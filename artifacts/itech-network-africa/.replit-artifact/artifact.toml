@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "iTech Network Africa"
+version = "1.0.0"
+id = "artifacts/itech-network-africa"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23676
+
+[services.development]
+run = "pnpm --filter @workspace/itech-network-africa run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/itech-network-africa", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/itech-network-africa/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23676"
+BASE_PATH = "/"
