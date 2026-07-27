@@ -26,7 +26,7 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
           <ul className="space-y-3">
             {section.links.map((link) => (
               <li key={link}>
-                <Link href="#" className="text-[#BDBDBD] hover:text-[#007BFF] transition-colors text-sm hover:translate-x-1 inline-block transform duration-200">
+                <Link href="#" className="text-[#BDBDBD] hover:text-[#3CB52A] transition-colors text-sm hover:translate-x-1 inline-block transform duration-200">
                   {link}
                 </Link>
               </li>
@@ -47,7 +47,7 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
               <motion.div
                 animate={{ rotate: openSection === section.title ? 45 : 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-[#007BFF]"
+                className="text-[#3CB52A]"
               >
                 <Plus size={20} />
               </motion.div>
@@ -64,7 +64,7 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
                   <ul className="pb-5 pt-1 px-4 space-y-4">
                     {section.links.map((link) => (
                       <li key={link}>
-                        <Link href="#" className="text-[#BDBDBD] hover:text-[#007BFF] transition-colors text-sm block">
+                        <Link href="#" className="text-[#BDBDBD] hover:text-[#3CB52A] transition-colors text-sm block">
                           {link}
                         </Link>
                       </li>

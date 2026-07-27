@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
         {/* Country & Language + Currency */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-b border-white/10">
           <button className="flex items-center gap-2 text-[#BDBDBD] hover:text-white transition-colors text-sm group">
-            <Globe size={16} className="group-hover:text-[#007BFF] transition-colors" />
+            <Globe size={16} className="group-hover:text-[#3CB52A] transition-colors" />
             <span>Liberia &ndash; English</span>
             <span className="text-[10px] ml-1">▼</span>
           </button>

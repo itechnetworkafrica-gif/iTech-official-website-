@@ -36,14 +36,14 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden text-white hover:text-[#007BFF] transition-colors p-1"
+              className="lg:hidden text-white hover:text-[#3CB52A] transition-colors p-1"
               aria-label="Open mobile menu"
             >
               <Menu size={28} />
             </button>
             
             <Link href="/" className="flex items-center">
-              <Logo hideTextOnMobile={true} />
+              <Logo />
             </Link>
           </div>
 
@@ -57,8 +57,8 @@ export const Header: React.FC = () => {
               <button 
                 onClick={toggleAccountDropdown}
                 className={`text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center
-                  hover:scale-110 hover:text-[#007BFF] hover:bg-[#007BFF]/10 hover:shadow-[0_0_15px_rgba(0,123,255,0.4)]
-                  ${isAccountDropdownOpen ? 'text-[#007BFF] bg-[#007BFF]/10 shadow-[0_0_15px_rgba(0,123,255,0.4)]' : ''}
+                  hover:scale-110 hover:text-[#3CB52A] hover:bg-[#3CB52A]/10 hover:shadow-[0_0_15px_rgba(60,181,42,0.4)]
+                  ${isAccountDropdownOpen ? 'text-[#3CB52A] bg-[#3CB52A]/10 shadow-[0_0_15px_rgba(60,181,42,0.4)]' : ''}
                 `}
                 aria-label="Account"
               >
@@ -70,11 +70,11 @@ export const Header: React.FC = () => {
               />
             </div>
             
-            <Link href="/cart" className="group relative text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:scale-110 hover:text-[#007BFF] hover:bg-[#007BFF]/10 hover:shadow-[0_0_15px_rgba(0,123,255,0.4)]">
+            <Link href="/cart" className="group relative text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:scale-110 hover:text-[#3CB52A] hover:bg-[#3CB52A]/10 hover:shadow-[0_0_15px_rgba(60,181,42,0.4)]">
               <ShoppingCart size={22} />
               {/* Animated Badge */}
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#007BFF] rounded-full ring-2 ring-[#2B2B2B]"></span>
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#007BFF] rounded-full animate-ping opacity-75"></span>
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#3CB52A] rounded-full ring-2 ring-[#2B2B2B]"></span>
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#3CB52A] rounded-full animate-ping opacity-75"></span>
             </Link>
           </div>
           
@@ -100,7 +100,7 @@ const HeaderIcon: React.FC<HeaderIconProps> = ({ icon, label, href }) => {
   return (
     <Link 
       href={href} 
-      className="hidden sm:flex text-white transition-all duration-200 p-2 rounded-full items-center justify-center hover:scale-110 hover:text-[#007BFF] hover:bg-[#007BFF]/10 hover:shadow-[0_0_15px_rgba(0,123,255,0.4)]"
+      className="hidden sm:flex text-white transition-all duration-200 p-2 rounded-full items-center justify-center hover:scale-110 hover:text-[#3CB52A] hover:bg-[#3CB52A]/10 hover:shadow-[0_0_15px_rgba(60,181,42,0.4)]"
       title={label}
     >
       {icon}

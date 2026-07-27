@@ -6,7 +6,27 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SearchBar } from '@/components/SearchBar';
+
+// Page Imports
 import HomePage from '@/pages/HomePage';
+import AboutPage from '@/pages/AboutPage';
+import ServicesPage from '@/pages/ServicesPage';
+import AIPage from '@/pages/AIPage';
+import SolutionsPage from '@/pages/SolutionsPage';
+import ProductsPage from '@/pages/ProductsPage';
+import PortfolioPage from '@/pages/PortfolioPage';
+import ProjectsPage from '@/pages/ProjectsPage';
+import IndustriesPage from '@/pages/IndustriesPage';
+import PartnersPage from '@/pages/PartnersPage';
+import ResourcesPage from '@/pages/ResourcesPage';
+import BlogPage from '@/pages/BlogPage';
+import CareersPage from '@/pages/CareersPage';
+import SupportPage from '@/pages/SupportPage';
+import ContactPage from '@/pages/ContactPage';
+import PricingPage from '@/pages/PricingPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import TermsPage from '@/pages/TermsPage';
+import CookiesPage from '@/pages/CookiesPage';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +38,24 @@ function Router() {
       <main className="flex-grow flex flex-col">
         <Switch>
           <Route path="/" component={HomePage} />
+          <Route path="/about" component={AboutPage} />
+          <Route path="/services" component={ServicesPage} />
+          <Route path="/ai-solutions" component={AIPage} />
+          <Route path="/solutions" component={SolutionsPage} />
+          <Route path="/products" component={ProductsPage} />
+          <Route path="/portfolio" component={PortfolioPage} />
+          <Route path="/projects" component={ProjectsPage} />
+          <Route path="/industries" component={IndustriesPage} />
+          <Route path="/partners" component={PartnersPage} />
+          <Route path="/resources" component={ResourcesPage} />
+          <Route path="/blog" component={BlogPage} />
+          <Route path="/careers" component={CareersPage} />
+          <Route path="/support" component={SupportPage} />
+          <Route path="/contact" component={ContactPage} />
+          <Route path="/pricing" component={PricingPage} />
+          <Route path="/privacy-policy" component={PrivacyPage} />
+          <Route path="/terms" component={TermsPage} />
+          <Route path="/cookies" component={CookiesPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

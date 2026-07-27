@@ -24,7 +24,7 @@ export const ScrollingMarquee: React.FC = () => {
                 <span className="text-white text-sm font-bold uppercase tracking-[0.15em] whitespace-nowrap">
                   {item}
                 </span>
-                <span className="text-[#007BFF] mx-6">•</span>
+                <span className="text-[#3CB52A] mx-6">•</span>
               </div>
             ))}
           </div>

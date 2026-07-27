@@ -19,7 +19,7 @@ export const SearchBar: React.FC = () => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        <button className="bg-[#007BFF] hover:bg-blue-600 text-white font-medium py-4 px-8 rounded-r-full transition-colors h-full flex items-center justify-center">
+        <button className="bg-[#3CB52A] hover:bg-[#2fa022] text-white font-medium py-4 px-8 rounded-r-full transition-colors h-full flex items-center justify-center">
           Search
         </button>
       </div>

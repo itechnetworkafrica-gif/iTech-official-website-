@@ -29,7 +29,7 @@ export const FooterSocial: React.FC = () => {
           key={social.label}
           href={social.href}
           aria-label={social.label}
-          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:border-[#007BFF] hover:bg-[#007BFF]/10 hover:text-[#007BFF] hover:shadow-[0_0_15px_rgba(0,123,255,0.3)]"
+          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:border-[#3CB52A] hover:bg-[#3CB52A]/10 hover:text-[#3CB52A] hover:shadow-[0_0_15px_rgba(60,181,42,0.3)]"
         >
           {social.icon}
         </a>

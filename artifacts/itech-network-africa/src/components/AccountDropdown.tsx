@@ -50,7 +50,7 @@ export const AccountDropdown: React.FC<AccountDropdownProps> = ({ isOpen, onClos
               className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                 item.isDestructive 
                   ? 'text-red-400 hover:bg-red-400/10 hover:text-red-300' 
-                  : 'text-white hover:bg-white/10 hover:text-[#007BFF]'
+                  : 'text-white hover:bg-white/10 hover:text-[#3CB52A]'
               }`}
             >
               {item.icon}

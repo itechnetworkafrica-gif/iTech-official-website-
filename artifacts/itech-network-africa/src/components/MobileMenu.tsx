@@ -81,14 +81,14 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-xl" aria-hidden="true">{item.emoji}</span>
-                      <span className={`font-medium transition-colors ${openAccordion === item.id ? 'text-[#007BFF]' : 'text-white group-hover:text-white'}`}>
+                      <span className={`font-medium transition-colors ${openAccordion === item.id ? 'text-[#3CB52A]' : 'text-white group-hover:text-white'}`}>
                         {item.label}
                       </span>
                     </div>
                     <motion.div
                       animate={{ rotate: openAccordion === item.id ? 45 : 0 }}
                       transition={{ duration: 0.2 }}
-                      className={`transition-colors ${openAccordion === item.id ? 'text-[#007BFF]' : 'text-[#BDBDBD] group-hover:text-white'}`}
+                      className={`transition-colors ${openAccordion === item.id ? 'text-[#3CB52A]' : 'text-[#BDBDBD] group-hover:text-white'}`}
                     >
                       <Plus size={20} />
                     </motion.div>
@@ -110,7 +110,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                               <Link 
                                 href={item.href}
                                 onClick={onClose}
-                                className="block py-[10px] px-3 text-[14px] text-[#BDBDBD] hover:text-[#007BFF] hover:bg-white/5 rounded-md transition-all duration-200"
+                                className="block py-[10px] px-3 text-[14px] text-[#BDBDBD] hover:text-[#3CB52A] hover:bg-white/5 rounded-md transition-all duration-200"
                               >
                                 {subItem}
                               </Link>
@@ -126,7 +126,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             
             {/* Quick Actions Footer */}
             <div className="p-6 border-t border-white/10 bg-[#1A1A1A]">
-              <Link href="/contact" onClick={onClose} className="w-full bg-[#007BFF] text-white py-3 rounded-lg font-medium text-center flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
+              <Link href="/contact" onClick={onClose} className="w-full bg-[#3CB52A] text-white py-3 rounded-lg font-medium text-center flex items-center justify-center gap-2 hover:bg-[#2fa022] transition-colors shadow-lg shadow-[#3CB52A]/20">
                 Contact Support
               </Link>
             </div>
