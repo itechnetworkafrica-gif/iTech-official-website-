@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ArrowRight, CheckCircle, Globe, Shield, Zap, Users, Award, TrendingUp,
-  Star, Monitor, Cloud, Brain, Code2, Wifi, Database, ChevronRight,
-  Linkedin, Twitter, Facebook, Instagram, Plus, X,
-  Quote, Phone, Mail, MapPin
+  Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
+  Quote
 } from 'lucide-react';
 
 /* ─── Animation helpers ─── */
@@ -48,48 +47,6 @@ const WHY = [
   { icon: <Zap size={22} />, title: 'Scalable Solutions', desc: 'Architecture that grows with you — from startup to national scale.' },
 ];
 
-const TEAM = [
-  {
-    name: 'Wilmot Kerkulah',
-    role: 'CEO & Founder',
-    bio: 'Visionary leader with 15+ years in African ICT, driving the digital transformation agenda across the continent.',
-    photo: 'https://randomuser.me/api/portraits/men/85.jpg',
-    initials: 'WK',
-    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
-  },
-  {
-    name: 'Sarah Johnson',
-    role: 'Chief Technology Officer',
-    bio: 'Cloud architect and AI strategist with a passion for building robust, scalable platforms for emerging markets.',
-    photo: 'https://randomuser.me/api/portraits/women/65.jpg',
-    initials: 'SJ',
-    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
-  },
-  {
-    name: 'Michael Osei',
-    role: 'Head of AI Solutions',
-    bio: 'ML engineer pioneering intelligent automation and data analytics tools tailored for African enterprises.',
-    photo: 'https://randomuser.me/api/portraits/men/42.jpg',
-    initials: 'MO',
-    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
-  },
-  {
-    name: 'David Mensah',
-    role: 'VP of Enterprise Software',
-    bio: 'Full-stack leader delivering mission-critical ERP, CRM and government systems across West Africa.',
-    photo: 'https://randomuser.me/api/portraits/men/18.jpg',
-    initials: 'DM',
-    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
-  },
-  {
-    name: 'Aisha Diallo',
-    role: 'Director of Operations',
-    bio: 'Operations strategist ensuring every project is delivered with precision, speed and client delight.',
-    photo: 'https://randomuser.me/api/portraits/women/29.jpg',
-    initials: 'AD',
-    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
-  },
-];
 
 const TESTIMONIALS = [
   { name: 'Emmanuel Togba', role: 'Director of IT, Central Bank of Liberia', quote: 'iTech Network Africa transformed our digital infrastructure. Their team delivered a secure, enterprise-grade platform that has improved our operational efficiency by 40%.', rating: 5 },
@@ -97,88 +54,6 @@ const TESTIMONIALS = [
   { name: 'Samuel Kollie', role: 'CTO, Liberia Telecom Authority', quote: 'Their AI automation suite reduced our manual processing time by 60%. I would not trust our digital future to any other tech partner in the region.', rating: 5 },
 ];
 
-/* ─── Team Card ─── */
-const TeamCard: React.FC<{ member: typeof TEAM[0]; index: number }> = ({ member, index }) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <motion.div
-      custom={index}
-      variants={fadeUp}
-      className="group relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.14)] transition-shadow duration-400"
-    >
-      {/* Photo */}
-      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-[#0A1929] to-[#1a3a55]">
-        <img
-          src={member.photo}
-          alt={member.name}
-          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          onError={e => {
-            const target = e.currentTarget as HTMLImageElement;
-            target.style.display = 'none';
-            const parent = target.parentElement!;
-            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-5xl font-bold text-white/60">${member.initials}</div>`;
-          }}
-        />
-        {/* Green gradient overlay at bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="p-6">
-        <h3 className="text-lg font-bold text-[#060E18] leading-tight">{member.name}</h3>
-        <p className="text-[#3CB52A] text-sm font-semibold mt-0.5 mb-3">{member.role}</p>
-        <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
-      </div>
-
-      {/* Social toggle button */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        aria-label="Toggle social links"
-        className={`absolute bottom-5 right-5 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
-          open ? 'bg-[#3CB52A] rotate-45' : 'bg-[#060E18] hover:bg-[#3CB52A]'
-        }`}
-      >
-        {open ? <X size={16} className="text-white" /> : <Plus size={16} className="text-white" />}
-      </button>
-
-      {/* Social links overlay */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-5 flex flex-col gap-2 items-end"
-          >
-            {[
-              { icon: <Linkedin size={15} />, href: member.social.linkedin, label: 'LinkedIn', color: '#0077B5' },
-              { icon: <Twitter size={15} />, href: member.social.twitter, label: 'Twitter', color: '#1DA1F2' },
-              { icon: <Facebook size={15} />, href: member.social.facebook, label: 'Facebook', color: '#1877F2' },
-              { icon: <Instagram size={15} />, href: member.social.instagram, label: 'Instagram', color: '#E1306C' },
-            ].map((s, i) => (
-              <motion.a
-                key={s.label}
-                href={s.href}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                aria-label={s.label}
-                target="_blank"
-                rel="noreferrer"
-                style={{ backgroundColor: s.color }}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-md hover:scale-110 transition-transform"
-              >
-                {s.icon}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
 
 /* ─── Main Component ─── */
 export default function HomePage() {
@@ -327,16 +202,19 @@ export default function HomePage() {
                 key={svc.title}
                 custom={i}
                 variants={fadeUp}
-                className="group p-8 rounded-3xl border border-[#F0F0F0] hover:border-[#3CB52A]/30 hover:shadow-[0_8px_40px_rgba(60,181,42,0.1)] transition-all duration-300 cursor-pointer"
+                className="group flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-xl hover:border-[#3CB52A]/30 transition-all duration-300"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
                   {svc.icon}
                 </div>
-                <h3 className="text-xl font-bold text-[#060E18] mb-2">{svc.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed mb-4">{svc.desc}</p>
-                <div className="flex items-center gap-1 text-[#3CB52A] text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn more <ChevronRight size={16} />
-                </div>
+                <h3 className="text-lg font-bold text-[#060E18] mb-2">{svc.title}</h3>
+                <p className="text-[#6B7280] text-sm leading-relaxed mb-6 flex-1">{svc.desc}</p>
+                <Link
+                  href="/services"
+                  className="w-full py-2.5 bg-[#060E18] group-hover:bg-[#3CB52A] text-white text-sm font-bold rounded-xl text-center transition-colors flex items-center justify-center gap-1.5"
+                >
+                  Learn More <ChevronRight size={14} />
+                </Link>
               </motion.div>
             ))}
           </motion.div>
@@ -454,41 +332,6 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          TEAM
-      ══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={stagger}
-            className="text-center mb-16"
-          >
-            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">The Team</motion.span>
-            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
-              The People Behind<br />the Platform
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-xl mx-auto">
-              A world-class team of engineers, strategists and operators united by a mission to transform Africa through technology.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={stagger}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
-          >
-            {TEAM.map((member, i) => (
-              <TeamCard key={member.name} member={member} index={i} />
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
           TESTIMONIALS
       ══════════════════════════════════════ */}
       <section className="py-24 lg:py-32 bg-[#0A1929]">
@@ -532,31 +375,6 @@ export default function HomePage() {
               </motion.div>
             ))}
           </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
-          QUICK CONTACT STRIP
-      ══════════════════════════════════════ */}
-      <section className="bg-white py-14">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              { icon: <Phone size={22} />, label: 'Call Us', value: '+231 761 798 796', href: 'tel:+231761798796' },
-              { icon: <Mail size={22} />, label: 'Email Us', value: 'itechnetworkafrica@gmail.com', href: 'mailto:itechnetworkafrica@gmail.com' },
-              { icon: <MapPin size={22} />, label: 'Find Us', value: 'Monrovia, Liberia', href: '/contact' },
-            ].map(c => (
-              <a key={c.label} href={c.href} className="flex items-center gap-4 p-6 rounded-2xl border border-[#F0F0F0] hover:border-[#3CB52A]/30 hover:shadow-[0_4px_20px_rgba(60,181,42,0.08)] transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center shrink-0 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
-                  {c.icon}
-                </div>
-                <div>
-                  <p className="text-[#9CA3AF] text-xs font-semibold uppercase tracking-wider">{c.label}</p>
-                  <p className="text-[#060E18] font-bold text-sm mt-0.5">{c.value}</p>
-                </div>
-              </a>
-            ))}
-          </div>
         </div>
       </section>
 

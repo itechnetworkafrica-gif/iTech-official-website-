@@ -112,7 +112,14 @@ export const Header: React.FC = () => {
               <span className="hidden lg:inline text-xs font-medium whitespace-nowrap">{PHONE}</span>
             </a>
 
-            <HeaderIconLink icon={<HelpCircle size={20} />} label="Support" href="/support" />
+            <Link
+              href="/support"
+              className="flex text-white transition-all duration-200 p-1.5 rounded-full items-center justify-center hover:text-[#3CB52A] border border-white/40 hover:border-[#3CB52A] hover:bg-[#3CB52A]/10"
+              title="Support"
+              aria-label="Support"
+            >
+              <HelpCircle size={18} />
+            </Link>
 
             <div className="relative">
               <button

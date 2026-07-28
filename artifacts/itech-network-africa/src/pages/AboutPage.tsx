@@ -33,32 +33,27 @@ const values = [
 ];
 
 const timeline = [
-  { year: '2018', title: 'Foundation', desc: 'iTech Network Africa established in Monrovia, Liberia by Wilmot Kerkulah as a boutique IT consultancy.' },
-  { year: '2019', title: 'First Enterprise Contracts', desc: 'Secured major software development projects with leading financial institutions across West Africa.' },
-  { year: '2020', title: 'Service Expansion', desc: 'Launched cybersecurity and cloud services divisions, growing the team to 25+ engineers.' },
-  { year: '2021', title: 'Regional Presence', desc: 'Opened operations in 5 West African countries, serving governments and NGOs at scale.' },
-  { year: '2022', title: 'Digital Marketing & Branding', desc: 'Added full-service digital marketing, multimedia, and branding capabilities.' },
-  { year: '2023', title: 'AI Division Launch', desc: 'Introduced dedicated AI, machine learning, and intelligent automation solutions.' },
-  { year: '2025', title: 'Pan-African Scale', desc: 'Operating in 10+ countries, 200+ enterprise clients, and 500+ projects delivered.' },
+  { year: '2023', title: 'Foundation', desc: 'iTech Network Africa established in Monrovia, Liberia by Wilmot Kerkulah with a mission to bridge the digital divide across West Africa.' },
+  { year: '2023', title: 'First Contracts', desc: 'Secured initial software development and IT consulting projects with local businesses and institutions.' },
+  { year: '2024', title: 'Service Expansion', desc: 'Launched cybersecurity, cloud infrastructure, and AI solutions divisions, growing team capabilities.' },
+  { year: '2024', title: 'Regional Growth', desc: 'Extended services across West Africa, partnering with financial institutions, NGOs and government agencies.' },
+  { year: '2025', title: 'Pan-African Reach', desc: 'Operating in 10+ African countries, delivering 500+ projects for 200+ enterprise clients.' },
 ];
 
 const team = [
-  { name: 'Wilmot Kerkulah', role: 'CEO & Founder', avatar: 'WK', color: '#3CB52A' },
-  { name: 'Sarah Johnson', role: 'Chief Technology Officer', avatar: 'SJ', color: '#0A7EBF' },
-  { name: 'Michael Osei', role: 'Head of AI Solutions', avatar: 'MO', color: '#7C3AED' },
-  { name: 'David Mensah', role: 'VP of Enterprise Software', avatar: 'DM', color: '#E85D04' },
-  { name: 'Aisha Diallo', role: 'Director of Operations', avatar: 'AD', color: '#0D9488' },
-  { name: 'James Koffi', role: 'Head of Cloud Infrastructure', avatar: 'JK', color: '#B45309' },
-  { name: 'Grace Togba', role: 'Head of Digital Marketing', avatar: 'GT', color: '#BE185D' },
-  { name: 'Emmanuel Toe', role: 'Lead UI/UX Designer', avatar: 'ET', color: '#1D4ED8' },
+  { name: 'Wilmot Kerkulah', role: 'Founder & Executive Director', avatar: 'WK', color: '#3CB52A', bio: 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation. Founded iTech Network Africa in 2023 with a mission to empower businesses and communities through world-class digital solutions.' },
+  { name: 'Foday Kabah', role: 'Full Stack Developer', avatar: 'FK', color: '#0A7EBF', bio: 'Builds robust web and mobile applications from front to back, crafting seamless digital experiences that power the company\'s enterprise solutions.' },
+  { name: 'Alvina Dahn', role: 'Finance Officer', avatar: 'AD', color: '#7C3AED', bio: 'Manages financial operations and ensures fiscal discipline across all projects, driving sustainable growth for the company and its clients.' },
+  { name: 'James Kerkula', role: 'Operations Associate', avatar: 'JK', color: '#E85D04', bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.' },
+  { name: 'Dorcas Kollie', role: 'Admin', avatar: 'DK', color: '#0D9488', bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.' },
 ];
 
 const profileStats = [
-  { value: '2018', label: 'Year Founded' },
+  { value: '2023', label: 'Year Founded' },
   { value: '10+', label: 'Countries' },
   { value: '200+', label: 'Enterprise Clients' },
   { value: '500+', label: 'Projects Delivered' },
-  { value: '50+', label: 'Team Members' },
+  { value: '5', label: 'Core Team' },
   { value: '99%', label: 'Client Satisfaction' },
 ];
 
@@ -202,7 +197,7 @@ export default function AboutPage() {
                 From Monrovia<br />to the World
               </h2>
               <p className="text-[#6B7280] text-lg leading-relaxed mb-5">
-                Founded in 2018 by visionary entrepreneur <strong className="text-[#0A0A0A]">Wilmot Kerkulah</strong> in Monrovia, Liberia,
+                Founded in 2023 by visionary entrepreneur <strong className="text-[#0A0A0A]">Wilmot Kerkulah</strong> in Monrovia, Liberia,
                 iTech Network Africa began with a singular mission: to bridge the technological divide in West Africa.
               </p>
               <p className="text-[#6B7280] text-lg leading-relaxed mb-5">
@@ -217,7 +212,7 @@ export default function AboutPage() {
 
               <div className="grid grid-cols-2 gap-6 pt-8 border-t border-[#E5E7EB]">
                 <div>
-                  <div className="text-4xl font-bold text-[#0A0A0A] mb-1">2018</div>
+                  <div className="text-4xl font-bold text-[#0A0A0A] mb-1">2023</div>
                   <div className="text-[#6B7280] text-sm font-medium">Year Founded</div>
                 </div>
                 <div>
@@ -324,66 +319,59 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
             <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">The People</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">Our Team</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">Meet Our Team</h2>
             <p className="mt-5 text-[#6B7280] text-lg">
-              50+ passionate technologists, designers, and strategists united by one purpose — Africa's digital future.
+              A dedicated team of professionals united by one purpose — transforming Africa through technology.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {team.map((member, i) => (
-              <motion.div key={i} {...stagger(i, 0.04)} className="group text-center">
-                <div className="relative mb-5 mx-auto w-full aspect-square max-w-[180px] rounded-2xl overflow-hidden bg-[#F8F9FA] flex items-center justify-center">
+          {/* First row: 3 cards */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {team.slice(0, 3).map((member, i) => (
+              <motion.div
+                key={i}
+                {...stagger(i, 0.06)}
+                className="group bg-white border border-[#E5E7EB] rounded-2xl p-8 hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
+              >
+                {/* Avatar */}
+                <div className="flex items-center gap-5 mb-6">
                   <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold group-hover:scale-110 transition-transform duration-300"
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-lg"
                     style={{ backgroundColor: member.color }}
                   >
                     {member.avatar}
                   </div>
-                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#3CB52A]/30 rounded-2xl transition-colors duration-300" />
+                  <div>
+                    <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
+                    <p className="text-[#3CB52A] text-sm font-semibold mt-0.5">{member.role}</p>
+                  </div>
                 </div>
-                <h3 className="font-bold text-[#0A0A0A] text-sm mb-1">{member.name}</h3>
-                <p className="text-[#3CB52A] text-xs font-medium">{member.role}</p>
+                <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ═══════════════════════════════════════
-          4. LEADERSHIP
-      ═══════════════════════════════════════ */}
-      <section id="leadership" className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#3CB52A]/8 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">Leadership</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">The Minds Behind iTech</h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {team.slice(0, 3).map((leader, i) => (
+          {/* Second row: 2 cards centred */}
+          <div className="grid sm:grid-cols-2 gap-6 lg:w-2/3 lg:mx-auto">
+            {team.slice(3).map((member, i) => (
               <motion.div
                 key={i}
-                {...stagger(i, 0.1)}
-                className={`bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#3CB52A]/40 transition-all duration-300 ${i === 0 ? 'md:col-span-1 md:row-span-1' : ''}`}
+                {...stagger(i + 3, 0.06)}
+                className="group bg-white border border-[#E5E7EB] rounded-2xl p-8 hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
               >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold mb-6"
-                  style={{ backgroundColor: leader.color }}
-                >
-                  {leader.avatar}
+                <div className="flex items-center gap-5 mb-6">
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-lg"
+                    style={{ backgroundColor: member.color }}
+                  >
+                    {member.avatar}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
+                    <p className="text-[#3CB52A] text-sm font-semibold mt-0.5">{member.role}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1">{leader.name}</h3>
-                <p className="text-[#3CB52A] text-sm font-semibold mb-4">{leader.role}</p>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  {i === 0
-                    ? 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation since 2018.'
-                    : i === 1
-                    ? 'Engineering leader with 15+ years in enterprise software, cloud architecture, and AI systems across three continents.'
-                    : 'Pioneering AI solutions for African enterprises, building machine learning models that address continent-specific challenges.'}
-                </p>
+                <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
               </motion.div>
             ))}
           </div>
@@ -429,13 +417,13 @@ export default function AboutPage() {
               <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Company Profile</span>
               <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight mb-6">By the Numbers</h2>
               <p className="text-[#6B7280] text-lg leading-relaxed mb-8">
-                From a single office in Monrovia to a pan-African technology force — seven years of relentless growth, client trust, and measurable impact.
+                From a single office in Monrovia to a pan-African technology force — relentless growth, client trust, and measurable impact since 2023.
               </p>
               <div className="space-y-4">
                 {[
                   { label: 'Industry', value: 'Information & Communication Technology (ICT)' },
                   { label: 'Headquarters', value: 'Monrovia, Liberia' },
-                  { label: 'Founded', value: '2018' },
+                  { label: 'Founded', value: '2023' },
                   { label: 'Operations', value: '10+ African Countries' },
                   { label: 'Specialisation', value: 'Enterprise Software, AI, Cybersecurity, Cloud' },
                 ].map((row, i) => (
