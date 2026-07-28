@@ -26,6 +26,9 @@ import PricingPage from '@/pages/PricingPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import CookiesPage from '@/pages/CookiesPage';
+import ClientPortalPage from '@/pages/ClientPortalPage';
+import RefundPolicyPage from '@/pages/RefundPolicyPage';
+import SitemapPage from '@/pages/SitemapPage';
 
 const queryClient = new QueryClient();
 
@@ -54,6 +57,9 @@ function Router() {
           <Route path="/privacy-policy" component={PrivacyPage} />
           <Route path="/terms" component={TermsPage} />
           <Route path="/cookies" component={CookiesPage} />
+          <Route path="/portal" component={ClientPortalPage} />
+          <Route path="/refund-policy" component={RefundPolicyPage} />
+          <Route path="/sitemap" component={SitemapPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
