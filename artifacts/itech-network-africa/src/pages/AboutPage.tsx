@@ -107,10 +107,10 @@ const csrItems = [
 
 /* ─── Social links per member (placeholder hrefs) ─── */
 const socialLinks = [
-  { icon: <FaLinkedinIn size={14} />, label: 'LinkedIn', href: 'https://linkedin.com/company/itech-network-africa' },
-  { icon: <FaXTwitter size={14} />, label: 'X', href: 'https://x.com/itechnetworkafrica' },
-  { icon: <FaInstagram size={14} />, label: 'Instagram', href: 'https://instagram.com/itechnetworkafrica' },
-  { icon: <FaFacebook size={14} />, label: 'Facebook', href: 'https://facebook.com/itechnetworkafrica' },
+  { icon: <FaLinkedinIn size={18} />, label: 'LinkedIn', href: 'https://linkedin.com/company/itech-network-africa' },
+  { icon: <FaXTwitter size={18} />, label: 'X', href: 'https://x.com/itechnetworkafrica' },
+  { icon: <FaInstagram size={18} />, label: 'Instagram', href: 'https://instagram.com/itechnetworkafrica' },
+  { icon: <FaFacebook size={18} />, label: 'Facebook', href: 'https://facebook.com/itechnetworkafrica' },
 ];
 
 /* ─── Team card with photo + social toggle ─── */
@@ -123,17 +123,17 @@ const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, ind
       {...stagger(index, 0.06)}
       className="group bg-white border border-[#E5E7EB] rounded-2xl overflow-hidden hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
     >
-      {/* Photo / Avatar */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#F0F2F5]">
+      {/* Photo / Avatar — portrait ratio works well for headshots on all screen sizes */}
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#F0F2F5]">
         {member.photo ? (
           <img
             src={member.photo}
             alt={member.name}
-            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div
-            className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
+            className="w-full h-full flex items-center justify-center text-white text-5xl font-bold"
             style={{ backgroundColor: member.color }}
           >
             {member.avatar}
@@ -142,7 +142,7 @@ const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, ind
         {/* Social toggle button — bottom-right of photo */}
         <button
           onClick={() => setShowSocial(s => !s)}
-          className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-[#3CB52A] flex items-center justify-center text-white shadow-lg hover:bg-[#2da822] transition-all duration-200 z-10"
+          className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-[#3CB52A] flex items-center justify-center text-white shadow-lg hover:bg-[#2da822] transition-all duration-200 z-10"
           aria-label={showSocial ? 'Hide social links' : 'Show social links'}
         >
           <motion.span
@@ -150,18 +150,18 @@ const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, ind
             transition={{ duration: 0.2 }}
             className="flex items-center justify-center"
           >
-            <Plus size={16} />
+            <Plus size={18} />
           </motion.span>
         </button>
-        {/* Social icons overlay */}
+        {/* Social icons overlay — stacked vertically to avoid overflow on narrow cards */}
         <AnimatePresence>
           {showSocial && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-3 right-14 flex items-center gap-2"
+              className="absolute bottom-3 right-16 flex flex-col gap-2"
             >
               {socialLinks.map((s, i) => (
                 <a
@@ -170,7 +170,7 @@ const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, ind
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-8 h-8 rounded-full bg-[#060E18]/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#3CB52A] transition-colors duration-200"
+                  className="w-11 h-11 rounded-full bg-[#060E18]/85 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#3CB52A] transition-colors duration-200 shadow-md"
                 >
                   {s.icon}
                 </a>

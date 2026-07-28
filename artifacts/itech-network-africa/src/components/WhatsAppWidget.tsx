@@ -6,10 +6,10 @@ import { FaWhatsapp } from 'react-icons/fa6';
 const WA_NUMBER = '231776836689';
 
 const CTA_OPTIONS = [
-  { label: '💼 Request a Quote', msg: "Hello iTech Network Africa! I'd like to request a quote for your services." },
-  { label: '🛠️ Get Technical Support', msg: 'Hi! I need technical support from iTech Network Africa.' },
-  { label: '🤝 Partner With Us', msg: 'Hello! I\'m interested in partnering with iTech Network Africa.' },
-  { label: '📋 Learn About Services', msg: "Hi iTech! I'd like to learn more about your services and solutions." },
+  { label: 'Request a Quote', msg: "Hello iTech Network Africa! I'd like to request a quote for your services." },
+  { label: 'Get Technical Support', msg: 'Hi! I need technical support from iTech Network Africa.' },
+  { label: 'Partner With Us', msg: 'Hello! I\'m interested in partnering with iTech Network Africa.' },
+  { label: 'Learn About Services', msg: "Hi iTech! I'd like to learn more about your services and solutions." },
 ];
 
 export const WhatsAppWidget: React.FC = () => {
@@ -42,8 +42,8 @@ export const WhatsAppWidget: React.FC = () => {
             {/* ── Header ── */}
             <div className="bg-[#25D366] px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                  <FaWhatsapp size={22} className="text-white" />
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                  <FaWhatsapp size={28} className="text-white" />
                 </div>
                 <div>
                   <div className="text-white font-bold text-sm leading-tight">iTech Network Africa</div>
@@ -58,7 +58,7 @@ export const WhatsAppWidget: React.FC = () => {
                 className="text-white/70 hover:text-white transition-colors p-1"
                 aria-label="Close"
               >
-                <X size={18} />
+                <X size={22} />
               </button>
             </div>
 
@@ -67,7 +67,7 @@ export const WhatsAppWidget: React.FC = () => {
               {/* Greeting bubble */}
               <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm max-w-[88%]">
                 <p className="text-[#111] text-sm leading-relaxed">
-                  👋 Hi there! How can we help you today? Pick an option or type your message below.
+                  Hi there! How can we help you today? Pick an option or type your message below.
                 </p>
               </div>
 

@@ -327,10 +327,22 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          OUR PROCESS — clean & classic
+          OUR PROCESS — classic & pro
       ══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <section className="py-24 lg:py-36 bg-[#060E18] relative overflow-hidden">
+        {/* Subtle grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
+            backgroundSize: '64px 64px',
+          }}
+        />
+        {/* Ambient glow */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#3CB52A]/10 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#3CB52A]/6 rounded-full blur-[130px] pointer-events-none" />
+
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
 
           {/* Section header */}
           <motion.div
@@ -338,47 +350,51 @@ export default function HomePage() {
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
-            className="max-w-2xl mb-20"
+            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20"
           >
-            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-[0.14em] uppercase mb-4">How We Work</motion.span>
-            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] leading-tight mb-4">
-              A Process Built<br />for Results
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg leading-relaxed">
-              From first conversation to final launch — a structured, transparent approach that keeps every project on time and on target.
+            <div className="max-w-xl">
+              <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-[0.18em] uppercase mb-5">
+                How We Work
+              </motion.span>
+              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.05] mb-0">
+                A Process Built<br />for Results
+              </motion.h2>
+            </div>
+            <motion.p variants={fadeUp} custom={2} className="text-white/50 text-base lg:text-lg leading-relaxed max-w-sm lg:text-right">
+              From first conversation to final launch — structured, transparent, and on target every time.
             </motion.p>
           </motion.div>
 
-          {/* Steps */}
-          <div className="space-y-0">
+          {/* Steps — 2 × 2 grid */}
+          <div className="grid md:grid-cols-2 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
             {PROCESS.map((p, i) => (
               <motion.div
                 key={p.num}
-                initial={{ opacity: 0, x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.55, delay: i * 0.1, ease: EASE }}
-                className={`grid lg:grid-cols-[200px_1fr] gap-0 border-b border-[#E5E7EB] last:border-b-0 group`}
+                className="group bg-[#080F1C] hover:bg-[#0C1623] transition-colors duration-300 p-10 lg:p-12 flex flex-col gap-6"
               >
-                {/* Step number + label */}
-                <div className="py-10 lg:py-12 flex items-start gap-6 lg:border-r border-[#E5E7EB] pr-0 lg:pr-10">
-                  <span className="text-5xl font-black text-[#F0F2F5] group-hover:text-[#3CB52A]/15 transition-colors leading-none select-none">
+                {/* Step number + title row */}
+                <div className="flex items-start justify-between gap-4">
+                  <span className="text-[80px] font-black leading-none text-white/[0.06] group-hover:text-[#3CB52A]/20 transition-colors duration-300 select-none -mt-2">
                     {p.num}
                   </span>
-                  <div className="pt-2">
-                    <div className="w-2 h-2 rounded-full bg-[#3CB52A] mb-2" />
-                    <h3 className="text-xl font-black text-[#060E18]">{p.title}</h3>
+                  <div className="w-10 h-10 rounded-full border border-[#3CB52A]/40 group-hover:border-[#3CB52A] group-hover:bg-[#3CB52A]/10 flex items-center justify-center transition-all duration-300 shrink-0 mt-1">
+                    <div className="w-2 h-2 rounded-full bg-[#3CB52A]" />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="py-10 lg:py-12 lg:pl-12 flex flex-col justify-center">
-                  <p className="text-[#374151] text-base leading-relaxed mb-4 max-w-2xl">{p.desc}</p>
+                <div>
+                  <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{p.title}</h3>
+                  <p className="text-white/55 text-[15px] leading-relaxed mb-5">{p.desc}</p>
                   <div className="flex flex-wrap gap-2">
                     {p.detail.split(' · ').map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-semibold text-[#6B7280] bg-[#F8F9FA] border border-[#E5E7EB] px-3 py-1.5 rounded-full"
+                        className="text-xs font-semibold text-white/40 border border-white/10 group-hover:border-[#3CB52A]/30 group-hover:text-white/60 px-3 py-1.5 rounded-full transition-colors duration-300"
                       >
                         {tag}
                       </span>
@@ -399,11 +415,11 @@ export default function HomePage() {
           >
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-[#060E18] hover:bg-[#3CB52A] text-white font-bold px-8 py-4 rounded-xl transition-all"
+              className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all"
             >
               Start Your Project <ArrowRight size={16} />
             </Link>
-            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[#3CB52A] font-semibold hover:gap-3 transition-all text-sm">
+            <Link href="/portfolio" className="inline-flex items-center gap-2 text-white/50 hover:text-[#3CB52A] font-semibold transition-all text-sm">
               See our work <ArrowRight size={15} />
             </Link>
           </motion.div>
