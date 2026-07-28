@@ -329,19 +329,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           OUR PROCESS — classic & pro
       ══════════════════════════════════════ */}
-      <section className="py-24 lg:py-36 bg-[#060E18] relative overflow-hidden">
-        {/* Subtle grid texture */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
-            backgroundSize: '64px 64px',
-          }}
-        />
-        {/* Ambient glow */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#3CB52A]/10 rounded-full blur-[160px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#3CB52A]/6 rounded-full blur-[130px] pointer-events-none" />
-
+      <section className="py-24 lg:py-36 bg-[#F8F9FA] relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
 
           {/* Section header */}
@@ -356,17 +344,17 @@ export default function HomePage() {
               <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-[0.18em] uppercase mb-5">
                 How We Work
               </motion.span>
-              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.05] mb-0">
+              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl lg:text-6xl font-black text-[#060E18] leading-[1.05] mb-0">
                 A Process Built<br />for Results
               </motion.h2>
             </div>
-            <motion.p variants={fadeUp} custom={2} className="text-white/50 text-base lg:text-lg leading-relaxed max-w-sm lg:text-right">
+            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-base lg:text-lg leading-relaxed max-w-sm lg:text-right">
               From first conversation to final launch — structured, transparent, and on target every time.
             </motion.p>
           </motion.div>
 
           {/* Steps — 2 × 2 grid */}
-          <div className="grid md:grid-cols-2 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
+          <div className="grid md:grid-cols-2 gap-px bg-[#E5E7EB] rounded-2xl overflow-hidden border border-[#E5E7EB]">
             {PROCESS.map((p, i) => (
               <motion.div
                 key={p.num}
@@ -374,11 +362,11 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.55, delay: i * 0.1, ease: EASE }}
-                className="group bg-[#080F1C] hover:bg-[#0C1623] transition-colors duration-300 p-10 lg:p-12 flex flex-col gap-6"
+                className="group bg-white hover:bg-[#f0fdf4] transition-colors duration-300 p-10 lg:p-12 flex flex-col gap-6"
               >
-                {/* Step number + title row */}
+                {/* Step number + indicator */}
                 <div className="flex items-start justify-between gap-4">
-                  <span className="text-[80px] font-black leading-none text-white/[0.06] group-hover:text-[#3CB52A]/20 transition-colors duration-300 select-none -mt-2">
+                  <span className="text-[80px] font-black leading-none text-[#060E18]/[0.06] group-hover:text-[#3CB52A]/20 transition-colors duration-300 select-none -mt-2">
                     {p.num}
                   </span>
                   <div className="w-10 h-10 rounded-full border border-[#3CB52A]/40 group-hover:border-[#3CB52A] group-hover:bg-[#3CB52A]/10 flex items-center justify-center transition-all duration-300 shrink-0 mt-1">
@@ -388,13 +376,13 @@ export default function HomePage() {
 
                 {/* Content */}
                 <div>
-                  <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{p.title}</h3>
-                  <p className="text-white/55 text-[15px] leading-relaxed mb-5">{p.desc}</p>
+                  <h3 className="text-2xl font-black text-[#060E18] mb-3 tracking-tight">{p.title}</h3>
+                  <p className="text-[#6B7280] text-[15px] leading-relaxed mb-5">{p.desc}</p>
                   <div className="flex flex-wrap gap-2">
                     {p.detail.split(' · ').map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-semibold text-white/40 border border-white/10 group-hover:border-[#3CB52A]/30 group-hover:text-white/60 px-3 py-1.5 rounded-full transition-colors duration-300"
+                        className="text-xs font-semibold text-[#6B7280] bg-[#F0F2F5] border border-[#E5E7EB] group-hover:border-[#3CB52A]/40 group-hover:text-[#3CB52A] px-3 py-1.5 rounded-full transition-colors duration-300"
                       >
                         {tag}
                       </span>
@@ -415,11 +403,11 @@ export default function HomePage() {
           >
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all"
+              className="inline-flex items-center gap-2 bg-[#060E18] hover:bg-[#3CB52A] text-white font-bold px-8 py-4 rounded-xl transition-all"
             >
               Start Your Project <ArrowRight size={16} />
             </Link>
-            <Link href="/portfolio" className="inline-flex items-center gap-2 text-white/50 hover:text-[#3CB52A] font-semibold transition-all text-sm">
+            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[#3CB52A] font-semibold hover:gap-3 transition-all text-sm">
               See our work <ArrowRight size={15} />
             </Link>
           </motion.div>
