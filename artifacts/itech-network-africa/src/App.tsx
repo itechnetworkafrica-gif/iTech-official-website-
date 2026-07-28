@@ -1,3 +1,4 @@
+import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -5,6 +6,9 @@ import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import { WhatsAppWidget } from '@/components/WhatsAppWidget';
+import { RouteScrollReset } from '@/components/RouteScrollReset';
 
 // Page Imports
 import HomePage from '@/pages/HomePage';
@@ -35,6 +39,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <div className="min-h-screen flex flex-col">
+      <RouteScrollReset />
       <Header />
       <main className="flex-grow flex flex-col">
         <Switch>
@@ -64,6 +69,8 @@ function Router() {
         </Switch>
       </main>
       <Footer />
+      <ScrollToTop />
+      <WhatsAppWidget />
     </div>
   );
 }

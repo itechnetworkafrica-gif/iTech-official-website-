@@ -3,19 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Link } from 'wouter';
 
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
 interface FooterAccordionProps {
   sections: {
     title: string;
-    links: string[];
+    links: FooterLink[];
   }[];
 }
 
 export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) => {
   const [openSection, setOpenSection] = useState<string | null>(null);
-
-  const toggleSection = (title: string) => {
-    setOpenSection(openSection === title ? null : title);
-  };
 
   return (
     <div className="w-full">
@@ -26,9 +27,12 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
             <h3 className="text-white font-bold text-base mb-4">{section.title}</h3>
             <ul className="space-y-3">
               {section.links.map((link) => (
-                <li key={link}>
-                  <Link href="#" className="text-white/70 hover:text-white transition-colors text-sm">
-                    {link}
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-white/60 hover:text-white transition-colors text-sm"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -37,12 +41,12 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
         ))}
       </div>
 
-      {/* Mobile/Tablet: full-width accordion, exactly like GoDaddy */}
+      {/* Mobile/Tablet: accordion */}
       <div className="lg:hidden">
         {sections.map((section) => (
           <div key={section.title} className="border-b border-white/10 last:border-0">
             <button
-              onClick={() => toggleSection(section.title)}
+              onClick={() => setOpenSection(openSection === section.title ? null : section.title)}
               className="w-full flex justify-between items-center py-5 text-left"
             >
               <span className="text-white font-semibold text-base">{section.title}</span>
@@ -65,9 +69,12 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
                 >
                   <ul className="pb-5 space-y-4">
                     {section.links.map((link) => (
-                      <li key={link}>
-                        <Link href="#" className="text-white/70 hover:text-white transition-colors text-sm block">
-                          {link}
+                      <li key={link.label}>
+                        <Link
+                          href={link.href}
+                          className="text-white/60 hover:text-white transition-colors text-sm block"
+                        >
+                          {link.label}
                         </Link>
                       </li>
                     ))}

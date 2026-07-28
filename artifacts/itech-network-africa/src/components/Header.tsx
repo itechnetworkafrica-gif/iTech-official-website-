@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
-import { Menu, Search, Phone, HelpCircle, User, ShoppingCart, X, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
+import { Menu, Search, Phone, HelpCircle, User, PhoneCall, X, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { AccountDropdown } from './AccountDropdown';
 import { MobileMenu } from './MobileMenu';
@@ -114,7 +114,7 @@ export const Header: React.FC = () => {
 
             <Link
               href="/support"
-              className="flex text-white transition-all duration-200 p-1.5 rounded-full items-center justify-center hover:text-[#3CB52A] border border-white/40 hover:border-[#3CB52A] hover:bg-[#3CB52A]/10"
+              className="flex text-white transition-all duration-200 p-1.5 rounded-full items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
               title="Support"
               aria-label="Support"
             >
@@ -140,11 +140,12 @@ export const Header: React.FC = () => {
             </Link>
 
             <Link
-              href="/cart"
-              className="relative text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
+              href="/contact"
+              className="flex items-center gap-1.5 text-white transition-all duration-200 p-2 rounded-full hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
+              title="Call us"
+              aria-label="Contact us"
             >
-              <ShoppingCart size={22} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#3CB52A] rounded-full ring-2 ring-[#2B2B2B]" />
+              <PhoneCall size={22} />
             </Link>
           </div>
         </div>
