@@ -1,6 +1,6 @@
-# [Project name]
+# iTech Network Africa
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A full-featured enterprise website for iTech Network Africa — a technology company serving businesses, governments, and communities across Africa with software, AI solutions, and digital transformation services.
 
 ## Run & Operate
 
