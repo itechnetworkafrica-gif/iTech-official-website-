@@ -43,7 +43,7 @@ export const Header: React.FC = () => {
             </button>
             
             <Link href="/" className="flex items-center">
-              <Logo variant="icon" />
+              <Logo variant="icon" white />
             </Link>
           </div>
 

@@ -7,16 +7,16 @@ export const FooterBottom: React.FC = () => {
         Do not sell my personal information
       </button>
 
-      <p className="text-white/60 text-xs leading-relaxed max-w-lg">
+      <p className="text-white text-xs leading-relaxed max-w-lg">
         Copyright &copy; {new Date().getFullYear()} iTech Network Africa. All Rights Reserved.
         The iTech Network Africa name and iT logo are registered trademarks of iTech Network Africa,
         powered by Gotecx.
       </p>
 
-      <p className="text-white/50 text-xs leading-relaxed max-w-lg">
+      <p className="text-white text-xs leading-relaxed max-w-lg">
         Use of this Site is subject to express terms of use. By using this site, you signify that
         you agree to be bound by these{' '}
-        <a href="/terms" className="underline hover:opacity-80 transition-opacity">
+        <a href="/terms" className="underline hover:opacity-70 transition-opacity">
           Terms of Service
         </a>
         .
