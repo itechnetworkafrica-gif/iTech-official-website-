@@ -1,4 +1,5 @@
 import React from 'react';
+import { Globe, ChevronUp } from 'lucide-react';
 import { ScrollingMarquee } from './ScrollingMarquee';
 import { DynamicPageIdentifier } from './DynamicPageIdentifier';
 import { FooterAccordion } from './FooterAccordion';
@@ -6,7 +7,6 @@ import { FooterBrand } from './FooterBrand';
 import { FooterSocial } from './FooterSocial';
 import { FooterLegal } from './FooterLegal';
 import { FooterBottom } from './FooterBottom';
-import { Globe } from 'lucide-react';
 
 const footerSections = [
   {
@@ -64,27 +64,45 @@ export const Footer: React.FC = () => {
     <footer className="w-full bg-[#111111] overflow-hidden flex flex-col">
       <ScrollingMarquee />
       <DynamicPageIdentifier />
-      
-      <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-16 flex flex-col gap-12">
-        <FooterAccordion sections={footerSections} />
-        
+
+      {/* ── Main footer body ── */}
+      <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12">
+
+        {/* 1. Accordion nav sections */}
+        <div className="py-6">
+          <FooterAccordion sections={footerSections} />
+        </div>
+
+        {/* 2. Brand logo — left-aligned, just like GoDaddy */}
         <FooterBrand />
-        
-        {/* Country & Language + Currency */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-b border-white/10">
-          <button className="flex items-center gap-2 text-[#BDBDBD] hover:text-white transition-colors text-sm group">
-            <Globe size={16} className="group-hover:text-[#3CB52A] transition-colors" />
+
+        {/* 3. Thin divider */}
+        <div className="border-t border-white/10" />
+
+        {/* 4. Region / Currency row */}
+        <div className="flex items-center justify-between py-5">
+          <button className="flex items-center gap-1.5 text-[#BDBDBD] hover:text-white transition-colors text-sm">
+            <Globe size={15} className="shrink-0" />
             <span>Liberia &ndash; English</span>
-            <span className="text-[10px] ml-1">▼</span>
+            <ChevronUp size={14} className="ml-0.5" />
           </button>
-          <button className="text-[#BDBDBD] hover:text-white transition-colors text-sm font-medium hover:bg-white/5 px-3 py-1.5 rounded">
-            USD $
+          <button className="flex items-center gap-1 text-[#BDBDBD] hover:text-white transition-colors text-sm">
+            <span>USD $</span>
+            <ChevronUp size={14} />
           </button>
         </div>
-        
+
+        {/* 5. Social icons — flat, left-aligned, exactly like GoDaddy */}
         <FooterSocial />
-        <FooterLegal />
-        <FooterBottom />
+
+      </div>
+
+      {/* 6. Legal bottom strip — full-width slightly darker separation */}
+      <div className="border-t border-white/10 mt-4">
+        <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-8 flex flex-col items-center gap-4">
+          <FooterLegal />
+          <FooterBottom />
+        </div>
       </div>
     </footer>
   );

@@ -3,26 +3,17 @@ import { Link } from 'wouter';
 
 export const FooterLegal: React.FC = () => {
   const links = [
-    "Legal",
-    "Privacy Policy",
-    "Cookies Policy",
-    "Terms & Conditions",
-    "Accessibility",
-    "Security",
-    "Sitemap"
+    { label: 'Legal', href: '/terms' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Cookies', href: '/cookies' },
   ];
 
   return (
-    <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6 py-6 text-sm text-[#BDBDBD]">
-      {links.map((link, index) => (
-        <React.Fragment key={link}>
-          <Link href="#" className="hover:text-white transition-colors">
-            {link}
-          </Link>
-          {index < links.length - 1 && (
-            <span className="text-white/20 text-[10px]">•</span>
-          )}
-        </React.Fragment>
+    <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm text-[#BDBDBD]">
+      {links.map((link) => (
+        <Link key={link.label} href={link.href} className="hover:text-white transition-colors">
+          {link.label}
+        </Link>
       ))}
     </div>
   );
