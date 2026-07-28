@@ -1,25 +1,28 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'wouter';
 import {
-  Target, Globe, Lightbulb, ShieldCheck, Heart, Briefcase,
-  Zap, Users, Award, TrendingUp, ArrowRight, CheckCircle2,
-  Building2, Handshake, Leaf, GraduationCap, Phone
+  Target, Globe, Lightbulb, ShieldCheck, Heart,
+  Users, Award, TrendingUp, ArrowRight, CheckCircle2,
+  Building2, Handshake, Leaf, GraduationCap, Phone, Plus
 } from 'lucide-react';
+import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
 
 /* ─── Shared animation helpers ─── */
+const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
 const fadeUp = {
   initial: { opacity: 0, y: 32 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.6, ease: EASE },
 };
 
 const stagger = (i: number, base = 0) => ({
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.55, delay: base + i * 0.09, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.55, delay: base + i * 0.09, ease: EASE },
 });
 
 /* ─── Data ─── */
@@ -41,11 +44,11 @@ const timeline = [
 ];
 
 const team = [
-  { name: 'Wilmot Kerkulah', role: 'Founder & Executive Director', avatar: 'WK', color: '#3CB52A', bio: 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation. Founded iTech Network Africa in 2023 with a mission to empower businesses and communities through world-class digital solutions.' },
-  { name: 'Foday Kabah', role: 'Full Stack Developer', avatar: 'FK', color: '#0A7EBF', bio: 'Builds robust web and mobile applications from front to back, crafting seamless digital experiences that power the company\'s enterprise solutions.' },
-  { name: 'Alvina Dahn', role: 'Finance Officer', avatar: 'AD', color: '#7C3AED', bio: 'Manages financial operations and ensures fiscal discipline across all projects, driving sustainable growth for the company and its clients.' },
-  { name: 'James Kerkula', role: 'Operations Associate', avatar: 'JK', color: '#E85D04', bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.' },
-  { name: 'Dorcas Kollie', role: 'Admin', avatar: 'DK', color: '#0D9488', bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.' },
+  { name: 'Wilmot Kerkulah', role: 'Founder & Executive Director', avatar: 'WK', color: '#3CB52A', photo: '/team-wilmot.png', bio: 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation. Founded iTech Network Africa in 2023 with a mission to empower businesses and communities through world-class digital solutions.' },
+  { name: 'Foday Kabah', role: 'Full Stack Developer', avatar: 'FK', color: '#0A7EBF', photo: '/team-foday.jpg', bio: 'Builds robust web and mobile applications from front to back, crafting seamless digital experiences that power the company\'s enterprise solutions.' },
+  { name: 'Alvina Dahn', role: 'Finance Officer', avatar: 'AD', color: '#7C3AED', photo: '/team-alvina.png', bio: 'Manages financial operations and ensures fiscal discipline across all projects, driving sustainable growth for the company and its clients.' },
+  { name: 'James Kerkula', role: 'Operations Associate', avatar: 'JK', color: '#E85D04', photo: null, bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.' },
+  { name: 'Dorcas Kollie', role: 'Admin', avatar: 'DK', color: '#0D9488', photo: null, bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.' },
 ];
 
 const profileStats = [
@@ -101,6 +104,91 @@ const csrItems = [
     desc: 'Subsidised technology packages helping small African businesses compete in the digital economy.',
   },
 ];
+
+/* ─── Social links per member (placeholder hrefs) ─── */
+const socialLinks = [
+  { icon: <FaLinkedinIn size={14} />, label: 'LinkedIn', href: 'https://linkedin.com/company/itech-network-africa' },
+  { icon: <FaXTwitter size={14} />, label: 'X', href: 'https://x.com/itechnetworkafrica' },
+  { icon: <FaInstagram size={14} />, label: 'Instagram', href: 'https://instagram.com/itechnetworkafrica' },
+  { icon: <FaFacebook size={14} />, label: 'Facebook', href: 'https://facebook.com/itechnetworkafrica' },
+];
+
+/* ─── Team card with photo + social toggle ─── */
+interface TeamMember { name: string; role: string; avatar: string; color: string; photo: string | null; bio: string; }
+
+const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, index }) => {
+  const [showSocial, setShowSocial] = useState(false);
+  return (
+    <motion.div
+      {...stagger(index, 0.06)}
+      className="group bg-white border border-[#E5E7EB] rounded-2xl overflow-hidden hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
+    >
+      {/* Photo / Avatar */}
+      <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#F0F2F5]">
+        {member.photo ? (
+          <img
+            src={member.photo}
+            alt={member.name}
+            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center text-white text-4xl font-bold"
+            style={{ backgroundColor: member.color }}
+          >
+            {member.avatar}
+          </div>
+        )}
+        {/* Social toggle button — bottom-right of photo */}
+        <button
+          onClick={() => setShowSocial(s => !s)}
+          className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-[#3CB52A] flex items-center justify-center text-white shadow-lg hover:bg-[#2da822] transition-all duration-200 z-10"
+          aria-label={showSocial ? 'Hide social links' : 'Show social links'}
+        >
+          <motion.span
+            animate={{ rotate: showSocial ? 45 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center justify-center"
+          >
+            <Plus size={16} />
+          </motion.span>
+        </button>
+        {/* Social icons overlay */}
+        <AnimatePresence>
+          {showSocial && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-3 right-14 flex items-center gap-2"
+            >
+              {socialLinks.map((s, i) => (
+                <a
+                  key={i}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="w-8 h-8 rounded-full bg-[#060E18]/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#3CB52A] transition-colors duration-200"
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Info */}
+      <div className="p-6">
+        <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
+        <p className="text-[#3CB52A] text-sm font-semibold mt-0.5 mb-3">{member.role}</p>
+        <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
+      </div>
+    </motion.div>
+  );
+};
 
 export default function AboutPage() {
   return (
@@ -328,51 +416,14 @@ export default function AboutPage() {
           {/* First row: 3 cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             {team.slice(0, 3).map((member, i) => (
-              <motion.div
-                key={i}
-                {...stagger(i, 0.06)}
-                className="group bg-white border border-[#E5E7EB] rounded-2xl p-8 hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
-              >
-                {/* Avatar */}
-                <div className="flex items-center gap-5 mb-6">
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-lg"
-                    style={{ backgroundColor: member.color }}
-                  >
-                    {member.avatar}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
-                    <p className="text-[#3CB52A] text-sm font-semibold mt-0.5">{member.role}</p>
-                  </div>
-                </div>
-                <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
-              </motion.div>
+              <TeamCard key={i} member={member} index={i} />
             ))}
           </div>
 
           {/* Second row: 2 cards centred */}
           <div className="grid sm:grid-cols-2 gap-6 lg:w-2/3 lg:mx-auto">
             {team.slice(3).map((member, i) => (
-              <motion.div
-                key={i}
-                {...stagger(i + 3, 0.06)}
-                className="group bg-white border border-[#E5E7EB] rounded-2xl p-8 hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex items-center gap-5 mb-6">
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-lg"
-                    style={{ backgroundColor: member.color }}
-                  >
-                    {member.avatar}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
-                    <p className="text-[#3CB52A] text-sm font-semibold mt-0.5">{member.role}</p>
-                  </div>
-                </div>
-                <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
-              </motion.div>
+              <TeamCard key={i} member={member} index={i + 3} />
             ))}
           </div>
         </div>

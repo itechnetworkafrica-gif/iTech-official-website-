@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { Lock, LayoutDashboard, FolderOpen, FileText, Headphones, Download, ArrowRight } from 'lucide-react';
 
+const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const fadeUp = {
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.55, ease: EASE },
 };
 
 const portalFeatures = [

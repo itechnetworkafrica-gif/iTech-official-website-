@@ -100,7 +100,7 @@ export const Header: React.FC = () => {
               className={`text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10 ${isSearchOpen ? 'text-[#3CB52A] bg-[#3CB52A]/10' : ''}`}
               aria-label="Search"
             >
-              {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+              {isSearchOpen ? <X size={22} /> : <Search size={22} />}
             </button>
 
             <a
@@ -108,7 +108,7 @@ export const Header: React.FC = () => {
               className="hidden sm:flex items-center gap-1.5 text-white hover:text-[#3CB52A] transition-colors p-2 rounded-full hover:bg-[#3CB52A]/10"
               aria-label="Call us"
             >
-              <Phone size={20} />
+              <Phone size={22} />
               <span className="hidden lg:inline text-xs font-medium whitespace-nowrap">{PHONE}</span>
             </a>
 
@@ -118,7 +118,7 @@ export const Header: React.FC = () => {
               title="Support"
               aria-label="Support"
             >
-              <HelpCircle size={18} />
+              <HelpCircle size={20} />
             </Link>
 
             <div className="relative">
@@ -127,7 +127,7 @@ export const Header: React.FC = () => {
                 className={`text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10 ${isAccountDropdownOpen ? 'text-[#3CB52A] bg-[#3CB52A]/10' : ''}`}
                 aria-label="Account"
               >
-                <User size={20} />
+                <User size={22} />
               </button>
               <AccountDropdown isOpen={isAccountDropdownOpen} onClose={() => setIsAccountDropdownOpen(false)} />
             </div>
@@ -136,14 +136,14 @@ export const Header: React.FC = () => {
               href="/portal"
               className="hidden sm:flex items-center gap-1.5 text-white text-xs font-semibold px-3 py-1.5 rounded-full bg-[#3CB52A]/15 hover:bg-[#3CB52A]/25 hover:text-[#3CB52A] transition-all border border-[#3CB52A]/20"
             >
-              <ExternalLink size={13} /> Portal
+              <ExternalLink size={14} /> Portal
             </Link>
 
             <Link
               href="/cart"
               className="relative text-white transition-all duration-200 p-2 rounded-full flex items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={22} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#3CB52A] rounded-full ring-2 ring-[#2B2B2B]" />
             </Link>
           </div>
