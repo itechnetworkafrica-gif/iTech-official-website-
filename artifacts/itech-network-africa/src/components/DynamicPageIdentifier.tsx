@@ -1,40 +1,55 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { Logo } from './Logo';
+import { ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import iconLogo from '@assets/BackgroundEraser_20260727_193353873_1785181085865.png';
 
-const getPageName = (path: string): string => {
-  if (path === '/') return 'Home';
-  const segment = path.split('/')[1];
-  if (!segment) return 'Home';
-  
-  // Capitalize and format
-  return segment
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+const routeNames: Record<string, string> = {
+  '/': 'Home',
+  '/about': 'About Us',
+  '/services': 'Services',
+  '/ai-solutions': 'AI Solutions',
+  '/solutions': 'Solutions',
+  '/products': 'Products',
+  '/portfolio': 'Portfolio',
+  '/projects': 'Projects',
+  '/industries': 'Industries',
+  '/partners': 'Partners',
+  '/resources': 'Resources',
+  '/blog': 'Blog',
+  '/careers': 'Careers',
+  '/support': 'Support',
+  '/contact': 'Contact',
+  '/pricing': 'Pricing',
+  '/privacy-policy': 'Privacy Policy',
+  '/terms': 'Terms & Conditions',
+  '/cookies': 'Cookies Policy',
 };
 
 export const DynamicPageIdentifier: React.FC = () => {
   const [location] = useLocation();
-  const pageName = getPageName(location);
+  const pageName = routeNames[location] ?? location.split('/').pop()?.replace(/-/g, ' ') ?? 'Home';
 
   return (
-    <div className="bg-[#111111] px-6 lg:px-12 py-8 border-b border-white/10">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-        <Logo />
-        <div className="h-6 w-px bg-white/20 hidden md:block"></div>
+    <div className="bg-[#111111] border-b border-white/10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-5 flex items-center gap-2">
+        <img
+          src={iconLogo}
+          alt="iTech Network Africa"
+          className="h-9 w-9 object-contain shrink-0"
+        />
+        <ChevronRight size={16} className="text-white/50 shrink-0" />
         <AnimatePresence mode="wait">
-          <motion.h2 
+          <motion.span
             key={pageName}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.2 }}
-            className="text-white text-3xl font-bold tracking-tight text-center md:text-right"
+            initial={{ opacity: 0, x: -4 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 4 }}
+            transition={{ duration: 0.18 }}
+            className="text-white text-base font-medium"
           >
             {pageName}
-          </motion.h2>
+          </motion.span>
         </AnimatePresence>
       </div>
     </div>

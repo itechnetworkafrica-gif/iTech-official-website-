@@ -8,55 +8,32 @@ import { FooterSocial } from './FooterSocial';
 import { FooterLegal } from './FooterLegal';
 import { FooterBottom } from './FooterBottom';
 
+/* Exactly 6 sections — mirrors GoDaddy's structure */
 const footerSections = [
   {
     title: "About iTech Network Africa",
-    links: ["Company Overview", "Our Story", "Vision", "Mission", "Core Values", "Leadership Team"]
-  },
-  {
-    title: "Services",
-    links: ["Web Development", "Website Design", "Mobile Apps", "Software Dev", "UI/UX Design", "Graphic Design", "Branding", "Cloud Services", "API Dev", "DB Dev", "Business Automation", "IT Support", "Cybersecurity", "Networking"]
-  },
-  {
-    title: "Solutions",
-    links: ["POS Systems", "ERP Solutions", "CRM Systems", "HR Management", "School Management", "Hospital Management", "Church Management", "Inventory Management"]
-  },
-  {
-    title: "Products",
-    links: ["Software Products", "Cloud Products", "Mobile Apps", "Enterprise Platforms"]
-  },
-  {
-    title: "Resources",
-    links: ["Documentation", "API Reference", "Tutorials", "Blog", "Downloads", "Changelog"]
-  },
-  {
-    title: "Developers",
-    links: ["API Reference", "SDKs", "Webhooks", "Open Source", "Developer Blog"]
-  },
-  {
-    title: "Partners",
-    links: ["Technology Partners", "Become a Partner", "Strategic Alliances", "Partner Portal"]
-  },
-  {
-    title: "Careers",
-    links: ["Job Openings", "Benefits", "Culture", "Internships", "Apply Now"]
+    links: ["Company Overview", "Our Story", "Leadership Team", "Careers", "Press & Media", "Contact Us"],
   },
   {
     title: "Support",
-    links: ["Help Center", "Contact Support", "Status Page", "Community Forum", "Report Issue"]
+    links: ["Help Center", "Contact Support", "Status Page", "Community Forum", "Report an Issue"],
   },
   {
-    title: "Company",
-    links: ["About Us", "Leadership", "Press & Media", "Awards", "Investors", "Sitemap"]
+    title: "Resources",
+    links: ["Documentation", "API Reference", "Blog", "Tutorials", "Downloads"],
   },
   {
-    title: "Contact",
-    links: ["Contact Us", "Office Locations", "Request a Quote", "Live Chat"]
+    title: "Partner Programs",
+    links: ["Technology Partners", "Become a Partner", "Strategic Alliances", "Partner Portal"],
   },
   {
-    title: "Legal",
-    links: ["Privacy Policy", "Cookies Policy", "Terms & Conditions", "Accessibility", "Security"]
-  }
+    title: "Account",
+    links: ["Login", "Register", "Dashboard", "Profile Settings", "Billing"],
+  },
+  {
+    title: "Services",
+    links: ["Web Development", "Mobile Apps", "AI Solutions", "Cloud Services", "Cybersecurity", "IT Support"],
+  },
 ];
 
 export const Footer: React.FC = () => {
@@ -68,12 +45,12 @@ export const Footer: React.FC = () => {
       {/* ── Main footer body ── */}
       <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12">
 
-        {/* 1. Accordion nav sections */}
+        {/* 1. Accordion nav — 6 sections */}
         <div className="py-6">
           <FooterAccordion sections={footerSections} />
         </div>
 
-        {/* 2. Brand logo — left-aligned, just like GoDaddy */}
+        {/* 2. Brand logo — icon + wordmark, left-aligned */}
         <FooterBrand />
 
         {/* 3. Thin divider */}
@@ -81,23 +58,23 @@ export const Footer: React.FC = () => {
 
         {/* 4. Region / Currency row */}
         <div className="flex items-center justify-between py-5">
-          <button className="flex items-center gap-1.5 text-[#BDBDBD] hover:text-white transition-colors text-sm">
+          <button className="flex items-center gap-1.5 text-white hover:opacity-80 transition-opacity text-sm">
             <Globe size={15} className="shrink-0" />
             <span>Liberia &ndash; English</span>
             <ChevronUp size={14} className="ml-0.5" />
           </button>
-          <button className="flex items-center gap-1 text-[#BDBDBD] hover:text-white transition-colors text-sm">
+          <button className="flex items-center gap-1 text-white hover:opacity-80 transition-opacity text-sm">
             <span>USD $</span>
             <ChevronUp size={14} />
           </button>
         </div>
 
-        {/* 5. Social icons — flat, left-aligned, exactly like GoDaddy */}
+        {/* 5. Social icons — flat, left-aligned */}
         <FooterSocial />
 
       </div>
 
-      {/* 6. Legal bottom strip — full-width slightly darker separation */}
+      {/* 6. Legal bottom strip */}
       <div className="border-t border-white/10 mt-4">
         <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-8 flex flex-col items-center gap-4">
           <FooterLegal />

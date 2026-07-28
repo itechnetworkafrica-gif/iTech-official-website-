@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface FooterAccordionProps {
@@ -18,36 +18,38 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
   };
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-0 lg:gap-y-8">
-      {/* Desktop view (no accordion, just lists) */}
-      {sections.map((section) => (
-        <div key={section.title} className="hidden lg:block py-4">
-          <h3 className="text-white font-bold text-lg mb-4">{section.title}</h3>
-          <ul className="space-y-3">
-            {section.links.map((link) => (
-              <li key={link}>
-                <Link href="#" className="text-[#BDBDBD] hover:text-[#3CB52A] transition-colors text-sm hover:translate-x-1 inline-block transform duration-200">
-                  {link}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-
-      {/* Mobile/Tablet view (accordion) */}
-      <div className="lg:hidden col-span-full">
+    <div className="w-full">
+      {/* Desktop: 3-column grid */}
+      <div className="hidden lg:grid grid-cols-3 gap-x-12 gap-y-10">
         {sections.map((section) => (
-          <div key={section.title} className="border-b border-white/5 last:border-0">
+          <div key={section.title}>
+            <h3 className="text-white font-bold text-base mb-4">{section.title}</h3>
+            <ul className="space-y-3">
+              {section.links.map((link) => (
+                <li key={link}>
+                  <Link href="#" className="text-white/70 hover:text-white transition-colors text-sm">
+                    {link}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile/Tablet: full-width accordion, exactly like GoDaddy */}
+      <div className="lg:hidden">
+        {sections.map((section) => (
+          <div key={section.title} className="border-b border-white/10 last:border-0">
             <button
               onClick={() => toggleSection(section.title)}
-              className="w-full flex justify-between items-center py-5 text-left transition-colors hover:bg-white/5 px-2 -mx-2 rounded-lg"
+              className="w-full flex justify-between items-center py-5 text-left"
             >
-              <span className="text-white font-bold text-base">{section.title}</span>
+              <span className="text-white font-semibold text-base">{section.title}</span>
               <motion.div
                 animate={{ rotate: openSection === section.title ? 45 : 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-[#3CB52A]"
+                className="text-white shrink-0"
               >
                 <Plus size={20} />
               </motion.div>
@@ -58,13 +60,13 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <ul className="pb-5 pt-1 px-4 space-y-4">
+                  <ul className="pb-5 space-y-4">
                     {section.links.map((link) => (
                       <li key={link}>
-                        <Link href="#" className="text-[#BDBDBD] hover:text-[#3CB52A] transition-colors text-sm block">
+                        <Link href="#" className="text-white/70 hover:text-white transition-colors text-sm block">
                           {link}
                         </Link>
                       </li>
