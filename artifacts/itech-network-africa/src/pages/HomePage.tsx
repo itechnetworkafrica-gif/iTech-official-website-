@@ -1,482 +1,594 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import { Link } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowRight, CheckCircle2, Clock, Code2, Cloud, Shield, Smartphone,
-  Zap, Users, Star, ChevronRight, Globe, Layers, Headphones,
-  TrendingUp, Award, Target
+  ArrowRight, CheckCircle, Globe, Shield, Zap, Users, Award, TrendingUp,
+  Star, Monitor, Cloud, Brain, Code2, Wifi, Database, ChevronRight,
+  Linkedin, Twitter, Facebook, Instagram, Plus, X,
+  Quote, Phone, Mail, MapPin
 } from 'lucide-react';
 
-/* ─── Reusable animation variants ─── */
+/* ─── Animation helpers ─── */
 const fadeUp = {
-  initial: { opacity: 0, y: 32 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  hidden: { opacity: 0, y: 32 },
+  show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] } }),
 };
-
-const stagger = (i: number, base = 0) => ({
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.55, delay: base + i * 0.08, ease: [0.22, 1, 0.36, 1] },
-});
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 
 /* ─── Data ─── */
-const processSteps = [
-  {
-    num: '01',
-    icon: <Target size={22} />,
-    title: 'Discovery',
-    desc: 'We listen, research, and deeply understand your business challenges, goals, and constraints before any work begins.',
-  },
-  {
-    num: '02',
-    icon: <Layers size={22} />,
-    title: 'Strategy',
-    desc: 'Our architects design a tailored technology roadmap aligned to your budget, timeline, and long-term vision.',
-  },
-  {
-    num: '03',
-    icon: <Code2 size={22} />,
-    title: 'Build',
-    desc: 'Agile sprints, weekly demos, and full transparency. You see progress and give feedback every step of the way.',
-  },
-  {
-    num: '04',
-    icon: <Zap size={22} />,
-    title: 'Launch',
-    desc: 'Rigorous QA, smooth deployment, training, and dedicated post-launch support to ensure your success.',
-  },
+const SERVICES = [
+  { icon: <Code2 size={28} />, title: 'Enterprise Software', desc: 'Custom ERP, CRM and business platforms built for African enterprises.' },
+  { icon: <Brain size={28} />, title: 'AI & Automation', desc: 'Machine learning, intelligent automation and data-driven decision tools.' },
+  { icon: <Cloud size={28} />, title: 'Cloud Infrastructure', desc: 'Secure, scalable cloud solutions on AWS, Azure and Google Cloud.' },
+  { icon: <Monitor size={28} />, title: 'Web & Mobile Apps', desc: 'Stunning, high-performance digital products for web and mobile.' },
+  { icon: <Shield size={28} />, title: 'Cybersecurity', desc: 'End-to-end security audits, compliance and threat protection.' },
+  { icon: <Wifi size={28} />, title: 'Network Solutions', desc: 'Enterprise networking, connectivity and managed IT infrastructure.' },
 ];
 
-const whyItems = [
-  { icon: <Globe size={20} />, title: 'Pan-African Reach', desc: 'Operations across 10+ countries with local expertise and global standards.' },
-  { icon: <Award size={20} />, title: 'Proven Track Record', desc: '500+ successful projects delivered across every major African industry.' },
-  { icon: <Clock size={20} />, title: 'On-Time Delivery', desc: '97% on-time delivery rate — we respect your timeline and your trust.' },
-  { icon: <Shield size={20} />, title: 'Enterprise Security', desc: 'Military-grade security practices baked into every system we build.' },
-  { icon: <Headphones size={20} />, title: '24 / 7 Support', desc: 'Round-the-clock technical support so your operations never stop.' },
-  { icon: <TrendingUp size={20} />, title: 'Scalable Solutions', desc: 'Built to grow with you — from startup to enterprise without re-building.' },
-];
-
-const stats = [
+const STATS = [
   { value: '500+', label: 'Projects Delivered' },
   { value: '200+', label: 'Enterprise Clients' },
   { value: '10+', label: 'Countries Served' },
   { value: '99%', label: 'Client Satisfaction' },
 ];
 
-const testimonials = [
+const PROCESS = [
+  { num: '01', title: 'Discovery', desc: 'We listen deeply to understand your business goals, challenges and technical requirements.' },
+  { num: '02', title: 'Strategy', desc: 'Our architects design a tailored roadmap aligned with your timeline and budget.' },
+  { num: '03', title: 'Build', desc: 'Agile development with continuous delivery, quality assurance and stakeholder reviews.' },
+  { num: '04', title: 'Launch & Support', desc: 'Smooth deployment, user training and ongoing 24/7 managed support.' },
+];
+
+const WHY = [
+  { icon: <Globe size={22} />, title: 'Pan-African Expertise', desc: 'Operating in 10+ African countries with deep local market insight.' },
+  { icon: <Award size={22} />, title: 'Proven Track Record', desc: '500+ successful projects across government, banking and enterprise sectors.' },
+  { icon: <TrendingUp size={22} />, title: '99% Delivery Rate', desc: 'On time, on budget — every engagement backed by SLA guarantees.' },
+  { icon: <Shield size={22} />, title: 'ISO-Aligned Security', desc: 'Enterprise-grade data protection and compliance baked in from day one.' },
+  { icon: <Users size={22} />, title: '24/7 Support', desc: 'Dedicated account managers and round-the-clock technical assistance.' },
+  { icon: <Zap size={22} />, title: 'Scalable Solutions', desc: 'Architecture that grows with you — from startup to national scale.' },
+];
+
+const TEAM = [
   {
-    name: 'Emmanuel Togba',
-    role: 'CEO, West Africa Finance Group',
-    quote: 'iTech Network transformed our entire banking infrastructure. The new core system processes 10× the volume at a fraction of the cost. Simply world-class.',
-    rating: 5,
-    avatar: 'ET',
-    color: '#3CB52A',
+    name: 'Wilmot Kerkulah',
+    role: 'CEO & Founder',
+    bio: 'Visionary leader with 15+ years in African ICT, driving the digital transformation agenda across the continent.',
+    photo: 'https://randomuser.me/api/portraits/men/85.jpg',
+    initials: 'WK',
+    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
   },
   {
-    name: 'Fatima Kamara',
-    role: 'Director of IT, Ministry of Health',
-    quote: 'Our hospital management system now serves 14 facilities with real-time data. The team delivered ahead of schedule and the support has been exceptional.',
-    rating: 5,
-    avatar: 'FK',
-    color: '#0A7EBF',
+    name: 'Sarah Johnson',
+    role: 'Chief Technology Officer',
+    bio: 'Cloud architect and AI strategist with a passion for building robust, scalable platforms for emerging markets.',
+    photo: 'https://randomuser.me/api/portraits/women/65.jpg',
+    initials: 'SJ',
+    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
   },
   {
-    name: 'Samuel Kollie',
-    role: 'Founder, ShopAfrica Marketplace',
-    quote: 'From zero to a fully operational e-commerce platform in 8 weeks. The mobile app alone added 3,000 new customers in the first month.',
-    rating: 5,
-    avatar: 'SK',
-    color: '#7C3AED',
+    name: 'Michael Osei',
+    role: 'Head of AI Solutions',
+    bio: 'ML engineer pioneering intelligent automation and data analytics tools tailored for African enterprises.',
+    photo: 'https://randomuser.me/api/portraits/men/42.jpg',
+    initials: 'MO',
+    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
+  },
+  {
+    name: 'David Mensah',
+    role: 'VP of Enterprise Software',
+    bio: 'Full-stack leader delivering mission-critical ERP, CRM and government systems across West Africa.',
+    photo: 'https://randomuser.me/api/portraits/men/18.jpg',
+    initials: 'DM',
+    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
+  },
+  {
+    name: 'Aisha Diallo',
+    role: 'Director of Operations',
+    bio: 'Operations strategist ensuring every project is delivered with precision, speed and client delight.',
+    photo: 'https://randomuser.me/api/portraits/women/29.jpg',
+    initials: 'AD',
+    social: { linkedin: '#', twitter: '#', facebook: '#', instagram: '#' },
   },
 ];
 
-export default function HomePage() {
-  return (
-    <div className="flex flex-col w-full">
+const TESTIMONIALS = [
+  { name: 'Emmanuel Togba', role: 'Director of IT, Central Bank of Liberia', quote: 'iTech Network Africa transformed our digital infrastructure. Their team delivered a secure, enterprise-grade platform that has improved our operational efficiency by 40%.', rating: 5 },
+  { name: 'Fatima Kamara', role: 'CEO, West Africa Logistics Group', quote: 'Exceptional technical expertise combined with an understanding of the African business landscape. Our ERP went live on time, on budget — rare in this industry.', rating: 5 },
+  { name: 'Samuel Kollie', role: 'CTO, Liberia Telecom Authority', quote: 'Their AI automation suite reduced our manual processing time by 60%. I would not trust our digital future to any other tech partner in the region.', rating: 5 },
+];
 
-      {/* ═══════════════════════════════════════
-          1. HERO
-      ═══════════════════════════════════════ */}
-      <section className="relative min-h-[92vh] flex items-center bg-[#060E18] overflow-hidden">
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+/* ─── Team Card ─── */
+const TeamCard: React.FC<{ member: typeof TEAM[0]; index: number }> = ({ member, index }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <motion.div
+      custom={index}
+      variants={fadeUp}
+      className="group relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.14)] transition-shadow duration-400"
+    >
+      {/* Photo */}
+      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-[#0A1929] to-[#1a3a55]">
+        <img
+          src={member.photo}
+          alt={member.name}
+          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          onError={e => {
+            const target = e.currentTarget as HTMLImageElement;
+            target.style.display = 'none';
+            const parent = target.parentElement!;
+            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-5xl font-bold text-white/60">${member.initials}</div>`;
           }}
         />
-        {/* Glow orbs */}
-        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#3CB52A]/15 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] bg-[#0A7EBF]/10 rounded-full blur-[140px] pointer-events-none" />
+        {/* Green gradient overlay at bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+      </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full relative z-10 pt-16 pb-24">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      {/* Content */}
+      <div className="p-6">
+        <h3 className="text-lg font-bold text-[#060E18] leading-tight">{member.name}</h3>
+        <p className="text-[#3CB52A] text-sm font-semibold mt-0.5 mb-3">{member.role}</p>
+        <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
+      </div>
 
-            {/* Left — text */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#3CB52A]/15 border border-[#3CB52A]/30 mb-8"
+      {/* Social toggle button */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-label="Toggle social links"
+        className={`absolute bottom-5 right-5 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
+          open ? 'bg-[#3CB52A] rotate-45' : 'bg-[#060E18] hover:bg-[#3CB52A]'
+        }`}
+      >
+        {open ? <X size={16} className="text-white" /> : <Plus size={16} className="text-white" />}
+      </button>
+
+      {/* Social links overlay */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-16 right-5 flex flex-col gap-2 items-end"
+          >
+            {[
+              { icon: <Linkedin size={15} />, href: member.social.linkedin, label: 'LinkedIn', color: '#0077B5' },
+              { icon: <Twitter size={15} />, href: member.social.twitter, label: 'Twitter', color: '#1DA1F2' },
+              { icon: <Facebook size={15} />, href: member.social.facebook, label: 'Facebook', color: '#1877F2' },
+              { icon: <Instagram size={15} />, href: member.social.instagram, label: 'Instagram', color: '#E1306C' },
+            ].map((s, i) => (
+              <motion.a
+                key={s.label}
+                href={s.href}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                aria-label={s.label}
+                target="_blank"
+                rel="noreferrer"
+                style={{ backgroundColor: s.color }}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-md hover:scale-110 transition-transform"
               >
-                <span className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" />
-                <span className="text-[#3CB52A] text-xs font-semibold tracking-widest uppercase">
-                  Innovating Africa's Future
-                </span>
-              </motion.div>
+                {s.icon}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
-              <motion.h1
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.65, delay: 0.08 }}
-                className="text-5xl md:text-6xl lg:text-[72px] font-bold text-white leading-[1.08] tracking-tight mb-6"
-              >
-                Transforming<br />
-                Africa Through{' '}
-                <span className="text-[#3CB52A] relative">
-                  Technology
-                  <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 300 8" fill="none">
-                    <path d="M0 6 Q75 0 150 4 Q225 8 300 2" stroke="#3CB52A" strokeWidth="2.5" strokeLinecap="round" opacity="0.5"/>
-                  </svg>
-                </span>
-              </motion.h1>
+/* ─── Main Component ─── */
+export default function HomePage() {
+  return (
+    <div className="flex flex-col w-full overflow-x-hidden">
 
-              <motion.p
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.18 }}
-                className="text-lg text-white/60 leading-relaxed mb-10 max-w-xl"
-              >
-                Empowering businesses, governments and communities across Africa with
-                world-class software, AI solutions, and end-to-end digital transformation.
-              </motion.p>
+      {/* ══════════════════════════════════════
+          HERO — Background image
+      ══════════════════════════════════════ */}
+      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80')` }}
+        />
+        {/* Multi-layer dark overlay */}
+        <div className="absolute inset-0 bg-[#060E18]/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060E18]/40 via-transparent to-[#060E18]/90" />
+        {/* Green glow */}
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-[#3CB52A]/10 blur-[100px] pointer-events-none" />
 
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.26 }}
-                className="flex flex-wrap gap-4 mb-14"
-              >
-                <Link
-                  href="/services"
-                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#3CB52A] text-white font-semibold rounded-xl hover:bg-[#2da822] transition-all duration-200 shadow-[0_0_32px_rgba(60,181,42,0.35)] hover:shadow-[0_0_48px_rgba(60,181,42,0.5)]"
-                >
-                  Explore Services
-                  <ArrowRight size={17} className="group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white/5 text-white font-semibold rounded-xl border border-white/15 hover:bg-white/10 hover:border-white/25 transition-all duration-200"
-                >
-                  Partner With Us
-                </Link>
-              </motion.div>
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }}
+        />
 
-              {/* Trust line */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="flex items-center gap-4 text-white/40 text-sm"
-              >
-                <div className="flex -space-x-2">
-                  {['#3CB52A','#0A7EBF','#7C3AED','#E85D04'].map((c, i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-[#060E18] flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: c }}>
-                      {String.fromCharCode(65 + i * 5)}
-                    </div>
-                  ))}
-                </div>
-                <span>Trusted by <strong className="text-white/70">200+ enterprises</strong> across Africa</span>
-              </motion.div>
-            </div>
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 py-32 grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 bg-[#3CB52A]/15 border border-[#3CB52A]/30 rounded-full px-4 py-1.5 mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+              <span className="text-[#3CB52A] text-xs font-semibold tracking-widest uppercase">Innovating Africa's Future</span>
+            </motion.div>
 
-            {/* Right — stats card cluster */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.93 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.75, delay: 0.2 }}
-              className="hidden lg:block relative"
-            >
-              <div className="relative">
-                {/* Main card */}
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
-                  <div className="grid grid-cols-2 gap-6">
-                    {stats.map((s, i) => (
-                      <div key={i} className="bg-white/5 rounded-xl p-5 border border-white/8">
-                        <div className="text-3xl font-bold text-white mb-1">{s.value}</div>
-                        <div className="text-sm text-[#3CB52A] font-medium">{s.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-6 flex items-center justify-between pt-6 border-t border-white/10">
-                    <div className="flex items-center gap-2">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="#3CB52A" className="text-[#3CB52A]" />)}
-                    </div>
-                    <span className="text-white/50 text-sm">4.9 / 5 average rating</span>
-                  </div>
-                </div>
+            <motion.h1 variants={fadeUp} custom={1} className="text-5xl md:text-6xl lg:text-[72px] font-black text-white leading-[1.05] tracking-tight mb-6">
+              Transforming<br />Africa Through<br />
+              <span className="text-[#3CB52A] relative">
+                Technology
+                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 8" fill="none">
+                  <path d="M0 6 Q75 2 150 6 Q225 10 300 6" stroke="#3CB52A" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+                </svg>
+              </span>
+            </motion.h1>
 
-                {/* Floating service badges */}
-                <div className="absolute -top-6 -right-6 bg-[#3CB52A] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg shadow-[#3CB52A]/30">
-                  🚀 Active in 10+ countries
-                </div>
-                <div className="absolute -bottom-4 -left-4 bg-white text-[#111] px-4 py-2 rounded-full text-sm font-semibold shadow-xl">
-                  ✓ ISO-Aligned Security
-                </div>
+            <motion.p variants={fadeUp} custom={2} className="text-white/65 text-lg md:text-xl leading-relaxed max-w-lg mb-10">
+              Empowering businesses, governments and communities across Africa with world-class software, AI solutions, and end-to-end digital transformation.
+            </motion.p>
+
+            <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4 mb-12">
+              <Link href="/services" className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_8px_24px_rgba(60,181,42,0.4)] hover:shadow-[0_12px_32px_rgba(60,181,42,0.5)] hover:-translate-y-0.5">
+                Explore Services <ArrowRight size={18} />
+              </Link>
+              <Link href="/contact" className="inline-flex items-center gap-2 border border-white/25 hover:border-white/50 text-white font-bold px-8 py-4 rounded-xl transition-all hover:bg-white/5">
+                Partner With Us
+              </Link>
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div variants={fadeUp} custom={4} className="flex items-center gap-6 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle size={16} className="text-[#3CB52A]" />
+                <span className="text-white/55 text-sm">ISO-Aligned Security</span>
               </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle size={16} className="text-[#3CB52A]" />
+                <span className="text-white/55 text-sm">24/7 Support</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle size={16} className="text-[#3CB52A]" />
+                <span className="text-white/55 text-sm">SLA Guaranteed</span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right — Stats cards */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 gap-4"
+          >
+            {STATS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                custom={i + 3}
+                variants={fadeUp}
+                className="bg-white/8 backdrop-blur-sm border border-white/12 rounded-2xl p-6 hover:bg-white/12 hover:border-[#3CB52A]/30 transition-all"
+              >
+                <div className="text-4xl font-black text-white mb-1">{s.value}</div>
+                <div className="text-white/55 text-sm">{s.label}</div>
+              </motion.div>
+            ))}
+            {/* Rating badge */}
+            <motion.div custom={7} variants={fadeUp} className="col-span-2 bg-[#3CB52A]/10 border border-[#3CB52A]/20 rounded-2xl p-5 flex items-center justify-between">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => <Star key={i} size={18} className="text-[#3CB52A] fill-[#3CB52A]" />)}
+              </div>
+              <span className="text-white/70 text-sm font-medium">4.9 / 5 average rating</span>
+              <span className="text-[#3CB52A] text-xs font-bold px-3 py-1 bg-[#3CB52A]/15 rounded-full">Active in 10+ countries</span>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-white/30 text-xs tracking-widest uppercase">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent" />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          SERVICES OVERVIEW
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="text-center mb-16"
+          >
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">What We Do</motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
+              Enterprise-Grade Solutions<br />Built for Africa
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-2xl mx-auto">
+              From AI-powered automation to cloud infrastructure — every solution engineered for resilience, scale and local context.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={stagger}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {SERVICES.map((svc, i) => (
+              <motion.div
+                key={svc.title}
+                custom={i}
+                variants={fadeUp}
+                className="group p-8 rounded-3xl border border-[#F0F0F0] hover:border-[#3CB52A]/30 hover:shadow-[0_8px_40px_rgba(60,181,42,0.1)] transition-all duration-300 cursor-pointer"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
+                  {svc.icon}
+                </div>
+                <h3 className="text-xl font-bold text-[#060E18] mb-2">{svc.title}</h3>
+                <p className="text-[#6B7280] text-sm leading-relaxed mb-4">{svc.desc}</p>
+                <div className="flex items-center gap-1 text-[#3CB52A] text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more <ChevronRight size={16} />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <div className="text-center mt-12">
+            <Link href="/services" className="inline-flex items-center gap-2 border-2 border-[#060E18] text-[#060E18] hover:bg-[#060E18] hover:text-white font-bold px-8 py-3.5 rounded-xl transition-all">
+              View All Services <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          WHY CHOOSE US
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-[#060E18]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left — text */}
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={stagger}
+            >
+              <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Why iTech Network Africa</motion.span>
+              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                Your Most Trusted<br />Tech Partner in Africa
+              </motion.h2>
+              <motion.p variants={fadeUp} custom={2} className="text-white/55 text-lg leading-relaxed mb-10">
+                We combine global best practices with deep African market knowledge to deliver solutions that actually work — on time, on budget, and built to last.
+              </motion.p>
+              <motion.div variants={fadeUp} custom={3} className="grid grid-cols-3 gap-6 mb-10">
+                {STATS.map(s => (
+                  <div key={s.label}>
+                    <div className="text-3xl font-black text-[#3CB52A]">{s.value}</div>
+                    <div className="text-white/45 text-xs mt-1 leading-snug">{s.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.div variants={fadeUp} custom={4}>
+                <Link href="/about" className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all">
+                  About Our Company <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Right — feature cards */}
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={stagger}
+              className="grid sm:grid-cols-2 gap-4"
+            >
+              {WHY.map((w, i) => (
+                <motion.div
+                  key={w.title}
+                  custom={i}
+                  variants={fadeUp}
+                  className="p-6 rounded-2xl bg-white/4 border border-white/8 hover:border-[#3CB52A]/30 hover:bg-[#3CB52A]/5 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
+                    {w.icon}
+                  </div>
+                  <h4 className="text-white font-bold text-sm mb-1.5">{w.title}</h4>
+                  <p className="text-white/45 text-xs leading-relaxed">{w.desc}</p>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </div>
-
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </section>
 
-      {/* ═══════════════════════════════════════
-          2. OUR PROCESS
-      ═══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Label + heading */}
-          <motion.div {...fadeUp} className="max-w-2xl mb-20">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">
-              How We Work
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">
-              Our Process
-            </h2>
-            <p className="mt-5 text-[#6B7280] text-lg leading-relaxed">
-              A structured, transparent approach that keeps you informed and in control from first conversation to final delivery.
-            </p>
-          </motion.div>
-
-          {/* Steps */}
-          <div className="relative">
-            {/* Connector line (desktop) */}
-            <div className="hidden lg:block absolute top-12 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#E5E7EB] to-transparent" />
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {processSteps.map((step, i) => (
-                <motion.div key={i} {...stagger(i)} className="relative group">
-                  {/* Number + icon */}
-                  <div className="flex flex-col items-start mb-6">
-                    <div className="relative mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-[#F3F4F6] group-hover:bg-[#3CB52A] transition-colors duration-300 flex items-center justify-center text-[#3CB52A] group-hover:text-white shadow-sm">
-                        {step.icon}
-                      </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#3CB52A] text-white text-[10px] font-bold flex items-center justify-center">
-                        {step.num.replace('0', '')}
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold tracking-widest text-[#BDBDBD] uppercase">{step.num}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-[#0A0A0A] mb-3">{step.title}</h3>
-                  <p className="text-[#6B7280] leading-relaxed text-sm">{step.desc}</p>
-                  {/* Arrow (not last) */}
-                  {i < processSteps.length - 1 && (
-                    <div className="hidden lg:flex absolute top-12 -right-4 z-10 w-8 h-8 items-center justify-center bg-white rounded-full border border-[#E5E7EB]">
-                      <ChevronRight size={14} className="text-[#9CA3AF]" />
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom CTA */}
-          <motion.div {...fadeUp} className="mt-16 text-center">
-            <Link href="/contact" className="inline-flex items-center gap-2 text-[#3CB52A] font-semibold hover:gap-3 transition-all duration-200">
-              Start your project today <ArrowRight size={17} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          3. WHY CHOOSE US
-      ═══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-[#F8F9FA]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Heading */}
-          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">
-              The iTech Advantage
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">
-              Why Choose Us
-            </h2>
-            <p className="mt-5 text-[#6B7280] text-lg">
-              We combine global technology standards with deep African market expertise to deliver solutions that truly work for you.
-            </p>
-          </motion.div>
-
-          {/* Feature grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {whyItems.map((item, i) => (
-              <motion.div
-                key={i}
-                {...stagger(i, 0.05)}
-                className="group bg-white rounded-2xl p-7 border border-[#E5E7EB] hover:border-[#3CB52A]/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-xl bg-[#F0FDF4] group-hover:bg-[#3CB52A] text-[#3CB52A] group-hover:text-white flex items-center justify-center mb-5 transition-colors duration-300">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-bold text-[#0A0A0A] mb-2">{item.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Stats row */}
+      {/* ══════════════════════════════════════
+          OUR PROCESS
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-[#F8FAFB]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <motion.div
-            {...fadeUp}
-            className="bg-[#0A1929] rounded-2xl p-8 md:p-12 grid grid-cols-2 md:grid-cols-4 gap-8"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="text-center mb-16"
           >
-            {stats.map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{s.value}</div>
-                <div className="text-[#3CB52A] text-sm font-semibold">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          4. TESTIMONIALS
-      ═══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-        {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#3CB52A]/8 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">
-              Client Stories
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-              Testimonials
-            </h2>
-            <p className="mt-5 text-white/50 text-lg">
-              Don't take our word for it. Hear directly from the leaders who've transformed their organisations with iTech.
-            </p>
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">How We Work</motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
+              A Process Built for Results
+            </motion.h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {/* Connecting line (desktop) */}
+            <div className="hidden lg:block absolute top-14 left-[12.5%] right-[12.5%] h-px border-t-2 border-dashed border-[#3CB52A]/25 z-0" />
+
+            {PROCESS.map((p, i) => (
               <motion.div
-                key={i}
-                {...stagger(i, 0.1)}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/8 hover:border-white/20 transition-all duration-300 flex flex-col"
+                key={p.num}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                className="relative z-10 bg-white rounded-3xl p-8 text-center shadow-[0_2px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.1)] transition-shadow"
               >
-                {/* Stars */}
-                <div className="flex gap-1 mb-6">
-                  {[...Array(t.rating)].map((_, si) => (
-                    <Star key={si} size={14} fill="#3CB52A" className="text-[#3CB52A]" />
-                  ))}
+                <div className="w-14 h-14 rounded-full bg-[#3CB52A] text-white font-black text-lg flex items-center justify-center mx-auto mb-6 shadow-[0_6px_20px_rgba(60,181,42,0.4)]">
+                  {p.num}
                 </div>
-
-                {/* Quote */}
-                <blockquote className="text-white/80 leading-relaxed text-sm flex-1 mb-8">
-                  "{t.quote}"
-                </blockquote>
-
-                {/* Author */}
-                <div className="flex items-center gap-3 pt-6 border-t border-white/10">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-                    style={{ backgroundColor: t.color }}
-                  >
-                    {t.avatar}
-                  </div>
-                  <div>
-                    <div className="text-white text-sm font-semibold">{t.name}</div>
-                    <div className="text-white/40 text-xs">{t.role}</div>
-                  </div>
-                </div>
+                <h3 className="text-xl font-black text-[#060E18] mb-3">{p.title}</h3>
+                <p className="text-[#6B7280] text-sm leading-relaxed">{p.desc}</p>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* View all */}
-          <motion.div {...fadeUp} className="text-center mt-12">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm font-medium transition-colors"
-            >
-              View all case studies <ArrowRight size={15} />
-            </Link>
+      {/* ══════════════════════════════════════
+          TEAM
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="text-center mb-16"
+          >
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">The Team</motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
+              The People Behind<br />the Platform
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-xl mx-auto">
+              A world-class team of engineers, strategists and operators united by a mission to transform Africa through technology.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={stagger}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
+          >
+            {TEAM.map((member, i) => (
+              <TeamCard key={member.name} member={member} index={i} />
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          5. GET STARTED
-      ═══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-[#3CB52A] relative overflow-hidden">
-        {/* Pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle, #fff 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }}
-        />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-[80px] pointer-events-none" />
+      {/* ══════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-[#0A1929]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="text-center mb-16"
+          >
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Client Stories</motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-4">
+              Trusted by Industry Leaders
+            </motion.h2>
+          </motion.div>
 
-        <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center relative z-10">
-          <motion.div {...fadeUp}>
-            <span className="inline-block text-white/70 text-xs font-bold tracking-widest uppercase mb-5">
-              Ready When You Are
-            </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Get Started Today
-            </h2>
-            <p className="text-white/80 text-xl leading-relaxed mb-12 max-w-2xl mx-auto">
-              Join hundreds of forward-thinking organisations across Africa that trust iTech Network Africa with their most critical technology infrastructure.
-            </p>
-
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="group inline-flex items-center gap-2.5 px-8 py-4 bg-[#0A1929] text-white font-bold rounded-xl hover:bg-[#060E18] transition-all duration-200 shadow-xl"
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={stagger}
+            className="grid md:grid-cols-3 gap-6"
+          >
+            {TESTIMONIALS.map((t, i) => (
+              <motion.div
+                key={t.name}
+                custom={i}
+                variants={fadeUp}
+                className="bg-white/5 border border-white/8 rounded-3xl p-8 hover:border-[#3CB52A]/30 transition-colors"
               >
-                Request a Quote
-                <ArrowRight size={17} className="group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-white/20 text-white font-bold rounded-xl border border-white/30 hover:bg-white/30 transition-all duration-200"
-              >
-                Book a Consultation
-              </Link>
-            </div>
-
-            {/* Trust badges */}
-            <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-white/60 text-sm">
-              {[
-                { icon: <CheckCircle2 size={15} />, label: 'Free initial consultation' },
-                { icon: <CheckCircle2 size={15} />, label: 'No long-term lock-in' },
-                { icon: <CheckCircle2 size={15} />, label: '24/7 dedicated support' },
-                { icon: <Users size={15} />, label: '200+ happy clients' },
-              ].map((b, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-white/80">{b.icon}</span>
-                  <span>{b.label}</span>
+                <Quote size={32} className="text-[#3CB52A]/40 mb-4" />
+                <p className="text-white/75 text-sm leading-relaxed mb-6 italic">"{t.quote}"</p>
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(t.rating)].map((_, j) => <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />)}
                 </div>
-              ))}
-            </div>
+                <div>
+                  <div className="text-white font-bold text-sm">{t.name}</div>
+                  <div className="text-white/45 text-xs mt-0.5">{t.role}</div>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
 
+      {/* ══════════════════════════════════════
+          QUICK CONTACT STRIP
+      ══════════════════════════════════════ */}
+      <section className="bg-white py-14">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              { icon: <Phone size={22} />, label: 'Call Us', value: '+231 761 798 796', href: 'tel:+231761798796' },
+              { icon: <Mail size={22} />, label: 'Email Us', value: 'itechnetworkafrica@gmail.com', href: 'mailto:itechnetworkafrica@gmail.com' },
+              { icon: <MapPin size={22} />, label: 'Find Us', value: 'Monrovia, Liberia', href: '/contact' },
+            ].map(c => (
+              <a key={c.label} href={c.href} className="flex items-center gap-4 p-6 rounded-2xl border border-[#F0F0F0] hover:border-[#3CB52A]/30 hover:shadow-[0_4px_20px_rgba(60,181,42,0.08)] transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center shrink-0 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
+                  {c.icon}
+                </div>
+                <div>
+                  <p className="text-[#9CA3AF] text-xs font-semibold uppercase tracking-wider">{c.label}</p>
+                  <p className="text-[#060E18] font-bold text-sm mt-0.5">{c.value}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          CTA
+      ══════════════════════════════════════ */}
+      <section className="py-24 bg-[#3CB52A] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 max-w-3xl mx-auto px-6 text-center"
+        >
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+            Ready to Transform Your Business?
+          </h2>
+          <p className="text-white/80 text-lg mb-10">
+            Join 200+ enterprises across Africa that trust iTech Network Africa to power their digital future.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#3CB52A] font-black px-10 py-4 rounded-xl hover:bg-white/90 transition-colors shadow-xl">
+              Get a Free Consultation <ArrowRight size={18} />
+            </Link>
+            <Link href="/portfolio" className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/10 transition-colors">
+              View Our Work
+            </Link>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 }
