@@ -1,7 +1,7 @@
 import React from 'react';
-import iconLogo from '@assets/BackgroundEraser_20260727_193353873_1785181085865.png';
-import iconLogoWhite from '@assets/file_0000000045f081f48838b5de0272b6f0_1785198210271.png';
-import wordmarkLogo from '@assets/BackgroundEraser_20260727_193334961_1785181085959.png';
+import iconLogo from '@/assets/logo-icon-color.png';
+import iconLogoWhite from '@/assets/logo-icon-white.png';
+import wordmarkLogo from '@/assets/logo-wordmark.png';
 
 interface LogoProps {
   className?: string;
