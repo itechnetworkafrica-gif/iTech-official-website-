@@ -4,12 +4,27 @@ A full-featured enterprise website for iTech Network Africa — a technology com
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/itech-network-africa run dev` — run the frontend dev server (PORT=8080)
+- `pnpm --filter @workspace/itech-network-africa run build` — production build → `artifacts/itech-network-africa/dist/public/`
+- `pnpm --filter @workspace/api-server run dev` — run the API server (requires DATABASE_URL)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required env (API only): `DATABASE_URL` — Postgres connection string
+
+## Deployment (Vercel — frontend only)
+
+Import `artifacts/itech-network-africa/` as the Vercel project root:
+
+| Setting | Value |
+|---|---|
+| Root Directory | `artifacts/itech-network-africa` |
+| Build Command | `pnpm run build` |
+| Output Directory | `dist/public` |
+| Install Command | `pnpm install` |
+
+SPA routing and asset caching are pre-configured in `artifacts/itech-network-africa/vercel.json`.
 
 ## Stack
 
