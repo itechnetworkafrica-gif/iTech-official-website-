@@ -3,6 +3,7 @@ import { X, Plus } from 'lucide-react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { navigationData } from './NavigationData';
+import wordmarkLogo from '@assets/BackgroundEraser_20260727_193334961_1785181085959.png';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -60,8 +61,14 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             className="fixed top-0 left-0 h-full w-[85vw] max-w-[400px] bg-[#111111] z-[70] shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <span className="text-white font-bold text-lg uppercase tracking-widest">Navigation</span>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+              <Link href="/" onClick={onClose}>
+                <img
+                  src={wordmarkLogo}
+                  alt="iTech Network Africa"
+                  className="h-8 object-contain"
+                />
+              </Link>
               <button 
                 onClick={onClose}
                 className="text-[#BDBDBD] hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
@@ -80,7 +87,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     className="w-full flex items-center justify-between py-5 px-4 rounded-lg transition-colors hover:bg-white/5 group"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-xl" aria-hidden="true">{item.emoji}</span>
                       <span className={`font-medium transition-colors ${openAccordion === item.id ? 'text-[#3CB52A]' : 'text-white group-hover:text-white'}`}>
                         {item.label}
                       </span>

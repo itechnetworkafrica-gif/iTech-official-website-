@@ -1,10 +1,14 @@
 import React from 'react';
-import { Logo } from './Logo';
+import wordmarkLogo from '@assets/BackgroundEraser_20260727_193334961_1785181085959.png';
 
 export const FooterBrand: React.FC = () => {
   return (
     <div className="pt-10 pb-6">
-      <Logo size="lg" />
+      <img
+        src={wordmarkLogo}
+        alt="iTech Network Africa"
+        className="h-16 object-contain"
+      />
     </div>
   );
 };
