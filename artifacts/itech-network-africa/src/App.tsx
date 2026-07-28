@@ -5,7 +5,6 @@ import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { SearchBar } from '@/components/SearchBar';
 
 // Page Imports
 import HomePage from '@/pages/HomePage';
@@ -34,7 +33,6 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <SearchBar />
       <main className="flex-grow flex flex-col">
         <Switch>
           <Route path="/" component={HomePage} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import wordmarkLogo from '@assets/BackgroundEraser_20260727_193334961_1785181085959.png';
+import wordmarkLogo from '@assets/BackgroundEraser_20260727_193334961_1785198538356.png';
 
 export const FooterBrand: React.FC = () => {
   return (
@@ -7,7 +7,7 @@ export const FooterBrand: React.FC = () => {
       <img
         src={wordmarkLogo}
         alt="iTech Network Africa"
-        className="h-24 object-contain"
+        className="h-28 object-contain"
       />
     </div>
   );
