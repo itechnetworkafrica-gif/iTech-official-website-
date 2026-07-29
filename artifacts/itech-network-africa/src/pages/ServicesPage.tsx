@@ -9,24 +9,24 @@ import {
 } from 'lucide-react';
 
 const services = [
-  { icon: <Monitor size={24} />, title: "Web Development", desc: "Custom web applications built with modern frameworks for scale and performance." },
-  { icon: <Palette size={24} />, title: "Website Design", desc: "Stunning, responsive websites that capture your brand's unique identity." },
-  { icon: <Smartphone size={24} />, title: "Mobile App Dev", desc: "Native iOS and Android applications for seamless mobile experiences." },
-  { icon: <Code size={24} />, title: "Software Dev", desc: "Bespoke enterprise software tailored to your specific business logic." },
-  { icon: <Layers size={24} />, title: "UI/UX Design", desc: "User-centric interface design focused on engagement and conversion." },
-  { icon: <PenTool size={24} />, title: "Graphic Design", desc: "Professional visual assets, marketing materials, and digital illustrations." },
-  { icon: <Globe size={24} />, title: "Branding", desc: "Complete brand identity packages, from logos to corporate guidelines." },
-  { icon: <Cloud size={24} />, title: "Cloud Services", desc: "AWS, Azure, and Google Cloud infrastructure setup and migration." },
-  { icon: <Terminal size={24} />, title: "API Development", desc: "Secure, scalable REST and GraphQL APIs to power your digital ecosystem." },
-  { icon: <Database size={24} />, title: "Database Dev", desc: "Optimized database architecture design, implementation, and tuning." },
-  { icon: <Zap size={24} />, title: "Business Automation", desc: "Streamline workflows and eliminate manual tasks with smart automation." },
-  { icon: <Headphones size={24} />, title: "IT Support", desc: "24/7 technical support and infrastructure maintenance for your business." },
-  { icon: <Shield size={24} />, title: "Cybersecurity", desc: "Vulnerability assessments, penetration testing, and security hardening." },
-  { icon: <Network size={24} />, title: "Networking", desc: "Enterprise network design, installation, and management." },
-  { icon: <Video size={24} />, title: "CCTV Installation", desc: "High-definition security camera systems and monitoring setups." },
-  { icon: <Globe size={24} />, title: "Domain Registration", desc: "Secure your digital identity with global and regional domain extensions." },
-  { icon: <Server size={24} />, title: "Web Hosting", desc: "Fast, reliable, and secure hosting solutions for businesses of all sizes." },
-  { icon: <Mail size={24} />, title: "Email Hosting", desc: "Professional corporate email setups with advanced spam protection." }
+  { icon: <Monitor size={24} />, title: "Web Development", slug: "web-development", desc: "Custom web applications built with modern frameworks for scale and performance." },
+  { icon: <Palette size={24} />, title: "Website Design", slug: "website-design", desc: "Stunning, responsive websites that capture your brand's unique identity." },
+  { icon: <Smartphone size={24} />, title: "Mobile App Dev", slug: "mobile-app-development", desc: "Native iOS and Android applications for seamless mobile experiences." },
+  { icon: <Code size={24} />, title: "Software Dev", slug: "software-development", desc: "Bespoke enterprise software tailored to your specific business logic." },
+  { icon: <Layers size={24} />, title: "UI/UX Design", slug: "ui-ux-design", desc: "User-centric interface design focused on engagement and conversion." },
+  { icon: <PenTool size={24} />, title: "Graphic Design", slug: "graphic-design", desc: "Professional visual assets, marketing materials, and digital illustrations." },
+  { icon: <Globe size={24} />, title: "Branding", slug: "branding", desc: "Complete brand identity packages, from logos to corporate guidelines." },
+  { icon: <Cloud size={24} />, title: "Cloud Services", slug: "cloud-services", desc: "AWS, Azure, and Google Cloud infrastructure setup and migration." },
+  { icon: <Terminal size={24} />, title: "API Development", slug: "api-development", desc: "Secure, scalable REST and GraphQL APIs to power your digital ecosystem." },
+  { icon: <Database size={24} />, title: "Database Dev", slug: "database-development", desc: "Optimized database architecture design, implementation, and tuning." },
+  { icon: <Zap size={24} />, title: "Business Automation", slug: "business-automation", desc: "Streamline workflows and eliminate manual tasks with smart automation." },
+  { icon: <Headphones size={24} />, title: "IT Support", slug: "it-support", desc: "24/7 technical support and infrastructure maintenance for your business." },
+  { icon: <Shield size={24} />, title: "Cybersecurity", slug: "cybersecurity", desc: "Vulnerability assessments, penetration testing, and security hardening." },
+  { icon: <Network size={24} />, title: "Networking", slug: "networking", desc: "Enterprise network design, installation, and management." },
+  { icon: <Video size={24} />, title: "CCTV Installation", slug: "cctv-installation", desc: "High-definition security camera systems and monitoring setups." },
+  { icon: <Globe size={24} />, title: "Domain Registration", slug: "domain-registration", desc: "Secure your digital identity with global and regional domain extensions." },
+  { icon: <Server size={24} />, title: "Web Hosting", slug: "web-hosting", desc: "Fast, reliable, and secure hosting solutions for businesses of all sizes." },
+  { icon: <Mail size={24} />, title: "Email Hosting", slug: "email-hosting", desc: "Professional corporate email setups with advanced spam protection." }
 ];
 
 export default function ServicesPage() {
@@ -51,7 +51,7 @@ export default function ServicesPage() {
               className="bg-white p-8 rounded-2xl border border-[#E5E7EB] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden flex flex-col h-full"
             >
               {/* Hover left border accent */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#3CB52A] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#3CB52A] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
               
               <div className="w-14 h-14 rounded-xl bg-[#f0fdf0] text-[#3CB52A] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 {service.icon}
@@ -60,7 +60,10 @@ export default function ServicesPage() {
               <h3 className="text-xl font-bold text-[#111827] mb-3">{service.title}</h3>
               <p className="text-[#6B7280] leading-relaxed mb-8 flex-grow">{service.desc}</p>
               
-              <Link href="/contact" className="mt-auto text-[#0A1929] group-hover:text-[#3CB52A] font-semibold flex items-center gap-2 transition-colors">
+              <Link
+                href={`/services/${service.slug}`}
+                className="mt-auto text-[#0A1929] group-hover:text-[#3CB52A] font-semibold flex items-center gap-2 transition-colors"
+              >
                 Learn More <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>

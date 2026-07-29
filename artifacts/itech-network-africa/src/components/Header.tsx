@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
 import { Menu, Search, Phone, HelpCircle, User, PhoneCall, X, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
+import logoNew from '@/assets/logo-new.png';
 import { AccountDropdown } from './AccountDropdown';
 import { MobileMenu } from './MobileMenu';
 import { navigationData, primaryNavIds, type NavigationItem } from './NavigationData';
@@ -89,7 +90,7 @@ export const Header: React.FC = () => {
               <Menu size={24} />
             </button>
             <Link href="/" className="flex items-center">
-              <Logo variant="icon" white />
+              <img src={logoNew} alt="iTech Network Africa" className="h-8 object-contain" />
             </Link>
           </div>
 

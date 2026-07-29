@@ -14,6 +14,7 @@ import { RouteScrollReset } from '@/components/RouteScrollReset';
 import HomePage from '@/pages/HomePage';
 import AboutPage from '@/pages/AboutPage';
 import ServicesPage from '@/pages/ServicesPage';
+import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import AIPage from '@/pages/AIPage';
 import SolutionsPage from '@/pages/SolutionsPage';
 import ProductsPage from '@/pages/ProductsPage';
@@ -46,6 +47,7 @@ function Router() {
           <Route path="/" component={HomePage} />
           <Route path="/about" component={AboutPage} />
           <Route path="/services" component={ServicesPage} />
+          <Route path="/services/:slug" component={ServiceDetailPage} />
           <Route path="/ai-solutions" component={AIPage} />
           <Route path="/solutions" component={SolutionsPage} />
           <Route path="/products" component={ProductsPage} />
