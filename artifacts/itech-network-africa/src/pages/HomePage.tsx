@@ -203,44 +203,17 @@ export default function HomePage() {
     <div className="flex flex-col w-full overflow-x-hidden">
 
       {/* ══════════════════════════════════════
-          HERO — Clean light mode
+          HERO — Modern classic split layout
       ══════════════════════════════════════ */}
-      <section className="relative bg-white overflow-hidden">
-        {/* Subtle dot grid */}
+      <section className="relative bg-[#060E18] overflow-hidden">
+        {/* Subtle grid */}
         <div
-          className="absolute inset-0 opacity-[0.045]"
-          style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+          className="absolute inset-0 opacity-[0.035]"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '72px 72px' }}
         />
-        {/* Soft colour blobs */}
-        <motion.div
-          animate={{ scale: [1, 1.08, 1], opacity: [0.12, 0.18, 0.12] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-32 -right-32 w-[640px] h-[640px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #3CB52A 0%, transparent 70%)' }}
-        />
-        <motion.div
-          animate={{ scale: [1, 1.06, 1], opacity: [0.07, 0.12, 0.07] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute -bottom-24 -left-24 w-[480px] h-[480px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #0A7EBF 0%, transparent 70%)' }}
-        />
-
-        {/* Floating decorative shapes */}
-        <motion.div
-          animate={{ y: [-12, 12, -12], rotate: [0, 6, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-24 right-[12%] w-14 h-14 rounded-2xl bg-[#3CB52A]/10 border border-[#3CB52A]/20 hidden lg:block"
-        />
-        <motion.div
-          animate={{ y: [10, -10, 10], rotate: [0, -8, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-28 right-[20%] w-8 h-8 rounded-full bg-[#3CB52A]/15 hidden lg:block"
-        />
-        <motion.div
-          animate={{ y: [-8, 8, -8], x: [-4, 4, -4] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-          className="absolute top-1/2 left-[6%] w-6 h-6 rounded-full border-2 border-[#3CB52A]/30 hidden lg:block"
-        />
+        {/* Accent glows */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#3CB52A]/8 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#0A7EBF]/8 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-24 lg:pt-28 lg:pb-32">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -249,12 +222,8 @@ export default function HomePage() {
             <motion.div variants={stagger} initial="hidden" animate="show">
 
               {/* Tag */}
-              <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2.5 bg-[#f0fdf4] border border-[#3CB52A]/30 rounded-full px-5 py-2 mb-8">
-                <motion.span
-                  animate={{ scale: [1, 1.4, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] block"
-                />
+              <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2.5 bg-[#3CB52A]/12 border border-[#3CB52A]/25 rounded-full px-5 py-2 mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
                 <span className="text-[#3CB52A] text-xs font-bold tracking-[0.12em] uppercase">Innovating Africa's Future</span>
               </motion.div>
 
@@ -262,50 +231,34 @@ export default function HomePage() {
               <motion.h1
                 variants={fadeUp}
                 custom={1}
-                className="text-[clamp(2.5rem,5vw,4.5rem)] font-black text-[#060E18] leading-[1.07] tracking-tight mb-6"
+                className="text-[clamp(2.5rem,5vw,4.5rem)] font-black text-white leading-[1.07] tracking-tight mb-6"
               >
                 Transforming<br />
                 Africa Through<br />
-                <span className="relative inline-block text-[#3CB52A]">
-                  Technology
-                  <motion.span
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.8, delay: 1, ease: EASE }}
-                    className="absolute -bottom-1 left-0 right-0 h-1 bg-[#3CB52A]/30 rounded-full origin-left"
-                  />
-                </span>
+                <span className="text-[#3CB52A]">Technology</span>
               </motion.h1>
 
               {/* Divider accent */}
-              <motion.div
-                variants={fadeUp}
-                custom={2}
-                className="w-16 h-1 bg-gradient-to-r from-[#3CB52A] to-[#3CB52A]/30 rounded-full mb-6"
-              />
+              <motion.div variants={fadeUp} custom={2} className="w-16 h-1 bg-[#3CB52A] rounded-full mb-6" />
 
-              <motion.p variants={fadeUp} custom={2} className="text-[#4B5563] text-lg leading-relaxed max-w-xl mb-10">
+              <motion.p variants={fadeUp} custom={2} className="text-white/60 text-lg leading-relaxed max-w-xl mb-10">
                 Empowering businesses, governments and communities across Africa with world-class software, AI solutions, and end-to-end digital transformation.
               </motion.p>
 
               {/* CTAs */}
               <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4 mb-10">
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href="/services"
-                    className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_8px_28px_rgba(60,181,42,0.28)] hover:shadow-[0_12px_36px_rgba(60,181,42,0.4)]"
-                  >
-                    Explore Services <ArrowRight size={17} />
-                  </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2.5 border-2 border-[#060E18]/15 hover:border-[#3CB52A] text-[#060E18] font-bold px-8 py-4 rounded-xl transition-all hover:text-[#3CB52A]"
-                  >
-                    Get a Free Quote
-                  </Link>
-                </motion.div>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_8px_28px_rgba(60,181,42,0.35)] hover:shadow-[0_12px_36px_rgba(60,181,42,0.45)] hover:-translate-y-0.5"
+                >
+                  Explore Services <ArrowRight size={17} />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2.5 border border-white/20 hover:border-[#3CB52A]/50 text-white font-bold px-8 py-4 rounded-xl transition-all hover:bg-[#3CB52A]/8"
+                >
+                  Get a Free Quote
+                </Link>
               </motion.div>
 
               {/* Trust markers */}
@@ -313,7 +266,7 @@ export default function HomePage() {
                 {['ISO-Aligned Security', '24/7 Support', 'SLA Guaranteed'].map((t) => (
                   <div key={t} className="flex items-center gap-2">
                     <CheckCircle2 size={15} className="text-[#3CB52A] shrink-0" />
-                    <span className="text-[#6B7280] text-sm">{t}</span>
+                    <span className="text-white/50 text-sm">{t}</span>
                   </div>
                 ))}
               </motion.div>
@@ -329,18 +282,10 @@ export default function HomePage() {
                     key={s.label}
                     custom={i + 2}
                     variants={fadeUp}
-                    whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(60,181,42,0.12)' }}
-                    className="bg-white border border-[#E5E7EB] rounded-2xl p-7 shadow-sm transition-all cursor-default"
+                    className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#3CB52A]/30 hover:bg-white/8 transition-all"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: 0.8 + i * 0.15, ease: EASE }}
-                      className="text-4xl font-black text-[#3CB52A] mb-1.5"
-                    >
-                      {s.value}
-                    </motion.div>
-                    <div className="text-[#6B7280] text-sm font-medium">{s.label}</div>
+                    <div className="text-4xl font-black text-white mb-1.5">{s.value}</div>
+                    <div className="text-white/45 text-sm font-medium">{s.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -352,18 +297,10 @@ export default function HomePage() {
                     key={s.label}
                     custom={i + 4}
                     variants={fadeUp}
-                    whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(60,181,42,0.12)' }}
-                    className="bg-white border border-[#E5E7EB] rounded-2xl p-7 shadow-sm transition-all cursor-default"
+                    className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#3CB52A]/30 hover:bg-white/8 transition-all"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: 1.0 + i * 0.15, ease: EASE }}
-                      className="text-4xl font-black text-[#3CB52A] mb-1.5"
-                    >
-                      {s.value}
-                    </motion.div>
-                    <div className="text-[#6B7280] text-sm font-medium">{s.label}</div>
+                    <div className="text-4xl font-black text-white mb-1.5">{s.value}</div>
+                    <div className="text-white/45 text-sm font-medium">{s.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -372,24 +309,15 @@ export default function HomePage() {
               <motion.div
                 custom={6}
                 variants={fadeUp}
-                className="bg-[#f0fdf4] border border-[#3CB52A]/20 rounded-2xl px-6 py-4 flex items-center justify-between flex-wrap gap-3"
+                className="bg-[#3CB52A]/10 border border-[#3CB52A]/20 rounded-2xl px-6 py-4 flex items-center justify-between flex-wrap gap-3"
               >
                 <div className="flex items-center gap-2">
                   <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <motion.span
-                        key={i}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 1.2 + i * 0.08, duration: 0.4, ease: EASE }}
-                      >
-                        <Star size={16} className="text-[#3CB52A] fill-[#3CB52A]" />
-                      </motion.span>
-                    ))}
+                    {[...Array(5)].map((_, i) => <Star key={i} size={16} className="text-[#3CB52A] fill-[#3CB52A]" />)}
                   </div>
-                  <span className="text-[#374151] text-sm font-medium">4.9 / 5 average rating</span>
+                  <span className="text-white/60 text-sm font-medium">4.9 / 5 average rating</span>
                 </div>
-                <span className="text-[#3CB52A] text-xs font-bold tracking-wide px-3 py-1 bg-white border border-[#3CB52A]/20 rounded-full shadow-sm">
+                <span className="text-[#3CB52A] text-xs font-bold tracking-wide px-3 py-1 bg-[#3CB52A]/15 rounded-full">
                   Active in 10+ countries
                 </span>
               </motion.div>
@@ -398,21 +326,20 @@ export default function HomePage() {
               <motion.div
                 custom={7}
                 variants={fadeUp}
-                whileHover={{ y: -2 }}
-                className="bg-white border border-[#E5E7EB] shadow-sm rounded-2xl px-6 py-4 flex items-center gap-4"
+                className="bg-white/4 border border-white/8 rounded-2xl px-6 py-4 flex items-center gap-4"
               >
-                <div className="w-10 h-10 rounded-xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center shrink-0">
                   <Phone size={18} />
                 </div>
                 <div>
-                  <div className="text-[#9CA3AF] text-xs font-medium mb-0.5">Call us anytime</div>
-                  <a href="tel:+231761978796" className="text-[#060E18] font-bold text-sm hover:text-[#3CB52A] transition-colors">
+                  <div className="text-white/40 text-xs font-medium mb-0.5">Call us anytime</div>
+                  <a href="tel:+231761978796" className="text-white font-bold text-sm hover:text-[#3CB52A] transition-colors">
                     +231 761 978 796
                   </a>
                 </div>
                 <div className="ml-auto flex items-center gap-1.5">
-                  <MapPin size={13} className="text-[#D1D5DB]" />
-                  <span className="text-[#9CA3AF] text-xs">Monrovia, Liberia</span>
+                  <MapPin size={13} className="text-white/30" />
+                  <span className="text-white/30 text-xs">Monrovia, Liberia</span>
                 </div>
               </motion.div>
             </motion.div>
