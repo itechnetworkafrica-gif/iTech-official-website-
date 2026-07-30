@@ -1,60 +1,35 @@
 # iTech Network Africa
 
-A full-featured enterprise website for iTech Network Africa — a technology company serving businesses, governments, and communities across Africa with software, AI solutions, and digital transformation services.
-
-## Run & Operate
-
-- `pnpm --filter @workspace/itech-network-africa run dev` — run the frontend dev server (PORT=8080)
-- `pnpm --filter @workspace/itech-network-africa run build` — production build → `artifacts/itech-network-africa/dist/public/`
-- `pnpm --filter @workspace/api-server run dev` — run the API server (requires DATABASE_URL)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env (API only): `DATABASE_URL` — Postgres connection string
-
-## Deployment (Vercel — frontend only)
-
-Import `artifacts/itech-network-africa/` as the Vercel project root:
-
-| Setting | Value |
-|---|---|
-| Root Directory | `artifacts/itech-network-africa` |
-| Build Command | `pnpm run build` |
-| Output Directory | `dist/public` |
-| Install Command | `pnpm install` |
-
-SPA routing and asset caching are pre-configured in `artifacts/itech-network-africa/vercel.json`.
+A full-stack web application for iTech Network Africa — a technology company serving African markets. The site includes pages for services, solutions, AI offerings, portfolio, blog, careers, pricing, contact, and a client portal.
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- **Frontend**: React 19 + Vite 7 + TypeScript + Tailwind CSS v4 + shadcn/ui + Framer Motion + Wouter (routing) — located in `artifacts/itech-network-africa/`
+- **Backend**: Express 5 + TypeScript — located in `artifacts/api-server/`
+- **Monorepo**: pnpm workspace (`pnpm-workspace.yaml`)
 
-## Where things live
+## How to run
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+The frontend dev server starts automatically via the **iTech Network Africa** workflow:
 
-## Architecture decisions
+```
+PORT=8080 pnpm --filter @workspace/itech-network-africa run dev
+```
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+To start the API server separately (not yet wired to a workflow):
 
-## Product
+```
+pnpm --filter @workspace/api-server run dev
+```
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+## Key directories
+
+- `artifacts/itech-network-africa/src/pages/` — all page components
+- `artifacts/itech-network-africa/src/components/` — shared UI components (Header, Footer, etc.)
+- `artifacts/itech-network-africa/public/` — static assets (images, logos)
+- `artifacts/api-server/src/routes/` — Express API routes
+- `artifacts/api-server/src/lib/` — server utilities (logger, etc.)
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
-
-## Gotchas
-
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+_None recorded yet._
