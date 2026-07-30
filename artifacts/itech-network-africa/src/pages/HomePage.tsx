@@ -132,90 +132,104 @@ function HeroSlider() {
   const slide = HERO_SLIDES[active];
 
   return (
-    <section className="relative bg-[#060E18] overflow-hidden" style={{ minHeight: '420px' }}>
+    <section
+      className="relative bg-[#060E18] overflow-hidden"
+      style={{ minHeight: 'clamp(480px, 80vh, 680px)' }}
+    >
+      {/* ── Full-bleed background photo ── */}
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={`img-${active}`}
+          src={slide.img}
+          alt={slide.imgAlt}
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.65, ease: EASE }}
+          className="absolute inset-0 w-full h-full object-cover object-top"
+          style={{ objectPosition: 'center 15%' }}
+        />
+      </AnimatePresence>
 
-      {/* ── Full-bleed person image pinned to right edge ── */}
-      <div className="absolute inset-y-0 right-0 w-[52%] hidden lg:block">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={`img-${active}`}
-            src={slide.img}
-            alt={slide.imgAlt}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.55, ease: EASE }}
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
-        </AnimatePresence>
-        {/* Gradient: blends image into dark background on the left */}
-        <div className="absolute inset-y-0 left-0 w-3/5 bg-gradient-to-r from-[#060E18] via-[#060E18]/80 to-transparent z-10" />
-        {/* Decorative curved arc lines (top-right corner) */}
-        <svg className="absolute top-0 right-0 h-full w-64 z-10 pointer-events-none" viewBox="0 0 200 400" fill="none" preserveAspectRatio="xMaxYMid meet">
-          <path d="M200 0 Q120 200 200 400" stroke="#3CB52A" strokeOpacity="0.25" strokeWidth="1.5" fill="none" />
-          <path d="M200 40 Q140 200 200 360" stroke="#3CB52A" strokeOpacity="0.15" strokeWidth="1" fill="none" />
-          <path d="M200 80 Q160 200 200 320" stroke="white" strokeOpacity="0.08" strokeWidth="1" fill="none" />
-        </svg>
-        {/* Small accent squares */}
-        <div className="absolute z-20 bottom-20 right-48 w-5 h-5 border border-white/30" />
-        <div className="absolute z-20 top-16 right-24 w-3 h-3 bg-[#3CB52A]/50" />
-        <div className="absolute z-20 top-1/2 right-8 w-2 h-8 bg-white/10" />
-      </div>
+      {/* ── Gradient overlay: transparent top → dark bottom band ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(6,14,24,0.10) 0%, rgba(6,14,24,0.30) 45%, rgba(6,14,24,0.82) 68%, rgba(6,14,24,0.97) 100%)',
+        }}
+      />
 
-      {/* ── Left text content ── */}
-      <div className="relative z-20 h-full flex items-center">
-        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-16 lg:py-20">
-          <div className="max-w-[46%] lg:max-w-[44%] max-lg:max-w-full">
+      {/* ── Decorative arc lines bottom-right ── */}
+      <svg
+        className="absolute bottom-0 right-0 w-72 h-72 z-10 pointer-events-none opacity-30"
+        viewBox="0 0 200 200"
+        fill="none"
+      >
+        <path d="M200 200 Q60 120 200 0" stroke="#3CB52A" strokeOpacity="0.5" strokeWidth="1.5" fill="none" />
+        <path d="M200 200 Q80 130 200 40" stroke="#3CB52A" strokeOpacity="0.3" strokeWidth="1" fill="none" />
+      </svg>
 
-            {/* Badge tag */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`badge-${active}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-                className="inline-flex items-center gap-2 bg-[#3CB52A]/15 border border-[#3CB52A]/30 rounded-full px-4 py-1.5 mb-6"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
-                <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.14em] uppercase">{slide.badge}</span>
-              </motion.div>
-            </AnimatePresence>
+      {/* ── Bottom text content ── */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-end">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 pb-10 lg:pb-14">
 
-            {/* Headline — large, bold, italic, slides horizontally */}
-            <AnimatePresence mode="wait">
-              <motion.h1
-                key={`h1-${active}`}
-                initial={{ opacity: 0, x: -40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 40 }}
-                transition={{ duration: 0.48, ease: EASE }}
-                className="font-black italic leading-[1.04] tracking-tight mb-4"
-                style={{ fontSize: 'clamp(2.4rem, 5vw, 4.2rem)' }}
-              >
-                {slide.lines.map((line, i) => (
-                  <span key={i} className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}>
-                    {line}
-                  </span>
-                ))}
-              </motion.h1>
-            </AnimatePresence>
+          {/* Badge */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`badge-${active}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="inline-flex items-center gap-2 bg-[#3CB52A]/20 border border-[#3CB52A]/40 rounded-full px-4 py-1.5 mb-5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+              <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.14em] uppercase">
+                {slide.badge}
+              </span>
+            </motion.div>
+          </AnimatePresence>
 
-            {/* Subtitle */}
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={`sub-${active}`}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.35, delay: 0.07 }}
-                className="text-white/65 text-[0.95rem] leading-relaxed mb-8 max-w-sm"
-              >
-                {slide.subtitle}
-              </motion.p>
-            </AnimatePresence>
+          {/* Headline */}
+          <AnimatePresence mode="wait">
+            <motion.h1
+              key={`h1-${active}`}
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.48, ease: EASE }}
+              className="font-black italic leading-[1.04] tracking-tight mb-4"
+              style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4.4rem)', maxWidth: '700px' }}
+            >
+              {slide.lines.map((line, i) => (
+                <span
+                  key={i}
+                  className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}
+                >
+                  {line}
+                </span>
+              ))}
+            </motion.h1>
+          </AnimatePresence>
 
-            {/* CTA button — pill, uppercase, bold */}
+          {/* Subtitle */}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`sub-${active}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, delay: 0.07 }}
+              className="text-white/70 text-[0.95rem] leading-relaxed mb-7"
+              style={{ maxWidth: '480px' }}
+            >
+              {slide.subtitle}
+            </motion.p>
+          </AnimatePresence>
+
+          {/* CTA + Dots row */}
+          <div className="flex items-center gap-6 flex-wrap">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`cta-${active}`}
@@ -223,18 +237,17 @@ function HeroSlider() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, delay: 0.12 }}
-                className="mb-8"
               >
                 <Link
                   href={slide.href}
-                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_24px_rgba(60,181,42,0.40)] hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_24px_rgba(60,181,42,0.45)] hover:-translate-y-0.5"
                 >
                   {slide.cta}
                 </Link>
               </motion.div>
             </AnimatePresence>
 
-            {/* Dot navigation — ring for active, small filled for inactive */}
+            {/* Ring-dot navigation */}
             <div className="flex items-center gap-3">
               {HERO_SLIDES.map((_, i) => (
                 <button
@@ -244,23 +257,37 @@ function HeroSlider() {
                   className="flex items-center justify-center transition-all duration-300"
                   style={
                     i === active
-                      ? { width: 22, height: 22, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.75)', background: 'transparent' }
-                      : { width: 10, height: 10, borderRadius: '50%', background: 'rgba(255,255,255,0.30)' }
+                      ? {
+                          width: 22,
+                          height: 22,
+                          borderRadius: '50%',
+                          border: '2px solid rgba(255,255,255,0.80)',
+                          background: 'transparent',
+                        }
+                      : {
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          background: 'rgba(255,255,255,0.35)',
+                        }
                   }
                 >
                   {i === active && (
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'white', display: 'block' }} />
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        background: 'white',
+                        display: 'block',
+                      }}
+                    />
                   )}
                 </button>
               ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Small brand circle watermark — bottom left */}
-      <div className="absolute bottom-4 left-4 z-20 w-9 h-9 rounded-full bg-[#3CB52A]/20 border border-[#3CB52A]/40 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-[#3CB52A]/60" />
       </div>
     </section>
   );
