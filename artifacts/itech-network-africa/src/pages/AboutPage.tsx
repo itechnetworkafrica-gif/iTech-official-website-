@@ -4,7 +4,7 @@ import { Link } from 'wouter';
 import {
   Target, Globe, Lightbulb, ShieldCheck, Heart,
   Users, Award, TrendingUp, ArrowRight, CheckCircle2,
-  Building2, Handshake, Leaf, GraduationCap, Phone, Plus
+  Building2, Handshake, Leaf, GraduationCap, Phone, Plus, ExternalLink, Clock
 } from 'lucide-react';
 import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
 
@@ -71,15 +71,55 @@ const partnerLogos = [
   { name: 'Salesforce', abbr: 'SF', color: '#00A1E0' },
 ];
 
-const clientLogos = [
-  { name: 'Central Bank of Liberia', abbr: 'CBL' },
-  { name: 'Ministry of Finance', abbr: 'MOF' },
-  { name: 'University of Liberia', abbr: 'UL' },
-  { name: 'MTN Liberia', abbr: 'MTN' },
-  { name: 'Ecobank', abbr: 'ECO' },
-  { name: 'UNICEF', abbr: 'UNI' },
-  { name: 'WHO Liberia', abbr: 'WHO' },
-  { name: 'Total Energies', abbr: 'TTE' },
+const portfolioProjects = [
+  {
+    name: 'Health Tech Liberia',
+    url: 'https://healthtech-liberia.org',
+    domain: 'healthtech-liberia.org',
+    desc: 'Health technology platform connecting patients and providers across Liberia with digital health records and telemedicine capabilities.',
+    tags: ['Health Tech', 'Web Platform'],
+    color: '#10B981',
+  },
+  {
+    name: 'Galaxy International',
+    url: 'https://galaxyinternational.com',
+    domain: 'galaxyinternational.com',
+    desc: 'Corporate website with a full CMS, responsive design, and brand identity system for an international business group.',
+    tags: ['Corporate', 'CMS', 'Responsive'],
+    color: '#6366F1',
+  },
+  {
+    name: 'B4P Code Found',
+    url: 'https://b4pcodefound.org',
+    domain: 'b4pcodefound.org',
+    desc: 'NGO website featuring program pages, impact reporting, and donation integration to support coding education across Africa.',
+    tags: ['NGO', 'Donation Integration'],
+    color: '#F59E0B',
+  },
+  {
+    name: 'DKS Incubation Center',
+    url: 'https://dksincubationcenter.org',
+    domain: 'dksincubationcenter.org',
+    desc: 'Institution website with a fully integrated online application portal for startup founders and incubation program applicants.',
+    tags: ['Institution', 'Application Portal'],
+    color: '#3CB52A',
+  },
+  {
+    name: 'Lewanah LLC',
+    url: 'https://lewanahllc.com',
+    domain: 'lewanahllc.com',
+    desc: 'E-commerce platform for a US-based digital brand with instant delivery, product management, and payment processing.',
+    tags: ['E-commerce', 'Digital Brand', 'US Market'],
+    color: '#EF4444',
+  },
+  {
+    name: 'Agrolite',
+    url: 'https://www.agrolite.org',
+    domain: 'agrolite.org',
+    desc: 'Agricultural organisation website with an editorial blog, photo gallery, and outreach resources for farming communities.',
+    tags: ['Agriculture', 'Blog & Gallery'],
+    color: '#84CC16',
+  },
 ];
 
 const csrItems = [
@@ -543,32 +583,102 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════
-          8. CLIENTS
+          8. PORTFOLIO / SELECTED WORK
       ═══════════════════════════════════════ */}
-      <section id="clients" className="py-24 lg:py-32 bg-white">
+      <section id="clients" className="py-24 lg:py-32 bg-[#F8F9FA]">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">Trusted By</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">Our Clients</h2>
-            <p className="mt-5 text-[#6B7280] text-lg">
-              From central banks to international organisations — Africa's most respected institutions trust iTech.
-            </p>
+          {/* Header */}
+          <motion.div {...fadeUp} className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
+            <div className="max-w-xl">
+              <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Selected Work</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">
+                Our Portfolio
+              </h2>
+              <p className="mt-5 text-[#6B7280] text-lg leading-relaxed">
+                Live projects we've designed, built, and deployed — demonstrating our capacity in website design, development, security and maintenance.
+              </p>
+            </div>
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#060E18] text-[#060E18] hover:bg-[#060E18] hover:text-white font-bold rounded-xl transition-all shrink-0 self-start lg:self-auto"
+            >
+              View All Projects <ArrowRight size={16} />
+            </Link>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {clientLogos.map((c, i) => (
-              <motion.div
-                key={i}
-                {...stagger(i, 0.04)}
-                className="bg-[#F8F9FA] rounded-2xl p-8 border border-[#E5E7EB] hover:border-[#3CB52A]/30 hover:bg-white hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center gap-3 text-center group"
+          {/* Project cards */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {portfolioProjects.map((project, i) => (
+              <motion.a
+                key={project.name}
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...stagger(i, 0.05)}
+                className="group bg-white rounded-2xl border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
               >
-                <div className="w-14 h-14 rounded-xl bg-[#0A1929] flex items-center justify-center text-white text-xs font-bold">
-                  {c.abbr}
+                {/* Color accent bar */}
+                <div className="h-1 w-full" style={{ background: project.color }} />
+
+                <div className="p-7 flex flex-col flex-1">
+                  {/* Domain + external icon */}
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="text-xs font-mono text-[#9CA3AF] group-hover:text-[#3CB52A] transition-colors truncate pr-2">
+                      {project.domain}
+                    </span>
+                    <ExternalLink size={14} className="text-[#D1D5DB] group-hover:text-[#3CB52A] transition-colors shrink-0" />
+                  </div>
+
+                  {/* Name */}
+                  <h3 className="text-lg font-bold text-[#0A0A0A] mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">
+                    {project.name}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-[#6B7280] text-sm leading-relaxed flex-1 mb-5">
+                    {project.desc}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-semibold px-3 py-1 rounded-full"
+                        style={{ background: `${project.color}15`, color: project.color }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-xs font-semibold text-[#6B7280] group-hover:text-[#0A0A0A] transition-colors leading-tight">{c.name}</span>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
+
+          {/* "Coming Soon" bid card */}
+          <motion.div
+            {...stagger(portfolioProjects.length, 0.05)}
+            className="bg-[#060E18] rounded-2xl border border-white/8 p-7 flex flex-col sm:flex-row sm:items-center gap-6"
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'rgba(60,181,42,0.15)', border: '1px solid rgba(60,181,42,0.30)' }}
+            >
+              <Clock size={22} className="text-[#3CB52A]" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-1 flex-wrap">
+                <h3 className="text-white font-bold text-lg">Annual Diaspora Return Website</h3>
+                <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#3CB52A]/15 text-[#3CB52A] border border-[#3CB52A]/25">
+                  In Progress
+                </span>
+              </div>
+              <p className="text-white/50 text-sm leading-relaxed">
+                Currently in bidding — a dedicated platform for the Annual Diaspora Return programme, connecting Liberians in the diaspora with opportunities back home.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
