@@ -26,9 +26,9 @@ const SERVICES = [
 ];
 
 const STATS = [
-  { value: '500+', label: 'Projects Delivered' },
-  { value: '200+', label: 'Enterprise Clients' },
-  { value: '10+', label: 'Countries Served' },
+  { value: '20+', label: 'Projects Delivered' },
+  { value: '30+', label: 'Enterprise Clients' },
+  { value: '5+', label: 'Countries Served' },
   { value: '99%', label: 'Client Satisfaction' },
 ];
 
@@ -73,6 +73,198 @@ const TESTIMONIALS = [
   { name: 'Fatima Kamara', role: 'CEO, West Africa Logistics Group', quote: 'Exceptional technical expertise combined with an understanding of the African business landscape. Our ERP went live on time, on budget — rare in this industry.', rating: 5 },
   { name: 'Samuel Kollie', role: 'CTO, Liberia Telecom Authority', quote: 'Their AI automation suite reduced our manual processing time by 60%. I would not trust our digital future to any other tech partner in the region.', rating: 5 },
 ];
+
+/* ─── Hero Slides data ─── */
+const HERO_SLIDES = [
+  {
+    badge: "Innovating Africa's Future",
+    lines: ['Transforming Africa', 'Through', 'Technology'],
+    accentLine: 2,
+    subtitle: "Ambition 2030: Leading digital solutions for Africa's progress",
+    cta: 'Read More',
+    href: '/services',
+    img: '/team-alvina.png',
+    imgAlt: 'iTech Network Africa expert',
+  },
+  {
+    badge: 'Enterprise Solutions',
+    lines: ['Building Digital', 'Infrastructure', 'of Tomorrow'],
+    accentLine: 2,
+    subtitle: 'World-class software, AI automation and end-to-end digital transformation for African enterprises.',
+    cta: 'Our Services',
+    href: '/services',
+    img: '/team-wilmot.png',
+    imgAlt: 'Enterprise solutions specialist',
+  },
+  {
+    badge: 'Pan-African Reach',
+    lines: ['Trusted by', 'Governments &', 'Enterprises'],
+    accentLine: 1,
+    subtitle: '500+ projects delivered across 10+ African countries with proven results.',
+    cta: 'View Portfolio',
+    href: '/portfolio',
+    img: '/team-foday.jpg',
+    imgAlt: 'Pan-African operations',
+  },
+  {
+    badge: 'Cybersecurity & Cloud',
+    lines: ['Secure. Scalable.', 'Future-Ready', 'Solutions'],
+    accentLine: 1,
+    subtitle: 'Enterprise-grade cloud infrastructure and cybersecurity built for African organisations.',
+    cta: 'Get a Quote',
+    href: '/contact',
+    img: '/team-alvina.png',
+    imgAlt: 'Cybersecurity and cloud expert',
+  },
+];
+
+/* ─── Hero Slider ─── */
+function HeroSlider() {
+  const [active, setActive] = useState(0);
+  const total = HERO_SLIDES.length;
+  const next = useCallback(() => setActive((a) => (a + 1) % total), [total]);
+
+  useEffect(() => {
+    const id = setInterval(next, 5500);
+    return () => clearInterval(id);
+  }, [next]);
+
+  const slide = HERO_SLIDES[active];
+
+  return (
+    <section className="relative bg-[#060E18] overflow-hidden" style={{ minHeight: '420px' }}>
+
+      {/* ── Full-bleed person image pinned to right edge ── */}
+      <div className="absolute inset-y-0 right-0 w-[52%] hidden lg:block">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={`img-${active}`}
+            src={slide.img}
+            alt={slide.imgAlt}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.55, ease: EASE }}
+            className="absolute inset-0 w-full h-full object-cover object-top"
+          />
+        </AnimatePresence>
+        {/* Gradient: blends image into dark background on the left */}
+        <div className="absolute inset-y-0 left-0 w-3/5 bg-gradient-to-r from-[#060E18] via-[#060E18]/80 to-transparent z-10" />
+        {/* Decorative curved arc lines (top-right corner) */}
+        <svg className="absolute top-0 right-0 h-full w-64 z-10 pointer-events-none" viewBox="0 0 200 400" fill="none" preserveAspectRatio="xMaxYMid meet">
+          <path d="M200 0 Q120 200 200 400" stroke="#3CB52A" strokeOpacity="0.25" strokeWidth="1.5" fill="none" />
+          <path d="M200 40 Q140 200 200 360" stroke="#3CB52A" strokeOpacity="0.15" strokeWidth="1" fill="none" />
+          <path d="M200 80 Q160 200 200 320" stroke="white" strokeOpacity="0.08" strokeWidth="1" fill="none" />
+        </svg>
+        {/* Small accent squares */}
+        <div className="absolute z-20 bottom-20 right-48 w-5 h-5 border border-white/30" />
+        <div className="absolute z-20 top-16 right-24 w-3 h-3 bg-[#3CB52A]/50" />
+        <div className="absolute z-20 top-1/2 right-8 w-2 h-8 bg-white/10" />
+      </div>
+
+      {/* ── Left text content ── */}
+      <div className="relative z-20 h-full flex items-center">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-16 lg:py-20">
+          <div className="max-w-[46%] lg:max-w-[44%] max-lg:max-w-full">
+
+            {/* Badge tag */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`badge-${active}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="inline-flex items-center gap-2 bg-[#3CB52A]/15 border border-[#3CB52A]/30 rounded-full px-4 py-1.5 mb-6"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+                <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.14em] uppercase">{slide.badge}</span>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Headline — large, bold, italic, slides horizontally */}
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={`h1-${active}`}
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 40 }}
+                transition={{ duration: 0.48, ease: EASE }}
+                className="font-black italic leading-[1.04] tracking-tight mb-4"
+                style={{ fontSize: 'clamp(2.4rem, 5vw, 4.2rem)' }}
+              >
+                {slide.lines.map((line, i) => (
+                  <span key={i} className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}>
+                    {line}
+                  </span>
+                ))}
+              </motion.h1>
+            </AnimatePresence>
+
+            {/* Subtitle */}
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={`sub-${active}`}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.35, delay: 0.07 }}
+                className="text-white/65 text-[0.95rem] leading-relaxed mb-8 max-w-sm"
+              >
+                {slide.subtitle}
+              </motion.p>
+            </AnimatePresence>
+
+            {/* CTA button — pill, uppercase, bold */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`cta-${active}`}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, delay: 0.12 }}
+                className="mb-8"
+              >
+                <Link
+                  href={slide.href}
+                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_24px_rgba(60,181,42,0.40)] hover:-translate-y-0.5"
+                >
+                  {slide.cta}
+                </Link>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Dot navigation — ring for active, small filled for inactive */}
+            <div className="flex items-center gap-3">
+              {HERO_SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Slide ${i + 1}`}
+                  className="flex items-center justify-center transition-all duration-300"
+                  style={
+                    i === active
+                      ? { width: 22, height: 22, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.75)', background: 'transparent' }
+                      : { width: 10, height: 10, borderRadius: '50%', background: 'rgba(255,255,255,0.30)' }
+                  }
+                >
+                  {i === active && (
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'white', display: 'block' }} />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Small brand circle watermark — bottom left */}
+      <div className="absolute bottom-4 left-4 z-20 w-9 h-9 rounded-full bg-[#3CB52A]/20 border border-[#3CB52A]/40 flex items-center justify-center">
+        <div className="w-4 h-4 rounded-full bg-[#3CB52A]/60" />
+      </div>
+    </section>
+  );
+}
 
 /* ─── Testimonials Slider ─── */
 function TestimonialsSlider() {
@@ -202,150 +394,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
 
-      {/* ══════════════════════════════════════
-          HERO — Modern classic split layout
-      ══════════════════════════════════════ */}
-      <section className="relative bg-[#060E18] overflow-hidden">
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '72px 72px' }}
-        />
-        {/* Accent glows */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#3CB52A]/8 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#0A7EBF]/8 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-24 lg:pt-28 lg:pb-32">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-            {/* ── Left: Text ── */}
-            <motion.div variants={stagger} initial="hidden" animate="show">
-
-              {/* Tag */}
-              <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2.5 bg-[#3CB52A]/12 border border-[#3CB52A]/25 rounded-full px-5 py-2 mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
-                <span className="text-[#3CB52A] text-xs font-bold tracking-[0.12em] uppercase">Innovating Africa's Future</span>
-              </motion.div>
-
-              {/* Headline */}
-              <motion.h1
-                variants={fadeUp}
-                custom={1}
-                className="text-[clamp(2.5rem,5vw,4.5rem)] font-black text-white leading-[1.07] tracking-tight mb-6"
-              >
-                Transforming<br />
-                Africa Through<br />
-                <span className="text-[#3CB52A]">Technology</span>
-              </motion.h1>
-
-              {/* Divider accent */}
-              <motion.div variants={fadeUp} custom={2} className="w-16 h-1 bg-[#3CB52A] rounded-full mb-6" />
-
-              <motion.p variants={fadeUp} custom={2} className="text-white/60 text-lg leading-relaxed max-w-xl mb-10">
-                Empowering businesses, governments and communities across Africa with world-class software, AI solutions, and end-to-end digital transformation.
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4 mb-10">
-                <Link
-                  href="/services"
-                  className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_8px_28px_rgba(60,181,42,0.35)] hover:shadow-[0_12px_36px_rgba(60,181,42,0.45)] hover:-translate-y-0.5"
-                >
-                  Explore Services <ArrowRight size={17} />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2.5 border border-white/20 hover:border-[#3CB52A]/50 text-white font-bold px-8 py-4 rounded-xl transition-all hover:bg-[#3CB52A]/8"
-                >
-                  Get a Free Quote
-                </Link>
-              </motion.div>
-
-              {/* Trust markers */}
-              <motion.div variants={fadeUp} custom={4} className="flex flex-wrap items-center gap-5">
-                {['ISO-Aligned Security', '24/7 Support', 'SLA Guaranteed'].map((t) => (
-                  <div key={t} className="flex items-center gap-2">
-                    <CheckCircle2 size={15} className="text-[#3CB52A] shrink-0" />
-                    <span className="text-white/50 text-sm">{t}</span>
-                  </div>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            {/* ── Right: Stats panel ── */}
-            <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col gap-4">
-
-              {/* Top row: 2 large stat cards */}
-              <div className="grid grid-cols-2 gap-4">
-                {STATS.slice(0, 2).map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    custom={i + 2}
-                    variants={fadeUp}
-                    className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#3CB52A]/30 hover:bg-white/8 transition-all"
-                  >
-                    <div className="text-4xl font-black text-white mb-1.5">{s.value}</div>
-                    <div className="text-white/45 text-sm font-medium">{s.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Bottom row: 2 stat cards */}
-              <div className="grid grid-cols-2 gap-4">
-                {STATS.slice(2).map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    custom={i + 4}
-                    variants={fadeUp}
-                    className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#3CB52A]/30 hover:bg-white/8 transition-all"
-                  >
-                    <div className="text-4xl font-black text-white mb-1.5">{s.value}</div>
-                    <div className="text-white/45 text-sm font-medium">{s.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Rating strip */}
-              <motion.div
-                custom={6}
-                variants={fadeUp}
-                className="bg-[#3CB52A]/10 border border-[#3CB52A]/20 rounded-2xl px-6 py-4 flex items-center justify-between flex-wrap gap-3"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => <Star key={i} size={16} className="text-[#3CB52A] fill-[#3CB52A]" />)}
-                  </div>
-                  <span className="text-white/60 text-sm font-medium">4.9 / 5 average rating</span>
-                </div>
-                <span className="text-[#3CB52A] text-xs font-bold tracking-wide px-3 py-1 bg-[#3CB52A]/15 rounded-full">
-                  Active in 10+ countries
-                </span>
-              </motion.div>
-
-              {/* Contact card */}
-              <motion.div
-                custom={7}
-                variants={fadeUp}
-                className="bg-white/4 border border-white/8 rounded-2xl px-6 py-4 flex items-center gap-4"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center shrink-0">
-                  <Phone size={18} />
-                </div>
-                <div>
-                  <div className="text-white/40 text-xs font-medium mb-0.5">Call us anytime</div>
-                  <a href="tel:+231761978796" className="text-white font-bold text-sm hover:text-[#3CB52A] transition-colors">
-                    +231 761 978 796
-                  </a>
-                </div>
-                <div className="ml-auto flex items-center gap-1.5">
-                  <MapPin size={13} className="text-white/30" />
-                  <span className="text-white/30 text-xs">Monrovia, Liberia</span>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       {/* ══════════════════════════════════════
           SERVICES OVERVIEW
