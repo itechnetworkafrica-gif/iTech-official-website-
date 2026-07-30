@@ -83,18 +83,24 @@ const HERO_SLIDES = [
     subtitle: "Ambition 2030: Leading digital solutions for Africa's progress",
     cta: 'Read More',
     href: '/services',
-    img: '/team-alvina.png',
-    imgAlt: 'iTech Network Africa expert',
+    img: '/hero-group-excited.jpg',
+    imgAlt: 'iTech Network Africa team',
+    imgPosition: 'center top',
+    stat1: { value: '500+', label: 'Projects Delivered' },
+    stat2: { value: '10+', label: 'Countries Served' },
   },
   {
-    badge: 'Enterprise Solutions',
+    badge: 'AI & Digital Innovation',
     lines: ['Building Digital', 'Infrastructure', 'of Tomorrow'],
     accentLine: 2,
     subtitle: 'World-class software, AI automation and end-to-end digital transformation for African enterprises.',
     cta: 'Our Services',
     href: '/services',
-    img: '/team-wilmot.png',
-    imgAlt: 'Enterprise solutions specialist',
+    img: '/hero-woman-vr.jpg',
+    imgAlt: 'AI and technology innovation',
+    imgPosition: 'center center',
+    stat1: { value: '99%', label: 'Client Satisfaction' },
+    stat2: { value: '30+', label: 'Enterprise Clients' },
   },
   {
     badge: 'Pan-African Reach',
@@ -103,8 +109,11 @@ const HERO_SLIDES = [
     subtitle: '500+ projects delivered across 10+ African countries with proven results.',
     cta: 'View Portfolio',
     href: '/portfolio',
-    img: '/team-foday.jpg',
+    img: '/hero-man-denim.jpg',
     imgAlt: 'Pan-African operations',
+    imgPosition: 'center top',
+    stat1: { value: '20+', label: 'Years Combined Experience' },
+    stat2: { value: '5+', label: 'Countries Served' },
   },
   {
     badge: 'Cybersecurity & Cloud',
@@ -113,8 +122,11 @@ const HERO_SLIDES = [
     subtitle: 'Enterprise-grade cloud infrastructure and cybersecurity built for African organisations.',
     cta: 'Get a Quote',
     href: '/contact',
-    img: '/team-alvina.png',
-    imgAlt: 'Cybersecurity and cloud expert',
+    img: '/hero-group-phone.jpg',
+    imgAlt: 'Cybersecurity and cloud solutions',
+    imgPosition: 'center top',
+    stat1: { value: '24/7', label: 'Managed Support' },
+    stat2: { value: 'ISO', label: 'Aligned Security' },
   },
 ];
 
@@ -123,6 +135,7 @@ function HeroSlider() {
   const [active, setActive] = useState(0);
   const total = HERO_SLIDES.length;
   const next = useCallback(() => setActive((a) => (a + 1) % total), [total]);
+  const prev = useCallback(() => setActive((a) => (a - 1 + total) % total), [total]);
 
   useEffect(() => {
     const id = setInterval(next, 5500);
@@ -134,7 +147,7 @@ function HeroSlider() {
   return (
     <section
       className="relative bg-[#060E18] overflow-hidden"
-      style={{ minHeight: 'clamp(480px, 80vh, 680px)' }}
+      style={{ minHeight: 'clamp(560px, 88vh, 780px)' }}
     >
       {/* ── Full-bleed background photo ── */}
       <AnimatePresence mode="wait">
@@ -142,37 +155,35 @@ function HeroSlider() {
           key={`img-${active}`}
           src={slide.img}
           alt={slide.imgAlt}
-          initial={{ opacity: 0, scale: 1.06 }}
+          initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.65, ease: EASE }}
-          className="absolute inset-0 w-full h-full object-cover object-top"
-          style={{ objectPosition: 'center 15%' }}
+          transition={{ duration: 0.7, ease: EASE }}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: slide.imgPosition }}
         />
       </AnimatePresence>
 
-      {/* ── Gradient overlay: transparent top → dark bottom band ── */}
+      {/* ── Desktop gradient: dark left band fading right + dark bottom band ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none hidden md:block"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(6,14,24,0.10) 0%, rgba(6,14,24,0.30) 45%, rgba(6,14,24,0.82) 68%, rgba(6,14,24,0.97) 100%)',
+            'linear-gradient(to right, rgba(6,14,24,0.96) 0%, rgba(6,14,24,0.80) 38%, rgba(6,14,24,0.40) 60%, rgba(6,14,24,0.10) 100%), linear-gradient(to bottom, rgba(6,14,24,0.05) 0%, rgba(6,14,24,0.50) 70%, rgba(6,14,24,0.92) 100%)',
+        }}
+      />
+      {/* ── Mobile gradient: transparent top → dark bottom ── */}
+      <div
+        className="absolute inset-0 pointer-events-none md:hidden"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(6,14,24,0.15) 0%, rgba(6,14,24,0.45) 50%, rgba(6,14,24,0.95) 78%, rgba(6,14,24,1) 100%)',
         }}
       />
 
-      {/* ── Decorative arc lines bottom-right ── */}
-      <svg
-        className="absolute bottom-0 right-0 w-72 h-72 z-10 pointer-events-none opacity-30"
-        viewBox="0 0 200 200"
-        fill="none"
-      >
-        <path d="M200 200 Q60 120 200 0" stroke="#3CB52A" strokeOpacity="0.5" strokeWidth="1.5" fill="none" />
-        <path d="M200 200 Q80 130 200 40" stroke="#3CB52A" strokeOpacity="0.3" strokeWidth="1" fill="none" />
-      </svg>
-
-      {/* ── Bottom text content ── */}
+      {/* ── Content ── */}
       <div className="absolute inset-0 z-20 flex flex-col justify-end">
-        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 pb-10 lg:pb-14">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 pb-8 lg:pb-12">
 
           {/* Badge */}
           <AnimatePresence mode="wait">
@@ -182,7 +193,7 @@ function HeroSlider() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
-              className="inline-flex items-center gap-2 bg-[#3CB52A]/20 border border-[#3CB52A]/40 rounded-full px-4 py-1.5 mb-5"
+              className="inline-flex items-center gap-2 bg-[#3CB52A]/20 border border-[#3CB52A]/40 rounded-full px-4 py-1.5 mb-4"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
               <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.14em] uppercase">
@@ -200,7 +211,7 @@ function HeroSlider() {
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.48, ease: EASE }}
               className="font-black italic leading-[1.04] tracking-tight mb-4"
-              style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4.4rem)', maxWidth: '700px' }}
+              style={{ fontSize: 'clamp(2.4rem, 5.8vw, 4.8rem)', maxWidth: '660px' }}
             >
               {slide.lines.map((line, i) => (
                 <span
@@ -221,15 +232,15 @@ function HeroSlider() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35, delay: 0.07 }}
-              className="text-white/70 text-[0.95rem] leading-relaxed mb-7"
-              style={{ maxWidth: '480px' }}
+              className="text-white/70 text-[0.9rem] leading-relaxed mb-6"
+              style={{ maxWidth: '440px' }}
             >
               {slide.subtitle}
             </motion.p>
           </AnimatePresence>
 
-          {/* CTA + Dots row */}
-          <div className="flex items-center gap-6 flex-wrap">
+          {/* CTA + Dots */}
+          <div className="flex items-center gap-5 flex-wrap mb-6 lg:mb-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`cta-${active}`}
@@ -240,7 +251,7 @@ function HeroSlider() {
               >
                 <Link
                   href={slide.href}
-                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_24px_rgba(60,181,42,0.45)] hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_28px_rgba(60,181,42,0.50)] hover:-translate-y-0.5 active:scale-95"
                 >
                   {slide.cta}
                 </Link>
@@ -248,7 +259,7 @@ function HeroSlider() {
             </AnimatePresence>
 
             {/* Ring-dot navigation */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               {HERO_SLIDES.map((_, i) => (
                 <button
                   key={i}
@@ -257,38 +268,74 @@ function HeroSlider() {
                   className="flex items-center justify-center transition-all duration-300"
                   style={
                     i === active
-                      ? {
-                          width: 22,
-                          height: 22,
-                          borderRadius: '50%',
-                          border: '2px solid rgba(255,255,255,0.80)',
-                          background: 'transparent',
-                        }
-                      : {
-                          width: 10,
-                          height: 10,
-                          borderRadius: '50%',
-                          background: 'rgba(255,255,255,0.35)',
-                        }
+                      ? { width: 22, height: 22, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.85)', background: 'transparent' }
+                      : { width: 9, height: 9, borderRadius: '50%', background: 'rgba(255,255,255,0.38)' }
                   }
                 >
                   {i === active && (
-                    <span
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: 'white',
-                        display: 'block',
-                      }}
-                    />
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'white', display: 'block' }} />
                   )}
                 </button>
               ))}
             </div>
           </div>
+
+          {/* ── Glassmorphism stat cards (desktop only) ── */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`stats-${active}`}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.4, delay: 0.18 }}
+              className="hidden lg:flex gap-4"
+            >
+              {[slide.stat1, slide.stat2].map((s, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 px-6 py-4 rounded-2xl"
+                  style={{
+                    background: 'rgba(255,255,255,0.08)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    minWidth: 200,
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(60,181,42,0.18)', border: '1px solid rgba(60,181,42,0.35)' }}
+                  >
+                    <TrendingUp size={18} className="text-[#3CB52A]" />
+                  </div>
+                  <div>
+                    <div className="text-white font-black text-lg leading-none">{s.value}</div>
+                    <div className="text-white/55 text-xs mt-1 leading-snug">{s.label}</div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
+
+      {/* ── Prev / Next arrows (desktop) ── */}
+      <button
+        onClick={prev}
+        aria-label="Previous slide"
+        className="hidden lg:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 items-center justify-center rounded-full transition-all"
+        style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.20)' }}
+      >
+        <ChevronLeft size={20} className="text-white" />
+      </button>
+      <button
+        onClick={next}
+        aria-label="Next slide"
+        className="hidden lg:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 items-center justify-center rounded-full transition-all"
+        style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.20)' }}
+      >
+        <ChevronRight size={20} className="text-white" />
+      </button>
     </section>
   );
 }

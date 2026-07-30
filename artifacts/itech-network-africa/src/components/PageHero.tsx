@@ -7,16 +7,55 @@ interface PageHeroProps {
   title: string;
   subtitle: string;
   badge: string;
+  bgImage?: string;
   ctaPrimary?: { label: string; href: string };
   ctaSecondary?: { label: string; href: string };
 }
 
-export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaPrimary, ctaSecondary }) => {
+/* Cycle through these for variety across pages */
+const BG_IMAGES = [
+  '/hero-event-audience.jpg',
+  '/hero-woman-vr.jpg',
+  '/hero-group-excited.jpg',
+  '/hero-man-denim.jpg',
+];
+
+let bgIndex = 0;
+function nextBg() {
+  const img = BG_IMAGES[bgIndex % BG_IMAGES.length];
+  bgIndex++;
+  return img;
+}
+
+export const PageHero: React.FC<PageHeroProps> = ({
+  title,
+  subtitle,
+  badge,
+  bgImage,
+  ctaPrimary,
+  ctaSecondary,
+}) => {
+  const [bg] = React.useState(() => bgImage ?? nextBg());
+
   return (
-    <section className="relative bg-[#060E18] py-20 lg:py-28 overflow-hidden">
-      {/* Subtle green glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-[#3CB52A]/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-[#3CB52A]/5 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative bg-[#060E18] py-24 lg:py-32 overflow-hidden">
+      {/* Dark background image */}
+      <img
+        src={bg}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+        style={{ opacity: 0.35 }}
+      />
+
+      {/* Dark overlay — heavier on left for text legibility */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to right, rgba(6,14,24,0.97) 0%, rgba(6,14,24,0.88) 50%, rgba(6,14,24,0.70) 100%), linear-gradient(to bottom, rgba(6,14,24,0.20) 0%, rgba(6,14,24,0.60) 100%)',
+        }}
+      />
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-3xl">
@@ -34,7 +73,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaP
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-black italic text-white leading-tight mb-5 tracking-tight"
             dangerouslySetInnerHTML={{ __html: title }}
           />
 
@@ -42,7 +81,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaP
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.18 }}
-            className="text-white/60 text-lg md:text-xl leading-relaxed max-w-2xl"
+            className="text-white/65 text-lg md:text-xl leading-relaxed max-w-2xl"
           >
             {subtitle}
           </motion.p>
@@ -57,7 +96,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaP
               {ctaPrimary && (
                 <Link
                   href={ctaPrimary.href}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold rounded-xl transition-all shadow-[0_8px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold rounded-full transition-all shadow-[0_8px_24px_rgba(60,181,42,0.40)] hover:-translate-y-0.5"
                 >
                   {ctaPrimary.label} <ArrowRight size={16} />
                 </Link>
@@ -65,7 +104,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaP
               {ctaSecondary && (
                 <Link
                   href={ctaSecondary.href}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold rounded-xl border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold rounded-full border border-white/25 hover:border-white/50 hover:bg-white/5 transition-all"
                 >
                   {ctaSecondary.label}
                 </Link>
@@ -74,9 +113,6 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, badge, ctaP
           )}
         </div>
       </div>
-
-      {/* Bottom border line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3CB52A]/30 to-transparent" />
     </section>
   );
 };
