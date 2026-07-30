@@ -1,63 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, ArrowLeft, MessageSquare } from 'lucide-react';
-import logoWhite from '@/assets/logo-icon-white.png';
+import { Home, ArrowLeft, MessageSquare, Search, Wifi, WifiOff } from 'lucide-react';
 
+/* ─── Animation presets ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const HELPFUL_LINKS = [
-  { label: 'Home',          href: '/'        },
-  { label: 'About Us',      href: '/about'   },
-  { label: 'Services',      href: '/services'},
-  { label: 'Portfolio',     href: '/portfolio'},
-  { label: 'Client Portal', href: '/portal'  },
-  { label: 'Blog',          href: '/blog'    },
-  { label: 'Contact',       href: '/contact' },
+  { label: 'Home',          href: '/'             },
+  { label: 'About Us',      href: '/about'        },
+  { label: 'Services',      href: '/services'     },
+  { label: 'AI Solutions',  href: '/ai-solutions' },
+  { label: 'Portfolio',     href: '/portfolio'    },
+  { label: 'Client Portal', href: '/portal'       },
+  { label: 'Blog',          href: '/blog'         },
+  { label: 'Contact',       href: '/contact'      },
 ];
 
 export default function NotFound() {
   const [showLinks, setShowLinks] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
-  /* ── SEO meta management ── */
+  /* ── Full SEO meta management ── */
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = '404 | Page Not Found | iTech Network Africa';
 
-    const setMeta = (sel: string, attr: string, val: string) => {
-      let el = document.querySelector(sel) as HTMLMetaElement | null;
+    // Page title
+    document.title = '404 – Page Not Found | iTech Network Africa';
+
+    const setMeta = (selector: string, nameAttr: string, nameVal: string, contentVal: string): HTMLMetaElement => {
+      let el = document.querySelector(selector) as HTMLMetaElement | null;
       if (!el) {
         el = document.createElement('meta');
         document.head.appendChild(el);
       }
-      el.setAttribute(attr, val);
+      el.setAttribute(nameAttr, nameVal);
+      el.setAttribute('content', contentVal);
       return el;
     };
 
-    const robots    = setMeta('meta[name="robots"]',       'name',    'robots');
-    robots.setAttribute('content', 'noindex, nofollow');
+    // Standard SEO
+    const robots = setMeta('meta[name="robots"]', 'name', 'robots', 'noindex, nofollow');
+    const desc   = setMeta(
+      'meta[name="description"]', 'name', 'description',
+      'The page you were looking for could not be found. Return to iTech Network Africa and explore our enterprise software, AI solutions, and digital transformation services across Africa.'
+    );
 
-    const desc      = setMeta('meta[name="description"]',  'name',    'description');
-    desc.setAttribute('content', 'The page you were looking for could not be found. Return to iTech Network Africa and explore our digital transformation services across Africa.');
+    // Open Graph
+    const ogType  = setMeta('meta[property="og:type"]',        'property', 'og:type',        'website');
+    const ogTitle = setMeta('meta[property="og:title"]',       'property', 'og:title',       '404 – Page Not Found | iTech Network Africa');
+    const ogDesc  = setMeta('meta[property="og:description"]', 'property', 'og:description', 'Page not found. Visit iTech Network Africa for enterprise software, AI solutions and digital transformation services across Africa.');
+    const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       '/og-image.png');
+    const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         window.location.href);
 
-    const ogTitle   = setMeta('meta[property="og:title"]', 'property','og:title');
-    ogTitle.setAttribute('content', '404 – Page Not Found | iTech Network Africa');
+    // Twitter Card
+    const twCard  = setMeta('meta[name="twitter:card"]',        'name', 'twitter:card',        'summary_large_image');
+    const twTitle = setMeta('meta[name="twitter:title"]',       'name', 'twitter:title',       '404 – Page Not Found | iTech Network Africa');
+    const twDesc  = setMeta('meta[name="twitter:description"]', 'name', 'twitter:description', 'Page not found. Explore iTech Network Africa\'s enterprise technology solutions for Africa.');
+    const twImg   = setMeta('meta[name="twitter:image"]',       'name', 'twitter:image',       '/og-image.png');
 
-    const ogDesc    = setMeta('meta[property="og:description"]', 'property','og:description');
-    ogDesc.setAttribute('content', 'Page not found. Visit iTech Network Africa for enterprise software, AI solutions and digital transformation services.');
-
-    const twCard    = setMeta('meta[name="twitter:card"]', 'name',    'twitter:card');
-    twCard.setAttribute('content', 'summary');
+    // Canonical link — point to home since this URL doesn't exist
+    let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canon) {
+      canon = document.createElement('link');
+      canon.rel = 'canonical';
+      document.head.appendChild(canon);
+    }
+    const prevCanon = canon.href;
+    canon.href = window.location.origin + '/';
 
     return () => {
       document.title = prevTitle;
       robots.setAttribute('content', 'index, follow');
+      canon!.href = prevCanon;
     };
   }, []);
 
-  /* ── Show helpful links after 5 s ── */
+  /* ── Show helpful links after 4 s ── */
   useEffect(() => {
-    const id = setTimeout(() => setShowLinks(true), 5000);
+    const id = setTimeout(() => setShowLinks(true), 4000);
     return () => clearTimeout(id);
   }, []);
 
@@ -65,114 +86,169 @@ export default function NotFound() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.7, ease: EASE }}
-      className="flex-1 flex flex-col items-center justify-center bg-[#060E18] px-6 py-20 relative overflow-hidden"
+      transition={{ duration: 0.6, ease: EASE }}
+      className="flex-1 flex flex-col items-center justify-center bg-[#060E18] px-6 py-16 relative overflow-hidden"
       role="main"
       aria-label="404 – Page not found"
     >
-      {/* ── Background texture ── */}
+
+      {/* ── Background: subtle grid ── */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
-          backgroundSize: '72px 72px',
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
         }}
       />
-      {/* Radial glow behind the 404 */}
+
+      {/* ── Background: green radial glow ── */}
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.06) 0%, transparent 70%)' }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.07) 0%, transparent 65%)' }}
       />
 
-      {/* ── 404 display ── */}
+      {/* ── Floating particles ── */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          aria-hidden="true"
+          className="absolute w-1.5 h-1.5 rounded-full bg-[#3CB52A]/30 pointer-events-none"
+          style={{ left: `${15 + i * 14}%`, top: `${20 + (i % 3) * 20}%` }}
+          animate={{ y: [-12, 12, -12], opacity: [0.2, 0.6, 0.2] }}
+          transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
+        />
+      ))}
+
+      {/* ═══════════════════════════════
+          HERO: 4 · LOGO CIRCLE · 4
+      ═══════════════════════════════ */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.65, ease: EASE }}
-        className="flex items-center justify-center mb-12 select-none"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.75, ease: EASE }}
+        className="flex items-center justify-center mb-10 select-none"
         aria-hidden="true"
       >
+
         {/* Left "4" */}
-        <span
+        <motion.span
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
           className="font-black text-white leading-none"
-          style={{ fontSize: 'clamp(7rem, 18vw, 16rem)' }}
+          style={{ fontSize: 'clamp(5.5rem, 16vw, 13rem)' }}
         >
           4
-        </span>
+        </motion.span>
 
-        {/* Centre "O" — white ring containing the logo */}
-        <div
-          className="relative flex items-center justify-center mx-1 sm:mx-2 md:mx-4"
+        {/* ── Round logo circle (the "0") ── */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+          className="relative flex items-center justify-center mx-2 sm:mx-4 md:mx-6"
           style={{
-            width:  'clamp(7rem, 18vw, 16rem)',
-            height: 'clamp(7rem, 18vw, 16rem)',
+            width:  'clamp(5.5rem, 16vw, 13rem)',
+            height: 'clamp(5.5rem, 16vw, 13rem)',
           }}
         >
-          {/* Outer soft glow ring */}
-          <div
+          {/* Outer pulse ring */}
+          <motion.div
             aria-hidden="true"
-            className="absolute inset-0 rounded-full"
-            style={{
-              boxShadow: '0 0 60px 12px rgba(255,255,255,0.08), 0 0 110px 30px rgba(60,181,42,0.07)',
-            }}
+            className="absolute inset-0 rounded-full border-[2px] border-[#3CB52A]/20"
+            animate={{ scale: [1, 1.12, 1], opacity: [0.4, 0, 0.4] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
           />
-          {/* White circle border */}
+
+          {/* Second pulse ring */}
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full border-[2px] border-[#3CB52A]/15"
+            animate={{ scale: [1, 1.22, 1], opacity: [0.3, 0, 0.3] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+          />
+
+          {/* Main white border circle */}
           <div
             className="absolute inset-0 rounded-full border-[5px] sm:border-[7px] md:border-[9px] border-white"
-            style={{ boxShadow: 'inset 0 0 24px rgba(255,255,255,0.06)' }}
+            style={{
+              boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 0 60px 8px rgba(255,255,255,0.06), 0 0 90px 20px rgba(60,181,42,0.08)',
+            }}
           />
-          {/* White fill inside circle (very subtle) */}
-          <div className="absolute inset-[10%] rounded-full bg-white/[0.04]" />
 
-          {/* Logo — gently floating */}
+          {/* Dark fill background */}
+          <div className="absolute inset-[8%] rounded-full bg-[#0A1929]" />
+
+          {/* Green subtle inner glow */}
+          <div
+            className="absolute inset-[8%] rounded-full"
+            style={{ background: 'radial-gradient(circle at 40% 35%, rgba(60,181,42,0.12) 0%, transparent 65%)' }}
+          />
+
+          {/* ── The Logo — gently floating ── */}
           <motion.img
-            src={logoWhite}
-            alt="iTech Network Africa logo"
-            animate={{ y: [-8, 8, -8] }}
-            transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+            src="/logo-icon.png"
+            alt="iTech Network Africa"
+            onError={() => setLogoError(true)}
+            animate={logoError ? {} : { y: [-6, 6, -6] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
             className="relative z-10 object-contain"
-            style={{ width: '46%', height: '46%' }}
+            style={{ width: '52%', height: '52%' }}
             loading="eager"
           />
-        </div>
+
+          {/* Fallback if logo fails */}
+          {logoError && (
+            <div className="relative z-10 text-white font-black" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
+              iT
+            </div>
+          )}
+        </motion.div>
 
         {/* Right "4" */}
-        <span
+        <motion.span
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
           className="font-black text-white leading-none"
-          style={{ fontSize: 'clamp(7rem, 18vw, 16rem)' }}
+          style={{ fontSize: 'clamp(5.5rem, 16vw, 13rem)' }}
         >
           4
-        </span>
+        </motion.span>
       </motion.div>
 
-      {/* ── Text + buttons ── */}
+      {/* ── Heading + description ── */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.25, ease: EASE }}
+        transition={{ duration: 0.6, delay: 0.35, ease: EASE }}
         className="text-center max-w-lg w-full"
       >
-        <h1 className="text-3xl md:text-[2.6rem] font-black text-white leading-tight mb-4 tracking-tight">
-          Oops! Page Not Found
+        <h1 className="text-3xl md:text-4xl font-black text-white leading-tight mb-3 tracking-tight">
+          Page Not Found
         </h1>
-        <p className="text-white/50 text-base md:text-lg leading-relaxed mb-10 max-w-md mx-auto">
-          The page you're looking for may have been moved, deleted, or never existed.
+        <p className="text-white/45 text-base md:text-lg leading-relaxed mb-3 max-w-md mx-auto">
+          The page you're looking for may have been moved, renamed, or may never have existed.
+        </p>
+        <p className="text-white/25 text-sm mb-10">
+          Error 404 — <span className="text-[#3CB52A]/70">itechnetworkafrica.com</span>
         </p>
 
-        {/* Action buttons */}
+        {/* ── Action buttons ── */}
         <div
-          className="flex flex-wrap items-center justify-center gap-4"
+          className="flex flex-wrap items-center justify-center gap-3 md:gap-4"
           role="navigation"
           aria-label="Recovery options"
         >
-          {/* Primary — Return Home */}
+          {/* Return Home */}
           <Link href="/">
             <motion.a
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.2 }}
-              className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-3.5 rounded-xl transition-colors shadow-[0_6px_24px_rgba(60,181,42,0.38)] focus:outline-none focus:ring-2 focus:ring-[#3CB52A] focus:ring-offset-2 focus:ring-offset-[#060E18] cursor-pointer"
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.18 }}
+              className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-7 py-3.5 rounded-xl transition-colors shadow-[0_6px_28px_rgba(60,181,42,0.4)] focus:outline-none focus:ring-2 focus:ring-[#3CB52A] focus:ring-offset-2 focus:ring-offset-[#060E18] cursor-pointer"
               aria-label="Return to iTech Network Africa home page"
             >
               <Home size={17} aria-hidden="true" />
@@ -180,23 +256,24 @@ export default function NotFound() {
             </motion.a>
           </Link>
 
-          {/* Secondary — Go Back */}
+          {/* Go Back */}
           <motion.button
             whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.18 }}
             onClick={() => window.history.back()}
-            className="inline-flex items-center gap-2.5 border border-white/20 hover:border-white/40 text-white font-semibold px-8 py-3.5 rounded-xl transition-all hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-[#060E18]"
+            className="inline-flex items-center gap-2.5 border border-white/20 hover:border-white/40 text-white font-semibold px-7 py-3.5 rounded-xl transition-all hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#060E18]"
             aria-label="Go back to previous page"
           >
             <ArrowLeft size={17} aria-hidden="true" />
             Go Back
           </motion.button>
 
-          {/* Tertiary — Contact Support */}
+          {/* Contact Support */}
           <Link href="/support">
             <a
-              className="inline-flex items-center gap-1.5 text-white/40 hover:text-white/75 text-sm font-medium transition-colors focus:outline-none focus:underline"
-              aria-label="Contact iTech support team"
+              className="inline-flex items-center gap-1.5 text-white/35 hover:text-[#3CB52A] text-sm font-medium transition-colors focus:outline-none focus:underline"
+              aria-label="Contact iTech support"
             >
               <MessageSquare size={14} aria-hidden="true" />
               Contact Support
@@ -205,25 +282,26 @@ export default function NotFound() {
         </div>
       </motion.div>
 
-      {/* ── Helpful links (appears after 5 s) ── */}
+      {/* ── Helpful links (appears after 4 s) ── */}
       <AnimatePresence>
         {showLinks && (
           <motion.nav
             key="helpful-links"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE }}
-            className="mt-20 text-center"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="mt-16 text-center"
             aria-label="You might be looking for"
           >
-            <p className="text-white/25 text-[11px] uppercase tracking-[0.18em] font-semibold mb-5">
+            <p className="text-white/20 text-[10px] uppercase tracking-[0.2em] font-semibold mb-4">
               You might be looking for
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 max-w-xl">
               {HELPFUL_LINKS.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <a
-                    className="text-white/40 hover:text-[#3CB52A] text-sm font-medium transition-colors focus:outline-none focus:text-[#3CB52A]"
+                    className="text-white/35 hover:text-[#3CB52A] text-sm font-medium transition-colors focus:outline-none focus:text-[#3CB52A]"
                     aria-label={`Go to ${link.label}`}
                   >
                     {link.label}
@@ -235,13 +313,13 @@ export default function NotFound() {
         )}
       </AnimatePresence>
 
-      {/* ── Subtle bottom brand mark ── */}
+      {/* ── Bottom brand mark ── */}
       <div
         aria-hidden="true"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-20"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-15"
       >
         <div className="w-1 h-1 rounded-full bg-[#3CB52A]" />
-        <span className="text-white/40 text-[10px] tracking-widest uppercase font-semibold">iTech Network Africa</span>
+        <span className="text-white/50 text-[10px] tracking-[0.2em] uppercase font-semibold whitespace-nowrap">iTech Network Africa</span>
         <div className="w-1 h-1 rounded-full bg-[#3CB52A]" />
       </div>
     </motion.div>
