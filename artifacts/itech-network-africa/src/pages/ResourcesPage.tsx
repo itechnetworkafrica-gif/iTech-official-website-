@@ -1,67 +1,126 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PageHero } from '@/components/PageHero';
-import { FileText, Code2, PlayCircle, BookOpen, Download, Clock, Wrench, Users, ArrowRight, Search, ExternalLink, Zap, Shield, Cloud, Brain } from 'lucide-react';
+import {
+  FileText, Code2, PlayCircle, BookOpen, Download, Clock, Wrench, Users,
+  ArrowRight, Search, ExternalLink, Zap, Shield, Cloud, Brain, Calendar, Building2
+} from 'lucide-react';
 import { Link } from 'wouter';
 
+const PUBLISHER = 'Gotecx';
+
 const resources = [
-  { icon: <FileText size={26} />, title: "Documentation", desc: "Detailed product manuals, implementation guides, and administrative instructions for all iTech software.", link: "/resources/docs", badge: "Essential" },
-  { icon: <Code2 size={26} />, title: "API Reference", desc: "Comprehensive endpoints, request/response schemas, and authentication methods for developers.", link: "/resources/api", badge: "Developer" },
-  { icon: <PlayCircle size={26} />, title: "Tutorials", desc: "Video walkthroughs and step-by-step guides on how to maximise the value of our platforms.", link: "/resources/tutorials", badge: "Getting Started" },
-  { icon: <BookOpen size={26} />, title: "Blog & Insights", desc: "Articles on technology trends, digital transformation strategy, and company news from our team.", link: "/blog", badge: "Updated Weekly" },
-  { icon: <Download size={26} />, title: "Downloads", desc: "Desktop clients, mobile APKs, plugins, configuration templates, and official brand assets.", link: "/resources/downloads", badge: "Free" },
-  { icon: <Clock size={26} />, title: "Changelog", desc: "Stay up to date with the latest feature releases, bug fixes, and platform improvements.", link: "/resources/changelog", badge: "v2.x" },
-  { icon: <Wrench size={26} />, title: "Developer Tools", desc: "SDKs, CLI tools, Postman collections, and sandbox environments to accelerate your integration.", link: "/resources/tools", badge: "Developer" },
-  { icon: <Users size={26} />, title: "Community Forum", desc: "Connect with other iTech users, share solutions, ask questions, and discuss best practices.", link: "/support", badge: "Community" }
+  {
+    icon: <FileText size={26} />,
+    title: "Documentation",
+    desc: "Detailed product manuals, implementation guides, and administrative instructions for all iTech Network Africa software platforms.",
+    link: "/resources/docs",
+    badge: "Essential",
+  },
+  {
+    icon: <Code2 size={26} />,
+    title: "API Reference",
+    desc: "Comprehensive API endpoints, request/response schemas, authentication flows, and webhook specifications for developers.",
+    link: "/resources/api",
+    badge: "Developer",
+  },
+  {
+    icon: <PlayCircle size={26} />,
+    title: "Video Tutorials",
+    desc: "Step-by-step video walkthroughs on setting up, configuring, and maximising the value of all iTech platforms.",
+    link: "/resources/tutorials",
+    badge: "Getting Started",
+  },
+  {
+    icon: <BookOpen size={26} />,
+    title: "Blog & Insights",
+    desc: "In-depth articles on digital transformation in Africa, AI strategy, cloud migration, and technology leadership.",
+    link: "/blog",
+    badge: "Weekly",
+  },
+  {
+    icon: <Download size={26} />,
+    title: "Downloads",
+    desc: "Software clients, mobile APKs, configuration templates, official brand assets, and signed deployment packages.",
+    link: "/resources/downloads",
+    badge: "Free",
+  },
+  {
+    icon: <Clock size={26} />,
+    title: "Changelog",
+    desc: "Release notes, feature announcements, and platform improvement logs across all iTech product lines.",
+    link: "/resources/changelog",
+    badge: "v2.x",
+  },
+  {
+    icon: <Wrench size={26} />,
+    title: "Developer Tools",
+    desc: "SDKs, CLI utilities, Postman collections, and sandbox environments to accelerate your integration projects.",
+    link: "/resources/tools",
+    badge: "Developer",
+  },
+  {
+    icon: <Users size={26} />,
+    title: "Community Forum",
+    desc: "Connect with iTech users and partners across Africa — share solutions, best practices, and technical insights.",
+    link: "/support",
+    badge: "Community",
+  },
 ];
 
 const FEATURED = [
   {
     icon: <Zap size={20} />,
     color: '#3CB52A',
-    title: 'Quick Start Guide',
-    desc: 'Get your first iTech integration running in under 30 minutes with our step-by-step setup guide.',
+    title: 'iTech Platform Quick Start Guide',
+    desc: 'Get your first iTech integration live in under 30 minutes. Covers environment setup, authentication, and your first API call.',
     time: '30 min read',
+    date: 'June 2025',
     href: '/resources/docs',
   },
   {
     icon: <Code2 size={20} />,
     color: '#0A7EBF',
-    title: 'REST API Quickstart',
-    desc: 'Authenticate and make your first API call in minutes. Includes code samples in JavaScript, Python, and PHP.',
+    title: 'REST API Integration Quickstart',
+    desc: 'Authenticate and make your first API call with code samples in JavaScript, Python, and PHP — ready to copy and run.',
     time: '15 min read',
+    date: 'May 2025',
     href: '/resources/api',
   },
   {
     icon: <Shield size={20} />,
     color: '#7C3AED',
-    title: 'Security Best Practices',
-    desc: 'Essential security guidelines for your iTech deployment: MFA setup, API key management, and data encryption.',
+    title: 'Enterprise Security Best Practices',
+    desc: 'Essential security guidelines for your iTech deployment: MFA setup, API key management, role-based access, and data encryption.',
     time: '20 min read',
+    date: 'July 2025',
     href: '/resources/docs',
   },
   {
     icon: <Cloud size={20} />,
     color: '#E85D04',
-    title: 'Cloud Deployment Checklist',
-    desc: 'A comprehensive pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud.',
+    title: 'Cloud Deployment Checklist for Africa',
+    desc: 'A pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud with African data-residency requirements in mind.',
     time: '25 min read',
+    date: 'April 2025',
     href: '/resources/docs',
   },
   {
     icon: <Brain size={20} />,
     color: '#DB2777',
-    title: 'AI Module Configuration',
-    desc: 'Configure and fine-tune iTech AI modules for your specific business context and data environment.',
+    title: 'Configuring AI & Automation Modules',
+    desc: 'Configure and fine-tune iTech AI modules for your specific business context, data pipeline, and automation workflows.',
     time: '40 min read',
+    date: 'June 2025',
     href: '/resources/docs',
   },
   {
-    icon: <Users size={20} />,
+    icon: <Building2 size={20} />,
     color: '#0D9488',
-    title: 'User Management Guide',
-    desc: 'Manage roles, permissions, SSO configuration, and audit trails for your organisation\'s users.',
+    title: 'Enterprise User Management Guide',
+    desc: 'Manage roles, permissions, SSO configuration, multi-tenancy, and full audit trails for your organisation\'s users at scale.',
     time: '20 min read',
+    date: 'March 2025',
     href: '/resources/docs',
   },
 ];
@@ -70,12 +129,14 @@ export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredResources = resources.filter(r =>
-    !searchQuery || r.title.toLowerCase().includes(searchQuery.toLowerCase()) || r.desc.toLowerCase().includes(searchQuery.toLowerCase())
+    !searchQuery ||
+    r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    r.desc.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="flex flex-col w-full bg-[#F8F9FA] min-h-screen">
-      <PageHero 
+      <PageHero
         badge="Knowledge Base"
         title="Resources & Documentation"
         subtitle="Everything you need to build, integrate, deploy, and succeed with iTech Network Africa's technology stack."
@@ -97,6 +158,16 @@ export default function ResourcesPage() {
         </div>
       </section>
 
+      {/* Publisher banner */}
+      {!searchQuery && (
+        <div className="bg-[#f0fdf4] border-b border-[#d1fae5] py-3">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center gap-2 text-sm text-[#166534]">
+            <Building2 size={15} className="shrink-0" />
+            <span>All resources on this page are published by <strong>{PUBLISHER}</strong> for iTech Network Africa clients and partners.</span>
+          </div>
+        </div>
+      )}
+
       {/* Featured guides */}
       {!searchQuery && (
         <section className="py-16 max-w-7xl mx-auto px-6 lg:px-8 w-full">
@@ -105,6 +176,7 @@ export default function ResourcesPage() {
               <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">Start Here</span>
               <h2 className="text-2xl font-bold text-[#111827]">Featured Guides</h2>
             </div>
+            <span className="text-[#9CA3AF] text-xs hidden sm:block">Published by {PUBLISHER}</span>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURED.map((guide, i) => (
@@ -126,9 +198,14 @@ export default function ResourcesPage() {
                 <h3 className="font-bold text-[#111827] mb-2 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
                 <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-grow">{guide.desc}</p>
                 <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#F3F4F6]">
-                  <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1">
-                    <Clock size={12} /> {guide.time}
-                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1">
+                      <Clock size={11} /> {guide.time}
+                    </span>
+                    <span className="text-[#C4C4C4] text-[10px] flex items-center gap-1">
+                      <Calendar size={10} /> {guide.date} · {PUBLISHER}
+                    </span>
+                  </div>
                   <span className="text-[#3CB52A] text-xs font-bold group-hover:gap-2 flex items-center gap-1 transition-all">
                     Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                   </span>
@@ -142,9 +219,12 @@ export default function ResourcesPage() {
       {/* All resources */}
       <section className="py-12 lg:py-16 max-w-7xl mx-auto px-6 lg:px-8 w-full">
         {!searchQuery && (
-          <div className="mb-8">
-            <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">All Resources</span>
-            <h2 className="text-2xl font-bold text-[#111827]">Resource Library</h2>
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">All Resources</span>
+              <h2 className="text-2xl font-bold text-[#111827]">Resource Library</h2>
+            </div>
+            <span className="text-[#9CA3AF] text-xs hidden sm:block">Published by {PUBLISHER}</span>
           </div>
         )}
         {filteredResources.length === 0 ? (
@@ -155,7 +235,7 @@ export default function ResourcesPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredResources.map((resource, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -172,8 +252,8 @@ export default function ResourcesPage() {
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-[#111827] mb-2 leading-snug">{resource.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed mb-5 flex-grow">{resource.desc}</p>
-                
+                <p className="text-[#6B7280] text-sm leading-relaxed mb-3 flex-grow">{resource.desc}</p>
+                <p className="text-[#C4C4C4] text-[10px] mb-4">{PUBLISHER}</p>
                 <Link href={resource.link} className="mt-auto text-[#0A1929] group-hover:text-[#3CB52A] font-semibold text-sm flex items-center gap-1.5 transition-colors w-fit">
                   Explore <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
                 </Link>

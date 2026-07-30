@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
+const RECIPIENT = 'itechnetworkafrica@gmail.com';
+
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email"),
@@ -32,20 +34,36 @@ const jobs = [
 
 export default function CareersPage() {
   const { toast } = useToast();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", email: "", position: "", portfolio: "", coverLetter: "" },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast({ title: "Application Submitted", description: "Our HR team will review your profile." });
+    const subject = `[Job Application] ${values.position} – ${values.name}`;
+    const body = [
+      `Applicant: ${values.name}`,
+      `Email: ${values.email}`,
+      `Position: ${values.position}`,
+      `Portfolio/LinkedIn: ${values.portfolio || 'N/A'}`,
+      ``,
+      `Cover Letter:`,
+      values.coverLetter,
+    ].join('\n');
+
+    window.open(
+      `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      '_blank'
+    );
+
+    toast({ title: "Application Ready", description: "Your email client has opened. Please hit Send to submit your application." });
     form.reset();
   }
 
   return (
     <div className="flex flex-col w-full bg-white">
-      <PageHero 
+      <PageHero
         badge="Build With Us"
         title="Join Our Team"
         subtitle="Help us build the next generation of enterprise software and AI solutions for the African continent."
@@ -58,7 +76,7 @@ export default function CareersPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-[#111827] mb-6">Why iTech Network Africa?</h2>
             <p className="text-[#6B7280] text-lg">We offer a challenging, fast-paced environment where you can do the best work of your career, solving massive problems at scale.</p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: <Heart size={24} />, title: "Health & Wellness", desc: "Comprehensive health coverage for you and your dependents." },
@@ -81,10 +99,10 @@ export default function CareersPage() {
       {/* Open Positions */}
       <section className="py-20 lg:py-28 max-w-7xl mx-auto px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-[#111827] mb-10">Open Positions</h2>
-        
+
         <div className="grid md:grid-cols-2 gap-6">
           {jobs.map((job, i) => (
-            <motion.div 
+            <motion.div
               key={i}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +118,7 @@ export default function CareersPage() {
                   <span className="flex items-center gap-1 bg-[#F8F9FA] px-2 py-1 rounded">{job.type}</span>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => {
                   form.setValue('position', job.title);
                   document.getElementById('apply-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -121,7 +139,7 @@ export default function CareersPage() {
             <h2 className="text-3xl font-bold mb-4">Submit Your Application</h2>
             <p className="text-[#BDBDBD]">Don't see a perfect fit? Select 'General Application' and we'll keep you in mind.</p>
           </div>
-          
+
           <div className="bg-white rounded-2xl p-8 text-[#111827]">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -149,7 +167,7 @@ export default function CareersPage() {
                     )}
                   />
                 </div>
-                
+
                 <FormField
                   control={form.control}
                   name="position"
@@ -171,7 +189,7 @@ export default function CareersPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="portfolio"
@@ -183,7 +201,7 @@ export default function CareersPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="coverLetter"
@@ -195,9 +213,9 @@ export default function CareersPage() {
                     </FormItem>
                   )}
                 />
-                
-                <button type="submit" className="w-full bg-[#3CB52A] hover:bg-[#2e911f] text-white py-3 rounded-md font-semibold transition-colors mt-4">
-                  Send Application
+
+                <button type="submit" className="w-full flex items-center justify-center gap-2 bg-[#3CB52A] hover:bg-[#2e911f] text-white py-3 rounded-md font-semibold transition-colors mt-4">
+                  Send Application <ArrowRight size={16} />
                 </button>
               </form>
             </Form>

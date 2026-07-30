@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
+const RECIPIENT = 'itechnetworkafrica@gmail.com';
+
 const formSchema = z.object({
   name: z.string().min(2, "Name required"),
   email: z.string().email("Invalid email"),
@@ -54,8 +56,25 @@ export default function ContactPage() {
     defaultValues: { name: '', email: '', phone: '', company: '', interest: '', message: '' },
   });
 
-  function onSubmit() {
-    toast({ title: 'Message Sent', description: 'Thank you. Our team will contact you within 24 hours.' });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const subject = `[Contact Form] ${values.interest} – ${values.name}`;
+    const body = [
+      `Name: ${values.name}`,
+      `Email: ${values.email}`,
+      `Phone: ${values.phone}`,
+      `Company: ${values.company || 'N/A'}`,
+      `Interest: ${values.interest}`,
+      ``,
+      `Message:`,
+      values.message,
+    ].join('\n');
+
+    window.open(
+      `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      '_blank'
+    );
+
+    toast({ title: 'Message Ready', description: 'Your email client has opened with the message pre-filled. Please hit Send to submit.' });
     form.reset();
   }
 
@@ -139,12 +158,12 @@ export default function ContactPage() {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Select service..." /></SelectTrigger></FormControl>
                     <SelectContent>
-                      <SelectItem value="Software Dev">Enterprise Software</SelectItem>
-                      <SelectItem value="AI Solutions">AI & Automation</SelectItem>
-                      <SelectItem value="Cloud">Cloud Infrastructure</SelectItem>
+                      <SelectItem value="Enterprise Software">Enterprise Software</SelectItem>
+                      <SelectItem value="AI & Automation">AI & Automation</SelectItem>
+                      <SelectItem value="Cloud Infrastructure">Cloud Infrastructure</SelectItem>
                       <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
-                      <SelectItem value="Network">Network Solutions</SelectItem>
-                      <SelectItem value="Other">Other Services</SelectItem>
+                      <SelectItem value="Network Solutions">Network Solutions</SelectItem>
+                      <SelectItem value="Other Services">Other Services</SelectItem>
                     </SelectContent>
                   </Select>
                 <FormMessage /></FormItem>
@@ -167,7 +186,6 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
           className="flex flex-col gap-6"
         >
-          {/* Google Maps embed */}
           <div className="flex-1 rounded-3xl overflow-hidden border border-[#E5E7EB] min-h-[280px]">
             <iframe
               title="iTech Network Africa Location"
@@ -181,7 +199,6 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* Quick contact callout */}
           <div className="bg-[#060E18] rounded-3xl p-8">
             <h3 className="text-white font-bold text-xl mb-4">Prefer a direct call?</h3>
             <p className="text-white/55 text-sm mb-6">Our team is available Monday to Friday, 8 AM – 6 PM WAT. For urgent support, we're available 24/7.</p>

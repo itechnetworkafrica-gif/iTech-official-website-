@@ -38,9 +38,26 @@ export default function PartnersPage() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const subject = `[Partner Application] ${values.type} – ${values.company}`;
+    const body = [
+      `Name: ${values.name}`,
+      `Company: ${values.company}`,
+      `Email: ${values.email}`,
+      `Phone: ${values.phone}`,
+      `Partnership Type: ${values.type}`,
+      ``,
+      `Message / Company Profile:`,
+      values.message,
+    ].join('\n');
+
+    window.open(
+      `mailto:itechnetworkafrica@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      '_blank'
+    );
+
     toast({
-      title: "Application Received",
-      description: "Our partnership team will contact you shortly.",
+      title: "Application Ready",
+      description: "Your email client has opened. Please hit Send to submit your application.",
     });
     form.reset();
   }

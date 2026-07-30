@@ -15,6 +15,7 @@ import * as z from 'zod';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+const RECIPIENT = 'itechnetworkafrica@gmail.com';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Full name required'),
@@ -53,8 +54,23 @@ export default function SupportPage() {
     defaultValues: { name: '', email: '', subject: '', message: '' },
   });
 
-  function onSubmit() {
-    toast({ title: 'Ticket Created', description: 'Your support ticket has been logged. Our team will be in touch within 1 hour.' });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const subject = `[Support Ticket] ${values.subject} – ${values.name}`;
+    const body = [
+      `Name: ${values.name}`,
+      `Email: ${values.email}`,
+      `Subject: ${values.subject}`,
+      ``,
+      `Message:`,
+      values.message,
+    ].join('\n');
+
+    window.open(
+      `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      '_blank'
+    );
+
+    toast({ title: 'Ticket Ready', description: 'Your email client has opened. Please hit Send to submit your ticket.' });
     form.reset();
   }
 
@@ -67,24 +83,18 @@ export default function SupportPage() {
   return (
     <div className="flex flex-col w-full bg-white">
 
-      {/* ══════════════════════════════════════
-          HERO — GoDaddy-style: person LEFT, search RIGHT
-      ══════════════════════════════════════ */}
+      {/* HERO */}
       <section className="relative bg-[#DFF0F7] overflow-hidden">
-        {/* Soft background blobs */}
         <div className="absolute -top-20 -left-20 w-[380px] h-[380px] rounded-full bg-[#BDE4F3]/40 pointer-events-none" />
         <div className="absolute top-0 right-0 w-[260px] h-[260px] rounded-full bg-[#C8EBF8]/35 pointer-events-none" />
 
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 pt-0 pb-0 grid lg:grid-cols-[1fr_1.1fr] gap-0 items-end">
-
-          {/* LEFT: person image */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease: EASE }}
             className="hidden lg:flex items-end relative h-[340px]"
           >
-            {/* Name badge — top right of photo */}
             <div className="absolute top-4 right-4 text-right z-20 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-sm">
               <div className="text-xs font-bold text-[#374151]">Alvina K.</div>
               <div className="text-xs text-[#9CA3AF]">iTech Support Guide</div>
@@ -97,14 +107,12 @@ export default function SupportPage() {
             />
           </motion.div>
 
-          {/* RIGHT: heading + search bar */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.08 }}
             className="pb-14 pt-14 pl-0 lg:pl-10"
           >
-            {/* Brand badge */}
             <div className="flex items-center gap-2 mb-5">
               <div className="w-7 h-7 rounded-full bg-[#3CB52A]/15 flex items-center justify-center">
                 <Headphones size={14} className="text-[#3CB52A]" />
@@ -119,7 +127,6 @@ export default function SupportPage() {
               Find guides, troubleshoot issues, or connect with our expert support team — 24/7.
             </p>
 
-            {/* Search bar */}
             <div className="relative max-w-[440px]">
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
               <input
@@ -134,7 +141,6 @@ export default function SupportPage() {
               </button>
             </div>
 
-            {/* Trust row */}
             <div className="flex flex-wrap gap-5 mt-6">
               {['Under 1-hr response', '24/7 availability', 'Expert engineers'].map((t) => (
                 <div key={t} className="flex items-center gap-1.5">
@@ -147,9 +153,7 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          SUPPORT CATEGORIES — icon list row
-      ══════════════════════════════════════ */}
+      {/* SUPPORT CATEGORIES */}
       <section className="bg-white border-b border-[#F3F4F6]">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1">
@@ -170,9 +174,7 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          SUPPORT CHANNELS CARD — overlapping
-      ══════════════════════════════════════ */}
+      {/* SUPPORT CHANNELS */}
       <div className="max-w-[1200px] mx-auto px-6 lg:px-12 w-full -mt-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -182,7 +184,6 @@ export default function SupportPage() {
         >
           <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F3F4F6]">
 
-            {/* Chat Now */}
             <div className="p-8">
               <h3 className="text-xl font-bold text-[#111827] mb-2">Chat Now</h3>
               <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
@@ -208,7 +209,6 @@ export default function SupportPage() {
               <p className="text-xs text-[#9CA3AF] font-medium">7×24 availability</p>
             </div>
 
-            {/* Email Support */}
             <div className="p-8">
               <h3 className="text-xl font-bold text-[#111827] mb-2">Email Support</h3>
               <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
@@ -216,7 +216,7 @@ export default function SupportPage() {
               </p>
               <div className="flex flex-wrap gap-3 mb-4">
                 <a
-                  href="mailto:support@itechnetworkafrica.com"
+                  href={`mailto:${RECIPIENT}`}
                   className="inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
                 >
                   <Mail size={15} />
@@ -232,7 +232,6 @@ export default function SupportPage() {
               <p className="text-xs text-[#9CA3AF] font-medium">Response within 24h</p>
             </div>
 
-            {/* Phone */}
             <div className="p-8">
               <h3 className="text-xl font-bold text-[#111827] mb-2">Call Us</h3>
               <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
@@ -253,13 +252,10 @@ export default function SupportPage() {
         </motion.div>
       </div>
 
-      {/* ══════════════════════════════════════
-          TICKET FORM + FAQ
-      ══════════════════════════════════════ */}
+      {/* TICKET FORM + FAQ */}
       <section className="py-20 lg:py-28 max-w-[1200px] mx-auto px-6 lg:px-12 w-full">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
 
-          {/* Ticket Form */}
           <div id="ticket-form" className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E7EB]">
             <div className="w-12 h-12 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5">
               <LifeBuoy size={22} />
@@ -315,7 +311,6 @@ export default function SupportPage() {
             </Form>
           </div>
 
-          {/* FAQ */}
           <div>
             <div className="w-12 h-12 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5">
               <HelpCircle size={22} />

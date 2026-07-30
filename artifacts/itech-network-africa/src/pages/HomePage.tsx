@@ -70,8 +70,11 @@ const WHY = [
 
 const TESTIMONIALS = [
   { name: 'Emmanuel Togba', role: 'Director of IT, Central Bank of Liberia', quote: 'iTech Network Africa transformed our digital infrastructure. Their team delivered a secure, enterprise-grade platform that has improved our operational efficiency by 40%.', rating: 5 },
-  { name: 'Fatima Kamara', role: 'CEO, West Africa Logistics Group', quote: 'Exceptional technical expertise combined with an understanding of the African business landscape. Our ERP went live on time, on budget — rare in this industry.', rating: 5 },
+  { name: 'Fatima Kamara', role: 'CEO, West Africa Logistics Group', quote: 'Exceptional technical expertise combined with a deep understanding of the African business landscape. Our ERP went live on time, on budget — rare in this industry.', rating: 5 },
   { name: 'Samuel Kollie', role: 'CTO, Liberia Telecom Authority', quote: 'Their AI automation suite reduced our manual processing time by 60%. I would not trust our digital future to any other tech partner in the region.', rating: 5 },
+  { name: 'Grace Mensah', role: 'Head of Digital, Accra Commercial Bank', quote: 'The mobile banking platform iTech built for us has been flawless since launch. Over 120,000 users and zero downtime in eight months — truly world-class engineering.', rating: 5 },
+  { name: 'James Obiora', role: 'CEO, Lagos Freight Services', quote: 'iTech delivered our logistics management system three weeks ahead of schedule. The quality of their work and after-delivery support is second to none.', rating: 5 },
+  { name: 'Amara Conteh', role: 'Director General, Sierra Leone Revenue Authority', quote: 'Since deploying iTech\'s enterprise tax platform our collections have increased by 28%. The system is reliable, secure, and our staff love it.', rating: 5 },
 ];
 
 /* ─── Hero Slides data ─── */
@@ -481,8 +484,41 @@ function TestimonialsSlider() {
 
         {/* Slider */}
         <div className="relative">
-          {/* Cards track */}
-          <div className="overflow-hidden rounded-3xl">
+
+          {/* ── Mobile: single card ── */}
+          <div className="md:hidden overflow-hidden rounded-3xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -60 }}
+                transition={{ duration: 0.4, ease: EASE }}
+                className="relative bg-white rounded-3xl p-7 border border-[#3CB52A]/25 shadow-xl"
+              >
+                <div className="absolute top-0 left-7 w-1 h-10 bg-[#3CB52A] rounded-b-full" />
+                <Quote size={26} className="mb-4 text-[#3CB52A]" />
+                <p className="text-[#374151] text-base leading-relaxed mb-6 italic">"{TESTIMONIALS[active].quote}"</p>
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(TESTIMONIALS[active].rating)].map((_, j) => (
+                    <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />
+                  ))}
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-sm shrink-0">
+                    {TESTIMONIALS[active].name[0]}
+                  </div>
+                  <div>
+                    <div className="text-[#111827] font-bold text-sm">{TESTIMONIALS[active].name}</div>
+                    <div className="text-[#9CA3AF] text-xs mt-0.5">{TESTIMONIALS[active].role}</div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* ── Desktop: 3 cards ── */}
+          <div className="hidden md:block overflow-hidden rounded-3xl">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
