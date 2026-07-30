@@ -17,6 +17,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const formSchema = z.object({
+  name: z.string().min(2, 'Full name required'),
   email: z.string().email('Invalid email'),
   subject: z.string().min(5, 'Subject required'),
   message: z.string().min(10, 'Message required'),
@@ -49,13 +50,19 @@ export default function SupportPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: '', subject: '', message: '' },
+    defaultValues: { name: '', email: '', subject: '', message: '' },
   });
 
   function onSubmit() {
-    toast({ title: 'Ticket Created', description: 'Your support ticket has been logged. Check your email.' });
+    toast({ title: 'Ticket Created', description: 'Your support ticket has been logged. Our team will be in touch within 1 hour.' });
     form.reset();
   }
+
+  const filteredFaqs = faqs.filter(f =>
+    !searchQuery.trim() ||
+    f.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    f.a.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <div className="flex flex-col w-full bg-white">
@@ -263,6 +270,13 @@ export default function SupportPage() {
             </p>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <FormField control={form.control} name="name" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[#374151] font-semibold text-sm">Full Name</FormLabel>
+                    <FormControl><Input placeholder="Your full name" className="rounded-xl" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[#374151] font-semibold text-sm">Account Email</FormLabel>
@@ -310,8 +324,11 @@ export default function SupportPage() {
             <p className="text-[#6B7280] mb-8 text-sm leading-relaxed">
               Quick answers to common administrative and technical questions.
             </p>
+            {filteredFaqs.length === 0 && (
+              <p className="text-[#9CA3AF] text-sm py-4">No results for "<strong>{searchQuery}</strong>". Try a different term.</p>
+            )}
             <Accordion type="single" collapsible className="w-full space-y-3">
-              {faqs.map((faq, i) => (
+              {filteredFaqs.map((faq, i) => (
                 <AccordionItem
                   key={i}
                   value={`item-${i}`}

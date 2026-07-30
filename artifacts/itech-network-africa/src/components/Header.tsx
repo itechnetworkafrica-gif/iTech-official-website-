@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Menu, Search, Phone, HelpCircle, User, PhoneCall, X, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { AccountDropdown } from './AccountDropdown';
@@ -11,15 +11,63 @@ const PHONE = '+231761978796';
 /* Primary nav items only */
 const primaryNav = navigationData.filter(n => primaryNavIds.includes(n.id));
 
+/* ── Searchable content index ── */
+const SEARCH_INDEX = [
+  { title: 'Home', href: '/', desc: 'iTech Network Africa homepage', category: 'Pages' },
+  { title: 'About Us', href: '/about', desc: 'Our story, team, mission and values', category: 'Pages' },
+  { title: 'Services', href: '/services', desc: 'All technology services we offer', category: 'Pages' },
+  { title: 'AI Solutions', href: '/ai-solutions', desc: 'Machine learning, automation and AI products', category: 'Pages' },
+  { title: 'Portfolio', href: '/portfolio', desc: 'Case studies and project showcase', category: 'Pages' },
+  { title: 'Projects', href: '/projects', desc: 'Current and completed projects', category: 'Pages' },
+  { title: 'Industries', href: '/industries', desc: 'Sectors and industries we specialise in', category: 'Pages' },
+  { title: 'Solutions', href: '/solutions', desc: 'Technology solutions by business need', category: 'Pages' },
+  { title: 'Products', href: '/products', desc: 'Our software products and platforms', category: 'Pages' },
+  { title: 'Partners', href: '/partners', desc: 'Partner program and strategic alliances', category: 'Pages' },
+  { title: 'Blog & Insights', href: '/blog', desc: 'Tech insights, news and company updates', category: 'Pages' },
+  { title: 'Careers', href: '/careers', desc: 'Join our team – open positions', category: 'Pages' },
+  { title: 'Contact', href: '/contact', desc: 'Get in touch or request a quote', category: 'Pages' },
+  { title: 'Pricing', href: '/pricing', desc: 'Software and service pricing plans', category: 'Pages' },
+  { title: 'Support / Help Center', href: '/support', desc: 'Help center, tickets and FAQs', category: 'Pages' },
+  { title: 'Client Portal', href: '/portal', desc: 'Login to your client dashboard', category: 'Pages' },
+  { title: 'Resources', href: '/resources', desc: 'Documentation, APIs and tutorials', category: 'Pages' },
+  { title: 'Enterprise Software', href: '/services', desc: 'Custom ERP, CRM and business platforms', category: 'Services' },
+  { title: 'Web Development', href: '/services', desc: 'Custom web application development', category: 'Services' },
+  { title: 'Mobile App Development', href: '/services', desc: 'iOS and Android app development', category: 'Services' },
+  { title: 'Cloud Infrastructure', href: '/services', desc: 'AWS, Azure and Google Cloud solutions', category: 'Services' },
+  { title: 'Cybersecurity', href: '/services', desc: 'Security audits, compliance and threat protection', category: 'Services' },
+  { title: 'AI & Automation', href: '/ai-solutions', desc: 'Machine learning and intelligent automation', category: 'Services' },
+  { title: 'IT Support & Managed Services', href: '/support', desc: '24/7 managed IT support and monitoring', category: 'Services' },
+  { title: 'Network Solutions', href: '/services', desc: 'Enterprise networking and connectivity', category: 'Services' },
+  { title: 'Privacy Policy', href: '/privacy-policy', desc: 'Our data privacy practices', category: 'Legal' },
+  { title: 'Terms & Conditions', href: '/terms', desc: 'Legal terms of service', category: 'Legal' },
+  { title: 'Cookies Policy', href: '/cookies', desc: 'How we use cookies', category: 'Legal' },
+  { title: 'Refund Policy', href: '/refund-policy', desc: 'Refund and cancellation terms', category: 'Legal' },
+];
+
+function getResults(query: string) {
+  const q = query.toLowerCase().trim();
+  if (q.length < 2) return [];
+  return SEARCH_INDEX.filter(
+    item =>
+      item.title.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q),
+  ).slice(0, 7);
+}
+
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const [, navigate] = useLocation();
+
+  const searchResults = getResults(searchQuery);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -29,15 +77,21 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     if (isSearchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
+    else setSearchQuery('');
   }, [isSearchOpen]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { setIsSearchOpen(false); setActiveMenu(null); }
+      if (e.key === 'Enter' && isSearchOpen && searchResults.length > 0) {
+        navigate(searchResults[0].href);
+        setIsSearchOpen(false);
+        setSearchQuery('');
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [isSearchOpen, searchResults, navigate]);
 
   /* Close menu when clicking outside */
   useEffect(() => {
@@ -66,6 +120,12 @@ export const Header: React.FC = () => {
   const toggleAccountDropdown = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsAccountDropdownOpen(!isAccountDropdownOpen);
+  };
+
+  const handleResultClick = (href: string) => {
+    navigate(href);
+    setIsSearchOpen(false);
+    setSearchQuery('');
   };
 
   return (
@@ -211,21 +271,67 @@ export const Header: React.FC = () => {
           </div>
         </nav>
 
-        {/* ── Search bar ── */}
+        {/* ── Search bar + results ── */}
         {isSearchOpen && (
-          <div className="bg-[#1A1A1A] border-t border-white/10 px-4 lg:px-8 py-3">
-            <div className="max-w-[1400px] mx-auto flex items-center gap-3">
-              <Search size={16} className="text-white/40 shrink-0" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search services, solutions, resources…"
-                className="flex-1 bg-transparent text-white placeholder-white/30 outline-none text-sm"
-              />
-              <button onClick={() => setIsSearchOpen(false)} className="text-white/40 hover:text-white transition-colors text-sm shrink-0">
-                Cancel
-              </button>
+          <div className="bg-[#1A1A1A] border-t border-white/10">
+            <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-3">
+              <div className="flex items-center gap-3">
+                <Search size={16} className="text-white/40 shrink-0" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search pages, services, resources…"
+                  className="flex-1 bg-transparent text-white placeholder-white/30 outline-none text-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="text-white/40 hover:text-white transition-colors shrink-0">
+                    <X size={14} />
+                  </button>
+                )}
+                <button onClick={() => setIsSearchOpen(false)} className="text-white/40 hover:text-white transition-colors text-sm shrink-0 pl-2 border-l border-white/10">
+                  Cancel
+                </button>
+              </div>
             </div>
+
+            {/* Results dropdown */}
+            {searchResults.length > 0 && (
+              <div className="max-w-[1400px] mx-auto px-4 lg:px-8 pb-4">
+                <div className="bg-[#111] border border-white/10 rounded-xl overflow-hidden">
+                  {searchResults.map((result, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleResultClick(result.href)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white text-sm font-medium group-hover:text-[#3CB52A] transition-colors truncate">
+                            {result.title}
+                          </span>
+                          <span className="text-[10px] font-semibold text-white/30 uppercase tracking-wider shrink-0 bg-white/5 px-2 py-0.5 rounded-full">
+                            {result.category}
+                          </span>
+                        </div>
+                        <p className="text-white/40 text-xs mt-0.5 truncate">{result.desc}</p>
+                      </div>
+                      <ArrowRight size={13} className="text-white/20 group-hover:text-[#3CB52A] transition-colors shrink-0" />
+                    </button>
+                  ))}
+                  <div className="px-4 py-2.5 bg-white/3 border-t border-white/5">
+                    <p className="text-white/30 text-xs">Press <kbd className="bg-white/10 text-white/50 px-1.5 py-0.5 rounded text-[10px]">Enter</kbd> to go to top result · <kbd className="bg-white/10 text-white/50 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> to close</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {searchQuery.length >= 2 && searchResults.length === 0 && (
+              <div className="max-w-[1400px] mx-auto px-4 lg:px-8 pb-4">
+                <p className="text-white/35 text-sm">No results for "<span className="text-white/60">{searchQuery}</span>". Try a different term.</p>
+              </div>
+            )}
           </div>
         )}
       </header>
@@ -324,22 +430,3 @@ const ServicesPanel: React.FC<{
     </div>
   );
 };
-
-/* ─────────────────────────────────────────
-   Small icon link helper
-───────────────────────────────────────── */
-interface HeaderIconLinkProps {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-}
-
-const HeaderIconLink: React.FC<HeaderIconLinkProps> = ({ icon, label, href }) => (
-  <Link
-    href={href}
-    className="hidden sm:flex text-white transition-all duration-200 p-2 rounded-full items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
-    title={label}
-  >
-    {icon}
-  </Link>
-);

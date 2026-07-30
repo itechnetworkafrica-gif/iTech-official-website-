@@ -207,7 +207,7 @@ function HeroSlider() {
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.75, ease: EASE }}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: slide.imgPosition }}
+          style={{ objectPosition: slide.imgPosition, filter: 'blur(3px)', transform: 'scale(1.04)' }}
         />
       </AnimatePresence>
 

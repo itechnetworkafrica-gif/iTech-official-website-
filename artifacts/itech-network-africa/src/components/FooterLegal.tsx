@@ -3,9 +3,10 @@ import { Link } from 'wouter';
 
 export const FooterLegal: React.FC = () => {
   const links = [
-    { label: 'Legal', href: '/terms' },
+    { label: 'Terms & Conditions', href: '/terms' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
-    { label: 'Cookies', href: '/cookies' },
+    { label: 'Cookies Policy', href: '/cookies' },
+    { label: 'Refund Policy', href: '/refund-policy' },
   ];
 
   return (

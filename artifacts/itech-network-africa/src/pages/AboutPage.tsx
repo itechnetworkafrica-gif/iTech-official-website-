@@ -61,14 +61,51 @@ const profileStats = [
 ];
 
 const partnerLogos = [
-  { name: 'Microsoft', abbr: 'MS', color: '#0078D4' },
-  { name: 'Google', abbr: 'GG', color: '#4285F4' },
-  { name: 'AWS', abbr: 'AWS', color: '#FF9900' },
-  { name: 'Cisco', abbr: 'CSC', color: '#049FD9' },
-  { name: 'Oracle', abbr: 'ORC', color: '#F80000' },
-  { name: 'Huawei', abbr: 'HW', color: '#CF0A2C' },
-  { name: 'Zoom', abbr: 'ZM', color: '#2D8CFF' },
-  { name: 'Salesforce', abbr: 'SF', color: '#00A1E0' },
+  {
+    name: 'Lumigrow Digital',
+    abbr: 'LD',
+    color: '#6366F1',
+    url: 'https://lumigrowdigitalagency.online',
+    domain: 'lumigrowdigitalagency.online',
+    category: 'Digital Agency',
+    desc: 'A creative digital agency delivering brand strategy, web design, and marketing solutions.',
+  },
+  {
+    name: 'Capacity For Youth',
+    abbr: 'C4Y',
+    color: '#3CB52A',
+    url: 'https://youthcapacity.org',
+    domain: 'youthcapacity.org',
+    category: 'NGO / Youth Dev',
+    desc: 'Empowering young people across Africa through skills development, mentorship, and opportunity.',
+  },
+  {
+    name: 'Health Tech Liberia',
+    abbr: 'HTL',
+    color: '#0D9488',
+    url: 'https://healthtech-liberia.org',
+    domain: 'healthtech-liberia.org',
+    category: 'Health Technology',
+    desc: 'Advancing healthcare delivery in Liberia through digital health infrastructure and telemedicine.',
+  },
+  {
+    name: 'Softnet Africa',
+    abbr: 'SNA',
+    color: '#0A7EBF',
+    url: 'https://softnetafrica.com',
+    domain: 'softnetafrica.com',
+    category: 'Software & Networks',
+    desc: 'Pan-African technology company specialising in software development and network infrastructure.',
+  },
+  {
+    name: 'B4P CodeFound',
+    abbr: 'B4P',
+    color: '#F59E0B',
+    url: 'https://b4pcodefound.org',
+    domain: 'b4pcodefound.org',
+    category: 'Tech Education',
+    desc: 'Bridging the coding skills gap in Africa through bootcamps, scholarships, and community outreach.',
+  },
 ];
 
 const portfolioProjects = [
@@ -292,8 +329,8 @@ export default function AboutPage() {
             transition={{ duration: 0.55, delay: 0.18 }}
             className="text-white/60 text-xl leading-relaxed max-w-2xl"
           >
-            A pan-African technology powerhouse founded in Monrovia, Liberia — dedicated to
-            transforming the continent through world-class digital innovation and enterprise solutions.
+            A global technology company founded in Monrovia, Liberia — dedicated to
+            transforming businesses and communities worldwide through world-class digital innovation and enterprise solutions.
           </motion.p>
 
           {/* Quick anchor nav */}
@@ -520,7 +557,7 @@ export default function AboutPage() {
                   { label: 'Industry', value: 'Information & Communication Technology (ICT)' },
                   { label: 'Headquarters', value: 'Monrovia, Liberia' },
                   { label: 'Founded', value: '2023' },
-                  { label: 'Operations', value: '10+ African Countries' },
+                  { label: 'Operations', value: 'Global — 20+ Countries' },
                   { label: 'Specialisation', value: 'Enterprise Software, AI, Cybersecurity, Cloud' },
                 ].map((row, i) => (
                   <div key={i} className="flex items-start gap-4 py-4 border-b border-[#F3F4F6]">
@@ -549,28 +586,41 @@ export default function AboutPage() {
       <section id="partners" className="py-24 lg:py-32 bg-[#F8F9FA]">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">Technology Alliances</span>
+            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">Strategic Partners</span>
             <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">Our Partners</h2>
             <p className="mt-5 text-[#6B7280] text-lg">
-              We partner with the world's leading technology companies to deliver best-in-class solutions.
+              We collaborate with trusted organisations across technology, health, education, and youth development to amplify our global impact.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {partnerLogos.map((p, i) => (
-              <motion.div
+              <motion.a
                 key={i}
-                {...stagger(i, 0.04)}
-                className="bg-white rounded-2xl p-8 border border-[#E5E7EB] hover:border-[#3CB52A]/30 hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center gap-3 text-center group"
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...stagger(i, 0.07)}
+                className="bg-white rounded-2xl p-7 border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex gap-5 items-start group"
               >
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center text-white text-sm font-bold"
+                  className="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
                   style={{ backgroundColor: p.color }}
                 >
                   {p.abbr}
                 </div>
-                <span className="text-sm font-semibold text-[#0A0A0A] group-hover:text-[#3CB52A] transition-colors">{p.name}</span>
-              </motion.div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h4 className="font-bold text-[#0A0A0A] group-hover:text-[#3CB52A] transition-colors leading-snug">{p.name}</h4>
+                    <ExternalLink size={14} className="text-[#D1D5DB] group-hover:text-[#3CB52A] transition-colors shrink-0" />
+                  </div>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2" style={{ background: `${p.color}18`, color: p.color }}>
+                    {p.category}
+                  </span>
+                  <p className="text-[#6B7280] text-sm leading-relaxed">{p.desc}</p>
+                  <p className="text-[#9CA3AF] text-xs font-mono mt-2 truncate">{p.domain}</p>
+                </div>
+              </motion.a>
             ))}
           </div>
 
