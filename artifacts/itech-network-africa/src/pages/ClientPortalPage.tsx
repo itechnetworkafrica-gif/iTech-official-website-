@@ -24,7 +24,8 @@ export default function ClientPortalPage() {
     <div className="flex flex-col w-full">
       {/* Hero */}
       <section className="relative bg-[#060E18] pt-20 pb-28 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#3CB52A]/10 rounded-full blur-[120px]" />
+        <img src="/hero-man-hoodie-laptop.jpg" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" style={{ opacity: 0.30 }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(6,14,24,0.60) 0%, rgba(6,14,24,0.90) 100%)' }} />
         <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#3CB52A]/15 border border-[#3CB52A]/30 mb-8">

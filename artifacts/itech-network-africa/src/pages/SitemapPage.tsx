@@ -6,8 +6,10 @@ import { navigationData } from '@/components/NavigationData';
 export default function SitemapPage() {
   return (
     <div className="flex flex-col w-full">
-      <section className="bg-[#060E18] pt-20 pb-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="relative bg-[#060E18] pt-20 pb-20 overflow-hidden">
+        <img src="/hero-man-denim.jpg" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" style={{ opacity: 0.28 }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(6,14,24,0.97) 0%, rgba(6,14,24,0.85) 60%, rgba(6,14,24,0.65) 100%)' }} />
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl font-bold text-white mb-4">
             Sitemap
           </motion.h1>

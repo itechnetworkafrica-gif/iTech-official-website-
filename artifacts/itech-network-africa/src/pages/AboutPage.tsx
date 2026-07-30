@@ -198,15 +198,20 @@ export default function AboutPage() {
           PAGE HERO
       ═══════════════════════════════════════ */}
       <section className="relative bg-[#060E18] pt-20 pb-28 overflow-hidden">
+        <img
+          src="/hero-event-audience.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ opacity: 0.32 }}
+        />
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
-            backgroundSize: '60px 60px',
+            background:
+              'linear-gradient(to right, rgba(6,14,24,0.97) 0%, rgba(6,14,24,0.88) 55%, rgba(6,14,24,0.65) 100%), linear-gradient(to bottom, rgba(6,14,24,0.10) 0%, rgba(6,14,24,0.70) 100%)',
           }}
         />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#3CB52A]/12 rounded-full blur-[130px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
           {/* Breadcrumb */}
@@ -571,7 +576,7 @@ export default function AboutPage() {
           9. CAREERS
       ═══════════════════════════════════════ */}
       <section id="careers" className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <img src="/hero-women-phone.jpg" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" style={{ opacity: 0.12 }} />
         <div className="max-w-5xl mx-auto px-6 lg:px-10 text-center relative z-10">
           <motion.div {...fadeUp}>
             <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Join the Team</span>
