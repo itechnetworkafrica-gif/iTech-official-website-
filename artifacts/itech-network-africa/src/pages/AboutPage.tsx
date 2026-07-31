@@ -40,7 +40,7 @@ const timeline = [
   { year: '2023', title: 'First Contracts', desc: 'Secured initial software development and IT consulting projects with local businesses and institutions.' },
   { year: '2024', title: 'Service Expansion', desc: 'Launched cybersecurity, cloud infrastructure, and AI solutions divisions, growing team capabilities.' },
   { year: '2024', title: 'Regional Growth', desc: 'Extended services across West Africa, partnering with financial institutions, NGOs and government agencies.' },
-  { year: '2025', title: 'Pan-African Reach', desc: 'Operating in 10+ African countries, delivering 500+ projects for 200+ enterprise clients.' },
+  { year: '2025', title: 'Pan-African Reach', desc: 'Operating in 5+ African countries, delivering 20+ projects for 30+ enterprise clients.' },
 ];
 
 const team = [
@@ -53,9 +53,9 @@ const team = [
 
 const profileStats = [
   { value: '2023', label: 'Year Founded' },
-  { value: '10+', label: 'Countries' },
-  { value: '200+', label: 'Enterprise Clients' },
-  { value: '500+', label: 'Projects Delivered' },
+  { value: '5+', label: 'Countries' },
+  { value: '30+', label: 'Enterprise Clients' },
+  { value: '20+', label: 'Projects Delivered' },
   { value: '5', label: 'Core Team' },
   { value: '99%', label: 'Client Satisfaction' },
 ];
@@ -372,7 +372,7 @@ export default function AboutPage() {
               </p>
               <p className="text-[#6B7280] text-lg leading-relaxed mb-5">
                 What started as a specialised IT consultancy rapidly evolved into a comprehensive technology
-                powerhouse. We now serve over 10 countries across the continent, delivering enterprise-grade
+                powerhouse. We now serve over 5 countries across the continent, delivering enterprise-grade
                 software, AI solutions, and digital infrastructure to governments, financial institutions, and
                 growing businesses.
               </p>

@@ -61,8 +61,8 @@ const PROCESS = [
 ];
 
 const WHY = [
-  { icon: <Globe size={22} />, title: 'Pan-African Expertise', desc: 'Operating in 10+ African countries with deep local market insight.' },
-  { icon: <Award size={22} />, title: 'Proven Track Record', desc: '500+ successful projects across government, banking and enterprise sectors.' },
+  { icon: <Globe size={22} />, title: 'Pan-African Expertise', desc: 'Operating in 5+ African countries with deep local market insight.' },
+  { icon: <Award size={22} />, title: 'Proven Track Record', desc: '20+ successful projects across government, NGO and enterprise sectors.' },
   { icon: <TrendingUp size={22} />, title: '99% Delivery Rate', desc: 'On time, on budget — every engagement backed by SLA guarantees.' },
   { icon: <Shield size={22} />, title: 'ISO-Aligned Security', desc: 'Enterprise-grade data protection and compliance baked in from day one.' },
   { icon: <Users size={22} />, title: '24/7 Support', desc: 'Dedicated account managers and round-the-clock technical assistance.' },
@@ -70,12 +70,12 @@ const WHY = [
 ];
 
 const TESTIMONIALS = [
-  { name: 'Emmanuel Togba', role: 'Director of IT, Central Bank of Liberia', quote: 'iTech Network Africa transformed our digital infrastructure. Their team delivered a secure, enterprise-grade platform that has improved our operational efficiency by 40%.', rating: 5 },
-  { name: 'Fatima Kamara', role: 'CEO, West Africa Logistics Group', quote: 'Exceptional technical expertise combined with a deep understanding of the African business landscape. Our ERP went live on time, on budget — rare in this industry.', rating: 5 },
-  { name: 'Samuel Kollie', role: 'CTO, Liberia Telecom Authority', quote: 'Their AI automation suite reduced our manual processing time by 60%. I would not trust our digital future to any other tech partner in the region.', rating: 5 },
-  { name: 'Grace Mensah', role: 'Head of Digital, Accra Commercial Bank', quote: 'The mobile banking platform iTech built for us has been flawless since launch. Over 120,000 users and zero downtime in eight months — truly world-class engineering.', rating: 5 },
-  { name: 'James Obiora', role: 'CEO, Lagos Freight Services', quote: 'iTech delivered our logistics management system three weeks ahead of schedule. The quality of their work and after-delivery support is second to none.', rating: 5 },
-  { name: 'Amara Conteh', role: 'Director General, Sierra Leone Revenue Authority', quote: 'Since deploying iTech\'s enterprise tax platform our collections have increased by 28%. The system is reliable, secure, and our staff love it.', rating: 5 },
+  { name: 'Health Tech Liberia', role: 'Digital Health Platform', quote: 'iTech Network Africa built our entire patient-provider platform from the ground up. The digital health records system and telemedicine integration have transformed how we deliver care across Liberia.', rating: 5 },
+  { name: 'Galaxy International', role: 'International Business Group', quote: 'Our corporate website and CMS delivered by iTech is exactly what we envisioned — clean, responsive, and easy for our team to manage. Their design sense and attention to brand detail is outstanding.', rating: 5 },
+  { name: 'B4P Code Found', role: 'NGO · Coding Education Africa', quote: 'iTech built us a platform that truly represents our mission. The donation integration works flawlessly and the programme pages have helped us reach thousands more young coders across Africa.', rating: 5 },
+  { name: 'DKS Incubation Center', role: 'Startup Incubation Institution', quote: 'The online application portal iTech developed has completely streamlined how we receive and review applicants. What used to take weeks now takes days. The team was professional from day one.', rating: 5 },
+  { name: 'Lewanah LLC', role: 'E-commerce · US Market', quote: 'Running a digital brand across borders is complex, but iTech made it seamless. Our e-commerce platform handles orders, payments, and product management without a hitch. Highly recommended.', rating: 5 },
+  { name: 'Agrolite', role: 'Agricultural Organisation', quote: 'Our website finally reflects the quality of work we do in the field. The blog, gallery, and outreach pages iTech built have helped us connect with farming communities in ways we never could before.', rating: 5 },
 ];
 
 /* ─── Hero Slides data ─── */
@@ -132,8 +132,8 @@ const HERO_SLIDES = [
     imgAlt: 'Pan-African operations',
     imgPosition: 'center top',
     stats: [
-      { value: '10+', label: 'Countries Served' },
-      { value: '200+', label: 'Enterprise Clients' },
+      { value: '5+', label: 'Countries Served' },
+      { value: '30+', label: 'Enterprise Clients' },
       { value: '2023', label: 'Founded' },
     ],
   },
@@ -925,7 +925,7 @@ export default function HomePage() {
             Ready to Transform Your Business?
           </h2>
           <p className="text-white/80 text-lg mb-10">
-            Join 200+ enterprises across Africa that trust iTech Network Africa to power their digital future.
+            Join 30+ enterprises across Africa that trust iTech Network Africa to power their digital future.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#3CB52A] font-black px-10 py-4 rounded-xl hover:bg-white/90 transition-colors shadow-xl">
