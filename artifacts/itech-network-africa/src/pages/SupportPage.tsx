@@ -93,17 +93,84 @@ export default function SupportPage() {
             initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease: EASE }}
-            className="hidden lg:flex items-end relative h-[340px]"
+            className="hidden lg:flex items-end justify-center relative h-[360px]"
           >
-            <div className="absolute top-4 right-4 text-right z-20 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-sm">
-              <div className="text-xs font-bold text-[#374151]">Alvina K.</div>
-              <div className="text-xs text-[#9CA3AF]">iTech Support Guide</div>
-            </div>
+            {/* Decorative rings */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full border-2 border-[#3CB52A]/20 pointer-events-none" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[220px] h-[220px] rounded-full border border-[#3CB52A]/15 pointer-events-none" />
+
+            {/* Glow blob behind person */}
+            <div
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[280px] h-[280px] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse at 50% 80%, rgba(60,181,42,0.18) 0%, transparent 70%)' }}
+            />
+
+            {/* Floating badge — top left */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5, ease: EASE }}
+              className="absolute top-8 left-2 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 flex items-center gap-2.5 border border-[#E5E7EB]"
+            >
+              <div className="w-7 h-7 rounded-lg bg-[#f0fdf4] flex items-center justify-center shrink-0">
+                <CheckCircle2 size={14} className="text-[#3CB52A]" />
+              </div>
+              <div>
+                <div className="text-[10px] font-black text-[#111827] leading-none">Under 1-hr</div>
+                <div className="text-[9px] text-[#9CA3AF] mt-0.5">Response Time</div>
+              </div>
+            </motion.div>
+
+            {/* Floating badge — top right */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.65, duration: 0.5, ease: EASE }}
+              className="absolute top-10 right-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 flex items-center gap-2.5 border border-[#E5E7EB]"
+            >
+              <div className="w-7 h-7 rounded-lg bg-[#eff6ff] flex items-center justify-center shrink-0">
+                <Headphones size={14} className="text-[#0A7EBF]" />
+              </div>
+              <div>
+                <div className="text-[10px] font-black text-[#111827] leading-none">24 / 7</div>
+                <div className="text-[9px] text-[#9CA3AF] mt-0.5">Live Support</div>
+              </div>
+            </motion.div>
+
+            {/* Floating name card — bottom right */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5, ease: EASE }}
+              className="absolute bottom-14 right-0 z-20 bg-[#0A1929] rounded-xl shadow-xl px-3.5 py-2.5 flex items-center gap-2.5 border border-white/10"
+            >
+              <div className="w-7 h-7 rounded-full bg-[#3CB52A] flex items-center justify-center shrink-0 text-white font-black text-[11px]">
+                F
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-white leading-none">Foday S.</div>
+                <div className="text-[9px] text-white/50 mt-0.5">Senior Support Engineer</div>
+              </div>
+              <div className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse ml-1" />
+            </motion.div>
+
+            {/* Dot-grid decoration — top left corner */}
+            <div
+              className="absolute top-4 left-4 w-[80px] h-[80px] pointer-events-none opacity-40"
+              style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1.5px, transparent 1.5px)', backgroundSize: '12px 12px' }}
+            />
+            {/* Dot-grid decoration — bottom right corner */}
+            <div
+              className="absolute bottom-4 right-4 w-[60px] h-[60px] pointer-events-none opacity-30"
+              style={{ backgroundImage: 'radial-gradient(circle, #0A7EBF 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }}
+            />
+
+            {/* Person image */}
             <img
-              src="/team-alvina.png"
-              alt="iTech Support Guide"
-              className="h-full object-cover object-top"
-              style={{ maxWidth: '340px' }}
+              src="/support-agent.png"
+              alt="iTech Support Agent"
+              className="relative z-10 h-[340px] object-contain object-bottom drop-shadow-xl"
+              style={{ maxWidth: '300px' }}
             />
           </motion.div>
 
