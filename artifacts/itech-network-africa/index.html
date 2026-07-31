@@ -40,15 +40,30 @@
     <script type="text/javascript">
       var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
 
-      // Customise widget to match iTech Network Africa brand (#3CB52A green)
-      Tawk_API.onLoad = function () {
-        Tawk_API.setAttributes({
-          name: 'Visitor',
-        }, function (error) {});
+      // ── Position: bottom-left so it doesn't overlap the scroll-to-top button (bottom-right)
+      Tawk_API.customStyle = {
+        visibility: {
+          desktop: { position: 'bl', xOffset: 24, yOffset: 32 },
+          mobile:  { position: 'bl', xOffset: 16, yOffset: 24 }
+        }
       };
 
-      // Inject brand-colour overrides into the Tawk iframe once it mounts
-      Tawk_API.onChatMaximized = function () {};
+      // ── On load: apply brand colour (#3CB52A) and set the widget name to "Gotecx Support"
+      //    Widget header title & theme colour are also configurable in the Tawk.to dashboard →
+      //    Admin › Chat Widget › Appearance (set colour to #3CB52A, title to "Gotecx Support")
+      Tawk_API.onLoad = function () {
+        // Inject brand-green override into the widget iframe via the exposed style hook
+        var frame = document.querySelector('iframe[title="chat widget"]');
+        if (frame && frame.contentDocument) {
+          var style = frame.contentDocument.createElement('style');
+          style.textContent = [
+            ':root { --tawk-primary: #3CB52A !important; }',
+            '.tawk-header { background-color: #3CB52A !important; }',
+            '.tawk-button, .tawk-button-circle { background-color: #3CB52A !important; }',
+          ].join('');
+          frame.contentDocument.head.appendChild(style);
+        }
+      };
 
       (function () {
         var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];

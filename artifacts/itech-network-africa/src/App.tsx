@@ -7,7 +7,6 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ScrollToTop } from '@/components/ScrollToTop';
-import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { RouteScrollReset } from '@/components/RouteScrollReset';
 
 // Page Imports
@@ -72,7 +71,6 @@ function Router() {
       </main>
       <Footer />
       <ScrollToTop />
-      <WhatsAppWidget />
     </div>
   );
 }
