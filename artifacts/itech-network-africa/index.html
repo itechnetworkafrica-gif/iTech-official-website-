@@ -35,5 +35,30 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+      var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+
+      // Customise widget to match iTech Network Africa brand (#3CB52A green)
+      Tawk_API.onLoad = function () {
+        Tawk_API.setAttributes({
+          name: 'Visitor',
+        }, function (error) {});
+      };
+
+      // Inject brand-colour overrides into the Tawk iframe once it mounts
+      Tawk_API.onChatMaximized = function () {};
+
+      (function () {
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/6a6cd7ee20d7701d492bff8c/1jusimvgh';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+    <!--End of Tawk.to Script-->
   </body>
 </html>
