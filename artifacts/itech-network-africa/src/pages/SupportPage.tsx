@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { motion } from 'framer-motion';
 import {
   MessageSquare, Mail, Phone, LifeBuoy,
@@ -408,8 +407,6 @@ export default function SupportPage() {
           </div>
         </div>
       </section>
-
-      <WhatsAppWidget />
     </div>
   );
 }

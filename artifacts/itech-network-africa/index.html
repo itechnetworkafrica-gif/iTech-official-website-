@@ -35,45 +35,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-      var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-
-      // ── Position: bottom-left so it doesn't overlap the scroll-to-top button (bottom-right)
-      Tawk_API.customStyle = {
-        visibility: {
-          desktop: { position: 'bl', xOffset: 24, yOffset: 32 },
-          mobile:  { position: 'bl', xOffset: 16, yOffset: 24 }
-        }
-      };
-
-      // ── On load: apply brand colour (#3CB52A) and set the widget name to "Gotecx Support"
-      //    Widget header title & theme colour are also configurable in the Tawk.to dashboard →
-      //    Admin › Chat Widget › Appearance (set colour to #3CB52A, title to "Gotecx Support")
-      Tawk_API.onLoad = function () {
-        // Inject brand-green override into the widget iframe via the exposed style hook
-        var frame = document.querySelector('iframe[title="chat widget"]');
-        if (frame && frame.contentDocument) {
-          var style = frame.contentDocument.createElement('style');
-          style.textContent = [
-            ':root { --tawk-primary: #3CB52A !important; }',
-            '.tawk-header { background-color: #3CB52A !important; }',
-            '.tawk-button, .tawk-button-circle { background-color: #3CB52A !important; }',
-          ].join('');
-          frame.contentDocument.head.appendChild(style);
-        }
-      };
-
-      (function () {
-        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = 'https://embed.tawk.to/6a6cd591a16bfc1d4f1a7f4e/1jusi4gen';
-        s1.charset = 'UTF-8';
-        s1.setAttribute('crossorigin', '*');
-        s0.parentNode.insertBefore(s1, s0);
-      })();
-    </script>
-    <!--End of Tawk.to Script-->
   </body>
 </html>
