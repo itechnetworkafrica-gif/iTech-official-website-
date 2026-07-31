@@ -98,13 +98,13 @@ const partnerLogos = [
     desc: 'Pan-African technology company specialising in software development and network infrastructure.',
   },
   {
-    name: 'B4P CodeFound',
+    name: 'B4P CODEFOUND',
     abbr: 'B4P',
     color: '#F59E0B',
     url: 'https://b4pcodefound.org',
     domain: 'b4pcodefound.org',
     category: 'Tech Education',
-    desc: 'Bridging the coding skills gap in Africa through bootcamps, scholarships, and community outreach.',
+    desc: 'Women and youth-led NGO bridging the coding skills gap for Liberians in the diaspora and at home through bootcamps and scholarships.',
   },
 ];
 
@@ -126,11 +126,11 @@ const portfolioProjects = [
     color: '#6366F1',
   },
   {
-    name: 'B4P Code Found',
+    name: 'B4P CODEFOUND',
     url: 'https://b4pcodefound.org',
     domain: 'b4pcodefound.org',
-    desc: 'NGO website featuring program pages, impact reporting, and donation integration to support coding education across Africa.',
-    tags: ['NGO', 'Donation Integration'],
+    desc: 'Website for a women and youth-led NGO operating in Liberia and the diaspora — featuring program pages, impact reporting, and donation integration for coding education.',
+    tags: ['NGO', 'Diaspora', 'Donation Integration'],
     color: '#F59E0B',
   },
   {
