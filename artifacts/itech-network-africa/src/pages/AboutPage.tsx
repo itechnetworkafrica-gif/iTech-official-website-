@@ -583,12 +583,21 @@ export default function AboutPage() {
       {/* ═══════════════════════════════════════
           7. PARTNERS
       ═══════════════════════════════════════ */}
-      <section id="partners" className="py-24 lg:py-32 bg-[#F8F9FA]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section id="partners" className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
+        {/* Subtle dot-grid background */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
+          style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        {/* Top green glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[200px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(60,181,42,0.10) 0%, transparent 70%)' }} />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
-            <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">Strategic Partners</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">Our Partners</h2>
-            <p className="mt-5 text-[#6B7280] text-lg">
+            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/25 px-4 py-1.5 rounded-full">
+              Strategic Partners
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight mt-2">Our Partners</h2>
+            <p className="mt-5 text-white/50 text-lg">
               We collaborate with trusted organisations across technology, health, education, and youth development to amplify our global impact.
             </p>
           </motion.div>
@@ -601,31 +610,36 @@ export default function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 {...stagger(i, 0.07)}
-                className="bg-white rounded-2xl p-7 border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex gap-5 items-start group"
+                className="group relative bg-white/[0.04] rounded-2xl p-7 border border-white/10 hover:border-[#3CB52A]/50 hover:bg-white/[0.07] transition-all duration-300 flex gap-5 items-start overflow-hidden"
               >
-                <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
-                  style={{ backgroundColor: p.color }}
-                >
+                {/* Green corner accent on hover */}
+                <div className="absolute top-0 left-0 w-1 h-full bg-[#3CB52A] opacity-0 group-hover:opacity-100 rounded-l-2xl transition-opacity duration-300" />
+
+                {/* Logo chip — always brand green */}
+                <div className="w-14 h-14 rounded-xl bg-[#3CB52A] flex items-center justify-center text-white text-xs font-black shrink-0 shadow-[0_4px_20px_rgba(60,181,42,0.35)]">
                   {p.abbr}
                 </div>
+
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <h4 className="font-bold text-[#0A0A0A] group-hover:text-[#3CB52A] transition-colors leading-snug">{p.name}</h4>
-                    <ExternalLink size={14} className="text-[#D1D5DB] group-hover:text-[#3CB52A] transition-colors shrink-0" />
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <h4 className="font-bold text-white group-hover:text-[#3CB52A] transition-colors leading-snug">{p.name}</h4>
+                    <ExternalLink size={14} className="text-white/20 group-hover:text-[#3CB52A] transition-colors shrink-0" />
                   </div>
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2" style={{ background: `${p.color}18`, color: p.color }}>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3 bg-[#3CB52A]/15 text-[#3CB52A] border border-[#3CB52A]/25">
                     {p.category}
                   </span>
-                  <p className="text-[#6B7280] text-sm leading-relaxed">{p.desc}</p>
-                  <p className="text-[#9CA3AF] text-xs font-mono mt-2 truncate">{p.domain}</p>
+                  <p className="text-white/45 text-sm leading-relaxed">{p.desc}</p>
+                  <p className="text-white/25 text-xs font-mono mt-2 truncate">{p.domain}</p>
                 </div>
               </motion.a>
             ))}
           </div>
 
-          <motion.div {...fadeUp} className="text-center mt-10">
-            <Link href="/contact#partner" className="inline-flex items-center gap-2 text-[#3CB52A] font-semibold hover:gap-3 transition-all">
+          <motion.div {...fadeUp} className="text-center mt-12">
+            <Link
+              href="/contact#partner"
+              className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-7 py-3.5 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5"
+            >
               Become a Partner <ArrowRight size={16} />
             </Link>
           </motion.div>
@@ -635,13 +649,15 @@ export default function AboutPage() {
       {/* ═══════════════════════════════════════
           8. PORTFOLIO / SELECTED WORK
       ═══════════════════════════════════════ */}
-      <section id="clients" className="py-24 lg:py-32 bg-[#F8F9FA]">
+      <section id="clients" className="py-24 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Header */}
           <motion.div {...fadeUp} className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
             <div className="max-w-xl">
-              <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Selected Work</span>
-              <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight">
+              <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] border border-[#bbf7d0] px-4 py-1.5 rounded-full">
+                Selected Work
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#0A0A0A] leading-tight mt-2">
                 Our Portfolio
               </h2>
               <p className="mt-5 text-[#6B7280] text-lg leading-relaxed">
@@ -650,7 +666,7 @@ export default function AboutPage() {
             </div>
             <Link
               href="/portfolio"
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#060E18] text-[#060E18] hover:bg-[#060E18] hover:text-white font-bold rounded-xl transition-all shrink-0 self-start lg:self-auto"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0A1929] hover:bg-[#3CB52A] text-white font-bold rounded-xl transition-all duration-200 shrink-0 self-start lg:self-auto shadow-md"
             >
               View All Projects <ArrowRight size={16} />
             </Link>
@@ -667,8 +683,8 @@ export default function AboutPage() {
                 {...stagger(i, 0.05)}
                 className="group bg-white rounded-2xl border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
               >
-                {/* Color accent bar */}
-                <div className="h-1 w-full" style={{ background: project.color }} />
+                {/* Brand green accent bar */}
+                <div className="h-1 w-full bg-[#3CB52A] opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="p-7 flex flex-col flex-1">
                   {/* Domain + external icon */}
@@ -680,7 +696,7 @@ export default function AboutPage() {
                   </div>
 
                   {/* Name */}
-                  <h3 className="text-lg font-bold text-[#0A0A0A] mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">
+                  <h3 className="text-lg font-bold text-[#0A1929] mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">
                     {project.name}
                   </h3>
 
@@ -689,13 +705,12 @@ export default function AboutPage() {
                     {project.desc}
                   </p>
 
-                  {/* Tags */}
+                  {/* Tags — brand green */}
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-semibold px-3 py-1 rounded-full"
-                        style={{ background: `${project.color}15`, color: project.color }}
+                        className="text-xs font-semibold px-3 py-1 rounded-full bg-[#3CB52A]/10 text-[#3CB52A] border border-[#3CB52A]/20"
                       >
                         {tag}
                       </span>
