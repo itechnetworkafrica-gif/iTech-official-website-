@@ -1,5 +1,4 @@
 import React from 'react';
-import { Globe, ChevronUp } from 'lucide-react';
 import { ScrollingMarquee } from './ScrollingMarquee';
 import { DynamicPageIdentifier } from './DynamicPageIdentifier';
 import { FooterAccordion } from './FooterAccordion';
@@ -7,6 +6,7 @@ import { FooterBrand } from './FooterBrand';
 import { FooterSocial } from './FooterSocial';
 import { FooterLegal } from './FooterLegal';
 import { FooterBottom } from './FooterBottom';
+import { FooterLocale } from './FooterLocale';
 
 const footerSections = [
   {
@@ -87,17 +87,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-white/10" />
 
-        <div className="flex items-center justify-between py-5">
-          <button className="flex items-center gap-1.5 text-white hover:opacity-80 transition-opacity text-sm">
-            <Globe size={15} className="shrink-0" />
-            <span>Liberia &ndash; English</span>
-            <ChevronUp size={14} className="ml-0.5" />
-          </button>
-          <button className="flex items-center gap-1 text-white hover:opacity-80 transition-opacity text-sm">
-            <span>USD $</span>
-            <ChevronUp size={14} />
-          </button>
-        </div>
+        <FooterLocale />
 
         <FooterSocial />
 
