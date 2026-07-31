@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, CheckCircle, Globe, Shield, Zap, Users, Award, TrendingUp,
   Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
-  Quote, Phone, MapPin, CheckCircle2, ChevronLeft, ExternalLink
+  Quote, Phone, MapPin, CheckCircle2, ChevronLeft, ExternalLink,
+  FolderOpen, Headphones
 } from 'lucide-react';
 
 /* ─── Animation helpers ─── */
@@ -271,107 +272,207 @@ function HeroSlider() {
 
         {/* ── Main content block ── */}
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 pb-0">
+          <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-end">
 
-          {/* Eyebrow */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`eye-${active}`}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 8 }}
-              transition={{ duration: 0.32 }}
-              className="flex items-center gap-3 mb-5"
-            >
-              <span className="w-8 h-px bg-[#3CB52A]" />
-              <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.20em] uppercase">
-                {slide.eyebrow}
-              </span>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Headline */}
-          <AnimatePresence mode="wait">
-            <motion.h1
-              key={`h1-${active}`}
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.52, ease: EASE }}
-              className="font-black italic leading-[1.03] tracking-tight mb-5"
-              style={{ fontSize: 'clamp(2.6rem, 6.2vw, 5.2rem)', maxWidth: '680px' }}
-            >
-              {slide.headline.map((line, i) => (
-                <span
-                  key={i}
-                  className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}
+            {/* ── Left column: text ── */}
+            <div>
+              {/* Eyebrow */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`eye-${active}`}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={{ duration: 0.32 }}
+                  className="flex items-center gap-3 mb-5"
                 >
-                  {line}
-                </span>
-              ))}
-            </motion.h1>
-          </AnimatePresence>
+                  <span className="w-8 h-px bg-[#3CB52A]" />
+                  <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.20em] uppercase">
+                    {slide.eyebrow}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
 
-          {/* Subtitle */}
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={`sub-${active}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.38, delay: 0.08 }}
-              className="text-white/65 text-base leading-relaxed mb-7"
-              style={{ maxWidth: '460px' }}
-            >
-              {slide.subtitle}
-            </motion.p>
-          </AnimatePresence>
-
-          {/* CTAs */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`cta-${active}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, delay: 0.14 }}
-              className="flex flex-wrap items-center gap-3 mb-7"
-            >
-              <Link
-                href={slide.href}
-                className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_32px_rgba(60,181,42,0.55)] hover:-translate-y-0.5 active:scale-95"
-              >
-                {slide.cta}
-              </Link>
-              <Link
-                href={slide.hrefSecondary}
-                className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold px-6 py-3.5 rounded-full transition-all border border-white/20 hover:border-white/40 hover:bg-white/5"
-              >
-                {slide.ctaSecondary} <ArrowRight size={14} />
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Service chips */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`chips-${active}`}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, delay: 0.20 }}
-              className="flex flex-wrap gap-2 mb-8 lg:mb-10"
-            >
-              {slide.chips.map((chip) => (
-                <span
-                  key={chip}
-                  className="text-xs font-semibold text-white/60 px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+              {/* Headline */}
+              <AnimatePresence mode="wait">
+                <motion.h1
+                  key={`h1-${active}`}
+                  initial={{ opacity: 0, y: 32 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.52, ease: EASE }}
+                  className="font-black italic leading-[1.03] tracking-tight mb-5"
+                  style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.6rem)' }}
                 >
-                  {chip}
-                </span>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+                  {slide.headline.map((line, i) => (
+                    <span
+                      key={i}
+                      className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}
+                    >
+                      {line}
+                    </span>
+                  ))}
+                </motion.h1>
+              </AnimatePresence>
+
+              {/* Subtitle */}
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={`sub-${active}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.38, delay: 0.08 }}
+                  className="text-white/65 text-base leading-relaxed mb-7"
+                  style={{ maxWidth: '420px' }}
+                >
+                  {slide.subtitle}
+                </motion.p>
+              </AnimatePresence>
+
+              {/* CTAs */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`cta-${active}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.14 }}
+                  className="flex flex-wrap items-center gap-3 mb-7"
+                >
+                  <Link
+                    href={slide.href}
+                    className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_32px_rgba(60,181,42,0.55)] hover:-translate-y-0.5 active:scale-95"
+                  >
+                    {slide.cta}
+                  </Link>
+                  <Link
+                    href={slide.hrefSecondary}
+                    className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold px-6 py-3.5 rounded-full transition-all border border-white/20 hover:border-white/40 hover:bg-white/5"
+                  >
+                    {slide.ctaSecondary} <ArrowRight size={14} />
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Service chips */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`chips-${active}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.20 }}
+                  className="flex flex-wrap gap-2 mb-8 lg:mb-10"
+                >
+                  {slide.chips.map((chip) => (
+                    <span
+                      key={chip}
+                      className="text-xs font-semibold text-white/60 px-3 py-1.5 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    >
+                      {chip}
+                    </span>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* ── Right column: floating info panel (desktop only) ── */}
+            <div className="hidden lg:flex flex-col gap-3 pb-8 xl:pb-10">
+
+              {/* Services grid card */}
+              <motion.div
+                key={`right-services-${active}`}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.55, delay: 0.15, ease: EASE }}
+                className="rounded-2xl p-5 border border-white/10"
+                style={{ background: 'rgba(10,25,41,0.80)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="w-5 h-px bg-[#3CB52A]" />
+                  <span className="text-[#3CB52A] text-[10px] font-bold tracking-[0.18em] uppercase">What We Deliver</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: Code2,      label: 'Enterprise Software' },
+                    { icon: Brain,      label: 'AI & Automation'     },
+                    { icon: Cloud,      label: 'Cloud Infrastructure' },
+                    { icon: Monitor,    label: 'Web & Mobile Apps'   },
+                    { icon: Shield,     label: 'Cybersecurity'       },
+                    { icon: Wifi,       label: 'Network Solutions'   },
+                  ].map(({ icon: Icon, label }) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-2.5 p-3 rounded-xl transition-colors hover:bg-white/5"
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                    >
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(60,181,42,0.15)' }}>
+                        <Icon size={13} className="text-[#3CB52A]" />
+                      </div>
+                      <span className="text-white/75 text-xs font-medium leading-tight">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Stats row */}
+              <motion.div
+                key={`right-stats-${active}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, delay: 0.25, ease: EASE }}
+                className="grid grid-cols-3 gap-3"
+              >
+                {[
+                  { value: '20+',  label: 'Projects',  icon: FolderOpen },
+                  { value: '30+',  label: 'Clients',   icon: Users      },
+                  { value: '5+',   label: 'Countries', icon: Globe      },
+                ].map(({ value, label, icon: Icon }) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl p-4 text-center border border-white/10"
+                    style={{ background: 'rgba(10,25,41,0.80)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
+                  >
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ background: 'rgba(60,181,42,0.12)' }}>
+                      <Icon size={15} className="text-[#3CB52A]" />
+                    </div>
+                    <div className="text-2xl font-black text-white leading-none mb-1">{value}</div>
+                    <div className="text-white/40 text-[10px] font-medium uppercase tracking-wide">{label}</div>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* CTA card */}
+              <motion.div
+                key={`right-cta-${active}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, delay: 0.35, ease: EASE }}
+                className="rounded-2xl p-4 border border-[#3CB52A]/25 flex items-center gap-4"
+                style={{ background: 'rgba(60,181,42,0.08)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(60,181,42,0.18)' }}>
+                  <Headphones size={17} className="text-[#3CB52A]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-white mb-0.5">Ready to start a project?</div>
+                  <div className="text-white/45 text-xs">Free consultation · No commitment</div>
+                </div>
+                <Link
+                  href="/contact"
+                  className="shrink-0 flex items-center gap-1.5 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                >
+                  Talk to Us <ArrowRight size={11} />
+                </Link>
+              </motion.div>
+            </div>
+
+          </div>
         </div>
 
         {/* ── Stats strip + dots ── */}
