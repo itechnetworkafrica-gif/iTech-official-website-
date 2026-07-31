@@ -93,24 +93,24 @@ export default function SupportPage() {
             initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease: EASE }}
-            className="hidden lg:flex items-end justify-center relative h-[360px]"
+            className="flex items-end justify-center relative h-[220px] sm:h-[280px] lg:h-[360px] order-first"
           >
             {/* Decorative rings */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full border-2 border-[#3CB52A]/20 pointer-events-none" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[220px] h-[220px] rounded-full border border-[#3CB52A]/15 pointer-events-none" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] lg:w-[300px] lg:h-[300px] rounded-full border-2 border-[#3CB52A]/20 pointer-events-none" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] lg:w-[220px] lg:h-[220px] rounded-full border border-[#3CB52A]/15 pointer-events-none" />
 
             {/* Glow blob behind person */}
             <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[280px] h-[280px] rounded-full pointer-events-none"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] lg:w-[280px] lg:h-[280px] rounded-full pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at 50% 80%, rgba(60,181,42,0.18) 0%, transparent 70%)' }}
             />
 
-            {/* Floating badge — top left */}
+            {/* Floating badge — top left (hidden on mobile, shown sm+) */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5, ease: EASE }}
-              className="absolute top-8 left-2 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 flex items-center gap-2.5 border border-[#E5E7EB]"
+              className="hidden sm:flex absolute top-4 left-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 items-center gap-2.5 border border-[#E5E7EB]"
             >
               <div className="w-7 h-7 rounded-lg bg-[#f0fdf4] flex items-center justify-center shrink-0">
                 <CheckCircle2 size={14} className="text-[#3CB52A]" />
@@ -121,12 +121,12 @@ export default function SupportPage() {
               </div>
             </motion.div>
 
-            {/* Floating badge — top right */}
+            {/* Floating badge — top right (hidden on mobile, shown sm+) */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.65, duration: 0.5, ease: EASE }}
-              className="absolute top-10 right-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 flex items-center gap-2.5 border border-[#E5E7EB]"
+              className="hidden sm:flex absolute top-6 right-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 items-center gap-2.5 border border-[#E5E7EB]"
             >
               <div className="w-7 h-7 rounded-lg bg-[#eff6ff] flex items-center justify-center shrink-0">
                 <Headphones size={14} className="text-[#0A7EBF]" />
@@ -137,12 +137,12 @@ export default function SupportPage() {
               </div>
             </motion.div>
 
-            {/* Floating name card — bottom right */}
+            {/* Floating name card — bottom right (hidden on mobile, shown sm+) */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.5, ease: EASE }}
-              className="absolute bottom-14 right-0 z-20 bg-[#0A1929] rounded-xl shadow-xl px-3.5 py-2.5 flex items-center gap-2.5 border border-white/10"
+              className="hidden sm:flex absolute bottom-10 right-0 z-20 bg-[#0A1929] rounded-xl shadow-xl px-3.5 py-2.5 items-center gap-2.5 border border-white/10"
             >
               <div className="w-7 h-7 rounded-full bg-[#3CB52A] flex items-center justify-center shrink-0 text-white font-black text-[11px]">
                 W
@@ -156,12 +156,12 @@ export default function SupportPage() {
 
             {/* Dot-grid decoration — top left corner */}
             <div
-              className="absolute top-4 left-4 w-[80px] h-[80px] pointer-events-none opacity-40"
+              className="absolute top-4 left-4 w-[60px] h-[60px] lg:w-[80px] lg:h-[80px] pointer-events-none opacity-40"
               style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1.5px, transparent 1.5px)', backgroundSize: '12px 12px' }}
             />
             {/* Dot-grid decoration — bottom right corner */}
             <div
-              className="absolute bottom-4 right-4 w-[60px] h-[60px] pointer-events-none opacity-30"
+              className="absolute bottom-4 right-4 w-[50px] h-[50px] lg:w-[60px] lg:h-[60px] pointer-events-none opacity-30"
               style={{ backgroundImage: 'radial-gradient(circle, #0A7EBF 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }}
             />
 
@@ -169,8 +169,7 @@ export default function SupportPage() {
             <img
               src="/support-agent.png"
               alt="iTech Support Agent"
-              className="relative z-10 h-[340px] object-contain object-bottom drop-shadow-xl"
-              style={{ maxWidth: '300px' }}
+              className="relative z-10 h-[200px] sm:h-[260px] lg:h-[340px] w-auto object-contain object-bottom drop-shadow-xl"
             />
           </motion.div>
 
