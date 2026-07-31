@@ -145,10 +145,10 @@ export default function SupportPage() {
               className="absolute bottom-14 right-0 z-20 bg-[#0A1929] rounded-xl shadow-xl px-3.5 py-2.5 flex items-center gap-2.5 border border-white/10"
             >
               <div className="w-7 h-7 rounded-full bg-[#3CB52A] flex items-center justify-center shrink-0 text-white font-black text-[11px]">
-                F
+                W
               </div>
               <div>
-                <div className="text-[10px] font-bold text-white leading-none">Foday S.</div>
+                <div className="text-[10px] font-bold text-white leading-none">Wilmot K.</div>
                 <div className="text-[9px] text-white/50 mt-0.5">Senior Support Engineer</div>
               </div>
               <div className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse ml-1" />
