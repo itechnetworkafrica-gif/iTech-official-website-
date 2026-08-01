@@ -118,7 +118,7 @@ export const WhatsAppWidget: React.FC = () => {
             onClick={() => setOpen(o => !o)}
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.93 }}
-            className="w-14 h-14 rounded-full bg-[#25D366] shadow-[0_6px_28px_rgba(37,211,102,0.45)] flex items-center justify-center"
+            className="relative z-[1] w-14 h-14 rounded-full bg-[#25D366] shadow-[0_6px_28px_rgba(37,211,102,0.45)] flex items-center justify-center"
             aria-label="Chat on WhatsApp"
           >
             <AnimatePresence mode="wait">
