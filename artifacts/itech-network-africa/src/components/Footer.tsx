@@ -107,15 +107,23 @@ export const Footer: React.FC = () => {
           <FooterAccordion sections={footerSections} />
         </div>
 
-        {/* Desktop: logo on left, social icons on right; Mobile: logo then icons stacked */}
+        {/* Desktop: logo on left, social icons on right; Mobile: logo only */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between pt-10 pb-6">
           <FooterBrand />
-          <FooterSocial />
+          {/* Desktop only — on mobile the icons move below the locale row */}
+          <div className="hidden lg:flex">
+            <FooterSocial />
+          </div>
         </div>
 
         <div className="border-t border-white/10" />
 
         <FooterLocale />
+
+        {/* Mobile only — social icons sit beneath the country/currency row */}
+        <div className="flex lg:hidden pb-4">
+          <FooterSocial />
+        </div>
 
       </div>
 
