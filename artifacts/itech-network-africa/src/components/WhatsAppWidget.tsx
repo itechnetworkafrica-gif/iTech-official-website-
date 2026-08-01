@@ -108,31 +108,36 @@ export const WhatsAppWidget: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Floating trigger ── */}
-      <motion.button
-        onClick={() => setOpen(o => !o)}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.93 }}
-        className="relative w-14 h-14 rounded-full bg-[#25D366] shadow-[0_6px_28px_rgba(37,211,102,0.55)] flex items-center justify-center"
-        aria-label="Chat on WhatsApp"
+      {/* ── Floating trigger — neon spinning ring ── */}
+      <div
+        className="neon-border"
+        style={{ borderRadius: '50%', padding: '3px', boxShadow: '0 0 28px rgba(0,229,255,0.22)' }}
       >
-        <AnimatePresence mode="wait">
-          {open ? (
-            <motion.span key="close" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }} transition={{ duration: 0.18 }}>
-              <X size={24} className="text-white" />
-            </motion.span>
-          ) : (
-            <motion.span key="wa" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ duration: 0.18 }}>
-              <FaWhatsapp size={28} className="text-white" />
-            </motion.span>
+        <motion.button
+          onClick={() => setOpen(o => !o)}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.93 }}
+          className="relative w-14 h-14 rounded-full bg-[#25D366] shadow-[0_6px_28px_rgba(37,211,102,0.45)] flex items-center justify-center"
+          aria-label="Chat on WhatsApp"
+        >
+          <AnimatePresence mode="wait">
+            {open ? (
+              <motion.span key="close" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }} transition={{ duration: 0.18 }}>
+                <X size={24} className="text-white" />
+              </motion.span>
+            ) : (
+              <motion.span key="wa" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ duration: 0.18 }}>
+                <FaWhatsapp size={28} className="text-white" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+          {!open && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF3B30] rounded-full text-white text-[9px] font-bold flex items-center justify-center select-none z-10">
+              1
+            </span>
           )}
-        </AnimatePresence>
-        {!open && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF3B30] rounded-full text-white text-[9px] font-bold flex items-center justify-center select-none">
-            1
-          </span>
-        )}
-      </motion.button>
+        </motion.button>
+      </div>
     </div>
   );
 };
