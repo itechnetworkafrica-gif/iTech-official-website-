@@ -1,412 +1,843 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'wouter';
 import {
-  MessageSquare, Mail, Phone, LifeBuoy,
-  Headphones, CheckCircle2, ArrowRight, HelpCircle,
-  Search, Globe, Shield, Cloud, Code2, Cpu, Server, Users, Video,
+  Search, MessageSquare, Phone, Mail, FileText, BookOpen,
+  Zap, Shield, Cloud, Code2, Globe, Cpu, Server, Users,
+  ChevronDown, ArrowRight, CheckCircle2, Clock, LifeBuoy,
+  Video, Headphones, AlertCircle, TicketCheck, MonitorCheck,
+  Star, ChevronRight, ExternalLink, HelpCircle, Wrench,
+  Database, Wifi, Lock, RefreshCw, Activity,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { PageHero } from '@/components/PageHero';
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const RECIPIENT = 'itechnetworkafrica@gmail.com';
+
+/* ─── data ──────────────────────────────────────────────────────────────── */
+
+const STATS = [
+  { value: '98.9%', label: 'Uptime SLA', icon: <Activity size={20} /> },
+  { value: '<1 hr', label: 'Avg. First Response', icon: <Clock size={20} /> },
+  { value: '5,000+', label: 'Tickets Resolved', icon: <TicketCheck size={20} /> },
+  { value: '4.9 / 5', label: 'Customer Rating', icon: <Star size={20} /> },
+];
+
+const STATUS_SERVICES = [
+  { name: 'Web Hosting Infrastructure', status: 'operational' },
+  { name: 'Client Portal & Dashboard', status: 'operational' },
+  { name: 'Email Services', status: 'operational' },
+  { name: 'API Gateway', status: 'operational' },
+  { name: 'CDN & Asset Delivery', status: 'operational' },
+  { name: 'Database Clusters', status: 'operational' },
+];
+
+const QUICK_ACTIONS = [
+  {
+    icon: <MessageSquare size={26} />,
+    title: 'Live Chat',
+    description: 'Chat with a support agent in real time.',
+    badge: 'Online now',
+    badgeColor: 'bg-[#3CB52A]/15 text-[#3CB52A]',
+    action: { label: 'Start Chat', href: '/contact' },
+    accent: true,
+  },
+  {
+    icon: <TicketCheck size={26} />,
+    title: 'Submit a Ticket',
+    description: 'Log an issue and track it to resolution.',
+    badge: '< 1 hr response',
+    badgeColor: 'bg-blue-50 text-blue-600',
+    action: { label: 'Open Ticket', href: '#ticket' },
+    accent: false,
+  },
+  {
+    icon: <Phone size={26} />,
+    title: 'Call Support',
+    description: 'Speak directly with a technical engineer.',
+    badge: 'Mon–Fri 8AM–6PM WAT',
+    badgeColor: 'bg-amber-50 text-amber-600',
+    action: { label: 'Call Now', href: 'tel:+231761798796' },
+    accent: false,
+  },
+  {
+    icon: <Mail size={26} />,
+    title: 'Email Us',
+    description: 'Send a detailed request to our team.',
+    badge: '24 hr response',
+    badgeColor: 'bg-purple-50 text-purple-600',
+    action: { label: 'Send Email', href: 'mailto:itechnetworkafrica@gmail.com' },
+    accent: false,
+  },
+  {
+    icon: <BookOpen size={26} />,
+    title: 'Knowledge Base',
+    description: 'Browse guides, tutorials, and how-tos.',
+    badge: '200+ articles',
+    badgeColor: 'bg-slate-100 text-slate-600',
+    action: { label: 'Browse Docs', href: '/resources' },
+    accent: false,
+  },
+  {
+    icon: <Video size={26} />,
+    title: 'Video Tutorials',
+    description: 'Step-by-step video walkthroughs.',
+    badge: 'Free access',
+    badgeColor: 'bg-rose-50 text-rose-500',
+    action: { label: 'Watch Now', href: '/resources' },
+    accent: false,
+  },
+];
+
+const HELP_CATEGORIES = [
+  { icon: <Globe size={22} />, title: 'Web & Mobile Apps', count: 34, href: '/resources' },
+  { icon: <Cloud size={22} />, title: 'Cloud & Hosting', count: 28, href: '/resources' },
+  { icon: <Shield size={22} />, title: 'Cybersecurity', count: 19, href: '/resources' },
+  { icon: <Code2 size={22} />, title: 'Software Development', count: 41, href: '/resources' },
+  { icon: <Cpu size={22} />, title: 'AI & Automation', count: 16, href: '/resources' },
+  { icon: <Server size={22} />, title: 'IT Infrastructure', count: 23, href: '/resources' },
+  { icon: <Users size={22} />, title: 'Digital Marketing', count: 15, href: '/resources' },
+  { icon: <Database size={22} />, title: 'Data & Databases', count: 12, href: '/resources' },
+  { icon: <Lock size={22} />, title: 'Account & Billing', count: 9, href: '/resources' },
+];
+
+const SLA_TIERS = [
+  {
+    name: 'Standard',
+    price: 'Included',
+    color: 'border-[#E5E7EB]',
+    features: [
+      '24-hr email response',
+      'Business hours support',
+      'Access to knowledge base',
+      'Community forum access',
+    ],
+    cta: 'Current plan',
+    ctaStyle: 'border-2 border-[#E5E7EB] text-[#6B7280]',
+  },
+  {
+    name: 'Priority',
+    price: 'Contact Sales',
+    color: 'border-[#3CB52A]/40 shadow-[0_8px_40px_rgba(60,181,42,0.12)]',
+    popular: true,
+    features: [
+      '< 4-hr first response',
+      'Priority queue routing',
+      'Dedicated Slack channel',
+      'Monthly strategy review',
+      'Remote troubleshooting',
+    ],
+    cta: 'Get Priority Support',
+    ctaStyle: 'bg-[#3CB52A] text-white shadow-[0_8px_24px_rgba(60,181,42,0.35)]',
+  },
+  {
+    name: 'Dedicated',
+    price: 'Enterprise',
+    color: 'border-[#0A1929]',
+    features: [
+      '< 1-hr response, 24 / 7',
+      'Named account engineer',
+      'Proactive monitoring',
+      'Quarterly business reviews',
+      'Custom SLA agreement',
+      'Onsite support available',
+    ],
+    cta: 'Contact Sales',
+    ctaStyle: 'bg-[#0A1929] text-white',
+  },
+];
+
+const FAQS = [
+  { q: 'What is your typical response time?', a: 'Enterprise clients on a Priority or Dedicated SLA receive responses within 1–4 hours. For general support tickets, we respond within 24 business hours.' },
+  { q: 'How do I report a critical system outage?', a: 'Enterprise clients should use the dedicated emergency line in their SLA documentation for 24/7 immediate routing. Others can submit an urgent ticket marked "Critical" above.' },
+  { q: 'Do you offer remote troubleshooting?', a: 'Yes. Our engineers can securely access your systems via TeamViewer or our internal tooling to diagnose and resolve software and infrastructure issues in real time.' },
+  { q: 'Can I upgrade my support tier at any time?', a: 'Absolutely. Contact your account manager or email us to upgrade to Priority or Dedicated support. Changes take effect within one business day.' },
+  { q: 'How are software updates and patches handled?', a: 'SaaS platforms are updated automatically during low-traffic windows. For on-premise deployments, our team coordinates with your IT department on scheduled maintenance.' },
+  { q: 'Do you provide end-user training?', a: 'Yes. All major deployments include comprehensive training sessions for administrators and end-users, plus digital manuals and on-demand video tutorials.' },
+  { q: 'What security and compliance standards do you follow?', a: 'We build systems compliant with ISO 27001, GDPR, and regional African data protection regulations. Security audits are available for enterprise clients.' },
+  { q: 'Where can I find API documentation?', a: 'Full API documentation is in the Resources section. Developer access tokens can be issued from the Client Portal. Contact us if you need elevated API access.' },
+];
 
 const formSchema = z.object({
   name: z.string().min(2, 'Full name required'),
-  email: z.string().email('Invalid email'),
+  email: z.string().email('Valid email required'),
+  phone: z.string().optional(),
+  company: z.string().optional(),
+  category: z.string().min(1, 'Select a category'),
+  priority: z.string().min(1, 'Select priority'),
   subject: z.string().min(5, 'Subject required'),
-  message: z.string().min(10, 'Message required'),
+  message: z.string().min(10, 'Please describe your issue in detail'),
 });
 
-const SUPPORT_CATEGORIES = [
-  { icon: Globe,   label: 'Web & Mobile Apps' },
-  { icon: Cloud,   label: 'Cloud & Infrastructure' },
-  { icon: Shield,  label: 'Cybersecurity' },
-  { icon: Code2,   label: 'Software Development' },
-  { icon: Cpu,     label: 'AI & Automation' },
-  { icon: Server,  label: 'IT Support & Managed Services' },
-  { icon: Users,   label: 'Digital Transformation' },
-  { icon: Video,   label: 'Training & Capacity Building' },
-];
+/* ─── sub-components ─────────────────────────────────────────────────────── */
 
-const faqs = [
-  { q: 'What is your typical response time?', a: 'For enterprise clients on a standard SLA, our response time is under 1 hour. For general inquiries, we aim to respond within 24 business hours.' },
-  { q: 'How do I report a critical system outage?', a: 'If you are an active enterprise client, please use the dedicated emergency phone number provided in your SLA documentation for immediate 24/7 technical routing.' },
-  { q: 'Do you offer remote troubleshooting?', a: 'Yes, our engineers can securely access your systems remotely to diagnose and resolve software and infrastructure issues.' },
-  { q: 'Where can I find API documentation?', a: 'All API documentation is available in the Resources section. You will need your developer access token to view specific restricted endpoints.' },
-  { q: 'Can I upgrade my support tier?', a: 'Absolutely. Contact your account manager or email support to upgrade to our Priority or Dedicated Support tiers.' },
-  { q: 'How are software updates handled?', a: 'SaaS products are updated automatically. For on-premise deployments, our team coordinates with your IT department for scheduled maintenance windows.' },
-  { q: 'Do you provide end-user training?', a: 'Yes, all major software deployments include comprehensive training sessions for administrators and end-users, along with digital manuals.' },
-  { q: 'What security compliance do you adhere to?', a: 'We build systems compliant with ISO 27001, GDPR, and regional African data protection regulations.' },
-];
+function FAQItem({ q, a, i }: { q: string; a: string; i: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: i * 0.04 }}
+      className="border border-[#E5E7EB] rounded-2xl overflow-hidden bg-white"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-[#F8F9FA] transition-colors"
+        aria-expanded={open}
+      >
+        <span className="font-semibold text-[#111827] pr-4 text-sm">{q}</span>
+        <ChevronDown
+          size={18}
+          className={`flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-[#3CB52A]' : 'text-[#9CA3AF]'}`}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="body"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <p className="px-6 pb-5 pt-3 text-[#6B7280] text-sm leading-relaxed border-t border-[#F3F4F6]">{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+/* ─── main page ──────────────────────────────────────────────────────────── */
 
 export default function SupportPage() {
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const filteredFaqs = FAQS.filter(
+    ({ q, a }) =>
+      !search ||
+      q.toLowerCase().includes(search.toLowerCase()) ||
+      a.toLowerCase().includes(search.toLowerCase()),
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', email: '', subject: '', message: '' },
+    defaultValues: {
+      name: '', email: '', phone: '', company: '',
+      category: '', priority: '', subject: '', message: '',
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const subject = `[Support Ticket] ${values.subject} – ${values.name}`;
+    const subject = `[Support – ${values.priority}] ${values.subject} — ${values.name}`;
     const body = [
       `Name: ${values.name}`,
       `Email: ${values.email}`,
+      `Phone: ${values.phone || 'N/A'}`,
+      `Company: ${values.company || 'N/A'}`,
+      `Category: ${values.category}`,
+      `Priority: ${values.priority}`,
       `Subject: ${values.subject}`,
-      ``,
-      `Message:`,
+      '',
+      'Issue Description:',
       values.message,
     ].join('\n');
 
     window.open(
       `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
-      '_blank'
+      '_blank',
     );
-
-    toast({ title: 'Ticket Ready', description: 'Your email client has opened. Please hit Send to submit your ticket.' });
+    setSubmitted(true);
     form.reset();
+    toast({ title: 'Ticket Ready', description: 'Your email client has opened. Hit Send to submit.' });
   }
 
-  const filteredFaqs = faqs.filter(f =>
-    !searchQuery.trim() ||
-    f.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    f.a.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
   return (
-    <div className="flex flex-col w-full bg-white">
+    <div className="flex flex-col w-full bg-[#F8F9FA] min-h-screen">
 
-      {/* HERO */}
-      <section className="relative bg-[#DFF0F7] overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-[380px] h-[380px] rounded-full bg-[#BDE4F3]/40 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[260px] h-[260px] rounded-full bg-[#C8EBF8]/35 pointer-events-none" />
+      {/* ── Hero ── */}
+      <PageHero
+        badge="Support Center"
+        title="How Can We Help You?"
+        subtitle="World-class support for every iTech Network client. Find answers, submit tickets, or connect directly with our engineering team."
+        ctaPrimary={{ label: 'Submit a Ticket', href: '#ticket' }}
+        ctaSecondary={{ label: 'Browse Knowledge Base', href: '/resources' }}
+      />
 
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 pt-0 pb-0 grid lg:grid-cols-[1fr_1.1fr] gap-0 items-end">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, ease: EASE }}
-            className="flex items-end justify-center relative h-[220px] sm:h-[280px] lg:h-[360px] order-first"
-          >
-            {/* Decorative rings */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] lg:w-[300px] lg:h-[300px] rounded-full border-2 border-[#3CB52A]/20 pointer-events-none" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] lg:w-[220px] lg:h-[220px] rounded-full border border-[#3CB52A]/15 pointer-events-none" />
-
-            {/* Glow blob behind person */}
-            <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] lg:w-[280px] lg:h-[280px] rounded-full pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at 50% 80%, rgba(60,181,42,0.18) 0%, transparent 70%)' }}
-            />
-
-            {/* Floating badge — top left (hidden on mobile, shown sm+) */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5, ease: EASE }}
-              className="hidden sm:flex absolute top-4 left-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 items-center gap-2.5 border border-[#E5E7EB]"
-            >
-              <div className="w-7 h-7 rounded-lg bg-[#f0fdf4] flex items-center justify-center shrink-0">
-                <CheckCircle2 size={14} className="text-[#3CB52A]" />
-              </div>
-              <div>
-                <div className="text-[10px] font-black text-[#111827] leading-none">Under 1-hr</div>
-                <div className="text-[9px] text-[#9CA3AF] mt-0.5">Response Time</div>
-              </div>
-            </motion.div>
-
-            {/* Floating badge — top right (hidden on mobile, shown sm+) */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65, duration: 0.5, ease: EASE }}
-              className="hidden sm:flex absolute top-6 right-0 z-20 bg-white rounded-xl shadow-lg px-3 py-2.5 items-center gap-2.5 border border-[#E5E7EB]"
-            >
-              <div className="w-7 h-7 rounded-lg bg-[#eff6ff] flex items-center justify-center shrink-0">
-                <Headphones size={14} className="text-[#0A7EBF]" />
-              </div>
-              <div>
-                <div className="text-[10px] font-black text-[#111827] leading-none">24 / 7</div>
-                <div className="text-[9px] text-[#9CA3AF] mt-0.5">Live Support</div>
-              </div>
-            </motion.div>
-
-            {/* Floating name card — bottom right (hidden on mobile, shown sm+) */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5, ease: EASE }}
-              className="hidden sm:flex absolute bottom-10 right-0 z-20 bg-[#0A1929] rounded-xl shadow-xl px-3.5 py-2.5 items-center gap-2.5 border border-white/10"
-            >
-              <div className="w-7 h-7 rounded-full bg-[#3CB52A] flex items-center justify-center shrink-0 text-white font-black text-[11px]">
-                W
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-white leading-none">Wilmot K.</div>
-                <div className="text-[9px] text-white/50 mt-0.5">Senior Support Engineer</div>
-              </div>
-              <div className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse ml-1" />
-            </motion.div>
-
-            {/* Dot-grid decoration — top left corner */}
-            <div
-              className="absolute top-4 left-4 w-[60px] h-[60px] lg:w-[80px] lg:h-[80px] pointer-events-none opacity-40"
-              style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1.5px, transparent 1.5px)', backgroundSize: '12px 12px' }}
-            />
-            {/* Dot-grid decoration — bottom right corner */}
-            <div
-              className="absolute bottom-4 right-4 w-[50px] h-[50px] lg:w-[60px] lg:h-[60px] pointer-events-none opacity-30"
-              style={{ backgroundImage: 'radial-gradient(circle, #0A7EBF 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }}
-            />
-
-            {/* Person image */}
-            <img
-              src="/support-agent.png"
-              alt="iTech Support Agent"
-              className="relative z-10 h-[200px] sm:h-[260px] lg:h-[340px] w-auto object-contain object-bottom drop-shadow-xl"
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.08 }}
-            className="pb-14 pt-14 pl-0 lg:pl-10"
-          >
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-7 h-7 rounded-full bg-[#3CB52A]/15 flex items-center justify-center">
-                <Headphones size={14} className="text-[#3CB52A]" />
-              </div>
-              <span className="text-[#374151] font-semibold text-sm">iTech Support Guides</span>
-            </div>
-
-            <h1 className="text-4xl lg:text-[3rem] font-black text-[#111827] leading-[1.08] mb-3 tracking-tight">
-              Help Center
-            </h1>
-            <p className="text-[#4B5563] text-base leading-relaxed mb-7 max-w-sm">
-              Find guides, troubleshoot issues, or connect with our expert support team — 24/7.
-            </p>
-
-            <div className="relative max-w-[440px]">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-              <input
-                type="text"
-                placeholder="What can we help you with?"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#D1D5DB] bg-white text-[#111827] placeholder:text-[#9CA3AF] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/40 focus:border-[#3CB52A] transition-all"
-              />
-              <button className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#111827] hover:bg-[#1f2937] text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
-                Search
-              </button>
-            </div>
-
-            <div className="flex flex-wrap gap-5 mt-6">
-              {['Under 1-hr response', '24/7 availability', 'Expert engineers'].map((t) => (
-                <div key={t} className="flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="text-[#3CB52A] shrink-0" />
-                  <span className="text-[#6B7280] text-xs font-medium">{t}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SUPPORT CATEGORIES */}
-      <section className="bg-white border-b border-[#F3F4F6]">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1">
-            {SUPPORT_CATEGORIES.map(({ icon: Icon, label }) => (
-              <button
-                key={label}
-                className="flex flex-col items-center gap-2.5 px-3 py-4 rounded-xl hover:bg-[#F9FAFB] transition-colors group text-center"
+      {/* ── Stats bar ── */}
+      <div className="bg-[#0A1929] border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {STATS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: i * 0.07 }}
+                className="flex flex-col items-center gap-1"
               >
-                <div className="w-10 h-10 rounded-full bg-[#F3F4F6] group-hover:bg-[#ECFDF5] flex items-center justify-center transition-colors">
-                  <Icon size={18} className="text-[#374151] group-hover:text-[#3CB52A] transition-colors" />
+                <span className="text-[#3CB52A]">{s.icon}</span>
+                <span className="text-2xl font-black text-white">{s.value}</span>
+                <span className="text-xs text-white/45 font-medium">{s.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Quick Actions ── */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Get Help Fast</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-[#111827] mb-3">Choose Your Support Channel</h2>
+            <p className="text-[#6B7280] text-lg max-w-2xl mx-auto">Multiple ways to reach us — pick what works best for your situation.</p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {QUICK_ACTIONS.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className={`
+                  relative rounded-2xl p-6 flex flex-col gap-4 border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group
+                  ${item.accent
+                    ? 'bg-[#0A1929] border-[#3CB52A]/30 shadow-[0_8px_32px_rgba(60,181,42,0.12)]'
+                    : 'bg-white border-[#E5E7EB]'
+                  }
+                `}
+              >
+                <div className="flex items-start justify-between">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${item.accent ? 'bg-[#3CB52A]/15 text-[#3CB52A]' : 'bg-[#F8F9FA] text-[#3CB52A]'}`}>
+                    {item.icon}
+                  </div>
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${item.badgeColor}`}>
+                    {item.badge}
+                  </span>
                 </div>
-                <span className="text-[11px] font-semibold text-[#374151] leading-tight group-hover:text-[#111827] transition-colors">
-                  {label}
-                </span>
-              </button>
+                <div>
+                  <h3 className={`font-bold text-lg mb-1 ${item.accent ? 'text-white' : 'text-[#111827]'}`}>{item.title}</h3>
+                  <p className={`text-sm leading-relaxed ${item.accent ? 'text-white/55' : 'text-[#6B7280]'}`}>{item.description}</p>
+                </div>
+                <a
+                  href={item.action.href}
+                  className={`
+                    mt-auto inline-flex items-center gap-2 text-sm font-bold transition-all
+                    ${item.accent ? 'text-[#3CB52A] hover:gap-3' : 'text-[#3CB52A] hover:gap-3'}
+                  `}
+                >
+                  {item.action.label} <ArrowRight size={14} />
+                </a>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SUPPORT CHANNELS */}
-      <div className="max-w-[1200px] mx-auto px-6 lg:px-12 w-full -mt-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25, ease: EASE }}
-          className="bg-white rounded-2xl shadow-xl border border-[#E5E7EB] overflow-hidden"
-        >
-          <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F3F4F6]">
-
-            <div className="p-8">
-              <h3 className="text-xl font-bold text-[#111827] mb-2">Chat Now</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
-                Chat for quick help on product issues, your account, and more.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-4">
-                <button className="inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
-                  <MessageSquare size={15} />
-                  Chat Now
-                </button>
-                <a
-                  href="https://wa.me/231761978796"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 border border-[#E5E7EB] hover:border-[#25D366] text-[#111827] hover:text-[#25D366] text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  WhatsApp
-                </a>
+      {/* ── System Status ── */}
+      <section className="py-16 bg-white border-t border-b border-[#E5E7EB]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#3CB52A] animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-widest text-[#3CB52A]">Live System Status</span>
               </div>
-              <p className="text-xs text-[#9CA3AF] font-medium">7×24 availability</p>
+              <h2 className="text-2xl font-black text-[#111827]">All Systems Operational</h2>
+              <p className="text-[#6B7280] text-sm mt-1">Last checked: just now · 99.9% uptime last 30 days</p>
             </div>
-
-            <div className="p-8">
-              <h3 className="text-xl font-bold text-[#111827] mb-2">Email Support</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
-                Send a detailed message and we'll reply within 24 business hours.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-4">
-                <a
-                  href={`mailto:${RECIPIENT}`}
-                  className="inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-                >
-                  <Mail size={15} />
-                  Email Us
-                </a>
-                <button
-                  onClick={() => document.getElementById('ticket-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-2 border border-[#E5E7EB] hover:border-[#3CB52A] text-[#111827] hover:text-[#3CB52A] text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-                >
-                  Open Ticket
-                </button>
-              </div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Response within 24h</p>
-            </div>
-
-            <div className="p-8">
-              <h3 className="text-xl font-bold text-[#111827] mb-2">Call Us</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
-                Speak directly with our technical team for urgent or complex issues.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-4">
-                <a
-                  href="tel:+231761978796"
-                  className="inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-                >
-                  <Phone size={15} />
-                  +231 761 978 796
-                </a>
-              </div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Mon–Fri 8am–6pm WAT · Emergencies 24/7</p>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* TICKET FORM + FAQ */}
-      <section className="py-20 lg:py-28 max-w-[1200px] mx-auto px-6 lg:px-12 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-
-          <div id="ticket-form" className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E7EB]">
-            <div className="w-12 h-12 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5">
-              <LifeBuoy size={22} />
-            </div>
-            <h2 className="text-2xl font-bold text-[#111827] mb-2">Open a Support Ticket</h2>
-            <p className="text-[#6B7280] mb-8 text-sm leading-relaxed">
-              Describe your issue in detail so our engineers can assist you efficiently.
-            </p>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#374151] font-semibold text-sm">Full Name</FormLabel>
-                    <FormControl><Input placeholder="Your full name" className="rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#374151] font-semibold text-sm">Account Email</FormLabel>
-                    <FormControl><Input placeholder="you@company.com" className="rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="subject" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#374151] font-semibold text-sm">Subject</FormLabel>
-                    <FormControl><Input placeholder="Brief description of the issue" className="rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="message" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#374151] font-semibold text-sm">Detailed Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Please include error codes, screenshots references, and steps to reproduce..."
-                        rows={6}
-                        className="resize-none rounded-xl"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <button
-                  type="submit"
-                  className="w-full bg-[#3CB52A] hover:bg-[#2e911f] text-white py-3.5 rounded-xl font-bold transition-colors mt-2 flex items-center justify-center gap-2"
-                >
-                  Submit Ticket <ArrowRight size={16} />
-                </button>
-              </form>
-            </Form>
+            <a
+              href="https://status.itechnetworkafrica.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E5E7EB] text-sm font-semibold text-[#374151] hover:border-[#3CB52A] hover:text-[#3CB52A] transition-colors"
+            >
+              Full Status Page <ExternalLink size={14} />
+            </a>
           </div>
 
-          <div>
-            <div className="w-12 h-12 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5">
-              <HelpCircle size={22} />
-            </div>
-            <h2 className="text-2xl font-bold text-[#111827] mb-2">Frequently Asked Questions</h2>
-            <p className="text-[#6B7280] mb-8 text-sm leading-relaxed">
-              Quick answers to common administrative and technical questions.
-            </p>
-            {filteredFaqs.length === 0 && (
-              <p className="text-[#9CA3AF] text-sm py-4">No results for "<strong>{searchQuery}</strong>". Try a different term.</p>
-            )}
-            <Accordion type="single" collapsible className="w-full space-y-3">
-              {filteredFaqs.map((faq, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`item-${i}`}
-                  className="bg-white border border-[#E5E7EB] rounded-xl px-5 data-[state=open]:border-[#3CB52A] transition-colors"
-                >
-                  <AccordionTrigger className="hover:no-underline font-semibold text-[#111827] text-left py-4 text-sm">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-[#6B7280] pb-4 text-sm leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {STATUS_SERVICES.map((svc, i) => (
+              <motion.div
+                key={svc.name}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.28, delay: i * 0.05 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl bg-[#F8F9FA] border border-[#E5E7EB]"
+              >
+                <span className="text-sm font-medium text-[#374151]">{svc.name}</span>
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-[#3CB52A]">
+                  <CheckCircle2 size={14} /> Operational
+                </span>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* ── Knowledge Base Categories ── */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Knowledge Base</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-[#111827] mb-3">Browse by Topic</h2>
+            <p className="text-[#6B7280] text-lg">Hundreds of guides, how-tos, and references — all organized by service area.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {HELP_CATEGORIES.map((cat, i) => (
+              <motion.a
+                key={cat.title}
+                href={cat.href}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.32, delay: i * 0.05 }}
+                className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-md transition-all duration-250"
+              >
+                <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-[#3CB52A]/10 text-[#3CB52A] flex items-center justify-center group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-250">
+                  {cat.icon}
+                </div>
+                <div className="flex-grow min-w-0">
+                  <p className="font-semibold text-[#111827] text-sm">{cat.title}</p>
+                  <p className="text-xs text-[#9CA3AF]">{cat.count} articles</p>
+                </div>
+                <ChevronRight size={16} className="flex-shrink-0 text-[#D1D5DB] group-hover:text-[#3CB52A] transition-colors" />
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Submit Ticket Form ── */}
+      <section id="ticket" className="py-20 bg-white border-t border-[#E5E7EB]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-5 gap-12 items-start">
+
+            {/* Left: form */}
+            <div className="lg:col-span-3">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />
+                  <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Submit a Ticket</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black text-[#111827] mb-2">Log a Support Request</h2>
+                <p className="text-[#6B7280] mb-8 leading-relaxed">Fill in the details below and our team will respond based on your priority level.</p>
+
+                <AnimatePresence mode="wait">
+                  {submitted ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex flex-col items-center justify-center py-16 text-center bg-[#F0FDF4] rounded-2xl border border-[#3CB52A]/20"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-[#3CB52A]/15 flex items-center justify-center mb-4">
+                        <CheckCircle2 size={32} className="text-[#3CB52A]" />
+                      </div>
+                      <h3 className="text-xl font-bold text-[#111827] mb-2">Ticket Submitted!</h3>
+                      <p className="text-[#6B7280] text-sm max-w-xs">We've received your request and will respond within your SLA window. Check your email for confirmation.</p>
+                      <button
+                        onClick={() => setSubmitted(false)}
+                        className="mt-6 text-sm font-semibold text-[#3CB52A] hover:underline"
+                      >
+                        Submit another ticket
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                          <div className="grid sm:grid-cols-2 gap-5">
+                            <FormField control={form.control} name="name" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Full Name *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Jane Doe" className="rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A]" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                            <FormField control={form.control} name="email" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Email Address *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="jane@company.com" className="rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A]" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                          </div>
+
+                          <div className="grid sm:grid-cols-2 gap-5">
+                            <FormField control={form.control} name="phone" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Phone (optional)</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="+231 7XX XXX XXX" className="rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A]" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                            <FormField control={form.control} name="company" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Company (optional)</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Your Organization" className="rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A]" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                          </div>
+
+                          <div className="grid sm:grid-cols-2 gap-5">
+                            <FormField control={form.control} name="category" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Category *</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                      <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="web-mobile">Web & Mobile Apps</SelectItem>
+                                    <SelectItem value="hosting">Cloud & Hosting</SelectItem>
+                                    <SelectItem value="security">Cybersecurity</SelectItem>
+                                    <SelectItem value="software">Software Development</SelectItem>
+                                    <SelectItem value="ai">AI & Automation</SelectItem>
+                                    <SelectItem value="it-support">IT Infrastructure</SelectItem>
+                                    <SelectItem value="billing">Billing & Account</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+
+                            <FormField control={form.control} name="priority" render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-semibold text-[#374151]">Priority *</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger className="rounded-xl border-[#E5E7EB]">
+                                      <SelectValue placeholder="Select priority" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="low">🟢 Low — General question</SelectItem>
+                                    <SelectItem value="medium">🟡 Medium — Issue affecting work</SelectItem>
+                                    <SelectItem value="high">🟠 High — Service degraded</SelectItem>
+                                    <SelectItem value="critical">🔴 Critical — System down</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )} />
+                          </div>
+
+                          <FormField control={form.control} name="subject" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-semibold text-[#374151]">Subject *</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Brief summary of your issue" className="rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A]" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+
+                          <FormField control={form.control} name="message" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-semibold text-[#374151]">Issue Description *</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Describe your issue in detail — include error messages, steps to reproduce, and any screenshots if available."
+                                  className="resize-none rounded-xl border-[#E5E7EB] focus-visible:ring-[#3CB52A] min-h-[140px]"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+
+                          <button
+                            type="submit"
+                            className="w-full bg-[#3CB52A] hover:bg-[#2da822] text-white py-4 rounded-xl font-bold transition-all shadow-[0_8px_24px_rgba(60,181,42,0.30)] hover:shadow-[0_12px_32px_rgba(60,181,42,0.45)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                          >
+                            Submit Ticket <ArrowRight size={16} />
+                          </button>
+
+                          <p className="text-center text-xs text-[#9CA3AF]">
+                            We'll respond via email. For urgent issues, call us at{' '}
+                            <a href="tel:+231761798796" className="text-[#3CB52A] font-semibold">+231 761 798 796</a>.
+                          </p>
+                        </form>
+                      </Form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+
+            {/* Right: contact info + SLA note */}
+            <div className="lg:col-span-2 space-y-5">
+              <motion.div
+                initial={{ opacity: 0, x: 16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="bg-[#F8F9FA] rounded-2xl border border-[#E5E7EB] p-6 space-y-4"
+              >
+                <h3 className="font-bold text-[#111827]">Direct Contact</h3>
+                {[
+                  { icon: <Phone size={16} />, label: 'Phone', value: '+231 761 798 796', href: 'tel:+231761798796' },
+                  { icon: <Mail size={16} />, label: 'Email', value: 'itechnetworkafrica@gmail.com', href: 'mailto:itechnetworkafrica@gmail.com' },
+                  { icon: <Clock size={16} />, label: 'Business Hours', value: 'Mon–Fri 8AM–6PM WAT', href: null },
+                  { icon: <Headphones size={16} />, label: 'Technical Support', value: '24/7 for enterprise clients', href: null },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-lg bg-[#3CB52A]/10 text-[#3CB52A] flex items-center justify-center">{item.icon}</div>
+                    <div>
+                      <p className="text-xs text-[#9CA3AF] font-medium">{item.label}</p>
+                      {item.href ? (
+                        <a href={item.href} className="text-sm font-semibold text-[#111827] hover:text-[#3CB52A] transition-colors">{item.value}</a>
+                      ) : (
+                        <p className="text-sm font-semibold text-[#111827]">{item.value}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.18 }}
+                className="bg-[#0A1929] rounded-2xl p-6 space-y-3"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={18} className="text-[#3CB52A]" />
+                  <h3 className="font-bold text-white text-sm">Response Time Guide</h3>
+                </div>
+                {[
+                  { level: '🔴 Critical', time: '< 2 hours' },
+                  { level: '🟠 High', time: '< 4 hours' },
+                  { level: '🟡 Medium', time: '< 12 hours' },
+                  { level: '🟢 Low', time: '< 24 hours' },
+                ].map((r) => (
+                  <div key={r.level} className="flex items-center justify-between text-sm">
+                    <span className="text-white/65">{r.level}</span>
+                    <span className="font-bold text-white">{r.time}</span>
+                  </div>
+                ))}
+                <p className="text-xs text-white/35 pt-1">Priority & Dedicated SLA clients receive faster routing.</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.24 }}
+                className="rounded-2xl border border-[#E5E7EB] bg-white p-6"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <MonitorCheck size={18} className="text-[#3CB52A]" />
+                  <h3 className="font-bold text-[#111827] text-sm">What Happens Next?</h3>
+                </div>
+                <ol className="space-y-2.5">
+                  {[
+                    'You receive an automatic confirmation email.',
+                    'A support engineer is assigned within your SLA window.',
+                    'We diagnose and communicate our findings.',
+                    'Issue is resolved and you confirm closure.',
+                  ].map((step, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-[#6B7280]">
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#3CB52A]/10 text-[#3CB52A] text-xs font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SLA Tiers ── */}
+      <section className="py-20 bg-[#F8F9FA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Support Plans</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-[#111827] mb-3">Choose Your Support Tier</h2>
+            <p className="text-[#6B7280] text-lg">Upgrade anytime to get faster responses and dedicated engineering access.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 items-stretch">
+            {SLA_TIERS.map((tier, i) => (
+              <motion.div
+                key={tier.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
+                className={`relative flex flex-col rounded-3xl border-2 p-8 bg-white transition-all hover:-translate-y-1 hover:shadow-lg ${tier.color} ${tier.popular ? 'scale-[1.03] z-10' : ''}`}
+              >
+                {tier.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-[#3CB52A] text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap">
+                    <Star size={11} fill="white" /> Most Chosen
+                  </div>
+                )}
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-[#111827] mb-1">{tier.name}</h3>
+                  <p className="text-[#3CB52A] font-bold">{tier.price}</p>
+                </div>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-[#374151]">
+                      <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-[#3CB52A]/12 flex items-center justify-center">
+                        <CheckCircle2 size={12} className="text-[#3CB52A]" />
+                      </span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/contact"
+                  className={`block text-center py-3.5 rounded-xl font-bold text-sm transition-all hover:-translate-y-0.5 ${tier.ctaStyle}`}
+                >
+                  {tier.cta}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-20 bg-white border-t border-[#E5E7EB]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">FAQ</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-[#111827] mb-3">Frequently Asked Questions</h2>
+            <p className="text-[#6B7280] text-lg mb-6">Quick answers to common questions.</p>
+
+            {/* Search */}
+            <div className="relative max-w-md mx-auto">
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search questions…"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] text-sm focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A]"
+              />
+            </div>
+          </motion.div>
+
+          <div className="space-y-3">
+            {filteredFaqs.length === 0 ? (
+              <p className="text-center text-[#9CA3AF] py-8 text-sm">No results for "<strong>{search}</strong>". Try a different term.</p>
+            ) : (
+              filteredFaqs.map((f, i) => <FAQItem key={f.q} q={f.q} a={f.a} i={i} />)
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="py-24 bg-[#0A1929] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#3CB52A]/8 blur-3xl" />
+        </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-[#3CB52A]/15 border border-[#3CB52A]/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">We're Here for You</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">Still Need Help?</h2>
+            <p className="text-white/65 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+              Our team of experienced engineers is ready to help you solve any challenge — from quick questions to complex system issues.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="#ticket"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold rounded-full transition-all shadow-[0_8px_32px_rgba(60,181,42,0.40)] hover:-translate-y-0.5"
+              >
+                Submit a Ticket <ArrowRight size={16} />
+              </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-full border border-white/25 hover:border-white/50 hover:bg-white/5 transition-all"
+              >
+                Contact Us
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
     </div>
   );
 }
