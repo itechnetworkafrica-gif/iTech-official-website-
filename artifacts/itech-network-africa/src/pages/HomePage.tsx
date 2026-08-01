@@ -69,6 +69,111 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   return <span ref={ref}>{display}{suffix}</span>;
 }
 
+/* ─── Typewriter: types once when scrolled into view ─── */
+function TypewriterText({
+  text,
+  className = '',
+  speed = 42,
+  delay = 0,
+  cursor = true,
+}: {
+  text: string;
+  className?: string;
+  speed?: number;
+  delay?: number;
+  cursor?: boolean;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!inView) return;
+    let i = 0;
+    let intervalId: ReturnType<typeof setInterval>;
+    const start = setTimeout(() => {
+      intervalId = setInterval(() => {
+        i++;
+        setDisplayed(text.slice(0, i));
+        if (i >= text.length) { clearInterval(intervalId); setDone(true); }
+      }, speed);
+    }, delay);
+    return () => { clearTimeout(start); clearInterval(intervalId); };
+  }, [inView, text, speed, delay]);
+
+  return (
+    <span ref={ref} className={className}>
+      {inView ? displayed : ''}
+      {cursor && (
+        <motion.span
+          animate={done ? { opacity: [1, 0, 1] } : { opacity: 1 }}
+          transition={done ? { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } : {}}
+          className="inline-block w-[3px] h-[0.82em] bg-current ml-1 align-middle rounded-sm"
+        />
+      )}
+    </span>
+  );
+}
+
+/* ─── RotatingWords: continuously types & erases a word list ─── */
+function RotatingWords({
+  words,
+  className = '',
+  speed = 60,
+  pause = 2200,
+}: {
+  words: string[];
+  className?: string;
+  speed?: number;
+  pause?: number;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-60px' });
+  const [wordIdx, setWordIdx] = useState(0);
+  const [displayed, setDisplayed] = useState('');
+  const [phase, setPhase] = useState<'idle' | 'typing' | 'pausing' | 'erasing'>('idle');
+
+  useEffect(() => {
+    if (inView && phase === 'idle') setPhase('typing');
+  }, [inView, phase]);
+
+  useEffect((): (() => void) | void => {
+    if (phase === 'idle') return;
+    const word = words[wordIdx];
+    if (phase === 'typing') {
+      if (displayed.length < word.length) {
+        const t = setTimeout(() => setDisplayed(word.slice(0, displayed.length + 1)), speed);
+        return () => clearTimeout(t);
+      }
+      const t = setTimeout(() => setPhase('pausing'), pause);
+      return () => clearTimeout(t);
+    }
+    if (phase === 'pausing') {
+      const t = setTimeout(() => setPhase('erasing'), 80);
+      return () => clearTimeout(t);
+    }
+    // phase === 'erasing'
+    if (displayed.length > 0) {
+      const t = setTimeout(() => setDisplayed((d) => d.slice(0, -1)), speed / 2);
+      return () => clearTimeout(t);
+    }
+    setWordIdx((idx) => (idx + 1) % words.length);
+    setPhase('typing');
+  }, [phase, displayed, wordIdx, words, speed, pause]);
+
+  return (
+    <span ref={ref} className={className}>
+      {displayed}
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.55, repeat: Infinity, repeatType: 'reverse', ease: 'linear' }}
+        className="inline-block w-[3px] h-[0.78em] bg-current ml-1 align-middle rounded-sm"
+      />
+    </span>
+  );
+}
+
 /* ─── Data ─── */
 const SERVICES = [
   { icon: <Code2 size={28} />, title: 'Enterprise Software', desc: 'Custom ERP, CRM and business platforms built for African enterprises.' },
@@ -792,7 +897,13 @@ export default function HomePage() {
           >
             <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">What We Do</motion.span>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
-              Enterprise-Grade Solutions<br />Built for Africa
+              <RotatingWords
+                words={['Enterprise Software', 'AI & Automation', 'Cloud Services', 'Cybersecurity', 'Mobile Apps', 'Network Solutions']}
+                className="text-[#3CB52A]"
+                speed={55}
+                pause={2400}
+              />
+              <br />Built for Africa
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-2xl mx-auto">
               From AI-powered automation to cloud infrastructure — every solution engineered for resilience, scale and local context.
@@ -846,7 +957,13 @@ export default function HomePage() {
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={stagger}>
               <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Why iTech Network Africa</motion.span>
               <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                Your Most Trusted<br />Tech Partner in Africa
+                Your Most Trusted<br />
+                <TypewriterText
+                  text="Tech Partner in Africa"
+                  speed={48}
+                  delay={500}
+                  className="text-[#3CB52A]"
+                />
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="text-white/55 text-lg leading-relaxed mb-10">
                 We combine global best practices with deep African market knowledge to deliver solutions that actually work — on time, on budget, and built to last.
@@ -1155,7 +1272,12 @@ export default function HomePage() {
           className="relative z-10 max-w-3xl mx-auto px-6 text-center"
         >
           <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-            Ready to Transform Your Business?
+            <TypewriterText
+              text="Ready to Transform Your Business?"
+              speed={36}
+              delay={300}
+              className="text-white"
+            />
           </h2>
           <p className="text-white/80 text-lg mb-10">
             Join 30+ enterprises across Africa that trust iTech Network Africa to power their digital future.
