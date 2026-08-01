@@ -25,6 +25,7 @@ import IndustriesPage from '@/pages/IndustriesPage';
 import PartnersPage from '@/pages/PartnersPage';
 import ResourcesPage from '@/pages/ResourcesPage';
 import BlogPage from '@/pages/BlogPage';
+import NewsPage from '@/pages/NewsPage';
 import CareersPage from '@/pages/CareersPage';
 import SupportPage from '@/pages/SupportPage';
 import ContactPage from '@/pages/ContactPage';
@@ -58,6 +59,7 @@ function Router() {
           <Route path="/partners" component={PartnersPage} />
           <Route path="/resources" component={ResourcesPage} />
           <Route path="/blog" component={BlogPage} />
+          <Route path="/news" component={NewsPage} />
           <Route path="/careers" component={CareersPage} />
           <Route path="/support" component={SupportPage} />
           <Route path="/contact" component={ContactPage} />

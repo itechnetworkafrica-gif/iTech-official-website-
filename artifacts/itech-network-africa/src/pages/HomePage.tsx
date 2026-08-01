@@ -904,6 +904,71 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
+          PROMO BLOCKS — Domain & Training
+      ══════════════════════════════════════ */}
+      <section className="py-16 bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 grid md:grid-cols-2 gap-6">
+
+          {/* Block 1 — Domain Registration */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="group relative rounded-2xl overflow-hidden shadow-lg border border-[#E5E7EB] hover:shadow-2xl transition-shadow duration-300 cursor-pointer"
+          >
+            <img
+              src="/promo-domain-names.png"
+              alt="Great ideas deserve a great domain name — iTech Network Africa"
+              className="w-full h-full object-cover block"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Link
+              href="/services"
+              className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 inline-flex items-center gap-2 bg-[#3CB52A] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg"
+            >
+              Get Your Domain <ArrowRight size={13} />
+            </Link>
+          </motion.div>
+
+          {/* Block 2 — Online Training */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+            className="group relative rounded-2xl overflow-hidden shadow-lg border border-[#E5E7EB] hover:shadow-2xl transition-shadow duration-300 bg-gradient-to-br from-[#EEF2FF] to-[#F0F9FF]"
+          >
+            <div className="flex flex-col md:flex-row items-center gap-0 h-full">
+              {/* Text side */}
+              <div className="flex flex-col justify-center p-8 md:p-10 flex-1">
+                <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3 bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-3 py-1 rounded-full self-start">
+                  Training & E-Learning
+                </span>
+                <h3 className="text-2xl font-black text-[#0A1929] leading-snug mb-3">
+                  Learn from Africa's best technology engineers
+                </h3>
+                <p className="text-[#6B7280] text-sm leading-relaxed mb-6">
+                  Live online sessions, recorded courses, and mentorship programmes — built for teams and individuals ready to level up.
+                </p>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-2 bg-[#0A1929] hover:bg-[#3CB52A] text-white font-bold px-5 py-2.5 rounded-xl transition-colors text-sm self-start"
+                >
+                  Explore Training <ArrowRight size={14} />
+                </Link>
+              </div>
+              {/* Image side */}
+              <div className="w-full md:w-[55%] shrink-0 h-56 md:h-full min-h-[220px] overflow-hidden">
+                <img
+                  src="/promo-online-training.jpg"
+                  alt="Online training and e-learning at iTech Network Africa"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           TESTIMONIALS — Light mode slider
       ══════════════════════════════════════ */}
       <TestimonialsSlider />
