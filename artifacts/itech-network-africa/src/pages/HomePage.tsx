@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import {
   ArrowRight, CheckCircle, Globe, Shield, Zap, Users, Award, TrendingUp,
   Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
@@ -16,6 +16,60 @@ const fadeUp = {
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 
+/* ─── Floating ambient orbs ─── */
+function FloatingOrbs({ count = 5, dark = false }: { count?: number; dark?: boolean }) {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {Array.from({ length: count }, (_, i) => {
+        const size = 140 + (i * 53) % 200;
+        const x = (i * 179) % 85;
+        const y = (i * 131) % 75;
+        const dur = 9 + (i * 1.4) % 9;
+        const delay = (i * 0.8) % 5;
+        return (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: size,
+              height: size,
+              left: `${x}%`,
+              top: `${y}%`,
+              background: dark
+                ? `radial-gradient(circle, rgba(60,181,42,${0.05 + (i % 3) * 0.025}) 0%, transparent 70%)`
+                : `radial-gradient(circle, rgba(60,181,42,${0.08 + (i % 3) * 0.04}) 0%, transparent 70%)`,
+              filter: 'blur(45px)',
+            }}
+            animate={{
+              y: [0, -28 - (i % 3) * 14, 0],
+              x: [0, (i % 2 === 0 ? 1 : -1) * (14 + (i % 3) * 9), 0],
+              scale: [1, 1.08 + (i % 3) * 0.06, 1],
+            }}
+            transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── Animated count-up number ─── */
+function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, target, {
+      duration: 1.8,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, target]);
+  return <span ref={ref}>{display}{suffix}</span>;
+}
+
 /* ─── Data ─── */
 const SERVICES = [
   { icon: <Code2 size={28} />, title: 'Enterprise Software', desc: 'Custom ERP, CRM and business platforms built for African enterprises.' },
@@ -27,10 +81,10 @@ const SERVICES = [
 ];
 
 const STATS = [
-  { value: '20+', label: 'Projects Delivered' },
-  { value: '30+', label: 'Enterprise Clients' },
-  { value: '5+', label: 'Countries Served' },
-  { value: '99%', label: 'Client Satisfaction' },
+  { value: '20+', num: 20, suffix: '+', label: 'Projects Delivered' },
+  { value: '30+', num: 30, suffix: '+', label: 'Enterprise Clients' },
+  { value: '5+',  num: 5,  suffix: '+', label: 'Countries Served' },
+  { value: '99%', num: 99, suffix: '%', label: 'Client Satisfaction' },
 ];
 
 const PROCESS = [
@@ -236,6 +290,11 @@ function HeroSlider() {
         }}
       />
 
+      {/* ── Floating ambient orbs ── */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <FloatingOrbs count={5} dark />
+      </div>
+
       {/* ── Full layout wrapper ── */}
       <div className="absolute inset-0 z-20 flex flex-col">
 
@@ -288,6 +347,14 @@ function HeroSlider() {
                   <span className="w-8 h-px bg-[#3CB52A]" />
                   <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.20em] uppercase">
                     {slide.eyebrow}
+                  </span>
+                  <span className="flex items-center gap-1.5 ml-1 bg-[#3CB52A]/10 border border-[#3CB52A]/25 px-2.5 py-1 rounded-full">
+                    <motion.span
+                      animate={{ scale: [1, 1.6, 1], opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                      className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] inline-block shrink-0"
+                    />
+                    <span className="text-[#3CB52A] text-[9px] font-bold tracking-widest uppercase">Live</span>
                   </span>
                 </motion.div>
               </AnimatePresence>
@@ -745,6 +812,7 @@ export default function HomePage() {
                 key={svc.title}
                 custom={i}
                 variants={fadeUp}
+                whileHover={{ y: -8, transition: { duration: 0.28, ease: EASE } }}
                 className="group flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-xl hover:border-[#3CB52A]/30 transition-all duration-300"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
@@ -787,7 +855,9 @@ export default function HomePage() {
               <motion.div variants={fadeUp} custom={3} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
                 {STATS.map(s => (
                   <div key={s.label}>
-                    <div className="text-3xl font-black text-[#3CB52A]">{s.value}</div>
+                    <div className="text-3xl font-black text-[#3CB52A]">
+                      <CountUp target={s.num} suffix={s.suffix} />
+                    </div>
                     <div className="text-white/45 text-xs mt-1 leading-snug">{s.label}</div>
                   </div>
                 ))}
@@ -801,7 +871,7 @@ export default function HomePage() {
 
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={stagger} className="grid sm:grid-cols-2 gap-4">
               {WHY.map((w, i) => (
-                <motion.div key={w.title} custom={i} variants={fadeUp} className="p-6 rounded-2xl bg-white/4 border border-white/8 hover:border-[#3CB52A]/30 hover:bg-[#3CB52A]/5 transition-all group">
+                <motion.div key={w.title} custom={i} variants={fadeUp} whileHover={{ scale: 1.04, transition: { duration: 0.22 } }} className="p-6 rounded-2xl bg-white/4 border border-white/8 hover:border-[#3CB52A]/30 hover:bg-[#3CB52A]/5 transition-all group">
                   <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
                     {w.icon}
                   </div>
@@ -1067,6 +1137,17 @@ export default function HomePage() {
       <section id="get-started" className="py-24 bg-[#3CB52A] relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <FloatingOrbs count={4} />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+          className="absolute -bottom-48 -left-48 w-[560px] h-[560px] rounded-full border border-white/10 pointer-events-none"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 70, repeat: Infinity, ease: 'linear' }}
+          className="absolute -bottom-36 -left-36 w-[420px] h-[420px] rounded-full border border-white/8 pointer-events-none"
+        />
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

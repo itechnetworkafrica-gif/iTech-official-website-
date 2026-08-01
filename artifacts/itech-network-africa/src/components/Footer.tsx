@@ -74,6 +74,7 @@ const footerSections = [
   },
   {
     title: 'Account',
+    isNew: true,
     links: [
       { label: 'Client Portal Login', href: '/portal', isNew: true },
       { label: 'Register', href: '/portal' },
