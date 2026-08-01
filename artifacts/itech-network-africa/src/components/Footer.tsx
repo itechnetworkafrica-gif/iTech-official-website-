@@ -66,7 +66,17 @@ const footerSections = [
       { label: 'Cloud Services', href: '/services' },
       { label: 'Cybersecurity', href: '/services' },
       { label: 'IT Support', href: '/support' },
-      { label: 'Pricing', href: '/pricing' },
+    ],
+  },
+  {
+    title: 'Pricing',
+    links: [
+      { label: 'Website Design', href: '/pricing' },
+      { label: 'Web Hosting', href: '/pricing' },
+      { label: 'Digital Marketing', href: '/pricing' },
+      { label: 'IT Consultancy', href: '/pricing' },
+      { label: 'Graphic Design', href: '/pricing' },
+      { label: 'Request a Quote', href: '/contact' },
     ],
   },
 ];
