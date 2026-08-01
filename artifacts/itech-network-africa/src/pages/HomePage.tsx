@@ -78,275 +78,470 @@ const TESTIMONIALS = [
   { name: 'Agrolite', role: 'Agricultural Organisation', quote: 'Our website finally reflects the quality of work we do in the field. The blog, gallery, and outreach pages iTech built have helped us connect with farming communities in ways we never could before.', rating: 5 },
 ];
 
-/* ─── Hero Section ─── */
-function HeroSection() {
+/* ─── Hero Slides data ─── */
+const HERO_SLIDES = [
+  {
+    eyebrow: "Innovating Africa's Future",
+    headline: ['Transforming', 'Africa Through', 'Technology'],
+    accentLine: 2,
+    subtitle: 'We build world-class software, AI and digital infrastructure that powers Africa\'s most ambitious organisations forward.',
+    cta: 'Explore Services',
+    href: '/services',
+    ctaSecondary: 'View Our Work',
+    hrefSecondary: '/portfolio',
+    chips: ['Web & Mobile', 'AI Solutions', 'Cloud Infra', 'Cybersecurity'],
+    img: '/hero-group-excited.jpg',
+    imgAlt: 'iTech Network Africa team',
+    imgPosition: 'center top',
+    stats: [
+      { value: '20+', label: 'Projects Delivered' },
+      { value: '30+', label: 'Enterprise Clients' },
+      { value: '99%', label: 'Client Satisfaction' },
+    ],
+  },
+  {
+    eyebrow: 'AI & Digital Innovation',
+    headline: ['Building Digital', 'Infrastructure', 'of Tomorrow'],
+    accentLine: 1,
+    subtitle: 'Machine learning, intelligent automation and data-driven platforms — engineered for African enterprises at scale.',
+    cta: 'AI Solutions',
+    href: '/ai',
+    ctaSecondary: 'Learn More',
+    hrefSecondary: '/services',
+    chips: ['Machine Learning', 'Automation', 'Data Analytics', 'NLP'],
+    img: '/hero-woman-vr.jpg',
+    imgAlt: 'AI and technology innovation',
+    imgPosition: 'center center',
+    stats: [
+      { value: '99%', label: 'Client Satisfaction' },
+      { value: '60%', label: 'Avg. Efficiency Gain' },
+      { value: '5+', label: 'Countries Served' },
+    ],
+  },
+  {
+    eyebrow: 'Pan-African Reach',
+    headline: ['Trusted by', 'Governments &', 'Enterprises'],
+    accentLine: 0,
+    subtitle: 'From central banks to NGOs — Africa\'s most respected institutions rely on iTech to deliver on time, on budget, every time.',
+    cta: 'View Portfolio',
+    href: '/portfolio',
+    ctaSecondary: 'About Us',
+    hrefSecondary: '/about',
+    chips: ['Government', 'Banking', 'NGO & INGO', 'Telecoms'],
+    img: '/hero-man-denim.jpg',
+    imgAlt: 'Pan-African operations',
+    imgPosition: 'center top',
+    stats: [
+      { value: '5+', label: 'Countries Served' },
+      { value: '30+', label: 'Enterprise Clients' },
+      { value: '2023', label: 'Founded' },
+    ],
+  },
+  {
+    eyebrow: 'Cybersecurity & Cloud',
+    headline: ['Secure.', 'Scalable.', 'Future-Ready.'],
+    accentLine: 2,
+    subtitle: 'Enterprise-grade cloud architecture and end-to-end cybersecurity built for the resilience African organisations demand.',
+    cta: 'Get a Quote',
+    href: '/contact',
+    ctaSecondary: 'Our Services',
+    hrefSecondary: '/services',
+    chips: ['AWS · Azure · GCP', 'Security Audits', 'Compliance', '24/7 Monitoring'],
+    img: '/hero-group-phone.jpg',
+    imgAlt: 'Cybersecurity and cloud solutions',
+    imgPosition: 'center top',
+    stats: [
+      { value: '24/7', label: 'Managed Support' },
+      { value: 'ISO', label: 'Aligned Security' },
+      { value: '100%', label: 'Uptime SLA' },
+    ],
+  },
+];
+
+/* ─── Hero Slider ─── */
+const INTERVAL_MS = 6000;
+
+function HeroSlider() {
+  const [active, setActive] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const total = HERO_SLIDES.length;
+
+  const goTo = useCallback((idx: number) => {
+    setActive(idx);
+    setProgress(0);
+  }, []);
+  const next = useCallback(() => goTo((active + 1) % total), [active, total, goTo]);
+  const prev = useCallback(() => goTo((active - 1 + total) % total), [active, total, goTo]);
+
+  /* auto-advance + progress bar */
+  useEffect(() => {
+    setProgress(0);
+    const tick = 50; // ms per tick
+    let elapsed = 0;
+    const id = setInterval(() => {
+      elapsed += tick;
+      setProgress(Math.min((elapsed / INTERVAL_MS) * 100, 100));
+      if (elapsed >= INTERVAL_MS) {
+        elapsed = 0;
+        setActive((a) => (a + 1) % total);
+        setProgress(0);
+      }
+    }, tick);
+    return () => clearInterval(id);
+  }, [active, total]);
+
+  const slide = HERO_SLIDES[active];
+  const slideNum = String(active + 1).padStart(2, '0');
+  const totalNum = String(total).padStart(2, '0');
+
   return (
     <section
-      className="relative overflow-hidden flex flex-col"
-      style={{ background: '#05080F', minHeight: 'clamp(680px, 94vh, 960px)' }}
+      className="relative bg-[#060E18] overflow-hidden"
+      style={{ minHeight: 'clamp(600px, 92vh, 860px)' }}
     >
-      {/* ── Background: dot grid ── */}
+      {/* ── Full-bleed background photo ── */}
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={`img-${active}`}
+          src={slide.img}
+          alt={slide.imgAlt}
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.75, ease: EASE }}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: slide.imgPosition, filter: 'blur(3px)', transform: 'scale(1.04)' }}
+        />
+      </AnimatePresence>
+
+      {/* ── Desktop: hard dark panel left, fade to transparent right ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none hidden md:block"
         style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px)',
-          backgroundSize: '36px 36px',
+          background:
+            'linear-gradient(105deg, #060E18 0%, #060E18 42%, rgba(6,14,24,0.94) 52%, rgba(6,14,24,0.55) 66%, rgba(6,14,24,0.12) 82%, transparent 100%)',
         }}
       />
-      {/* Green radial glow — top left */}
+      {/* bottom vignette on desktop */}
       <div
-        className="absolute -top-56 -left-56 w-[800px] h-[800px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.13) 0%, transparent 62%)' }}
+        className="absolute inset-x-0 bottom-0 h-40 pointer-events-none hidden md:block"
+        style={{ background: 'linear-gradient(to top, rgba(6,14,24,0.85) 0%, transparent 100%)' }}
       />
-      {/* Subtle blue accent — bottom right */}
+      {/* ── Mobile gradient ── */}
       <div
-        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(30,100,220,0.07) 0%, transparent 65%)' }}
-      />
-      {/* Bottom fade */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
-        style={{ background: 'linear-gradient(to top, #05080F 0%, transparent 100%)' }}
+        className="absolute inset-0 pointer-events-none md:hidden"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(6,14,24,0.20) 0%, rgba(6,14,24,0.55) 45%, rgba(6,14,24,0.96) 72%, #060E18 100%)',
+        }}
       />
 
-      {/* ── Main content ── */}
-      <div className="relative z-10 flex-1 flex items-center">
-        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-20 items-center">
+      {/* ── Full layout wrapper ── */}
+      <div className="absolute inset-0 z-20 flex flex-col">
 
-            {/* ── LEFT: Text ── */}
-            <motion.div initial="hidden" animate="show" variants={stagger}>
+        {/* ── Top bar: slide counter + prev/next (desktop) ── */}
+        <div className="flex items-center justify-between w-full max-w-[1400px] mx-auto px-6 lg:px-16 pt-10 lg:pt-12">
+          <div className="hidden lg:flex items-center gap-3">
+            <span className="text-white font-black text-2xl tabular-nums">{slideNum}</span>
+            <div className="w-px h-5 bg-white/25 mx-1" />
+            <span className="text-white/35 text-sm tabular-nums">{totalNum}</span>
+          </div>
+          <div className="hidden lg:flex items-center gap-2 ml-auto">
+            <button
+              onClick={prev}
+              aria-label="Previous slide"
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all hover:bg-white/10"
+              style={{ border: '1px solid rgba(255,255,255,0.18)' }}
+            >
+              <ChevronLeft size={18} className="text-white" />
+            </button>
+            <button
+              onClick={next}
+              aria-label="Next slide"
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all hover:bg-white/10"
+              style={{ border: '1px solid rgba(255,255,255,0.18)' }}
+            >
+              <ChevronRight size={18} className="text-white" />
+            </button>
+          </div>
+        </div>
 
+        {/* ── Spacer ── */}
+        <div className="flex-1" />
+
+        {/* ── Main content block ── */}
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 pb-0">
+          <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-end">
+
+            {/* ── Left column: text ── */}
+            <div>
               {/* Eyebrow */}
-              <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3 mb-8">
-                <span
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold tracking-[0.16em] uppercase"
-                  style={{ background: 'rgba(60,181,42,0.10)', border: '1px solid rgba(60,181,42,0.28)', color: '#3CB52A' }}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`eye-${active}`}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={{ duration: 0.32 }}
+                  className="flex items-center gap-3 mb-5"
                 >
-                  <Globe size={12} />
-                  Pan-African Technology Leader
-                </span>
-                <span className="flex items-center gap-1.5 text-white/35 text-xs font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse shrink-0" />
-                  Serving 5+ Countries
-                </span>
-              </motion.div>
+                  <span className="w-8 h-px bg-[#3CB52A]" />
+                  <span className="text-[#3CB52A] text-[11px] font-bold tracking-[0.20em] uppercase">
+                    {slide.eyebrow}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
 
               {/* Headline */}
-              <motion.h1
-                variants={fadeUp}
-                custom={1}
-                className="font-black leading-[1.04] tracking-tight mb-7"
-                style={{ fontSize: 'clamp(2.8rem, 5.2vw, 5.0rem)' }}
-              >
-                <span className="block text-white">We Build</span>
-                <span className="block text-white">Digital Solutions</span>
-                <span className="block" style={{ color: '#3CB52A' }}>Africa Relies On.</span>
-              </motion.h1>
-
-              {/* Subtitle */}
-              <motion.p
-                variants={fadeUp}
-                custom={2}
-                className="text-white/55 leading-relaxed mb-10"
-                style={{ fontSize: '1.05rem', maxWidth: '480px' }}
-              >
-                Enterprise software, AI, cloud infrastructure and cybersecurity — delivered on time, on budget, across Africa and beyond.
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4 mb-12">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold text-sm px-8 py-4 rounded-full transition-all shadow-[0_8px_36px_rgba(60,181,42,0.38)] hover:-translate-y-0.5 active:scale-95"
+              <AnimatePresence mode="wait">
+                <motion.h1
+                  key={`h1-${active}`}
+                  initial={{ opacity: 0, y: 32 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.52, ease: EASE }}
+                  className="font-black italic leading-[1.03] tracking-tight mb-5"
+                  style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.6rem)' }}
                 >
-                  Start a Project <ArrowRight size={16} />
-                </Link>
-                <Link
-                  href="/portfolio"
-                  className="inline-flex items-center gap-2.5 text-white font-semibold text-sm px-7 py-4 rounded-full transition-all hover:bg-white/6"
-                  style={{ border: '1px solid rgba(255,255,255,0.18)' }}
-                >
-                  View Our Work <ChevronRight size={16} />
-                </Link>
-              </motion.div>
-
-              {/* Trusted by */}
-              <motion.div variants={fadeUp} custom={4}>
-                <p className="text-white/25 text-[10px] font-bold tracking-[0.22em] uppercase mb-3">Trusted by</p>
-                <div className="flex flex-wrap gap-2">
-                  {['Health Tech Liberia', 'Galaxy International', 'B4P CODEFOUND', 'DKS Incubation', 'Lewanah LLC', 'Agrolite'].map((name) => (
+                  {slide.headline.map((line, i) => (
                     <span
-                      key={name}
-                      className="text-white/50 text-xs px-3 py-1.5 rounded-full"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}
+                      key={i}
+                      className={`block ${i === slide.accentLine ? 'text-[#3CB52A]' : 'text-white'}`}
                     >
-                      {name}
+                      {line}
                     </span>
                   ))}
-                </div>
-              </motion.div>
-            </motion.div>
+                </motion.h1>
+              </AnimatePresence>
 
-            {/* ── RIGHT: Image composition (desktop only) ── */}
-            <div className="relative hidden lg:block">
+              {/* Subtitle */}
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={`sub-${active}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.38, delay: 0.08 }}
+                  className="text-white/65 text-base leading-relaxed mb-7"
+                  style={{ maxWidth: '420px' }}
+                >
+                  {slide.subtitle}
+                </motion.p>
+              </AnimatePresence>
 
-              {/* Main image frame */}
+              {/* CTAs */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`cta-${active}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.14 }}
+                  className="flex flex-wrap items-center gap-3 mb-7"
+                >
+                  <Link
+                    href={slide.href}
+                    className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-sm font-extrabold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all shadow-[0_6px_32px_rgba(60,181,42,0.55)] hover:-translate-y-0.5 active:scale-95"
+                  >
+                    {slide.cta}
+                  </Link>
+                  <Link
+                    href={slide.hrefSecondary}
+                    className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold px-6 py-3.5 rounded-full transition-all border border-white/20 hover:border-white/40 hover:bg-white/5"
+                  >
+                    {slide.ctaSecondary} <ArrowRight size={14} />
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Service chips */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`chips-${active}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, delay: 0.20 }}
+                  className="flex flex-wrap gap-2 mb-8 lg:mb-10"
+                >
+                  {slide.chips.map((chip) => (
+                    <span
+                      key={chip}
+                      className="text-xs font-semibold text-white/60 px-3 py-1.5 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    >
+                      {chip}
+                    </span>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* ── Right column: floating info panel (desktop only) ── */}
+            <div className="hidden lg:flex flex-col gap-3 pb-8 xl:pb-10">
+
+              {/* Services grid card */}
               <motion.div
-                className="relative rounded-3xl overflow-hidden"
-                style={{ height: '540px', border: '1px solid rgba(255,255,255,0.10)', boxShadow: '0 40px 100px rgba(0,0,0,0.55)' }}
-                initial={{ opacity: 0, x: 40 }}
+                key={`right-services-${active}`}
+                initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.55, delay: 0.15, ease: EASE }}
+                className="rounded-2xl p-5 border border-white/10"
+                style={{ background: 'rgba(10,25,41,0.80)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
               >
-                <img
-                  src="/hero-man-laptop-chair.jpg"
-                  alt="iTech Network Africa — technology professional"
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: 'center top' }}
-                />
-                {/* Cinematic overlay */}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.65) 0%, rgba(5,8,15,0.10) 50%, transparent 100%)' }}
-                />
-                {/* Green accent edge */}
-                <div className="absolute top-10 bottom-10 left-0 w-[3px] bg-[#3CB52A] rounded-r-full" />
-
-                {/* Bottom-left inset badge */}
-                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                  <div
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                    style={{ background: 'rgba(5,8,15,0.85)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(12px)' }}
-                  >
-                    <CheckCircle2 size={14} className="text-[#3CB52A] shrink-0" />
-                    <span className="text-white text-xs font-semibold">ISO-Aligned Security</span>
-                  </div>
-                  <div
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                    style={{ background: 'rgba(5,8,15,0.85)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(12px)' }}
-                  >
-                    <Zap size={14} className="text-[#3CB52A] shrink-0" />
-                    <span className="text-white text-xs font-semibold">24/7 Support</span>
-                  </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="w-5 h-px bg-[#3CB52A]" />
+                  <span className="text-[#3CB52A] text-[10px] font-bold tracking-[0.18em] uppercase">What We Deliver</span>
                 </div>
-              </motion.div>
-
-              {/* Floating card: countries */}
-              <motion.div
-                className="absolute -top-6 -right-6 rounded-2xl p-4 z-20"
-                style={{
-                  background: 'rgba(8,14,26,0.94)',
-                  border: '1px solid rgba(255,255,255,0.13)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  minWidth: '178px',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                }}
-                initial={{ opacity: 0, y: -16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45, duration: 0.5, ease: EASE }}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(60,181,42,0.15)' }}>
-                    <Globe size={14} className="text-[#3CB52A]" />
-                  </div>
-                  <span className="text-white text-xs font-bold">Pan-African Reach</span>
-                </div>
-                <div className="flex items-baseline gap-1.5 mb-2">
-                  <span className="text-[2rem] font-black text-white leading-none">5+</span>
-                  <span className="text-white/45 text-xs">countries</span>
-                </div>
-                <div className="flex gap-1">
-                  {['🇱🇷', '🇬🇭', '🇳🇬', '🇰🇪', '🇿🇦'].map((f) => (
-                    <span key={f} className="text-[15px]">{f}</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: Code2,      label: 'Enterprise Software' },
+                    { icon: Brain,      label: 'AI & Automation'     },
+                    { icon: Cloud,      label: 'Cloud Infrastructure' },
+                    { icon: Monitor,    label: 'Web & Mobile Apps'   },
+                    { icon: Shield,     label: 'Cybersecurity'       },
+                    { icon: Wifi,       label: 'Network Solutions'   },
+                  ].map(({ icon: Icon, label }) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-2.5 p-3 rounded-xl transition-colors hover:bg-white/5"
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                    >
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(60,181,42,0.15)' }}>
+                        <Icon size={13} className="text-[#3CB52A]" />
+                      </div>
+                      <span className="text-white/75 text-xs font-medium leading-tight">{label}</span>
+                    </div>
                   ))}
                 </div>
               </motion.div>
 
-              {/* Floating card: satisfaction */}
+              {/* Stats row */}
               <motion.div
-                className="absolute -bottom-6 -left-6 rounded-2xl p-4 z-20"
-                style={{
-                  background: 'rgba(8,14,26,0.94)',
-                  border: '1px solid rgba(60,181,42,0.28)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  minWidth: '190px',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                }}
+                key={`right-stats-${active}`}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5, ease: EASE }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, delay: 0.25, ease: EASE }}
+                className="grid grid-cols-3 gap-3"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={11} className="text-[#3CB52A] fill-[#3CB52A]" />
-                    ))}
+                {[
+                  { value: '20+',  label: 'Projects',  icon: FolderOpen },
+                  { value: '30+',  label: 'Clients',   icon: Users      },
+                  { value: '5+',   label: 'Countries', icon: Globe      },
+                ].map(({ value, label, icon: Icon }) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl p-4 text-center border border-white/10"
+                    style={{ background: 'rgba(10,25,41,0.80)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
+                  >
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ background: 'rgba(60,181,42,0.12)' }}>
+                      <Icon size={15} className="text-[#3CB52A]" />
+                    </div>
+                    <div className="text-2xl font-black text-white leading-none mb-1">{value}</div>
+                    <div className="text-white/40 text-[10px] font-medium uppercase tracking-wide">{label}</div>
                   </div>
-                  <span className="text-white/40 text-[10px] font-medium">Client Rating</span>
-                </div>
-                <div className="flex items-baseline gap-1.5 mb-1">
-                  <span className="text-[2rem] font-black text-white leading-none">99%</span>
-                  <span className="text-white/45 text-xs">satisfaction</span>
-                </div>
-                <p className="text-white/30 text-[10px]">Across 30+ enterprise clients</p>
+                ))}
               </motion.div>
 
-              {/* Secondary image — mid-right peek */}
+              {/* CTA card */}
               <motion.div
-                className="absolute top-1/2 -right-5 -translate-y-1/2 w-[88px] rounded-2xl overflow-hidden"
-                style={{
-                  height: '148px',
-                  border: '2px solid rgba(60,181,42,0.22)',
-                  boxShadow: '0 20px 48px rgba(0,0,0,0.55)',
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.55, duration: 0.5, ease: EASE }}
+                key={`right-cta-${active}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, delay: 0.35, ease: EASE }}
+                className="rounded-2xl p-4 border border-[#3CB52A]/25 flex items-center gap-4"
+                style={{ background: 'rgba(60,181,42,0.08)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)' }}
               >
-                <img
-                  src="/hero-woman-glasses.jpg"
-                  alt="iTech Network Africa team member"
-                  className="w-full h-full object-cover"
-                />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(60,181,42,0.18)' }}>
+                  <Headphones size={17} className="text-[#3CB52A]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-white mb-0.5">Ready to start a project?</div>
+                  <div className="text-white/45 text-xs">Free consultation · No commitment</div>
+                </div>
+                <Link
+                  href="/contact"
+                  className="shrink-0 flex items-center gap-1.5 bg-[#3CB52A] hover:bg-[#2ea827] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                >
+                  Talk to Us <ArrowRight size={11} />
+                </Link>
               </motion.div>
             </div>
 
           </div>
         </div>
-      </div>
 
-      {/* ── Stats bar ── */}
-      <div
-        className="relative z-10 w-full"
-        style={{ background: 'rgba(255,255,255,0.03)', borderTop: '1px solid rgba(255,255,255,0.07)' }}
-      >
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 py-5">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
-            {[
-              { value: '20+',  label: 'Projects Delivered',  icon: FolderOpen },
-              { value: '30+',  label: 'Enterprise Clients',  icon: Users      },
-              { value: '5+',   label: 'Countries Served',    icon: Globe      },
-              { value: '99%',  label: 'Client Satisfaction', icon: Award      },
-            ].map(({ value, label, icon: Icon }, i) => (
-              <div
-                key={label}
-                className={`flex items-center gap-3 ${i < 3 ? 'lg:border-r lg:border-white/8 lg:pr-8' : ''} ${i > 0 ? 'lg:pl-8' : ''}`}
+        {/* ── Stats strip + dots ── */}
+        <div
+          className="w-full"
+          style={{ background: 'rgba(6,14,24,0.72)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', borderTop: '1px solid rgba(255,255,255,0.07)' }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-16 py-4 flex items-center justify-between gap-4 flex-wrap">
+
+            {/* Stats */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`stats-${active}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-6 lg:gap-10"
               >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(60,181,42,0.12)' }}
+                {slide.stats.map((s, i) => (
+                  <React.Fragment key={s.label}>
+                    {i > 0 && <div className="hidden sm:block w-px h-7 bg-white/15" />}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-white font-black text-xl lg:text-2xl tabular-nums leading-none">{s.value}</span>
+                      <span className="text-white/45 text-xs hidden sm:block">{s.label}</span>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Dot navigation */}
+            <div className="flex items-center gap-2.5 ml-auto">
+              {HERO_SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  aria-label={`Slide ${i + 1}`}
+                  className="relative flex items-center justify-center transition-all duration-300"
+                  style={
+                    i === active
+                      ? { width: 28, height: 28, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.60)', background: 'transparent' }
+                      : { width: 9, height: 9, borderRadius: '50%', background: 'rgba(255,255,255,0.30)' }
+                  }
                 >
-                  <Icon size={17} className="text-[#3CB52A]" />
-                </div>
-                <div>
-                  <div className="text-[1.6rem] font-black text-white leading-none">{value}</div>
-                  <div className="text-white/38 text-[11px] font-medium mt-0.5">{label}</div>
-                </div>
-              </div>
-            ))}
+                  {i === active && (
+                    <>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', display: 'block' }} />
+                      {/* progress ring */}
+                      <svg
+                        className="absolute inset-0 -rotate-90"
+                        width="28" height="28" viewBox="0 0 28 28"
+                        style={{ pointerEvents: 'none' }}
+                      >
+                        <circle
+                          cx="14" cy="14" r="11"
+                          fill="none"
+                          stroke="#3CB52A"
+                          strokeWidth="2"
+                          strokeDasharray={`${2 * Math.PI * 11}`}
+                          strokeDashoffset={`${2 * Math.PI * 11 * (1 - progress / 100)}`}
+                          strokeLinecap="round"
+                          style={{ transition: 'stroke-dashoffset 0.05s linear' }}
+                        />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -515,7 +710,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
 
-      <HeroSection />
+      <HeroSlider />
 
       {/* ══════════════════════════════════════
           SERVICES OVERVIEW
