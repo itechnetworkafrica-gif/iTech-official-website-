@@ -41,6 +41,18 @@ const footerSections = [
     ],
   },
   {
+    title: 'Pricing',
+    isNew: true,
+    links: [
+      { label: 'Website Design', href: '/pricing' },
+      { label: 'Web Hosting', href: '/pricing' },
+      { label: 'Digital Marketing', href: '/pricing' },
+      { label: 'IT Consultancy', href: '/pricing' },
+      { label: 'Graphic Design', href: '/pricing' },
+      { label: 'Request a Quote', href: '/contact' },
+    ],
+  },
+  {
     title: 'Partner Programs',
     links: [
       { label: 'Technology Partners', href: '/partners' },
@@ -69,18 +81,6 @@ const footerSections = [
       { label: 'IT Support', href: '/support' },
     ],
   },
-  {
-    title: 'Pricing',
-    isNew: true,
-    links: [
-      { label: 'Website Design', href: '/pricing' },
-      { label: 'Web Hosting', href: '/pricing' },
-      { label: 'Digital Marketing', href: '/pricing' },
-      { label: 'IT Consultancy', href: '/pricing' },
-      { label: 'Graphic Design', href: '/pricing' },
-      { label: 'Request a Quote', href: '/contact' },
-    ],
-  },
 ];
 
 export const Footer: React.FC = () => {
@@ -95,13 +95,15 @@ export const Footer: React.FC = () => {
           <FooterAccordion sections={footerSections} />
         </div>
 
-        <FooterBrand />
+        {/* Desktop: social icons to the left of logo in a row; Mobile: logo then icons stacked */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-10 pt-10 pb-6">
+          <FooterSocial />
+          <FooterBrand />
+        </div>
 
         <div className="border-t border-white/10" />
 
         <FooterLocale />
-
-        <FooterSocial />
 
       </div>
 
