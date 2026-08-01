@@ -13,6 +13,8 @@ export interface NavigationItem {
   id: string;
   label: string;
   href: string;
+  /** Show a NEW badge next to the label */
+  isNew?: boolean;
   /** Simple dropdown list */
   children: NavChild[];
   /** Multi-column mega-menu (Services) */
@@ -336,6 +338,7 @@ export const navigationData: NavigationItem[] = [
     id: 'support',
     label: 'Support',
     href: '/support',
+    isNew: true,
     children: [
       { label: 'Help Centre', href: '/support#help' },
       { label: 'Knowledge Base', href: '/support#knowledge-base' },
@@ -366,6 +369,7 @@ export const navigationData: NavigationItem[] = [
     id: 'portal',
     label: 'Client Portal',
     href: '/portal',
+    isNew: true,
     children: [
       { label: 'Login', href: '/portal' },
       { label: 'Dashboard', href: '/portal#dashboard' },

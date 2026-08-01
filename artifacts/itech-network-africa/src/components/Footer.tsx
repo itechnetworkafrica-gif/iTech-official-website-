@@ -23,10 +23,10 @@ const footerSections = [
   {
     title: 'Support',
     links: [
-      { label: 'Help Center', href: '/support' },
+      { label: 'Help Center', href: '/support', isNew: true },
       { label: 'Contact Support', href: '/contact' },
       { label: 'Report an Issue', href: '/contact' },
-      { label: 'Client Portal', href: '/portal' },
+      { label: 'Client Portal', href: '/portal', isNew: true },
     ],
   },
   {
@@ -51,7 +51,7 @@ const footerSections = [
   {
     title: 'Account',
     links: [
-      { label: 'Client Portal Login', href: '/portal' },
+      { label: 'Client Portal Login', href: '/portal', isNew: true },
       { label: 'Register', href: '/portal' },
       { label: 'Dashboard', href: '/portal' },
       { label: 'Billing', href: '/portal' },
@@ -70,6 +70,7 @@ const footerSections = [
   },
   {
     title: 'Pricing',
+    isNew: true,
     links: [
       { label: 'Website Design', href: '/pricing' },
       { label: 'Web Hosting', href: '/pricing' },

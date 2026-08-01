@@ -177,11 +177,12 @@ export const Header: React.FC = () => {
 
             <Link
               href="/support"
-              className="flex text-white transition-all duration-200 p-1.5 rounded-full items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
+              className="relative flex text-white transition-all duration-200 p-1.5 rounded-full items-center justify-center hover:text-[#3CB52A] hover:bg-[#3CB52A]/10"
               title="Support"
               aria-label="Support"
             >
               <HelpCircle size={20} />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#3CB52A] border border-[#2B2B2B]" />
             </Link>
 
             <div className="relative">
@@ -200,6 +201,7 @@ export const Header: React.FC = () => {
               className="hidden sm:flex items-center gap-1.5 text-white text-xs font-semibold px-3 py-1.5 rounded-full bg-[#3CB52A]/15 hover:bg-[#3CB52A]/25 hover:text-[#3CB52A] transition-all border border-[#3CB52A]/20"
             >
               <ExternalLink size={14} /> Portal
+              <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-[#3CB52A] text-white tracking-wide uppercase leading-none">NEW</span>
             </Link>
 
             <Link
@@ -236,6 +238,9 @@ export const Header: React.FC = () => {
                     }`}
                   >
                     {item.label}
+                    {item.isNew && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#3CB52A] text-white tracking-wide uppercase leading-none">NEW</span>
+                    )}
                     {item.children.length > 0 && (
                       <ChevronDown
                         size={13}

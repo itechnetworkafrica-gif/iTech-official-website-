@@ -77,8 +77,11 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                       onClick={() => toggleAccordion(item.id)}
                       className="w-full flex items-center justify-between py-4 px-6 transition-colors hover:bg-white/5 group"
                     >
-                      <span className={`font-semibold text-sm transition-colors ${isOpen ? 'text-[#3CB52A]' : 'text-white/90 group-hover:text-white'}`}>
+                      <span className={`font-semibold text-sm transition-colors flex items-center gap-2 ${isOpen ? 'text-[#3CB52A]' : 'text-white/90 group-hover:text-white'}`}>
                         {item.label}
+                        {item.isNew && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#3CB52A] text-white tracking-wide uppercase leading-none">NEW</span>
+                        )}
                       </span>
                       <motion.div
                         animate={{ rotate: isOpen ? 45 : 0 }}
@@ -165,6 +168,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 className="w-full bg-white/5 text-white/70 py-3 rounded-xl font-medium text-sm text-center flex items-center justify-center gap-2 hover:bg-white/10 transition-colors border border-white/10"
               >
                 <ExternalLink size={14} /> Client Portal
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#3CB52A] text-white tracking-wide uppercase leading-none">NEW</span>
               </Link>
             </div>
           </motion.div>
