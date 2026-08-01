@@ -140,7 +140,7 @@ export const TEAM: TeamMember[] = [
     department: 'Operations',
     avatar: 'JK',
     color: '#E85D04',
-    photo: null,
+    photo: '/team-james.jpg',
     bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.',
     longBio: [
       'James Kerkula is iTech Network Africa\'s Operations Associate, the engine room of the company\'s day-to-day execution. James ensures that projects move from scoping through delivery with the speed, structure, and quality that clients depend on.',
@@ -174,7 +174,7 @@ export const TEAM: TeamMember[] = [
     department: 'Administration',
     avatar: 'DK',
     color: '#0D9488',
-    photo: null,
+    photo: '/team-dorcas.jpg',
     bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.',
     longBio: [
       'Dorcas Kollie is the administrative backbone of iTech Network Africa. As Administrative Officer, she keeps the entire organisation running smoothly — managing schedules, coordinating client communications, and ensuring the team has everything it needs to do its best work.',
