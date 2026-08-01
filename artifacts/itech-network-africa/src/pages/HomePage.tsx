@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import {
-  ArrowRight, CheckCircle, Globe, Shield, Zap, Users, Award, TrendingUp,
+  ArrowRight, Globe, Shield, Zap, Users, Award, TrendingUp,
   Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
-  Quote, Phone, MapPin, CheckCircle2, ChevronLeft, ExternalLink,
-  FolderOpen, Headphones
+  Quote, ChevronLeft, FolderOpen, Headphones
 } from 'lucide-react';
 
 /* ─── Animation helpers ─── */
