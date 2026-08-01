@@ -66,9 +66,9 @@ const footerSections = [
   {
     title: 'Partner Programs',
     links: [
-      { label: 'Technology Partners', href: '/partners' },
-      { label: 'Become a Partner', href: '/contact' },
-      { label: 'Strategic Alliances', href: '/partners' },
+      { label: 'Technology Partners', href: '/about#partners' },
+      { label: 'Become a Partner', href: '/partners' },
+      { label: 'Strategic Alliances', href: '/about#partners' },
       { label: 'Partner Portal', href: '/portal' },
     ],
   },
