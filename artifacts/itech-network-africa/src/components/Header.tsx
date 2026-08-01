@@ -254,7 +254,7 @@ export const Header: React.FC = () => {
                     <div
                       onMouseEnter={cancelClose}
                       onMouseLeave={closeMenu}
-                      className={`absolute top-full left-0 z-50 ${isServices ? 'w-[900px]' : 'w-64'} bg-[#1A1A1A] border border-white/10 rounded-b-2xl shadow-2xl overflow-hidden`}
+                      className={`absolute top-full left-0 z-50 ${isServices ? 'w-[900px]' : 'w-64'} bg-white border border-gray-200 rounded-b-2xl shadow-2xl overflow-hidden`}
                     >
                       {isServices && item.categories ? (
                         <ServicesPanel categories={item.categories} onClose={() => setActiveMenu(null)} />
@@ -359,7 +359,7 @@ const SimpleDropdown: React.FC<{ item: NavigationItem; onClose: () => void }> = 
         key={i}
         href={child.href}
         onClick={onClose}
-        className="flex items-center gap-2.5 px-5 py-2.5 text-[13px] text-white/65 hover:text-white hover:bg-white/5 transition-all group"
+        className="flex items-center gap-2.5 px-5 py-2.5 text-[13px] text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all group"
       >
         <span className="w-1 h-1 rounded-full bg-[#3CB52A] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
         {child.label}
@@ -381,7 +381,7 @@ const ServicesPanel: React.FC<{
   return (
     <div className="flex h-[480px]">
       {/* Left: category list */}
-      <div className="w-[260px] border-r border-white/8 py-4 overflow-y-auto shrink-0">
+      <div className="w-[260px] border-r border-gray-100 py-4 overflow-y-auto shrink-0">
         {categories.map((cat, i) => (
           <button
             key={i}
@@ -390,7 +390,7 @@ const ServicesPanel: React.FC<{
             className={`w-full flex items-center justify-between px-5 py-2.5 text-[13px] text-left transition-all ${
               hovered === i
                 ? 'bg-[#3CB52A]/10 text-[#3CB52A]'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
             <span className="font-medium">{cat.title}</span>
@@ -416,7 +416,7 @@ const ServicesPanel: React.FC<{
               key={i}
               href={sub.href}
               onClick={onClose}
-              className="flex items-center gap-2 px-3 py-2 text-[13px] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all group"
+              className="flex items-center gap-2 px-3 py-2 text-[13px] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all group"
             >
               <span className="w-1 h-1 rounded-full bg-[#3CB52A] opacity-0 group-hover:opacity-100 shrink-0 transition-opacity" />
               {sub.label}
@@ -425,7 +425,7 @@ const ServicesPanel: React.FC<{
         </div>
 
         {/* CTA at bottom */}
-        <div className="mt-6 pt-5 border-t border-white/8">
+        <div className="mt-6 pt-5 border-t border-gray-100">
           <Link
             href="/services"
             onClick={onClose}
