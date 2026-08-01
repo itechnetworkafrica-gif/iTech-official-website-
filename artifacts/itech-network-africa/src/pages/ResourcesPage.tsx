@@ -1,77 +1,85 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { PageHero } from '@/components/PageHero';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText, Code2, PlayCircle, BookOpen, Download, Clock, Wrench, Users,
-  ArrowRight, Search, ExternalLink, Zap, Shield, Cloud, Brain, Calendar, Building2
+  FileText, Code2, PlayCircle, BookOpen, Download, Clock,
+  Wrench, Users, ArrowRight, Search, ExternalLink, Zap,
+  Shield, Cloud, Brain, Calendar, Building2, X,
 } from 'lucide-react';
 import { Link } from 'wouter';
 
-const PUBLISHER = 'Gotecx';
+const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-const resources = [
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-50px' },
+  transition: { duration: 0.55, delay, ease: EASE },
+});
+
+/* ─── Resource Library ─── */
+const RESOURCES = [
   {
-    icon: <FileText size={26} />,
-    title: "Documentation",
-    desc: "Detailed product manuals, implementation guides, and administrative instructions for all iTech Network Africa software platforms.",
-    link: "/resources/docs",
-    badge: "Essential",
+    icon: FileText,
+    title: 'Documentation',
+    desc: 'Detailed product manuals, implementation guides, and administrative instructions for all iTech platforms.',
+    link: '/resources/docs',
+    badge: 'Essential',
   },
   {
-    icon: <Code2 size={26} />,
-    title: "API Reference",
-    desc: "Comprehensive API endpoints, request/response schemas, authentication flows, and webhook specifications for developers.",
-    link: "/resources/api",
-    badge: "Developer",
+    icon: Code2,
+    title: 'API Reference',
+    desc: 'Comprehensive API endpoints, request/response schemas, authentication flows, and webhook specifications.',
+    link: '/resources/api',
+    badge: 'Developer',
   },
   {
-    icon: <PlayCircle size={26} />,
-    title: "Video Tutorials",
-    desc: "Step-by-step video walkthroughs on setting up, configuring, and maximising the value of all iTech platforms.",
-    link: "/resources/tutorials",
-    badge: "Getting Started",
+    icon: PlayCircle,
+    title: 'Video Tutorials',
+    desc: 'Step-by-step video walkthroughs on setting up, configuring, and maximising every iTech platform.',
+    link: '/resources/tutorials',
+    badge: 'Getting Started',
   },
   {
-    icon: <BookOpen size={26} />,
-    title: "Blog & Insights",
-    desc: "In-depth articles on digital transformation in Africa, AI strategy, cloud migration, and technology leadership.",
-    link: "/blog",
-    badge: "Weekly",
+    icon: BookOpen,
+    title: 'Blog & Insights',
+    desc: 'In-depth articles on digital transformation in Africa, AI strategy, cloud migration, and technology leadership.',
+    link: '/blog',
+    badge: 'Weekly',
   },
   {
-    icon: <Download size={26} />,
-    title: "Downloads",
-    desc: "Software clients, mobile APKs, configuration templates, official brand assets, and signed deployment packages.",
-    link: "/resources/downloads",
-    badge: "Free",
+    icon: Download,
+    title: 'Downloads',
+    desc: 'Software clients, mobile APKs, configuration templates, official brand assets, and deployment packages.',
+    link: '/resources/downloads',
+    badge: 'Free',
   },
   {
-    icon: <Clock size={26} />,
-    title: "Changelog",
-    desc: "Release notes, feature announcements, and platform improvement logs across all iTech product lines.",
-    link: "/resources/changelog",
-    badge: "v2.x",
+    icon: Clock,
+    title: 'Changelog',
+    desc: 'Release notes, feature announcements, and platform improvement logs across all iTech product lines.',
+    link: '/resources/changelog',
+    badge: 'v2.x',
   },
   {
-    icon: <Wrench size={26} />,
-    title: "Developer Tools",
-    desc: "SDKs, CLI utilities, Postman collections, and sandbox environments to accelerate your integration projects.",
-    link: "/resources/tools",
-    badge: "Developer",
+    icon: Wrench,
+    title: 'Developer Tools',
+    desc: 'SDKs, CLI utilities, Postman collections, and sandbox environments to accelerate your integrations.',
+    link: '/resources/tools',
+    badge: 'Developer',
   },
   {
-    icon: <Users size={26} />,
-    title: "Community Forum",
-    desc: "Connect with iTech users and partners across Africa — share solutions, best practices, and technical insights.",
-    link: "/support",
-    badge: "Community",
+    icon: Users,
+    title: 'Community Forum',
+    desc: 'Connect with iTech users and partners across Africa — share solutions, best practices, and insights.',
+    link: '/support',
+    badge: 'Community',
   },
 ];
 
+/* ─── Featured Guides ─── */
 const FEATURED = [
   {
-    icon: <Zap size={20} />,
-    color: '#3CB52A',
+    icon: Zap,
     title: 'iTech Platform Quick Start Guide',
     desc: 'Get your first iTech integration live in under 30 minutes. Covers environment setup, authentication, and your first API call.',
     time: '30 min read',
@@ -79,8 +87,7 @@ const FEATURED = [
     href: '/resources/docs',
   },
   {
-    icon: <Code2 size={20} />,
-    color: '#0A7EBF',
+    icon: Code2,
     title: 'REST API Integration Quickstart',
     desc: 'Authenticate and make your first API call with code samples in JavaScript, Python, and PHP — ready to copy and run.',
     time: '15 min read',
@@ -88,26 +95,23 @@ const FEATURED = [
     href: '/resources/api',
   },
   {
-    icon: <Shield size={20} />,
-    color: '#7C3AED',
+    icon: Shield,
     title: 'Enterprise Security Best Practices',
-    desc: 'Essential security guidelines for your iTech deployment: MFA setup, API key management, role-based access, and data encryption.',
+    desc: 'Essential security guidelines: MFA setup, API key management, role-based access, and data encryption for your deployment.',
     time: '20 min read',
     date: 'July 2025',
     href: '/resources/docs',
   },
   {
-    icon: <Cloud size={20} />,
-    color: '#E85D04',
+    icon: Cloud,
     title: 'Cloud Deployment Checklist for Africa',
-    desc: 'A pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud with African data-residency requirements in mind.',
+    desc: 'A pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud with African data-residency requirements.',
     time: '25 min read',
     date: 'April 2025',
     href: '/resources/docs',
   },
   {
-    icon: <Brain size={20} />,
-    color: '#DB2777',
+    icon: Brain,
     title: 'Configuring AI & Automation Modules',
     desc: 'Configure and fine-tune iTech AI modules for your specific business context, data pipeline, and automation workflows.',
     time: '40 min read',
@@ -115,176 +119,336 @@ const FEATURED = [
     href: '/resources/docs',
   },
   {
-    icon: <Building2 size={20} />,
-    color: '#0D9488',
+    icon: Building2,
     title: 'Enterprise User Management Guide',
-    desc: 'Manage roles, permissions, SSO configuration, multi-tenancy, and full audit trails for your organisation\'s users at scale.',
+    desc: 'Manage roles, permissions, SSO configuration, multi-tenancy, and full audit trails for your organisation at scale.',
     time: '20 min read',
     date: 'March 2025',
     href: '/resources/docs',
   },
 ];
 
-export default function ResourcesPage() {
-  const [searchQuery, setSearchQuery] = useState('');
+const STATS = [
+  { value: '50+',  label: 'Guides & Docs'   },
+  { value: '8',    label: 'Resource Types'  },
+  { value: '24/7', label: 'Support Access'  },
+  { value: 'Free', label: 'For All Clients' },
+];
 
-  const filteredResources = resources.filter(r =>
-    !searchQuery ||
-    r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.desc.toLowerCase().includes(searchQuery.toLowerCase())
+export default function ResourcesPage() {
+  const [query, setQuery] = useState('');
+
+  const filtered = RESOURCES.filter(r =>
+    !query ||
+    r.title.toLowerCase().includes(query.toLowerCase()) ||
+    r.desc.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
-    <div className="flex flex-col w-full bg-[#F8F9FA] min-h-screen">
-      <PageHero
-        badge="Knowledge Base"
-        title="Resources & Documentation"
-        subtitle="Everything you need to build, integrate, deploy, and succeed with iTech Network Africa's technology stack."
-      />
+    <div className="flex flex-col w-full bg-white">
 
-      {/* Search bar */}
-      <section className="bg-white border-b border-[#E5E7EB] py-8">
-        <div className="max-w-2xl mx-auto px-6">
-          <div className="relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-            <input
-              type="text"
-              placeholder="Search resources, guides, and documentation…"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#D1D5DB] bg-white text-[#111827] placeholder:text-[#9CA3AF] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] transition-all"
-            />
+      {/* ═══════════════════════════
+          HERO
+      ═══════════════════════════ */}
+      <section className="relative bg-[#060E18] pt-20 pb-28 overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
+            backgroundSize: '64px 64px',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-0 top-0 w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.07) 0%, transparent 65%)' }}
+        />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+          {/* Breadcrumb */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-2 text-white/40 text-sm mb-12"
+          >
+            <Link href="/"><a className="hover:text-white transition-colors">Home</a></Link>
+            <span>/</span>
+            <span className="text-white/70">Resources</span>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.05 }}
+                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#3CB52A]/15 border border-[#3CB52A]/30 mb-8"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" />
+                <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Knowledge Base</span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
+                className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6"
+              >
+                Resources &<br /><span className="text-[#3CB52A]">Documentation</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.18, ease: EASE }}
+                className="text-white/50 text-lg leading-relaxed mb-10 max-w-lg"
+              >
+                Everything you need to build, integrate, deploy, and succeed with
+                iTech Network Africa's full technology stack.
+              </motion.p>
+
+              {/* Search bar in hero */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.26 }}
+                className="relative max-w-lg"
+              >
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                <input
+                  type="text"
+                  placeholder="Search guides, docs, and tools…"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  className="w-full pl-11 pr-10 py-4 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/40 focus:border-[#3CB52A]/60 transition-all backdrop-blur-sm"
+                />
+                <AnimatePresence>
+                  {query && (
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                    >
+                      <X size={16} />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
+              className="hidden lg:grid grid-cols-2 gap-4"
+            >
+              {STATS.map((s, i) => (
+                <div
+                  key={i}
+                  className={`rounded-2xl p-8 ${i === 0 ? 'bg-[#3CB52A]' : 'bg-white/5 border border-white/10'}`}
+                >
+                  <div className={`text-4xl font-black mb-2 ${i === 0 ? 'text-white' : 'text-white'}`}>{s.value}</div>
+                  <div className={`text-sm font-semibold ${i === 0 ? 'text-white/80' : 'text-white/40'}`}>{s.label}</div>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Publisher banner */}
-      {!searchQuery && (
-        <div className="bg-[#f0fdf4] border-b border-[#d1fae5] py-3">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center gap-2 text-sm text-[#166534]">
-            <Building2 size={15} className="shrink-0" />
-            <span>All resources on this page are published by <strong>{PUBLISHER}</strong> for iTech Network Africa clients and partners.</span>
-          </div>
-        </div>
-      )}
-
-      {/* Featured guides */}
-      {!searchQuery && (
-        <section className="py-16 max-w-7xl mx-auto px-6 lg:px-8 w-full">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">Start Here</span>
-              <h2 className="text-2xl font-bold text-[#111827]">Featured Guides</h2>
+      {/* ═══════════════════════════
+          SEARCH RESULTS (only when searching)
+      ═══════════════════════════ */}
+      <AnimatePresence>
+        {query && (
+          <motion.section
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="py-12 bg-[#F8F9FA] border-b border-[#E5E7EB]"
+          >
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm text-[#6B7280]">
+                  <strong className="text-[#0A0A0A]">{filtered.length}</strong> result{filtered.length !== 1 ? 's' : ''} for "<strong className="text-[#0A0A0A]">{query}</strong>"
+                </p>
+                <button onClick={() => setQuery('')} className="text-[#3CB52A] text-sm font-semibold hover:underline flex items-center gap-1">
+                  <X size={13} /> Clear
+                </button>
+              </div>
+              {filtered.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-[#9CA3AF] mb-4">No resources match your search.</p>
+                  <button onClick={() => setQuery('')} className="text-[#3CB52A] font-semibold hover:underline text-sm">Browse all resources</button>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {filtered.map((r, i) => {
+                    const Icon = r.icon;
+                    return (
+                      <Link key={i} href={r.link}>
+                        <a className="group bg-white rounded-2xl border border-[#E5E7EB] p-6 hover:border-[#3CB52A]/50 hover:shadow-md transition-all flex flex-col">
+                          <div className="w-11 h-11 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all">
+                            <Icon size={20} className="text-[#3CB52A] group-hover:text-white transition-colors" />
+                          </div>
+                          <h3 className="font-bold text-[#0A0A0A] mb-1 text-sm">{r.title}</h3>
+                          <p className="text-[#6B7280] text-xs leading-relaxed flex-grow">{r.desc}</p>
+                          <span className="mt-3 text-[#3CB52A] text-xs font-bold flex items-center gap-1">
+                            Explore <ArrowRight size={11} />
+                          </span>
+                        </a>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <span className="text-[#9CA3AF] text-xs hidden sm:block">Published by {PUBLISHER}</span>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURED.map((guide, i) => (
-              <motion.a
-                key={i}
-                href={guide.href}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: i * 0.05 }}
-                className="group bg-white border border-[#E5E7EB] rounded-2xl p-6 hover:border-[#3CB52A]/40 hover:shadow-lg transition-all duration-300 flex flex-col"
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white mb-4 shrink-0"
-                  style={{ backgroundColor: guide.color }}
-                >
-                  {guide.icon}
-                </div>
-                <h3 className="font-bold text-[#111827] mb-2 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-grow">{guide.desc}</p>
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#F3F4F6]">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1">
-                      <Clock size={11} /> {guide.time}
-                    </span>
-                    <span className="text-[#C4C4C4] text-[10px] flex items-center gap-1">
-                      <Calendar size={10} /> {guide.date} · {PUBLISHER}
-                    </span>
-                  </div>
-                  <span className="text-[#3CB52A] text-xs font-bold group-hover:gap-2 flex items-center gap-1 transition-all">
-                    Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </div>
-              </motion.a>
-            ))}
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════════════════
+          FEATURED GUIDES
+      ═══════════════════════════ */}
+      {!query && (
+        <section className="py-20 lg:py-28 bg-[#F8F9FA]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+              <div>
+                <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">Start Here</span>
+                <h2 className="text-4xl md:text-5xl font-black text-[#0A0A0A] leading-tight">Featured Guides</h2>
+              </div>
+              <p className="text-[#9CA3AF] text-sm max-w-xs">
+                Curated by the iTech Network Africa team to get you productive fast.
+              </p>
+            </motion.div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {FEATURED.map((guide, i) => {
+                const Icon = guide.icon;
+                return (
+                  <motion.a
+                    key={i}
+                    href={guide.href}
+                    {...fadeUp(i * 0.06)}
+                    className="group bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex flex-col"
+                  >
+                    {/* Icon */}
+                    <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all duration-300 shrink-0">
+                      <Icon size={20} className="text-[#3CB52A] group-hover:text-white transition-colors duration-300" />
+                    </div>
+
+                    <h3 className="font-black text-[#0A0A0A] text-lg mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
+                    <p className="text-[#6B7280] text-sm leading-relaxed mb-5 flex-grow">{guide.desc}</p>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-[#F3F4F6] mt-auto">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1.5">
+                          <Clock size={11} /> {guide.time}
+                        </span>
+                        <span className="text-[#C4C4C4] text-[11px] flex items-center gap-1">
+                          <Calendar size={10} /> {guide.date}
+                        </span>
+                      </div>
+                      <span className="text-[#3CB52A] text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </div>
+                  </motion.a>
+                );
+              })}
+            </div>
           </div>
         </section>
       )}
 
-      {/* All resources */}
-      <section className="py-12 lg:py-16 max-w-7xl mx-auto px-6 lg:px-8 w-full">
-        {!searchQuery && (
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">All Resources</span>
-              <h2 className="text-2xl font-bold text-[#111827]">Resource Library</h2>
-            </div>
-            <span className="text-[#9CA3AF] text-xs hidden sm:block">Published by {PUBLISHER}</span>
-          </div>
-        )}
-        {filteredResources.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-[#6B7280] text-lg mb-4">No resources found for "<strong>{searchQuery}</strong>".</p>
-            <button onClick={() => setSearchQuery('')} className="text-[#3CB52A] font-semibold hover:underline text-sm">Clear search</button>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {filteredResources.map((resource, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: i * 0.04 }}
-                className="bg-white p-6 rounded-2xl border border-[#E5E7EB] hover:border-[#3CB52A] hover:shadow-lg transition-all duration-300 group flex flex-col"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#f0fdf0] text-[#3CB52A] flex items-center justify-center group-hover:bg-[#3CB52A] group-hover:text-white transition-all duration-300 shrink-0">
-                    {resource.icon}
-                  </div>
-                  <span className="text-[10px] font-bold text-[#9CA3AF] bg-[#F3F4F6] px-2 py-1 rounded-full uppercase tracking-wider shrink-0 ml-2">
-                    {resource.badge}
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-[#111827] mb-2 leading-snug">{resource.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed mb-3 flex-grow">{resource.desc}</p>
-                <p className="text-[#C4C4C4] text-[10px] mb-4">{PUBLISHER}</p>
-                <Link href={resource.link} className="mt-auto text-[#0A1929] group-hover:text-[#3CB52A] font-semibold text-sm flex items-center gap-1.5 transition-colors w-fit">
-                  Explore <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </section>
+      {/* ═══════════════════════════
+          RESOURCE LIBRARY
+      ═══════════════════════════ */}
+      {!query && (
+        <section className="py-20 lg:py-28 bg-white">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <motion.div {...fadeUp()} className="mb-12">
+              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">All Resources</span>
+              <h2 className="text-4xl md:text-5xl font-black text-[#0A0A0A] leading-tight">Resource Library</h2>
+            </motion.div>
 
-      {/* Support CTA */}
-      <section className="bg-white py-16 border-t border-[#E5E7EB] mt-4">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-bold text-[#111827] mb-3">Can't find what you're looking for?</h2>
-            <p className="text-[#6B7280] mb-8 max-w-md mx-auto">Our dedicated support team is available around the clock to help you navigate our resources or answer specific technical questions.</p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <Link href="/support" className="inline-flex items-center gap-2 px-6 py-3 bg-[#0A1929] text-white font-semibold rounded-xl hover:bg-[#0A1929]/90 transition-all">
-                Open a Support Ticket
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {RESOURCES.map((r, i) => {
+                const Icon = r.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    {...fadeUp(i * 0.05)}
+                    className="group bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:border-[#3CB52A]/50 hover:shadow-xl transition-all duration-300 flex flex-col"
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-13 h-13 w-12 h-12 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all duration-300 shrink-0">
+                        <Icon size={22} className="text-[#3CB52A] group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <span className="text-[10px] font-bold text-[#3CB52A] bg-[#f0fdf4] border border-[#bbf7d0] px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0 ml-2">
+                        {r.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="font-black text-[#0A0A0A] text-base mb-2 leading-snug">{r.title}</h3>
+                    <p className="text-[#6B7280] text-sm leading-relaxed flex-grow">{r.desc}</p>
+
+                    <Link href={r.link}>
+                      <a className="mt-5 pt-4 border-t border-[#F3F4F6] text-sm font-bold flex items-center gap-1.5 text-[#0A0A0A] group-hover:text-[#3CB52A] transition-colors w-fit">
+                        Explore <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                      </a>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════
+          BOTTOM CTA
+      ═══════════════════════════ */}
+      <section className="bg-[#060E18] py-24 relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(60,181,42,0.08) 0%, transparent 60%)' }}
+        />
+        <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
+          <motion.div {...fadeUp()}>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
+              Can't find what<br />you're looking for?
+            </h2>
+            <p className="text-white/50 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+              Our support team is available around the clock to help you navigate our resources
+              or answer specific technical questions.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/support">
+                <a className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-7 py-3.5 rounded-xl transition-colors shadow-[0_6px_28px_rgba(60,181,42,0.4)]">
+                  Open a Support Ticket
+                </a>
               </Link>
-              <a href="https://wa.me/231761978796" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#0A1929] text-[#0A1929] font-semibold rounded-xl hover:bg-[#0A1929] hover:text-white transition-all">
+              <a
+                href="https://wa.me/231761978796"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white font-semibold px-7 py-3.5 rounded-xl transition-all hover:bg-white/5"
+              >
                 <ExternalLink size={15} /> Chat on WhatsApp
               </a>
             </div>
           </motion.div>
         </div>
       </section>
+
     </div>
   );
 }
