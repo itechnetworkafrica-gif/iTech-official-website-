@@ -815,6 +815,95 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
+          BRAND STORY SPLIT — GoDaddy-style
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-white overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+
+          {/* Heading */}
+          <motion.h2
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp}
+            className="text-4xl md:text-5xl lg:text-6xl font-black text-[#060E18] mb-10 leading-tight"
+          >
+            iTech Network Africa,<br className="hidden sm:block" /> every step of the way.
+          </motion.h2>
+
+          {/* Split block */}
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="flex flex-col lg:flex-row rounded-3xl overflow-hidden shadow-2xl border border-[#E5E7EB]"
+          >
+            {/* Left — photo */}
+            <motion.div variants={fadeUp} className="lg:w-[48%] min-h-[340px] lg:min-h-[520px] shrink-0">
+              <img
+                src="/hero-man-laptop-chair.jpg"
+                alt="iTech Network Africa professional"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            {/* Right — card */}
+            <motion.div
+              variants={fadeUp}
+              custom={1}
+              className="flex-1 bg-[#F8F9FA] p-8 lg:p-12 flex flex-col justify-between gap-8"
+            >
+              {/* Quote */}
+              <blockquote className="text-[#060E18] text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
+                "We handle the technology so you can focus on what you do best. From web apps to AI solutions, iTech Network Africa turns your vision into reality — on time, on budget, and built to last."
+              </blockquote>
+
+              {/* Features + preview image */}
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                {/* Feature list */}
+                <ul className="flex-1 space-y-3.5">
+                  {[
+                    { icon: <Code2 size={16} />, label: 'Web Development' },
+                    { icon: <Monitor size={16} />, label: 'Mobile Apps' },
+                    { icon: <Brain size={16} />, label: 'AI Solutions' },
+                    { icon: <Cloud size={16} />, label: 'Cloud Services' },
+                    { icon: <Shield size={16} />, label: 'Cybersecurity' },
+                    { icon: <Headphones size={16} />, label: 'IT Support & Managed Services' },
+                  ].map(({ icon, label }) => (
+                    <li key={label} className="flex items-center gap-3 text-[#374151] text-sm font-medium">
+                      <span className="text-[#3CB52A] shrink-0">{icon}</span>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Small preview image */}
+                <div className="sm:w-[180px] shrink-0 rounded-xl overflow-hidden border border-[#E5E7EB] shadow-md">
+                  <img
+                    src="/promo-online-training.jpg"
+                    alt="iTech platform preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-7 py-3.5 rounded-xl transition-all text-sm"
+                >
+                  Explore Our Services <ArrowRight size={15} />
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           OUR PROCESS — classic & pro
       ══════════════════════════════════════ */}
       <section className="py-24 lg:py-36 bg-[#F8F9FA] relative overflow-hidden">
