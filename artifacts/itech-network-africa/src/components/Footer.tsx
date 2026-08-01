@@ -22,6 +22,7 @@ const footerSections = [
   },
   {
     title: 'Support',
+    isNew: true,
     links: [
       { label: 'Help Center', href: '/support', isNew: true },
       { label: 'Contact Support', href: '/contact' },
