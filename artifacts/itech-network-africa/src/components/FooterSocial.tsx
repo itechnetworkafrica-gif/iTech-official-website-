@@ -24,7 +24,7 @@ export const FooterSocial: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-row items-center gap-6 flex-wrap sm:flex-nowrap">
+    <div className="flex flex-row items-center gap-3 flex-wrap sm:flex-nowrap">
       {socials.map((social) => (
         <a
           key={social.label}
