@@ -1,5 +1,5 @@
 import React from 'react';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
 
 const TikTokIcon = () => (
   <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
@@ -15,11 +15,12 @@ const XIcon = () => (
 
 export const FooterSocial: React.FC = () => {
   const socials = [
-    { icon: <Facebook size={36} />, label: 'Facebook', href: '#' },
-    { icon: <Instagram size={36} />, label: 'Instagram', href: '#' },
+    { icon: <Facebook size={36} />, label: 'Facebook', href: 'https://www.facebook.com/itechnetworkafrica' },
+    { icon: <Instagram size={36} />, label: 'Instagram', href: 'https://www.instagram.com/info.itechnetwork?igsh=MXM5eG5xNzRzc2Z0MQ==' },
+    { icon: <Linkedin size={36} />, label: 'LinkedIn', href: 'https://www.linkedin.com/company/gotecx-itech-network-africa/' },
     { icon: <TikTokIcon />, label: 'TikTok', href: '#' },
     { icon: <XIcon />, label: 'X (Twitter)', href: '#' },
-    { icon: <Youtube size={36} />, label: 'YouTube', href: '#' },
+    { icon: <Youtube size={36} />, label: 'YouTube', href: 'https://youtube.com/@wilmotkerkulah?si=0wpgFcy-NBquNa3w' },
   ];
 
   return (
@@ -29,6 +30,8 @@ export const FooterSocial: React.FC = () => {
           key={social.label}
           href={social.href}
           aria-label={social.label}
+          target={social.href !== '#' ? '_blank' : undefined}
+          rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
           className="text-white hover:opacity-80 transition-opacity duration-200"
         >
           {social.icon}
