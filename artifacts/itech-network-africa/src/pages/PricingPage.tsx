@@ -47,26 +47,20 @@ const PAYMENT_ICONS: Record<string, React.ReactNode> = {
 function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
   const isPopular = !!pkg.popular;
 
-  return (
+  const cardInner = (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.07 }}
       className={`
-        relative flex flex-col rounded-3xl transition-all duration-300 group
+        relative flex flex-col transition-all duration-300 group h-full
         ${isPopular
-          ? 'bg-[#0A1929] border border-[#3CB52A]/40 shadow-[0_20px_60px_rgba(60,181,42,0.18)] scale-[1.04] z-10'
-          : 'bg-white border border-[#E5E7EB] shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-[#3CB52A]/30'
+          ? 'rounded-[20px]'
+          : 'rounded-3xl bg-white border border-[#E5E7EB] shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-[#3CB52A]/30'
         }
       `}
+      style={isPopular ? { background: 'rgba(10,14,26,0.97)', backdropFilter: 'blur(20px)' } : {}}
     >
-      {/* Most Popular badge */}
-      {isPopular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-[#3CB52A] text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">
-          <Star size={11} fill="white" /> Most Popular
-        </div>
-      )}
-
       <div className="p-8 flex flex-col h-full">
         {/* Header */}
         <div className="mb-6">
@@ -118,6 +112,23 @@ function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
       </div>
     </motion.div>
   );
+
+  if (isPopular) {
+    return (
+      <div className="relative scale-[1.04] z-10">
+        {/* Spinning neon border */}
+        <div className="neon-border" style={{ boxShadow: '0 0 40px rgba(0,229,255,0.12)' }}>
+          {cardInner}
+        </div>
+        {/* Badge sits outside neon-border (which has overflow:hidden) */}
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-[#3CB52A] text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap z-20">
+          <Star size={11} fill="white" /> Most Popular
+        </div>
+      </div>
+    );
+  }
+
+  return cardInner;
 }
 
 /* ─── FAQItem ──────────────────────────────────────────────────────────── */

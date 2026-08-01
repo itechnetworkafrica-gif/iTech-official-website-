@@ -141,13 +141,16 @@ export const Header: React.FC = () => {
 
           {/* Left: hamburger (mobile) + logo */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="xl:hidden text-white hover:text-[#3CB52A] transition-colors p-1"
-              aria-label="Open menu"
-            >
-              <Menu size={24} />
-            </button>
+            <div className="neon-border xl:hidden" style={{ borderRadius: '12px', padding: '2px', boxShadow: '0 0 18px rgba(0,229,255,0.18)' }}>
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="text-white hover:text-[#00e5ff] transition-colors p-2 flex items-center justify-center"
+                style={{ background: 'rgba(14,16,28,0.95)', borderRadius: '10px', backdropFilter: 'blur(8px)' }}
+                aria-label="Open menu"
+              >
+                <Menu size={22} />
+              </button>
+            </div>
             <Link href="/" className="flex items-center">
               <Logo variant="icon" white />
             </Link>
