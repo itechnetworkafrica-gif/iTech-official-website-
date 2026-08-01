@@ -20,8 +20,6 @@ const formSchema = z.object({
   message: z.string().min(10, "Please provide some details"),
 });
 
-const partners = ["Microsoft", "Google Cloud", "AWS", "Oracle", "Cisco", "IBM", "Salesforce", "SAP"];
-
 export default function PartnersPage() {
   const { toast } = useToast();
   
@@ -69,20 +67,6 @@ export default function PartnersPage() {
         title="Our Partners"
         subtitle="Collaborating with global technology leaders to deliver uncompromising quality and innovation to the African market."
       />
-
-      {/* Tech Partners Logos */}
-      <section className="py-20 bg-[#F8F9FA] border-b border-[#E5E7EB]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <h4 className="text-[#6B7280] font-medium tracking-widest uppercase text-sm mb-12">Trusted Technology Partners</h4>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-            {partners.map((partner) => (
-              <div key={partner} className="text-2xl md:text-3xl font-black text-[#0A1929] tracking-tighter">
-                {partner}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Partner Program Tiers */}
       <section className="py-20 lg:py-28 max-w-7xl mx-auto px-6 lg:px-8">
