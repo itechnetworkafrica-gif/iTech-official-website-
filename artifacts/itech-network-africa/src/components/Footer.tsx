@@ -81,6 +81,18 @@ const footerSections = [
       { label: 'Billing', href: '/portal' },
     ],
   },
+  {
+    title: 'Contact',
+    desktopOnly: true,
+    links: [
+      { label: 'Get in Touch', href: '/contact' },
+      { label: 'Request a Quote', href: '/contact' },
+      { label: 'Book a Consultation', href: '/contact' },
+      { label: 'Office Locations', href: '/contact' },
+      { label: 'WhatsApp Us', href: '/contact' },
+      { label: 'Support Tickets', href: '/support' },
+    ],
+  },
 ];
 
 export const Footer: React.FC = () => {

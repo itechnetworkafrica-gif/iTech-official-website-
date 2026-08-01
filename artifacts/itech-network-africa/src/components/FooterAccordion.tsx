@@ -13,6 +13,7 @@ interface FooterAccordionProps {
   sections: {
     title: string;
     isNew?: boolean;
+    desktopOnly?: boolean;
     links: FooterLink[];
   }[];
 }
@@ -51,9 +52,9 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
         ))}
       </div>
 
-      {/* Mobile/Tablet: accordion */}
+      {/* Mobile/Tablet: accordion — desktopOnly sections are hidden */}
       <div className="lg:hidden">
-        {sections.map((section) => (
+        {sections.filter((s) => !s.desktopOnly).map((section) => (
           <div key={section.title} className="border-b border-white/10 last:border-0">
             <button
               onClick={() => setOpenSection(openSection === section.title ? null : section.title)}
