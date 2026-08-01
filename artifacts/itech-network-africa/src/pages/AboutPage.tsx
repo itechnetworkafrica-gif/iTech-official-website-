@@ -7,6 +7,7 @@ import {
   Building2, Handshake, Leaf, GraduationCap, Phone, Plus, ExternalLink, Clock
 } from 'lucide-react';
 import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
+import { TEAM, type TeamMember } from '@/data/team';
 
 /* ─── Shared animation helpers ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -43,13 +44,7 @@ const timeline = [
   { year: '2025', title: 'Pan-African Reach', desc: 'Operating in 5+ African countries, delivering 20+ projects for 30+ enterprise clients.' },
 ];
 
-const team = [
-  { name: 'Wilmot Kerkulah', role: 'Founder & Executive Director', avatar: 'WK', color: '#3CB52A', photo: '/team-wilmot.png', bio: 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation. Founded iTech Network Africa in 2023 with a mission to empower businesses and communities through world-class digital solutions.' },
-  { name: 'Foday Kabah', role: 'Full Stack Developer', avatar: 'FK', color: '#0A7EBF', photo: '/team-foday.jpg', bio: 'Builds robust web and mobile applications from front to back, crafting seamless digital experiences that power the company\'s enterprise solutions.' },
-  { name: 'Alvina Dahn', role: 'Finance Officer', avatar: 'AD', color: '#7C3AED', photo: '/team-alvina.png', bio: 'Manages financial operations and ensures fiscal discipline across all projects, driving sustainable growth for the company and its clients.' },
-  { name: 'James Kerkula', role: 'Operations Associate', avatar: 'JK', color: '#E85D04', photo: null, bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.' },
-  { name: 'Dorcas Kollie', role: 'Admin', avatar: 'DK', color: '#0D9488', photo: null, bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.' },
-];
+// Team data is imported from @/data/team (shared with individual profile pages)
 
 const profileStats = [
   { value: '2023', label: 'Year Founded' },
@@ -182,87 +177,102 @@ const csrItems = [
   },
 ];
 
-/* ─── Social links per member (placeholder hrefs) ─── */
-const socialLinks = [
-  { icon: <FaLinkedinIn size={18} />, label: 'LinkedIn', href: 'https://linkedin.com/company/itech-network-africa' },
-  { icon: <FaXTwitter size={18} />, label: 'X', href: 'https://x.com/itechnetworkafrica' },
-  { icon: <FaInstagram size={18} />, label: 'Instagram', href: 'https://instagram.com/itechnetworkafrica' },
-  { icon: <FaFacebook size={18} />, label: 'Facebook', href: 'https://facebook.com/itechnetworkafrica' },
-];
-
-/* ─── Team card with photo + social toggle ─── */
-interface TeamMember { name: string; role: string; avatar: string; color: string; photo: string | null; bio: string; }
-
+/* ─── Team card — clicking navigates to the member's individual profile page ─── */
 const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, index }) => {
   const [showSocial, setShowSocial] = useState(false);
+
+  const socialEntries = Object.entries(member.socials).filter(([, url]) => !!url);
+  const socialIcons: Record<string, React.ReactNode> = {
+    linkedin:  <FaLinkedinIn size={17} />,
+    twitter:   <FaXTwitter size={17} />,
+    instagram: <FaInstagram size={17} />,
+    facebook:  <FaFacebook size={17} />,
+  };
+
   return (
     <motion.div
       {...stagger(index, 0.06)}
-      className="group bg-white border border-[#E5E7EB] rounded-2xl overflow-hidden hover:border-[#3CB52A]/30 hover:shadow-xl transition-all duration-300"
+      className="group bg-white border border-[#E5E7EB] rounded-2xl overflow-hidden hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300"
     >
-      {/* Photo / Avatar — portrait ratio works well for headshots on all screen sizes */}
-      <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#F0F2F5]">
-        {member.photo ? (
-          <img
-            src={member.photo}
-            alt={member.name}
-            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-white text-5xl font-bold"
-            style={{ backgroundColor: member.color }}
-          >
-            {member.avatar}
-          </div>
-        )}
-        {/* Social toggle button — bottom-right of photo */}
-        <button
-          onClick={() => setShowSocial(s => !s)}
-          className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-[#3CB52A] flex items-center justify-center text-white shadow-lg hover:bg-[#2da822] transition-all duration-200 z-10"
-          aria-label={showSocial ? 'Hide social links' : 'Show social links'}
-        >
-          <motion.span
-            animate={{ rotate: showSocial ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center justify-center"
-          >
-            <Plus size={18} />
-          </motion.span>
-        </button>
-        {/* Social icons overlay — stacked vertically to avoid overflow on narrow cards */}
-        <AnimatePresence>
-          {showSocial && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-3 right-16 flex flex-col gap-2"
+      {/* Photo / Avatar */}
+      <Link href={`/team/${member.slug}`}>
+        <a className="block relative w-full aspect-[3/4] overflow-hidden bg-[#F0F2F5] cursor-pointer">
+          {member.photo ? (
+            <img
+              src={member.photo}
+              alt={member.name}
+              className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center text-white text-5xl font-bold"
+              style={{ backgroundColor: member.color }}
             >
-              {socialLinks.map((s, i) => (
-                <a
-                  key={i}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="w-11 h-11 rounded-full bg-[#060E18]/85 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#3CB52A] transition-colors duration-200 shadow-md"
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </motion.div>
+              {member.avatar}
+            </div>
           )}
-        </AnimatePresence>
-      </div>
 
-      {/* Info */}
-      <div className="p-6">
-        <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
-        <p className="text-[#3CB52A] text-sm font-semibold mt-0.5 mb-3">{member.role}</p>
-        <p className="text-[#6B7280] text-sm leading-relaxed">{member.bio}</p>
-      </div>
+          {/* "View Profile" hover overlay */}
+          <div className="absolute inset-0 bg-[#0A1929]/0 group-hover:bg-[#0A1929]/50 transition-colors duration-300 flex items-end justify-center pb-6">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#0A1929] text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1.5">
+              View Profile <ArrowRight size={12} />
+            </span>
+          </div>
+
+          {/* Social toggle — stops propagation so it doesn't navigate */}
+          <button
+            onClick={e => { e.preventDefault(); e.stopPropagation(); setShowSocial(s => !s); }}
+            className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-[#3CB52A] flex items-center justify-center text-white shadow-lg hover:bg-[#2da822] transition-all duration-200 z-10"
+            aria-label={showSocial ? 'Hide social links' : 'Show social links'}
+          >
+            <motion.span
+              animate={{ rotate: showSocial ? 45 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-center"
+            >
+              <Plus size={18} />
+            </motion.span>
+          </button>
+
+          <AnimatePresence>
+            {showSocial && (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute bottom-3 right-16 flex flex-col gap-2 z-10"
+              >
+                {socialEntries.map(([platform, url]) => (
+                  <a
+                    key={platform}
+                    href={url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={platform}
+                    onClick={e => e.stopPropagation()}
+                    className="w-11 h-11 rounded-full bg-[#060E18]/85 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#3CB52A] transition-colors duration-200 shadow-md"
+                  >
+                    {socialIcons[platform]}
+                  </a>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </a>
+      </Link>
+
+      {/* Info footer — also navigates on click */}
+      <Link href={`/team/${member.slug}`}>
+        <a className="block p-6 hover:bg-[#FAFAFA] transition-colors cursor-pointer">
+          <h3 className="font-bold text-[#0A0A0A] text-lg leading-tight">{member.name}</h3>
+          <p className="text-sm font-semibold mt-0.5 mb-3" style={{ color: member.color }}>{member.role}</p>
+          <p className="text-[#6B7280] text-sm leading-relaxed line-clamp-3">{member.bio}</p>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold mt-4" style={{ color: member.color }}>
+            View Full Profile <ArrowRight size={12} />
+          </span>
+        </a>
+      </Link>
     </motion.div>
   );
 };
@@ -497,15 +507,15 @@ export default function AboutPage() {
 
           {/* First row: 3 cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {team.slice(0, 3).map((member, i) => (
-              <TeamCard key={i} member={member} index={i} />
+            {TEAM.slice(0, 3).map((member, i) => (
+              <TeamCard key={member.slug} member={member} index={i} />
             ))}
           </div>
 
           {/* Second row: 2 cards centred */}
           <div className="grid sm:grid-cols-2 gap-6 lg:w-2/3 lg:mx-auto">
-            {team.slice(3).map((member, i) => (
-              <TeamCard key={i} member={member} index={i + 3} />
+            {TEAM.slice(3).map((member, i) => (
+              <TeamCard key={member.slug} member={member} index={i + 3} />
             ))}
           </div>
         </div>

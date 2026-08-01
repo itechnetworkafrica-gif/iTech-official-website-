@@ -34,6 +34,7 @@ import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import CookiesPage from '@/pages/CookiesPage';
 import ClientPortalPage from '@/pages/ClientPortalPage';
+import TeamMemberPage from '@/pages/TeamMemberPage';
 import RefundPolicyPage from '@/pages/RefundPolicyPage';
 import SitemapPage from '@/pages/SitemapPage';
 
@@ -68,6 +69,7 @@ function Router() {
           <Route path="/terms" component={TermsPage} />
           <Route path="/cookies" component={CookiesPage} />
           <Route path="/portal" component={ClientPortalPage} />
+          <Route path="/team/:slug" component={TeamMemberPage} />
           <Route path="/refund-policy" component={RefundPolicyPage} />
           <Route path="/sitemap" component={SitemapPage} />
           <Route component={NotFound} />
