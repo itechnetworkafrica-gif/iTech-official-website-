@@ -24,18 +24,18 @@ export const RouteScrollReset: React.FC = () => {
 
   // On every route change, either scroll to hash or to top
   useEffect(() => {
-    if (window.location.hash) {
-      // Give the page one frame to mount, then scroll
-      const id = requestAnimationFrame(() => {
-        if (!scrollToHash()) {
-          // Element not rendered yet — retry after a short delay (e.g. lazy sections)
-          setTimeout(scrollToHash, 200);
-        }
-      });
-      return () => cancelAnimationFrame(id);
-    } else {
+    if (!window.location.hash) {
       window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
     }
+    // Give the page one frame to mount, then scroll to the hash target
+    const frameId = requestAnimationFrame(() => {
+      if (!scrollToHash()) {
+        // Element not rendered yet — retry after a short delay (e.g. lazy sections)
+        setTimeout(scrollToHash, 200);
+      }
+    });
+    return () => cancelAnimationFrame(frameId);
   }, [location]);
 
   // Handle hash changes on the same page (clicking a hash link while already on that path)
