@@ -1,14 +1,17 @@
 # iTech Network Africa
 
-A full-stack web application for iTech Network Africa — a technology company serving African markets. The site includes pages for services, solutions, AI offerings, portfolio, blog, careers, pricing, contact, and a client portal.
+A full company website for **iTech Network Africa** — a tech services and solutions provider. Built with React, Vite, TypeScript, and Tailwind CSS, it covers ~20 pages including Home, Services, AI Solutions, Blog, Careers, Contact, Pricing, and more.
 
 ## Stack
 
-- **Frontend**: React 19 + Vite 7 + TypeScript + Tailwind CSS v4 + shadcn/ui + Framer Motion + Wouter (routing) — located in `artifacts/itech-network-africa/`
-- **Backend**: Express 5 + TypeScript — located in `artifacts/api-server/`
-- **Monorepo**: pnpm workspace (`pnpm-workspace.yaml`)
+- **Frontend:** React 19 + Vite + TypeScript + Tailwind CSS v4
+- **Routing:** Wouter (client-side SPA)
+- **UI components:** shadcn/ui (Radix primitives)
+- **Animations:** Framer Motion
+- **API server:** Express 5 + TypeScript (separate artifact)
+- **Package manager:** pnpm (workspace monorepo)
 
-## How to run
+## Running the project
 
 The frontend dev server starts automatically via the **iTech Network Africa** workflow:
 
@@ -16,20 +19,24 @@ The frontend dev server starts automatically via the **iTech Network Africa** wo
 PORT=8080 pnpm --filter @workspace/itech-network-africa run dev
 ```
 
-To start the API server separately (not yet wired to a workflow):
+If you need to restart it manually, use the workflow panel or run the above command.
+
+## Project structure
 
 ```
-pnpm --filter @workspace/api-server run dev
+artifacts/
+  itech-network-africa/   # React/Vite frontend
+    src/
+      pages/              # ~20 page components
+      components/         # Shared layout + UI components
+      data/               # Static data files
+  api-server/             # Express API backend
+    src/
+      routes/             # API route handlers
+      middlewares/        # Express middleware
+lib/                      # Shared workspace libraries
 ```
-
-## Key directories
-
-- `artifacts/itech-network-africa/src/pages/` — all page components
-- `artifacts/itech-network-africa/src/components/` — shared UI components (Header, Footer, etc.)
-- `artifacts/itech-network-africa/public/` — static assets (images, logos)
-- `artifacts/api-server/src/routes/` — Express API routes
-- `artifacts/api-server/src/lib/` — server utilities (logger, etc.)
 
 ## User preferences
 
-_None recorded yet._
+- Keep the existing project structure and stack — do not restructure or migrate.
