@@ -49,6 +49,12 @@ const footerSections = [
       { label: 'Cloud Services', href: '/services' },
       { label: 'Cybersecurity', href: '/services' },
       { label: 'IT Support', href: '/support' },
+      { label: 'UI/UX Design', href: '/services' },
+      { label: 'Data Analytics', href: '/services' },
+      { label: 'Network Solutions', href: '/services' },
+      { label: 'Digital Marketing', href: '/services' },
+      { label: 'Domain & Hosting', href: '/services' },
+      { label: 'Enterprise Software', href: '/services' },
     ],
   },
   {
