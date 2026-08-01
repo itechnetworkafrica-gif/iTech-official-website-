@@ -23,7 +23,7 @@ export const FooterAccordion: React.FC<FooterAccordionProps> = ({ sections }) =>
   return (
     <div className="w-full">
       {/* Desktop: 3-column grid */}
-      <div className="hidden lg:grid grid-cols-3 gap-x-12 gap-y-10">
+      <div className="hidden lg:grid grid-cols-4 gap-x-10 gap-y-10">
         {sections.map((section) => (
           <div key={section.title}>
             <h3 className="text-white font-bold text-base mb-4 flex items-center gap-2">

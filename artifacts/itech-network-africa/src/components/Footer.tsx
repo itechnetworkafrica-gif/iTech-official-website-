@@ -41,6 +41,17 @@ const footerSections = [
     ],
   },
   {
+    title: 'Services',
+    links: [
+      { label: 'Web Development', href: '/services' },
+      { label: 'Mobile Apps', href: '/services' },
+      { label: 'AI Solutions', href: '/ai-solutions' },
+      { label: 'Cloud Services', href: '/services' },
+      { label: 'Cybersecurity', href: '/services' },
+      { label: 'IT Support', href: '/support' },
+    ],
+  },
+  {
     title: 'Pricing',
     isNew: true,
     links: [
@@ -70,17 +81,6 @@ const footerSections = [
       { label: 'Billing', href: '/portal' },
     ],
   },
-  {
-    title: 'Services',
-    links: [
-      { label: 'Web Development', href: '/services' },
-      { label: 'Mobile Apps', href: '/services' },
-      { label: 'AI Solutions', href: '/ai-solutions' },
-      { label: 'Cloud Services', href: '/services' },
-      { label: 'Cybersecurity', href: '/services' },
-      { label: 'IT Support', href: '/support' },
-    ],
-  },
 ];
 
 export const Footer: React.FC = () => {
@@ -95,10 +95,10 @@ export const Footer: React.FC = () => {
           <FooterAccordion sections={footerSections} />
         </div>
 
-        {/* Desktop: social icons to the left of logo in a row; Mobile: logo then icons stacked */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-10 pt-10 pb-6">
-          <FooterSocial />
+        {/* Desktop: logo on left, social icons on right; Mobile: logo then icons stacked */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between pt-10 pb-6">
           <FooterBrand />
+          <FooterSocial />
         </div>
 
         <div className="border-t border-white/10" />
