@@ -35,7 +35,7 @@ export const TEAM: TeamMember[] = [
     role: 'Founder & Executive Director',
     department: 'Leadership',
     avatar: 'WK',
-    color: '#3CB52A',
+    color: '#3CB52A',   // brand green
     photo: '/team-wilmot.png',
     bio: 'Visionary entrepreneur dedicated to positioning Africa at the forefront of global technological innovation. Founded iTech Network Africa in 2023 with a mission to empower businesses and communities through world-class digital solutions.',
     longBio: [
@@ -71,7 +71,7 @@ export const TEAM: TeamMember[] = [
     role: 'Full Stack Developer',
     department: 'Engineering',
     avatar: 'FK',
-    color: '#0A7EBF',
+    color: '#3CB52A',
     photo: '/team-foday.jpg',
     bio: 'Builds robust web and mobile applications from front to back, crafting seamless digital experiences that power the company\'s enterprise solutions.',
     longBio: [
@@ -105,7 +105,7 @@ export const TEAM: TeamMember[] = [
     role: 'Finance Officer',
     department: 'Finance & Operations',
     avatar: 'AD',
-    color: '#7C3AED',
+    color: '#3CB52A',
     photo: '/team-alvina.png',
     bio: 'Manages financial operations and ensures fiscal discipline across all projects, driving sustainable growth for the company and its clients.',
     longBio: [
@@ -139,7 +139,7 @@ export const TEAM: TeamMember[] = [
     role: 'Operations Associate',
     department: 'Operations',
     avatar: 'JK',
-    color: '#E85D04',
+    color: '#3CB52A',
     photo: '/team-james.jpg',
     bio: 'Coordinates day-to-day operations and project delivery, ensuring every engagement is executed with precision, speed, and client satisfaction.',
     longBio: [
@@ -173,7 +173,7 @@ export const TEAM: TeamMember[] = [
     role: 'Administrative Officer',
     department: 'Administration',
     avatar: 'DK',
-    color: '#0D9488',
+    color: '#3CB52A',
     photo: '/team-dorcas.jpg',
     bio: 'Oversees administrative functions and client communications, keeping the team organised and ensuring every client receives outstanding support.',
     longBio: [

@@ -24,12 +24,13 @@ const SOCIAL_ICON: Record<string, React.ReactNode> = {
   facebook:  <FaFacebook size={16} />,
 };
 
+// All departments use brand colours — green on light green
 const DEPT_COLOR: Record<string, { bg: string; text: string; border: string }> = {
   Leadership:            { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
-  Engineering:           { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
-  'Finance & Operations':{ bg: '#f5f3ff', text: '#6d28d9', border: '#ddd6fe' },
-  Operations:            { bg: '#fff7ed', text: '#c2410c', border: '#fed7aa' },
-  Administration:        { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4' },
+  Engineering:           { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+  'Finance & Operations':{ bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+  Operations:            { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+  Administration:        { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
 };
 
 export default function TeamMemberPage() {
