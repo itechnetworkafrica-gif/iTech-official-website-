@@ -565,83 +565,111 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm"
         >
-          <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-8 shadow-2xl shadow-black/40">
-            <h2 className="text-lg font-bold text-[#0A1929] mb-1">Sign in</h2>
-            <p className="text-xs text-[#9CA3AF] mb-6">Use the credentials provided by the admin team.</p>
+          {/* Neon spinning border wrapper */}
+          <div className="neon-border shadow-[0_0_40px_rgba(0,229,255,0.15)]">
+            <div className="neon-glass">
+              <h2 className="text-2xl font-black text-white mb-1 text-center">Welcome Back</h2>
+              <p className="text-[#9ca3af] text-sm mb-7 text-center">Sign in to your client portal</p>
 
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2 bg-[#fee2e2] text-[#991b1b] text-sm px-4 py-3 rounded-xl mb-4"
-              >
-                <AlertCircle size={15} className="shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </motion.div>
-            )}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl mb-5"
+                >
+                  <AlertCircle size={15} className="shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </motion.div>
+              )}
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Email Address</label>
-                <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    autoComplete="email"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E5E7EB] text-sm text-[#0A1929] focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] transition-all"
-                  />
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-xs font-semibold text-[#9ca3af] mb-1.5 uppercase tracking-wider">Email Address</label>
+                  <div className="relative">
+                    <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4b5563]" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                      className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-transparent border-2 border-[#374151] text-white text-sm placeholder:text-[#4b5563] focus:outline-none focus:border-[#00e5ff] transition-all duration-300"
+                      style={{ boxShadow: email ? '0 0 0 0 transparent' : undefined }}
+                      onFocus={e => (e.currentTarget.style.boxShadow = '0 0 15px rgba(0,229,255,0.25)')}
+                      onBlur={e => (e.currentTarget.style.boxShadow = 'none')}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-[#374151] mb-1.5">Password</label>
-                <div className="relative">
-                  <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E5E7EB] text-sm text-[#0A1929] focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] transition-all"
-                  />
+                <div>
+                  <label className="block text-xs font-semibold text-[#9ca3af] mb-1.5 uppercase tracking-wider">Password</label>
+                  <div className="relative">
+                    <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4b5563]" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-transparent border-2 border-[#374151] text-white text-sm placeholder:text-[#4b5563] focus:outline-none focus:border-[#00e5ff] transition-all duration-300"
+                      onFocus={e => (e.currentTarget.style.boxShadow = '0 0 15px rgba(0,229,255,0.25)')}
+                      onBlur={e => (e.currentTarget.style.boxShadow = 'none')}
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div className="flex items-center justify-between text-sm pt-1">
+                  <a
+                    href="mailto:itechnetworkafrica@gmail.com?subject=Portal%20Password%20Reset%20Request"
+                    className="text-[#00e5ff] hover:underline text-xs font-medium"
+                  >
+                    Forgot Password?
+                  </a>
+                  <a
+                    href="mailto:itechnetworkafrica@gmail.com?subject=Portal%20Access%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20request%20access%20to%20the%20iTech%20Network%20Africa%20client%20portal.%0A%0AName%3A%20%0ACompany%3A%20%0AEmail%3A%20%0A%0AThank%20you."
+                    className="text-[#00e5ff] hover:underline text-xs font-medium"
+                  >
+                    Request Access
+                  </a>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 rounded-xl font-bold text-white text-base transition-all duration-300 disabled:opacity-60 hover:-translate-y-0.5"
+                  style={{
+                    background: 'linear-gradient(90deg, #00e5ff, #ff00cc)',
+                    boxShadow: loading ? 'none' : '0 0 20px rgba(255,0,204,0.35)',
+                  }}
+                  onMouseEnter={e => { if (!loading) e.currentTarget.style.boxShadow = '0 0 32px rgba(255,0,204,0.55)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = loading ? 'none' : '0 0 20px rgba(255,0,204,0.35)'; }}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2 text-sm">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+                      </svg>
+                      Signing in…
+                    </span>
+                  ) : 'Sign In'}
+                </button>
+              </form>
+
+              <p className="text-center text-[#9ca3af] text-xs mt-6">
+                Don't have an account?{' '}
+                <a
+                  href="mailto:itechnetworkafrica@gmail.com?subject=Portal%20Access%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20request%20access%20to%20the%20iTech%20Network%20Africa%20client%20portal.%0A%0AName%3A%20%0ACompany%3A%20%0AEmail%3A%20%0A%0AThank%20you."
+                  className="text-[#00e5ff] hover:underline font-semibold"
+                >
+                  Create One
+                </a>
+              </p>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full mt-6 py-3.5 bg-[#3CB52A] hover:bg-[#2e911f] disabled:opacity-60 text-white font-bold rounded-xl transition-all shadow-[0_4px_16px_rgba(60,181,42,0.3)] flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <span className="flex items-center gap-2 text-sm">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
-                  </svg>
-                  Signing in…
-                </span>
-              ) : 'Sign In'}
-            </button>
-          </form>
-
-          {/* Request access */}
-          <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-            <p className="text-white/50 text-xs mb-3">Don't have access yet? Request an account from the admin team.</p>
-            <a
-              href="mailto:itechnetworkafrica@gmail.com?subject=Portal%20Access%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20request%20access%20to%20the%20iTech%20Network%20Africa%20client%20portal.%0A%0AName%3A%20%0ACompany%3A%20%0AEmail%3A%20%0A%0AThank%20you."
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3CB52A] hover:underline"
-            >
-              Request Portal Access <ArrowRight size={14} />
-            </a>
           </div>
 
           {/* Trust indicators */}
-          <div className="mt-4 flex items-center justify-center gap-4 text-white/20">
+          <div className="mt-5 flex items-center justify-center gap-4 text-white/20">
             <span className="flex items-center gap-1 text-[11px]"><CheckCircle2 size={11} /> SSL Encrypted</span>
             <span className="flex items-center gap-1 text-[11px]"><Shield size={11} /> Admin-controlled access</span>
           </div>
