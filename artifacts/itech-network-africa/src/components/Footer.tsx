@@ -27,7 +27,6 @@ const footerSections = [
       { label: 'Contact Support', href: '/contact' },
       { label: 'Report an Issue', href: '/contact' },
       { label: 'Client Portal', href: '/portal' },
-      { label: 'Pricing', href: '/pricing' },
     ],
   },
   {
@@ -67,6 +66,7 @@ const footerSections = [
       { label: 'Cloud Services', href: '/services' },
       { label: 'Cybersecurity', href: '/services' },
       { label: 'IT Support', href: '/support' },
+      { label: 'Pricing', href: '/pricing' },
     ],
   },
 ];
