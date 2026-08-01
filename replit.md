@@ -1,32 +1,38 @@
 # iTech Network Africa
 
-A full-stack React/Vite website for iTech Network Africa, with an Express API backend and shared TypeScript libraries.
+A multi-page React website for iTech Network Africa — a tech company offering IT services, AI solutions, products, and consulting across Africa.
 
 ## Stack
+- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
+- **Routing:** Wouter (client-side SPA)
+- **UI components:** Radix UI + shadcn/ui
+- **Animations:** Framer Motion
+- **Data fetching:** TanStack Query
+- **Monorepo:** pnpm workspace
 
-- **Frontend**: React 19 + Vite + Tailwind CSS v4 + shadcn/ui components (`artifacts/itech-network-africa`)
-- **Backend**: Express 5 API server (`artifacts/api-server`)
-- **Shared libs**: `lib/api-spec`, `lib/api-zod`, `lib/api-client-react`, `lib/db`
-- **Package manager**: pnpm (monorepo via `pnpm-workspace.yaml`)
+## Project structure
+```
+artifacts/itech-network-africa/   ← main frontend app
+  src/
+    pages/        ← one file per route (HomePage, AboutPage, etc.)
+    components/   ← shared UI components (Header, Footer, etc.)
+    data/         ← static data files
+    hooks/        ← custom React hooks
+    lib/          ← utilities
+  public/         ← static assets (images, logos, etc.)
 
-## Running the project
+artifacts/api-server/             ← Express API server (currently minimal)
+```
 
-The frontend dev server is managed by the **iTech Network Africa** workflow:
-
+## How to run
+The app runs via the **iTech Network Africa** workflow, which starts the Vite dev server:
 ```
 PORT=8080 pnpm --filter @workspace/itech-network-africa run dev
 ```
-
-To run the API server separately:
-
-```
-pnpm --filter @workspace/api-server run dev
-```
+The app is served at port 8080 (mapped to the root `/` preview path).
 
 ## Pages
-
-The frontend has a comprehensive set of pages: Home, About, Services, Products, AI, Pricing, Blog, News, Portfolio, Projects, Industries, Solutions, Partners, Careers, Team, Contact, Support, Client Portal, Resources, Sitemap, and legal pages (Privacy, Terms, Cookies, Refund Policy).
+Home, About, Services, Service Detail, AI Solutions, Solutions, Products, Portfolio, Projects, Industries, Partners, Resources, Blog, News, Careers, Support, Contact, Pricing, Privacy Policy, Terms, Cookies, Client Portal, Team Member, Refund Policy, Sitemap.
 
 ## User preferences
-
-<!-- Add user preferences here as they are stated -->
+<!-- Add any user preferences here -->
