@@ -1,42 +1,32 @@
 # iTech Network Africa
 
-A full company website for **iTech Network Africa** — a tech services and solutions provider. Built with React, Vite, TypeScript, and Tailwind CSS, it covers ~20 pages including Home, Services, AI Solutions, Blog, Careers, Contact, Pricing, and more.
+A full-stack React/Vite website for iTech Network Africa, with an Express API backend and shared TypeScript libraries.
 
 ## Stack
 
-- **Frontend:** React 19 + Vite + TypeScript + Tailwind CSS v4
-- **Routing:** Wouter (client-side SPA)
-- **UI components:** shadcn/ui (Radix primitives)
-- **Animations:** Framer Motion
-- **API server:** Express 5 + TypeScript (separate artifact)
-- **Package manager:** pnpm (workspace monorepo)
+- **Frontend**: React 19 + Vite + Tailwind CSS v4 + shadcn/ui components (`artifacts/itech-network-africa`)
+- **Backend**: Express 5 API server (`artifacts/api-server`)
+- **Shared libs**: `lib/api-spec`, `lib/api-zod`, `lib/api-client-react`, `lib/db`
+- **Package manager**: pnpm (monorepo via `pnpm-workspace.yaml`)
 
 ## Running the project
 
-The frontend dev server starts automatically via the **iTech Network Africa** workflow:
+The frontend dev server is managed by the **iTech Network Africa** workflow:
 
 ```
 PORT=8080 pnpm --filter @workspace/itech-network-africa run dev
 ```
 
-If you need to restart it manually, use the workflow panel or run the above command.
-
-## Project structure
+To run the API server separately:
 
 ```
-artifacts/
-  itech-network-africa/   # React/Vite frontend
-    src/
-      pages/              # ~20 page components
-      components/         # Shared layout + UI components
-      data/               # Static data files
-  api-server/             # Express API backend
-    src/
-      routes/             # API route handlers
-      middlewares/        # Express middleware
-lib/                      # Shared workspace libraries
+pnpm --filter @workspace/api-server run dev
 ```
+
+## Pages
+
+The frontend has a comprehensive set of pages: Home, About, Services, Products, AI, Pricing, Blog, News, Portfolio, Projects, Industries, Solutions, Partners, Careers, Team, Contact, Support, Client Portal, Resources, Sitemap, and legal pages (Privacy, Terms, Cookies, Refund Policy).
 
 ## User preferences
 
-- Keep the existing project structure and stack — do not restructure or migrate.
+<!-- Add user preferences here as they are stated -->
