@@ -496,6 +496,7 @@ export default function AboutPage() {
           3. OUR TEAM
       ═══════════════════════════════════════ */}
       <section id="our-team" className="py-24 lg:py-32 bg-white">
+        <span id="leadership" className="sr-only" />
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
             <span className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">The People</span>

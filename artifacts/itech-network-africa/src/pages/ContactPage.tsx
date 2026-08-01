@@ -121,7 +121,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── Form + Map ── */}
-      <section className="py-20 lg:py-28 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 w-full">
+      <section id="quote" className="py-20 lg:py-28 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 w-full">
         {/* Contact Form */}
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -213,7 +213,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── Regional Offices ── */}
-      <section className="py-20 bg-[#0A1929] text-white">
+      <section id="locations" className="py-20 bg-[#0A1929] text-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">Global Reach, Local Presence</h2>
           <div className="grid md:grid-cols-3 gap-6">

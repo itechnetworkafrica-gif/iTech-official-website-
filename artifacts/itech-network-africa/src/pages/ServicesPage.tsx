@@ -236,6 +236,7 @@ function ServiceCard({ cat, index }: { cat: ServiceCategory; index: number }) {
 
   return (
     <motion.div
+      id={cat.id}
       custom={index}
       variants={fadeUp}
       className="group flex flex-col bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300"

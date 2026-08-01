@@ -301,7 +301,7 @@ export default function SupportPage() {
       </div>
 
       {/* ── Quick Actions ── */}
-      <section className="py-20">
+      <section id="help" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -361,7 +361,7 @@ export default function SupportPage() {
       </section>
 
       {/* ── System Status ── */}
-      <section className="py-16 bg-white border-t border-b border-[#E5E7EB]">
+      <section id="status" className="py-16 bg-white border-t border-b border-[#E5E7EB]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>
@@ -403,7 +403,7 @@ export default function SupportPage() {
       </section>
 
       {/* ── Knowledge Base Categories ── */}
-      <section className="py-20">
+      <section id="knowledge-base" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -705,7 +705,7 @@ export default function SupportPage() {
       </section>
 
       {/* ── SLA Tiers ── */}
-      <section className="py-20 bg-[#F8F9FA]">
+      <section id="maintenance" className="py-20 bg-[#F8F9FA]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 16 }}

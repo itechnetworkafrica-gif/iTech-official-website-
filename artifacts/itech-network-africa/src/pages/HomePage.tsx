@@ -773,7 +773,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           WHY CHOOSE US
       ══════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-[#060E18]">
+      <section id="why-choose-us" className="py-24 lg:py-32 bg-[#060E18]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={stagger}>
@@ -906,7 +906,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           OUR PROCESS — classic & pro
       ══════════════════════════════════════ */}
-      <section className="py-24 lg:py-36 bg-[#F8F9FA] relative overflow-hidden">
+      <section id="process" className="py-24 lg:py-36 bg-[#F8F9FA] relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
 
           {/* Section header */}
@@ -1059,12 +1059,12 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           TESTIMONIALS — Light mode slider
       ══════════════════════════════════════ */}
-      <TestimonialsSlider />
+      <div id="testimonials"><TestimonialsSlider /></div>
 
       {/* ══════════════════════════════════════
           CTA
       ══════════════════════════════════════ */}
-      <section className="py-24 bg-[#3CB52A] relative overflow-hidden">
+      <section id="get-started" className="py-24 bg-[#3CB52A] relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
         <motion.div

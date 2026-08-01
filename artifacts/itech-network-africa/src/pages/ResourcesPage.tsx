@@ -316,7 +316,7 @@ export default function ResourcesPage() {
           FEATURED GUIDES
       ═══════════════════════════ */}
       {!query && (
-        <section className="py-20 lg:py-28 bg-[#F8F9FA]">
+        <section id="tutorials" className="py-20 lg:py-28 bg-[#F8F9FA]">
           <div className="max-w-7xl mx-auto px-6 lg:px-10">
             <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
               <div>
@@ -371,7 +371,7 @@ export default function ResourcesPage() {
           RESOURCE LIBRARY
       ═══════════════════════════ */}
       {!query && (
-        <section className="py-20 lg:py-28 bg-white">
+        <section id="docs" className="py-20 lg:py-28 bg-white">
           <div className="max-w-7xl mx-auto px-6 lg:px-10">
             <motion.div {...fadeUp()} className="mb-12">
               <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">All Resources</span>
