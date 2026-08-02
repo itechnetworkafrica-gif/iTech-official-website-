@@ -176,18 +176,18 @@ function RotatingWords({
 
 /* ─── Data ─── */
 const SERVICES = [
-  { icon: <Code2 size={28} />, title: 'Enterprise Software', desc: 'Custom ERP, CRM and business platforms built for African enterprises.' },
-  { icon: <Brain size={28} />, title: 'AI & Automation', desc: 'Machine learning, intelligent automation and data-driven decision tools.' },
-  { icon: <Cloud size={28} />, title: 'Cloud Infrastructure', desc: 'Secure, scalable cloud solutions on AWS, Azure and Google Cloud.' },
-  { icon: <Monitor size={28} />, title: 'Web & Mobile Apps', desc: 'Stunning, high-performance digital products for web and mobile.' },
-  { icon: <Shield size={28} />, title: 'Cybersecurity', desc: 'End-to-end security audits, compliance and threat protection.' },
-  { icon: <Wifi size={28} />, title: 'Network Solutions', desc: 'Enterprise networking, connectivity and managed IT infrastructure.' },
+  { icon: <Code2 size={28} />, title: 'Enterprise Software', desc: 'Custom ERP, CRM and business platforms engineered for global enterprise standards.' },
+  { icon: <Brain size={28} />, title: 'AI & Automation', desc: 'Machine learning, intelligent automation and data-driven decision tools at scale.' },
+  { icon: <Cloud size={28} />, title: 'Cloud Infrastructure', desc: 'Secure, scalable cloud solutions on AWS, Azure and Google Cloud — anywhere in the world.' },
+  { icon: <Monitor size={28} />, title: 'Web & Mobile Apps', desc: 'Stunning, high-performance digital products serving users across every continent.' },
+  { icon: <Shield size={28} />, title: 'Cybersecurity', desc: 'End-to-end security audits, global compliance frameworks and threat protection.' },
+  { icon: <Wifi size={28} />, title: 'Network Solutions', desc: 'Enterprise networking, connectivity and managed IT infrastructure — built to global spec.' },
 ];
 
 const STATS = [
   { value: '20+', num: 20, suffix: '+', label: 'Projects Delivered' },
   { value: '30+', num: 30, suffix: '+', label: 'Enterprise Clients' },
-  { value: '5+',  num: 5,  suffix: '+', label: 'Countries Served' },
+  { value: '10+', num: 10, suffix: '+', label: 'Countries Served' },
   { value: '99%', num: 99, suffix: '%', label: 'Client Satisfaction' },
 ];
 
@@ -219,12 +219,12 @@ const PROCESS = [
 ];
 
 const WHY = [
-  { icon: <Globe size={22} />, title: 'Pan-African Expertise', desc: 'Operating in 5+ African countries with deep local market insight.' },
-  { icon: <Award size={22} />, title: 'Proven Track Record', desc: '20+ successful projects across government, NGO and enterprise sectors.' },
+  { icon: <Globe size={22} />, title: 'Global Reach', desc: 'Serving clients across Africa, Europe and North America with world-class delivery standards.' },
+  { icon: <Award size={22} />, title: 'Proven Track Record', desc: '20+ successful projects across government, NGO and enterprise sectors worldwide.' },
   { icon: <TrendingUp size={22} />, title: '99% Delivery Rate', desc: 'On time, on budget — every engagement backed by SLA guarantees.' },
   { icon: <Shield size={22} />, title: 'ISO-Aligned Security', desc: 'Enterprise-grade data protection and compliance baked in from day one.' },
   { icon: <Users size={22} />, title: '24/7 Support', desc: 'Dedicated account managers and round-the-clock technical assistance.' },
-  { icon: <Zap size={22} />, title: 'Scalable Solutions', desc: 'Architecture that grows with you — from startup to national scale.' },
+  { icon: <Zap size={22} />, title: 'Scalable Solutions', desc: 'Architecture that grows with you — from local startup to global enterprise.' },
 ];
 
 const TESTIMONIALS = [
@@ -239,10 +239,10 @@ const TESTIMONIALS = [
 /* ─── Hero Slides data ─── */
 const HERO_SLIDES = [
   {
-    eyebrow: "Innovating Africa's Future",
-    headline: ['Transforming', 'Africa Through', 'Technology'],
+    eyebrow: 'Global Tech Company · African Roots',
+    headline: ['World-Class Tech,', 'Built Right Here', 'in Africa'],
     accentLine: 2,
-    subtitle: 'We build world-class software, AI and digital infrastructure that powers Africa\'s most ambitious organisations forward.',
+    subtitle: 'We build enterprise software, AI and digital infrastructure that powers the world\'s most ambitious organisations — headquartered in Africa, trusted globally.',
     cta: 'Explore Services',
     href: '/services',
     ctaSecondary: 'View Our Work',
@@ -253,7 +253,7 @@ const HERO_SLIDES = [
     imgPosition: 'center top',
     stats: [
       { value: '20+', label: 'Projects Delivered' },
-      { value: '30+', label: 'Enterprise Clients' },
+      { value: '30+', label: 'Global Clients' },
       { value: '99%', label: 'Client Satisfaction' },
     ],
   },
@@ -261,7 +261,7 @@ const HERO_SLIDES = [
     eyebrow: 'AI & Digital Innovation',
     headline: ['Building Digital', 'Infrastructure', 'of Tomorrow'],
     accentLine: 1,
-    subtitle: 'Machine learning, intelligent automation and data-driven platforms — engineered for African enterprises at scale.',
+    subtitle: 'Machine learning, intelligent automation and data-driven platforms — engineered for global enterprises and deployed at scale.',
     cta: 'AI Solutions',
     href: '/ai',
     ctaSecondary: 'Learn More',
@@ -273,24 +273,24 @@ const HERO_SLIDES = [
     stats: [
       { value: '99%', label: 'Client Satisfaction' },
       { value: '60%', label: 'Avg. Efficiency Gain' },
-      { value: '5+', label: 'Countries Served' },
+      { value: '10+', label: 'Countries Served' },
     ],
   },
   {
-    eyebrow: 'Pan-African Reach',
-    headline: ['Trusted by', 'Governments &', 'Enterprises'],
+    eyebrow: 'Global Reach · Local Expertise',
+    headline: ['Trusted by', 'Governments &', 'Enterprises Worldwide'],
     accentLine: 0,
-    subtitle: 'From central banks to NGOs — Africa\'s most respected institutions rely on iTech to deliver on time, on budget, every time.',
+    subtitle: 'From Monrovia to London — governments, NGOs and enterprises across four continents rely on iTech to deliver on time, on budget, every time.',
     cta: 'View Portfolio',
     href: '/portfolio',
     ctaSecondary: 'About Us',
     hrefSecondary: '/about',
     chips: ['Government', 'Banking', 'NGO & INGO', 'Telecoms'],
     img: '/hero-man-denim.jpg',
-    imgAlt: 'Pan-African operations',
+    imgAlt: 'Global operations',
     imgPosition: 'center top',
     stats: [
-      { value: '5+', label: 'Countries Served' },
+      { value: '10+', label: 'Countries Served' },
       { value: '30+', label: 'Enterprise Clients' },
       { value: '2023', label: 'Founded' },
     ],
@@ -299,7 +299,7 @@ const HERO_SLIDES = [
     eyebrow: 'Cybersecurity & Cloud',
     headline: ['Secure.', 'Scalable.', 'Future-Ready.'],
     accentLine: 2,
-    subtitle: 'Enterprise-grade cloud architecture and end-to-end cybersecurity built for the resilience African organisations demand.',
+    subtitle: 'Enterprise-grade cloud architecture and end-to-end cybersecurity — built for the resilience that global organisations demand.',
     cta: 'Get a Quote',
     href: '/contact',
     ctaSecondary: 'Our Services',
@@ -600,7 +600,7 @@ function HeroSlider() {
                 {[
                   { value: '20+',  label: 'Projects',  icon: FolderOpen },
                   { value: '30+',  label: 'Clients',   icon: Users      },
-                  { value: '5+',   label: 'Countries', icon: Globe      },
+                  { value: '10+',  label: 'Countries', icon: Globe      },
                 ].map(({ value, label, icon: Icon }) => (
                   <div
                     key={label}
@@ -749,7 +749,7 @@ function TestimonialsSlider() {
             Trusted by Industry Leaders
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-xl mx-auto">
-            Real results, real organisations — hear directly from the teams we've partnered with across Africa.
+            Real results, real organisations — hear directly from the teams we've partnered with around the world.
           </motion.p>
         </motion.div>
 
@@ -903,10 +903,10 @@ export default function HomePage() {
                 speed={55}
                 pause={2400}
               />
-              <br />Built for Africa
+              <br />Built for the World
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-2xl mx-auto">
-              From AI-powered automation to cloud infrastructure — every solution engineered for resilience, scale and local context.
+              From AI-powered automation to cloud infrastructure — every solution engineered for resilience, global scale, and lasting impact.
             </motion.p>
           </motion.div>
 
@@ -957,16 +957,16 @@ export default function HomePage() {
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={stagger}>
               <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Why iTech Network Africa</motion.span>
               <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                Your Most Trusted<br />
+                Your Global<br />
                 <TypewriterText
-                  text="Tech Partner in Africa"
+                  text="Technology Partner"
                   speed={48}
                   delay={500}
                   className="text-[#3CB52A]"
                 />
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="text-white/55 text-lg leading-relaxed mb-10">
-                We combine global best practices with deep African market knowledge to deliver solutions that actually work — on time, on budget, and built to last.
+                A global technology company headquartered in Africa — combining world-class engineering standards with deep local market knowledge to deliver solutions that actually work, everywhere.
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
                 {STATS.map(s => (
@@ -1014,7 +1014,7 @@ export default function HomePage() {
             variants={fadeUp}
             className="text-4xl md:text-5xl lg:text-6xl font-black text-[#060E18] mb-10 leading-tight"
           >
-            iTech Network Africa,<br className="hidden sm:block" /> every step of the way.
+            Global expertise,<br className="hidden sm:block" /> delivered from Africa.
           </motion.h2>
 
           {/* Split block */}
@@ -1042,7 +1042,7 @@ export default function HomePage() {
             >
               {/* Quote */}
               <blockquote className="text-[#060E18] text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
-                "We handle the technology so you can focus on what you do best. From web apps to AI solutions, iTech Network Africa turns your vision into reality — on time, on budget, and built to last."
+                "A global technology company with African roots — we handle the technology so you can focus on what you do best. From AI solutions to cloud infrastructure, iTech Network Africa delivers world-class results on time, on budget, every time."
               </blockquote>
 
               {/* Features + preview image */}

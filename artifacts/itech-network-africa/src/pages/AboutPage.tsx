@@ -28,27 +28,27 @@ const stagger = (i: number, base = 0) => ({
 
 /* ─── Data ─── */
 const values = [
-  { icon: <Lightbulb size={22} />, title: 'Innovation', desc: 'Constantly pushing boundaries with AI and modern technology to solve complex African challenges.' },
+  { icon: <Lightbulb size={22} />, title: 'Innovation', desc: 'Constantly pushing boundaries with AI and modern technology to solve complex global challenges.' },
   { icon: <ShieldCheck size={22} />, title: 'Integrity', desc: 'Radical transparency, data security, and honest partnerships in everything we do.' },
-  { icon: <TrendingUp size={22} />, title: 'Impact', desc: 'We measure success by the tangible growth and efficiency gains we deliver to clients.' },
-  { icon: <Heart size={22} />, title: 'Inclusivity', desc: 'Building technology that works for everyone — bridging gaps across regions and demographics.' },
+  { icon: <TrendingUp size={22} />, title: 'Impact', desc: 'We measure success by the tangible growth and efficiency gains we deliver to clients worldwide.' },
+  { icon: <Heart size={22} />, title: 'Inclusivity', desc: 'Building technology that works for everyone — bridging gaps across regions, cultures and demographics.' },
   { icon: <Users size={22} />, title: 'Collaboration', desc: 'Deep partnership with clients throughout every project, not just at handoff.' },
-  { icon: <Award size={22} />, title: 'Excellence', desc: 'Uncompromising standards in design, engineering, and support — every single time.' },
+  { icon: <Award size={22} />, title: 'Excellence', desc: 'Uncompromising standards in design, engineering, and support — every single time, everywhere.' },
 ];
 
 const timeline = [
-  { year: '2023', title: 'Foundation', desc: 'iTech Network Africa established in Monrovia, Liberia by Wilmot Kerkulah with a mission to bridge the digital divide across West Africa.' },
-  { year: '2023', title: 'First Contracts', desc: 'Secured initial software development and IT consulting projects with local businesses and institutions.' },
-  { year: '2024', title: 'Service Expansion', desc: 'Launched cybersecurity, cloud infrastructure, and AI solutions divisions, growing team capabilities.' },
-  { year: '2024', title: 'Regional Growth', desc: 'Extended services across West Africa, partnering with financial institutions, NGOs and government agencies.' },
-  { year: '2025', title: 'Pan-African Reach', desc: 'Operating in 5+ African countries, delivering 20+ projects for 30+ enterprise clients.' },
+  { year: '2023', title: 'Foundation', desc: 'iTech Network Africa established in Monrovia, Liberia by Wilmot Kerkulah with a mission to bridge the digital divide across West Africa and beyond.' },
+  { year: '2023', title: 'First Contracts', desc: 'Secured initial software development and IT consulting projects with local businesses, NGOs and international institutions.' },
+  { year: '2024', title: 'Service Expansion', desc: 'Launched cybersecurity, cloud infrastructure, and AI solutions divisions — growing into a full-spectrum global technology company.' },
+  { year: '2024', title: 'International Growth', desc: 'Extended delivery into North America and Europe, partnering with financial institutions, NGOs and government agencies across four continents.' },
+  { year: '2025', title: 'Global Tech Company', desc: 'Operating in 10+ countries across Africa, Europe and North America — 20+ projects delivered for 30+ enterprise clients worldwide.' },
 ];
 
 // Team data is imported from @/data/team (shared with individual profile pages)
 
 const profileStats = [
   { value: '2023', label: 'Year Founded' },
-  { value: '5+', label: 'Countries' },
+  { value: '10+', label: 'Countries' },
   { value: '30+', label: 'Enterprise Clients' },
   { value: '20+', label: 'Projects Delivered' },
   { value: '5', label: 'Core Team' },
