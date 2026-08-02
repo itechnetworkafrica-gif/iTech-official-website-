@@ -592,64 +592,102 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════
-          7. PARTNERS
+          7. PARTNERS — Horizontal Sliding Marquee
       ═══════════════════════════════════════ */}
       <section id="partners" className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-        {/* Subtle dot-grid background */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
-          style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        {/* Top green glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[200px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(60,181,42,0.10) 0%, transparent 70%)' }} />
+        <style>{`
+          @keyframes itech-marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+          }
+          .itech-marquee-track {
+            animation: itech-marquee 28s linear infinite;
+          }
+          .itech-marquee-track:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-16">
+        {/* Subtle dot-grid */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        {/* Top glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[220px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(60,181,42,0.12) 0%, transparent 70%)' }} />
+        {/* Bottom glow */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[180px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(60,181,42,0.07) 0%, transparent 70%)' }} />
+
+        <div className="relative z-10">
+          {/* Header */}
+          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto px-6 mb-14">
             <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/25 px-4 py-1.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
               Strategic Partners
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight mt-2">Our Partners</h2>
-            <p className="mt-5 text-white/50 text-lg">
-              We collaborate with trusted organisations across technology, health, education, and youth development to amplify our global impact.
+            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight mt-2">Trusted Partners</h2>
+            <p className="mt-5 text-white/50 text-lg leading-relaxed">
+              We collaborate with respected organisations across technology, health, education and youth development to amplify global impact.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {partnerLogos.map((p, i) => (
-              <motion.a
-                key={i}
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                {...stagger(i, 0.07)}
-                className="group relative bg-white/[0.04] rounded-2xl p-7 border border-white/10 hover:border-[#3CB52A]/50 hover:bg-white/[0.07] transition-all duration-300 flex gap-5 items-start overflow-hidden"
-              >
-                {/* Green corner accent on hover */}
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#3CB52A] opacity-0 group-hover:opacity-100 rounded-l-2xl transition-opacity duration-300" />
+          {/* ── Marquee track ── */}
+          <div className="relative overflow-hidden py-3">
+            {/* Left fade */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to right, #060E18 0%, transparent 100%)' }} />
+            {/* Right fade */}
+            <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to left, #060E18 0%, transparent 100%)' }} />
 
-                {/* Logo chip — always brand green */}
-                <div className="w-14 h-14 rounded-xl bg-[#3CB52A] flex items-center justify-center text-white text-xs font-black shrink-0 shadow-[0_4px_20px_rgba(60,181,42,0.35)]">
-                  {p.abbr}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <h4 className="font-bold text-white group-hover:text-[#3CB52A] transition-colors leading-snug">{p.name}</h4>
-                    <ExternalLink size={14} className="text-white/20 group-hover:text-[#3CB52A] transition-colors shrink-0" />
-                  </div>
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3 bg-[#3CB52A]/15 text-[#3CB52A] border border-[#3CB52A]/25">
-                    {p.category}
-                  </span>
-                  <p className="text-white/45 text-sm leading-relaxed">{p.desc}</p>
-                  <p className="text-white/25 text-xs font-mono mt-2 truncate">{p.domain}</p>
-                </div>
-              </motion.a>
-            ))}
+            {/* Sliding row — logos duplicated for seamless loop */}
+            <div className="itech-marquee-track flex items-center gap-6 w-max">
+              {[
+                { src: '/partner-lumigrow.jpg',           name: 'Lumigrow Digital Agency',      url: 'https://lumigrowdigitalagency.online' },
+                { src: '/partner-c4y.jpg',                name: 'Capacity For Youth',            url: 'https://youthcapacity.org'           },
+                { src: '/partner-htl.jpg',                name: 'Health Tech Liberia',           url: 'https://healthtech-liberia.org'      },
+                { src: '/partner-b4p.jpg',                name: 'B4P CODEFOUND',                url: 'https://b4pcodefound.org'            },
+                { src: '/partner-lumigrow-solutions.jpg', name: 'Lumigrow Marketing Solutions',  url: 'https://lumigrowagency.online'       },
+                // duplicated for loop
+                { src: '/partner-lumigrow.jpg',           name: 'Lumigrow Digital Agency',      url: 'https://lumigrowdigitalagency.online' },
+                { src: '/partner-c4y.jpg',                name: 'Capacity For Youth',            url: 'https://youthcapacity.org'           },
+                { src: '/partner-htl.jpg',                name: 'Health Tech Liberia',           url: 'https://healthtech-liberia.org'      },
+                { src: '/partner-b4p.jpg',                name: 'B4P CODEFOUND',                url: 'https://b4pcodefound.org'            },
+                { src: '/partner-lumigrow-solutions.jpg', name: 'Lumigrow Marketing Solutions',  url: 'https://lumigrowagency.online'       },
+              ].map((p, i) => (
+                <a
+                  key={i}
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={p.name}
+                  className="group shrink-0 flex items-center justify-center bg-white rounded-2xl border border-white/10 hover:border-[#3CB52A]/60 hover:shadow-[0_0_28px_rgba(60,181,42,0.20)] transition-all duration-300"
+                  style={{ width: 220, height: 110, padding: '18px 28px' }}
+                >
+                  <img
+                    src={p.src}
+                    alt={p.name}
+                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    draggable={false}
+                  />
+                </a>
+              ))}
+            </div>
           </div>
 
-          <motion.div {...fadeUp} className="text-center mt-12">
+          {/* Divider line */}
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-14">
+            <div className="h-px bg-white/[0.06]" />
+          </div>
+
+          {/* CTA */}
+          <motion.div {...fadeUp} className="text-center mt-12 px-6">
+            <p className="text-white/40 text-sm mb-5">
+              Want to grow together? We're open to strategic partnerships worldwide.
+            </p>
             <Link
               href="/contact#partner"
-              className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-7 py-3.5 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5 active:scale-95"
             >
               Become a Partner <ArrowRight size={16} />
             </Link>
