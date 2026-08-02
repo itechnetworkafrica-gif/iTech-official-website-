@@ -8,6 +8,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ── Body text readability uplift ── */
+  --text-xs: 0.8125rem;              /* 13 px  (was 12 px) */
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 1rem;                   /* 16 px  (was 14 px) */
+  --text-sm--line-height: 1.625rem;
+  --text-base: 1.125rem;             /* 18 px  (was 16 px) */
+  --text-base--line-height: 1.75rem;
+
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-border: hsl(var(--border));
