@@ -1,6 +1,7 @@
 export interface NavChild {
   label: string;
   href: string;
+  isNew?: boolean;
 }
 
 export interface NavCategory {
@@ -39,6 +40,7 @@ export const navigationData: NavigationItem[] = [
     id: 'about',
     label: 'About Us',
     href: '/about',
+    isNew: true,
     children: [
       { label: 'Our Story', href: '/about#our-story' },
       { label: 'Mission & Vision', href: '/about#mission-vision' },
@@ -48,7 +50,7 @@ export const navigationData: NavigationItem[] = [
       { label: 'Company Profile', href: '/about#company-profile' },
       { label: 'Partners', href: '/about#partners' },
       { label: 'Clients', href: '/about#clients' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'Careers', href: '/careers', isNew: true },
       { label: 'Corporate Social Responsibility', href: '/about#csr' },
     ],
   },

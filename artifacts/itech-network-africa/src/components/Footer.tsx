@@ -91,7 +91,7 @@ const footerSections = [
       { label: 'Book a Consultation', href: '/contact' },
       { label: 'Office Locations', href: '/contact' },
       { label: 'WhatsApp Us', href: '/contact' },
-      { label: 'Support Tickets', href: '/support' },
+      { label: 'Support Tickets', href: '/support', isNew: true },
     ],
   },
 ];

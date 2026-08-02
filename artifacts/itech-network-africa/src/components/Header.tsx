@@ -363,6 +363,9 @@ const SimpleDropdown: React.FC<{ item: NavigationItem; onClose: () => void }> = 
       >
         <span className="w-1 h-1 rounded-full bg-[#3CB52A] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
         {child.label}
+        {child.isNew && (
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#3CB52A] text-white tracking-wide uppercase leading-none">NEW</span>
+        )}
       </Link>
     ))}
   </div>
