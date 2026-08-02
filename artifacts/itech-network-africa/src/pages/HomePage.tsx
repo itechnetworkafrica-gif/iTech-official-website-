@@ -426,7 +426,7 @@ function HeroSlider() {
   return (
     <section
       className="relative bg-[#060E18] overflow-hidden"
-      style={{ minHeight: 'clamp(600px, 92vh, 860px)' }}
+      style={{ minHeight: 'clamp(700px, 96vh, 980px)' }}
     >
       {/* ── Full-bleed background photo ── */}
       <AnimatePresence mode="wait">
@@ -542,8 +542,8 @@ function HeroSlider() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.52, ease: EASE }}
-                  className="font-black italic leading-[1.03] tracking-tight mb-5"
-                  style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.6rem)' }}
+                  className="font-black italic leading-[1.0] tracking-tight mb-5"
+                  style={{ fontSize: 'clamp(2.8rem, 5.2vw, 5.8rem)', textShadow: '0 4px 32px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.9)' }}
                 >
                   {slide.headline.map((line, i) => (
                     <span
