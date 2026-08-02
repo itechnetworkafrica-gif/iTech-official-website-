@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
 
 const TikTokIcon = () => (
@@ -13,8 +13,63 @@ const XIcon = () => (
   </svg>
 );
 
+interface SocialItem {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+}
+
+const SocialLink: React.FC<{ social: SocialItem }> = ({ social }) => {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseLeave = () => setPos(null);
+
+  return (
+    <a
+      key={social.label}
+      href={social.href}
+      aria-label={social.label}
+      target={social.href !== '#' ? '_blank' : undefined}
+      rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative flex items-center justify-center rounded-full transition-transform duration-200 hover:scale-110"
+      style={{
+        color: pos ? '#3CB52A' : 'white',
+        filter: pos
+          ? 'drop-shadow(0 0 8px #3CB52A) drop-shadow(0 0 18px #3CB52Aaa)'
+          : 'none',
+        transition: 'color 0.2s ease, filter 0.2s ease, transform 0.2s ease',
+      }}
+    >
+      {/* Radial green spotlight that follows the cursor */}
+      {pos && (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: '-8px',
+            borderRadius: '50%',
+            background: `radial-gradient(circle 28px at ${pos.x + 8}px ${pos.y + 8}px, #3CB52A33 0%, transparent 70%)`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+      {social.icon}
+    </a>
+  );
+};
+
 export const FooterSocial: React.FC = () => {
-  const socials = [
+  const socials: SocialItem[] = [
     { icon: <Facebook size={36} />, label: 'Facebook', href: 'https://www.facebook.com/itechnetworkafrica' },
     { icon: <Instagram size={36} />, label: 'Instagram', href: 'https://www.instagram.com/info.itechnetwork?igsh=MXM5eG5xNzRzc2Z0MQ==' },
     { icon: <Linkedin size={36} />, label: 'LinkedIn', href: 'https://www.linkedin.com/company/gotecx-itech-network-africa/' },
@@ -26,16 +81,7 @@ export const FooterSocial: React.FC = () => {
   return (
     <div className="flex flex-row items-center gap-3 flex-wrap sm:flex-nowrap">
       {socials.map((social) => (
-        <a
-          key={social.label}
-          href={social.href}
-          aria-label={social.label}
-          target={social.href !== '#' ? '_blank' : undefined}
-          rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
-          className="text-white hover:opacity-80 transition-opacity duration-200"
-        >
-          {social.icon}
-        </a>
+        <SocialLink key={social.label} social={social} />
       ))}
     </div>
   );
