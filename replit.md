@@ -1,6 +1,6 @@
 # iTech Network Africa
 
-A multi-page React website for iTech Network Africa — a tech company offering IT services, AI solutions, products, and consulting across Africa.
+A multi-page React website for iTech Network Africa — a global technology company offering enterprise software, AI solutions, cloud infrastructure, cybersecurity, and digital services worldwide.
 
 ## Stack
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
