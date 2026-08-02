@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { PageHero } from '@/components/PageHero';
 
-const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, '') ?? '';
+const RECIPIENT = 'itechnetworkafrica@gmail.com';
 
 const formSchema = z.object({
   fullName: z.string().min(2, 'Please enter your full name'),
@@ -95,7 +95,6 @@ const BENEFITS = [
 export default function ConsultationPage() {
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -106,36 +105,43 @@ export default function ConsultationPage() {
     },
   });
 
-  async function onSubmit(values: FormValues) {
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(`${BASE_URL}/api/consultation`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
+  function onSubmit(values: FormValues) {
+    const slot = values.preferredDate
+      ? `${values.preferredDate}${values.preferredTime ? ` at ${values.preferredTime} WAT` : ''}`
+      : 'Not specified';
 
-      if (res.ok) {
-        setSubmitted(true);
-        form.reset();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        const err = await res.json().catch(() => ({}));
-        toast({
-          title: 'Submission failed',
-          description: (err as { message?: string }).message || 'Please try again or email us directly.',
-          variant: 'destructive',
-        });
-      }
-    } catch {
-      toast({
-        title: 'Connection error',
-        description: 'Could not reach our servers. Please try again shortly.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    const subject = `[Consultation] ${values.serviceInterest} – ${values.fullName}`;
+    const body = [
+      'New Consultation Request',
+      '---',
+      `Full Name: ${values.fullName}`,
+      `Email: ${values.email}`,
+      `Phone: ${values.phone}`,
+      `Company: ${values.company || 'N/A'}`,
+      `Job Title: ${values.jobTitle || 'N/A'}`,
+      `Service Interest: ${values.serviceInterest}`,
+      `Budget Range: ${values.budget}`,
+      `Project Timeline: ${values.timeline}`,
+      `Preferred Slot: ${slot}`,
+      `How They Found Us: ${values.hearAboutUs || 'N/A'}`,
+      '',
+      'Project Description:',
+      values.projectDescription,
+    ].join('\n');
+
+    window.open(
+      `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      '_blank',
+    );
+
+    toast({
+      title: 'Request Ready',
+      description: 'Your email client has opened with the consultation request pre-filled. Please hit Send to submit.',
+    });
+
+    setSubmitted(true);
+    form.reset();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   if (submitted) {
@@ -456,19 +462,9 @@ export default function ConsultationPage() {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="w-full flex items-center justify-center gap-2 bg-[#3CB52A] hover:bg-[#2e911f] disabled:opacity-60 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-[15px] transition-colors mt-2 shadow-[0_4px_20px_rgba(60,181,42,0.35)]"
+                      className="w-full flex items-center justify-center gap-2 bg-[#3CB52A] hover:bg-[#2e911f] text-white py-4 rounded-xl font-bold text-[15px] transition-colors mt-2 shadow-[0_4px_20px_rgba(60,181,42,0.35)]"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                          Submitting…
-                        </>
-                      ) : (
-                        <>
-                          Book My Consultation <ArrowRight size={18} />
-                        </>
-                      )}
+                      Book My Consultation <ArrowRight size={18} />
                     </button>
 
                     <p className="text-center text-[#9CA3AF] text-xs mt-2">
