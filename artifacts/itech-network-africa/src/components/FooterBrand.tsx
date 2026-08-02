@@ -7,7 +7,7 @@ export const FooterBrand: React.FC = () => {
       <img
         src={logoNew}
         alt="iTech Network Africa"
-        className="h-20 object-contain"
+        className="h-20 max-w-[200px] object-contain"
       />
     </div>
   );

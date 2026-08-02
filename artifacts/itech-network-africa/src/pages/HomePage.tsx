@@ -458,7 +458,7 @@ function HeroSlider() {
                       transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                       className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] inline-block shrink-0"
                     />
-                    <span className="text-[#3CB52A] text-[9px] font-bold tracking-widest uppercase">Live</span>
+                    <span className="text-[#3CB52A] text-[11px] font-bold tracking-widest uppercase">Live</span>
                   </span>
                 </motion.div>
               </AnimatePresence>
@@ -472,7 +472,7 @@ function HeroSlider() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.52, ease: EASE }}
                   className="font-black italic leading-[1.03] tracking-tight mb-5"
-                  style={{ fontSize: 'clamp(2.4rem, 5.2vw, 4.6rem)' }}
+                  style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.6rem)' }}
                 >
                   {slide.headline.map((line, i) => (
                     <span
@@ -563,7 +563,7 @@ function HeroSlider() {
               >
                 <div className="flex items-center gap-2 mb-4">
                   <span className="w-5 h-px bg-[#3CB52A]" />
-                  <span className="text-[#3CB52A] text-[10px] font-bold tracking-[0.18em] uppercase">What We Deliver</span>
+                  <span className="text-[#3CB52A] text-xs font-bold tracking-[0.18em] uppercase">What We Deliver</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {[
@@ -611,7 +611,7 @@ function HeroSlider() {
                       <Icon size={15} className="text-[#3CB52A]" />
                     </div>
                     <div className="text-2xl font-black text-white leading-none mb-1">{value}</div>
-                    <div className="text-white/40 text-[10px] font-medium uppercase tracking-wide">{label}</div>
+                    <div className="text-white/50 text-xs font-medium uppercase tracking-wide">{label}</div>
                   </div>
                 ))}
               </motion.div>
