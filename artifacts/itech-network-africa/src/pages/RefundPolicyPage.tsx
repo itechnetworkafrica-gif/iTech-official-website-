@@ -1,16 +1,35 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
+import { LegalTOC } from '@/components/LegalTOC';
+
+const TOC_ITEMS = [
+  { id: 'overview', title: 'Overview' },
+  { id: 'project-deposits', title: 'Project Deposits' },
+  { id: 'milestone-payments', title: 'Project Milestone Payments' },
+  { id: 'project-cancellations', title: 'Project Cancellations' },
+  { id: 'hosting-managed-services', title: 'Hosting & Managed Services' },
+  { id: 'saas-licences', title: 'SaaS and Software Licences' },
+  { id: 'digital-products', title: 'Digital Products and Downloads' },
+  { id: 'training-workshops', title: 'Training and Workshops' },
+  { id: 'service-failures', title: 'Service Failures and Credits' },
+  { id: 'refund-process', title: 'Refund Process' },
+  { id: 'disputes', title: 'Disputes' },
+  { id: 'contact-us', title: 'Contact Us' },
+];
 
 export default function RefundPolicyPage() {
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Refund Policy" subtitle="Last Updated: July 2026" />
       <section className="py-20 max-w-4xl mx-auto px-6 w-full prose prose-green max-w-none text-[#111827]">
-        <h2>1. Overview</h2>
+
+        <LegalTOC items={TOC_ITEMS} />
+
+        <h2 id="overview" className="scroll-mt-28">1. Overview</h2>
         <p>At iTech Network Africa, we are committed to delivering exceptional technology solutions and maintaining the highest standards of client satisfaction. This Refund Policy outlines the conditions and procedures under which refunds may be requested and granted across our range of services.</p>
         <p>We encourage all clients to review this policy carefully before engaging our services. By entering into a project agreement, SOW, or purchasing a service plan, you acknowledge and accept these terms.</p>
 
-        <h2>2. Project Deposits</h2>
+        <h2 id="project-deposits" className="scroll-mt-28">2. Project Deposits</h2>
         <p>A non-refundable deposit is required to commence any custom software development, consulting, or implementation project. This deposit:</p>
         <ul>
           <li>Secures your place in our project pipeline and reserves dedicated team resources.</li>
@@ -19,7 +38,7 @@ export default function RefundPolicyPage() {
           <li>Typically ranges from 25% to 50% of the total project value, as specified in the signed proposal.</li>
         </ul>
 
-        <h2>3. Project Milestone Payments</h2>
+        <h2 id="milestone-payments" className="scroll-mt-28">3. Project Milestone Payments</h2>
         <p>Most projects are structured around milestone-based billing:</p>
         <ul>
           <li>Once a project milestone has been formally completed and accepted by the Client (via written confirmation or lack of objection within the review period), the milestone payment becomes non-refundable.</li>
@@ -28,7 +47,7 @@ export default function RefundPolicyPage() {
           <li>If a project is paused by the Client for more than 30 days without written notice, iTech Network Africa reserves the right to invoice for work completed to date.</li>
         </ul>
 
-        <h2>4. Project Cancellations</h2>
+        <h2 id="project-cancellations" className="scroll-mt-28">4. Project Cancellations</h2>
         <p>Clients wishing to cancel a project must provide written notice via email to their assigned account manager or to support@itechnetworkafrica.com. Upon cancellation:</p>
         <ul>
           <li><strong>Before work commences:</strong> A full refund of any payments made (excluding the initial deposit) will be issued within 14 business days.</li>
@@ -36,7 +55,7 @@ export default function RefundPolicyPage() {
           <li><strong>Mid-milestone cancellation:</strong> A fair valuation of work completed to the cancellation date will be retained; any overpayment will be refunded within 30 business days.</li>
         </ul>
 
-        <h2>5. Hosting & Managed Services</h2>
+        <h2 id="hosting-managed-services" className="scroll-mt-28">5. Hosting & Managed Services</h2>
         <p>For recurring hosting, cloud management, and managed IT service subscriptions:</p>
         <ul>
           <li>Monthly subscription fees are non-refundable once the billing cycle has commenced.</li>
@@ -46,7 +65,7 @@ export default function RefundPolicyPage() {
           <li>SSL certificate fees are non-refundable after issuance.</li>
         </ul>
 
-        <h2>6. SaaS and Software Licences</h2>
+        <h2 id="saas-licences" className="scroll-mt-28">6. SaaS and Software Licences</h2>
         <p>For software-as-a-service (SaaS) products and platform licences provided by iTech Network Africa:</p>
         <ul>
           <li>A 14-day free trial or evaluation period is available on selected products. No charges apply during the trial.</li>
@@ -54,10 +73,10 @@ export default function RefundPolicyPage() {
           <li>If a product is discontinued by iTech Network Africa, a pro-rated refund for the unused subscription period will be issued automatically.</li>
         </ul>
 
-        <h2>7. Digital Products and Downloads</h2>
+        <h2 id="digital-products" className="scroll-mt-28">7. Digital Products and Downloads</h2>
         <p>Due to the intangible nature of digital products (including templates, code packages, design assets, and digital reports), all sales are final once access has been granted or a download link has been delivered. Exceptions will only be considered if the product is materially different from its description.</p>
 
-        <h2>8. Training and Workshops</h2>
+        <h2 id="training-workshops" className="scroll-mt-28">8. Training and Workshops</h2>
         <p>For scheduled training sessions, workshops, and capacity-building programmes:</p>
         <ul>
           <li>Cancellations made more than 5 business days before the scheduled date are eligible for a full refund or rescheduling at no charge.</li>
@@ -65,10 +84,10 @@ export default function RefundPolicyPage() {
           <li>No-shows and same-day cancellations are non-refundable.</li>
         </ul>
 
-        <h2>9. Service Failures and Credits</h2>
+        <h2 id="service-failures" className="scroll-mt-28">9. Service Failures and Credits</h2>
         <p>Where iTech Network Africa fails to meet the uptime or performance guarantees specified in a signed SLA, affected clients may be eligible for service credits applied to future invoices. Monetary refunds for SLA breaches are governed by the terms of the individual SLA agreement.</p>
 
-        <h2>10. Refund Process</h2>
+        <h2 id="refund-process" className="scroll-mt-28">10. Refund Process</h2>
         <p>To request a refund, please follow these steps:</p>
         <ol>
           <li>Submit your request in writing to <a href="mailto:support@itechnetworkafrica.com">support@itechnetworkafrica.com</a> within the applicable eligibility window.</li>
@@ -78,10 +97,10 @@ export default function RefundPolicyPage() {
           <li>For international transactions, currency exchange rates at the time of the original payment will apply.</li>
         </ol>
 
-        <h2>11. Disputes</h2>
+        <h2 id="disputes" className="scroll-mt-28">11. Disputes</h2>
         <p>We strive to resolve all refund disputes amicably. If you are unsatisfied with our decision, you may escalate to our management team at <a href="mailto:legal@itechnetworkafrica.com">legal@itechnetworkafrica.com</a>. Unresolved disputes may be referred to binding arbitration as outlined in our Terms and Conditions.</p>
 
-        <h2>12. Contact Us</h2>
+        <h2 id="contact-us" className="scroll-mt-28">12. Contact Us</h2>
         <p>For refund requests, billing queries, or further information, please contact us:</p>
         <ul>
           <li><strong>Email:</strong> <a href="mailto:support@itechnetworkafrica.com">support@itechnetworkafrica.com</a></li>

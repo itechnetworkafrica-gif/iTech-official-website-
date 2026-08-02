@@ -1,16 +1,30 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
+import { LegalTOC } from '@/components/LegalTOC';
+
+const TOC_ITEMS = [
+  { id: 'what-are-cookies', title: 'What Are Cookies?' },
+  { id: 'types-of-cookies', title: 'Types of Cookies We Use' },
+  { id: 'how-long-cookies-last', title: 'How Long Cookies Last' },
+  { id: 'third-party-cookies', title: 'Third-Party Cookies' },
+  { id: 'your-cookie-choices', title: 'Your Cookie Choices' },
+  { id: 'updates-to-policy', title: 'Updates to This Policy' },
+  { id: 'contact-us', title: 'Contact Us' },
+];
 
 export default function CookiesPage() {
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Cookies Policy" subtitle="Last Updated: July 2026" />
       <section className="py-20 max-w-4xl mx-auto px-6 w-full prose prose-green max-w-none text-[#111827]">
-        <h2>1. What Are Cookies?</h2>
+
+        <LegalTOC items={TOC_ITEMS} />
+
+        <h2 id="what-are-cookies" className="scroll-mt-28">1. What Are Cookies?</h2>
         <p>Cookies are small text files that are placed on your device (computer, smartphone, or tablet) by websites you visit. They are widely used by website owners to make websites work more efficiently, provide a better user experience, and deliver reporting information.</p>
         <p>This Cookies Policy explains how iTech Network Africa uses cookies and similar tracking technologies on our website and services. By using our website, you consent to our use of cookies as described in this policy.</p>
 
-        <h2>2. Types of Cookies We Use</h2>
+        <h2 id="types-of-cookies" className="scroll-mt-28">2. Types of Cookies We Use</h2>
         <p>We use the following categories of cookies:</p>
 
         <h3>2.1 Strictly Necessary Cookies</h3>
@@ -43,14 +57,14 @@ export default function CookiesPage() {
           <li><strong>Google Ads:</strong> Used to measure the effectiveness of advertising and show relevant ads on partner networks.</li>
         </ul>
 
-        <h2>3. How Long Cookies Last</h2>
+        <h2 id="how-long-cookies-last" className="scroll-mt-28">3. How Long Cookies Last</h2>
         <p>Cookies can be either:</p>
         <ul>
           <li><strong>Session Cookies:</strong> These are temporary and are deleted from your device when you close your browser.</li>
           <li><strong>Persistent Cookies:</strong> These remain on your device for a set period (e.g., 1 year) or until you manually delete them. They allow us to recognise you on return visits.</li>
         </ul>
 
-        <h2>4. Third-Party Cookies</h2>
+        <h2 id="third-party-cookies" className="scroll-mt-28">4. Third-Party Cookies</h2>
         <p>Some pages on our website may include content from third parties (such as embedded videos or social media widgets), which may set their own cookies. We have no control over these third-party cookies and recommend reviewing the respective privacy and cookie policies of those third parties. Common third-party cookies may come from:</p>
         <ul>
           <li>Google (Analytics, Ads, Maps)</li>
@@ -59,7 +73,7 @@ export default function CookiesPage() {
           <li>Intercom or similar chat platforms</li>
         </ul>
 
-        <h2>5. Your Cookie Choices</h2>
+        <h2 id="your-cookie-choices" className="scroll-mt-28">5. Your Cookie Choices</h2>
         <p>You have the right to choose whether to accept or reject cookies (except strictly necessary cookies). You can manage your cookie preferences in the following ways:</p>
         <ul>
           <li><strong>Browser settings:</strong> Most browsers allow you to view, manage, and delete cookies through your browser settings. Visit your browser's help section for instructions.</li>
@@ -68,10 +82,10 @@ export default function CookiesPage() {
         </ul>
         <p>Please note that disabling certain cookies may affect the functionality of our website and your user experience. Strictly necessary cookies cannot be disabled as they are essential for the site to function.</p>
 
-        <h2>6. Updates to This Policy</h2>
+        <h2 id="updates-to-policy" className="scroll-mt-28">6. Updates to This Policy</h2>
         <p>We may update this Cookies Policy periodically to reflect changes in the cookies we use or for other operational, legal, or regulatory reasons. We encourage you to review this policy each time you visit our website. The "Last Updated" date at the top of this page indicates when this policy was last revised.</p>
 
-        <h2>7. Contact Us</h2>
+        <h2 id="contact-us" className="scroll-mt-28">7. Contact Us</h2>
         <p>If you have any questions or concerns about our use of cookies or this policy, please contact us at:</p>
         <ul>
           <li><strong>Email:</strong> privacy@itechnetworkafrica.com</li>
