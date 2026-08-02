@@ -896,12 +896,6 @@ function VideoShowcaseSection() {
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14"
         >
           <div>
-            <motion.span
-              variants={fadeUp}
-              className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full"
-            >
-              Watch Our Work
-            </motion.span>
             <motion.h2
               variants={fadeUp}
               custom={1}
@@ -910,13 +904,6 @@ function VideoShowcaseSection() {
               Real Projects.<br />Real Results.
             </motion.h2>
           </div>
-          <motion.p
-            variants={fadeUp}
-            custom={2}
-            className="text-white/45 text-base max-w-sm lg:text-right leading-relaxed"
-          >
-            Hover any card to preview. Explore case studies and demos from our most impactful work across Africa and beyond.
-          </motion.p>
         </motion.div>
 
       </div>
