@@ -216,8 +216,8 @@ const VIDEO_REELS = [
 
 const FEATURED_SCENES = [
   {
-    label: 'Our Team',
-    title: 'Meet the engineers behind the technology',
+    label: 'Our Mission',
+    title: 'Transforming Africa through world-class technology solutions',
     img: '/hero-group-excited.jpg',
     imgPos: 'center top',
     duration: 5800,
