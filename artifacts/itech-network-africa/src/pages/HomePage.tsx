@@ -919,61 +919,328 @@ function VideoShowcaseSection() {
           </motion.p>
         </motion.div>
 
-        {/* Cards */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={stagger}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          {VIDEO_REELS.map((reel, i) => (
-            <VideoCard key={reel.title} reel={reel} index={i} />
-          ))}
-        </motion.div>
-
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-10 flex flex-wrap items-center gap-4"
-        >
-          <Link
-            href="/portfolio"
-            className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-6 py-3 rounded-xl transition-all text-sm"
-          >
-            View Full Portfolio <ArrowRight size={15} />
-          </Link>
-          <span className="text-white/30 text-sm">20+ completed projects</span>
-        </motion.div>
       </div>
     </section>
   );
 }
 
-/* ─── Featured Quote ─── */
+const FEATURED_SCENES = [
+  {
+    label: 'Our Mission',
+    title: 'Transforming Africa through world-class technology solutions',
+    img: '/hero-group-excited.jpg',
+    imgPos: 'center top',
+    duration: 5800,
+  },
+  {
+    label: 'Innovation',
+    title: "Building Africa's digital future, one product at a time",
+    img: '/hero-woman-vr.jpg',
+    imgPos: 'center center',
+    duration: 5200,
+  },
+  {
+    label: 'Global Reach',
+    title: 'Trusted by governments and enterprises across four continents',
+    img: '/hero-man-denim.jpg',
+    imgPos: 'center top',
+    duration: 5500,
+  },
+  {
+    label: 'Community',
+    title: 'Empowering African talent to compete on the world stage',
+    img: '/hero-event-audience.jpg',
+    imgPos: 'center center',
+    duration: 5000,
+  },
+];
+
+/* ─── Featured Video / Story Showcase ─── */
 function FeaturedVideoSection() {
+  const [active, setActive] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const total = FEATURED_SCENES.length;
+
+  useEffect(() => {
+    if (!playing) return;
+    const scene = FEATURED_SCENES[active];
+    setProgress(0);
+    const tick = 50;
+    let elapsed = 0;
+    const id = setInterval(() => {
+      elapsed += tick;
+      setProgress(Math.min((elapsed / scene.duration) * 100, 100));
+      if (elapsed >= scene.duration) {
+        setActive((a) => (a + 1) % total);
+        elapsed = 0;
+        setProgress(0);
+      }
+    }, tick);
+    return () => clearInterval(id);
+  }, [active, playing, total]);
+
+  const scene = FEATURED_SCENES[active];
+
   return (
     <section className="py-24 lg:py-32 bg-white">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, ease: EASE }}
-          className="flex flex-col items-center text-center"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={stagger}
+          className="text-center mb-14"
         >
-          <span className="text-[#3CB52A] text-4xl leading-none mb-6 select-none">&ldquo;</span>
-          <p className="text-3xl md:text-4xl lg:text-5xl font-black text-[#060E18] leading-tight max-w-4xl">
-            Transforming Africa through world-class technology solutions, one product at a time.
-          </p>
-          <span className="text-[#3CB52A] text-4xl leading-none mt-6 select-none rotate-180 inline-block">&ldquo;</span>
-          <div className="mt-8 flex items-center gap-3">
-            <div className="w-8 h-[2px] bg-[#3CB52A] rounded-full" />
-            <span className="text-[#6B7280] text-sm font-semibold tracking-wide uppercase">iTech Network Africa</span>
-            <div className="w-8 h-[2px] bg-[#3CB52A] rounded-full" />
+          <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#f0fdf4] px-4 py-1.5 rounded-full">
+            Our Story in Motion
+          </motion.span>
+          <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-4">
+            Building Africa's Digital Future
+          </motion.h2>
+          <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg max-w-xl mx-auto">
+            A glimpse into who we are, how we work, and the impact we create across the continent.
+          </motion.p>
+        </motion.div>
+
+        {/* Player + chapters */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: EASE }}
+          className="flex flex-col lg:flex-row gap-4 lg:gap-5 items-stretch"
+        >
+
+          {/* ── Main cinematic player ── */}
+          <div
+            className="flex-1 relative rounded-3xl overflow-hidden bg-[#060E18] shadow-2xl"
+            style={{ minHeight: '380px' }}
+          >
+            {/* Scene image */}
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={active}
+                src={scene.img}
+                alt={scene.title}
+                initial={{ opacity: 0, scale: 1.07 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.65, ease: EASE }}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: scene.imgPos }}
+              />
+            </AnimatePresence>
+
+            {/* Film-grain scan lines */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.07]"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(0deg,transparent,transparent 2px,black 2px,black 4px)',
+              }}
+            />
+            {/* Cinematic gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+
+            {/* Top controls */}
+            <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20">
+              <span className="text-[#3CB52A] text-[10px] font-bold tracking-widest uppercase bg-[#3CB52A]/15 border border-[#3CB52A]/28 px-3 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-1.5">
+                <motion.span
+                  animate={{ scale: [1, 1.7, 1], opacity: [1, 0.35, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] inline-block"
+                />
+                {scene.label}
+              </span>
+              <button
+                onClick={() => setPlaying((p) => !p)}
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{
+                  background: 'rgba(0,0,0,0.50)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,255,255,0.22)',
+                }}
+                aria-label={playing ? 'Pause' : 'Play'}
+              >
+                {playing ? (
+                  <div className="flex gap-[3px]">
+                    <div className="w-[3px] h-3.5 rounded-full bg-white" />
+                    <div className="w-[3px] h-3.5 rounded-full bg-white" />
+                  </div>
+                ) : (
+                  <div
+                    className="ml-0.5"
+                    style={{
+                      width: 0, height: 0,
+                      borderStyle: 'solid',
+                      borderWidth: '6px 0 6px 11px',
+                      borderColor: 'transparent transparent transparent white',
+                    }}
+                  />
+                )}
+              </button>
+            </div>
+
+            {/* Centre big play button when paused */}
+            <AnimatePresence>
+              {!playing && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.75 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.75 }}
+                  transition={{ duration: 0.3, ease: EASE }}
+                  className="absolute inset-0 flex items-center justify-center z-20"
+                >
+                  <button
+                    onClick={() => setPlaying(true)}
+                    className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110"
+                    style={{
+                      background: 'rgba(255,255,255,0.16)',
+                      backdropFilter: 'blur(18px)',
+                      WebkitBackdropFilter: 'blur(18px)',
+                      border: '2px solid rgba(255,255,255,0.42)',
+                    }}
+                    aria-label="Play"
+                  >
+                    <div
+                      className="ml-1.5"
+                      style={{
+                        width: 0, height: 0,
+                        borderStyle: 'solid',
+                        borderWidth: '13px 0 13px 22px',
+                        borderColor: 'transparent transparent transparent white',
+                      }}
+                    />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Bottom: title + scrubber + dots */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+              <AnimatePresence mode="wait">
+                <motion.h3
+                  key={active}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.38 }}
+                  className="text-white font-bold text-xl leading-snug mb-4"
+                >
+                  {scene.title}
+                </motion.h3>
+              </AnimatePresence>
+              {/* Scrubber */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1 h-1 bg-white/22 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#3CB52A] rounded-full"
+                    style={{ width: `${progress}%`, transition: 'none' }}
+                  />
+                </div>
+                <span className="text-white/50 text-xs font-mono whitespace-nowrap tabular-nums">
+                  {String(active + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+                </span>
+              </div>
+              {/* Chapter dots */}
+              <div className="flex items-center gap-2">
+                {FEATURED_SCENES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setActive(i); setProgress(0); setPlaying(true); }}
+                    aria-label={`Scene ${i + 1}`}
+                    className={`rounded-full transition-all duration-300 ${
+                      i === active ? 'w-6 h-2 bg-[#3CB52A]' : 'w-2 h-2 bg-white/30 hover:bg-white/60'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Chapter list ── */}
+          <div className="lg:w-72 flex flex-col gap-3">
+            {FEATURED_SCENES.map((s, i) => (
+              <motion.button
+                key={s.label}
+                onClick={() => { setActive(i); setProgress(0); setPlaying(true); }}
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.2 }}
+                className={`group relative rounded-2xl overflow-hidden flex items-stretch text-left transition-all duration-300 ${
+                  i === active
+                    ? 'ring-2 ring-[#3CB52A] shadow-lg shadow-[#3CB52A]/20'
+                    : 'opacity-55 hover:opacity-85'
+                }`}
+                style={{ minHeight: '76px' }}
+              >
+                {/* Thumbnail */}
+                <div className="w-24 shrink-0 relative overflow-hidden">
+                  <img
+                    src={s.img}
+                    alt={s.label}
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: s.imgPos }}
+                  />
+                  <div className="absolute inset-0 bg-black/35" />
+                  {i === active && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#3CB52A]/85">
+                        {playing ? (
+                          <div className="flex gap-[2px]">
+                            <div className="w-[2px] h-2.5 rounded-full bg-white" />
+                            <div className="w-[2px] h-2.5 rounded-full bg-white" />
+                          </div>
+                        ) : (
+                          <div
+                            className="ml-0.5"
+                            style={{
+                              width: 0, height: 0,
+                              borderStyle: 'solid',
+                              borderWidth: '4px 0 4px 8px',
+                              borderColor: 'transparent transparent transparent white',
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* Info */}
+                <div
+                  className={`flex-1 px-3 py-3 flex flex-col justify-center ${
+                    i === active ? 'bg-[#060E18]' : 'bg-[#0D1F35]'
+                  }`}
+                >
+                  <span className="text-[#3CB52A] text-[9px] font-bold uppercase tracking-widest mb-1">
+                    {s.label}
+                  </span>
+                  <span className="text-white text-xs font-semibold leading-snug line-clamp-2">
+                    {s.title}
+                  </span>
+                </div>
+                {/* Active progress strip */}
+                {i === active && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10">
+                    <div
+                      className="h-full bg-[#3CB52A]"
+                      style={{ width: `${progress}%`, transition: 'none' }}
+                    />
+                  </div>
+                )}
+              </motion.button>
+            ))}
+
+            {/* CTA */}
+            <Link
+              href="/about"
+              className="mt-2 inline-flex items-center justify-center gap-2 border-2 border-[#3CB52A]/30 text-[#3CB52A] font-bold px-5 py-3 rounded-xl transition-all hover:bg-[#3CB52A] hover:text-white hover:border-[#3CB52A] text-sm"
+            >
+              Our Full Story <ArrowRight size={14} />
+            </Link>
           </div>
         </motion.div>
       </div>
