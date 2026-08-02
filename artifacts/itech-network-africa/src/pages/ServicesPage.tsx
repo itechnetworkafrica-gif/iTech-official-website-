@@ -519,9 +519,9 @@ export default function ServicesPage() {
               Our engineering team specialises in solving complex, unique business challenges. Tell us what you need — no commitment required.
             </motion.p>
             <motion.div variants={fadeUp} custom={3} className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/contact"
+              <Link href="/consultation"
                 className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-[0_6px_28px_rgba(60,181,42,0.40)] hover:-translate-y-0.5 text-sm">
-                Schedule a Free Consultation <ArrowRight size={16} />
+                Book a Consultation <ArrowRight size={16} />
               </Link>
               <Link href="/pricing"
                 className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-semibold px-6 py-4 rounded-2xl border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all">

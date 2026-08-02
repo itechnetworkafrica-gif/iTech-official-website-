@@ -1416,8 +1416,8 @@ export default function HomePage() {
             Join 30+ enterprises across Africa that trust iTech Network Africa to power their digital future.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#3CB52A] font-black px-10 py-4 rounded-xl hover:bg-white/90 transition-colors shadow-xl">
-              Get a Free Consultation <ArrowRight size={18} />
+            <Link href="/consultation" className="inline-flex items-center gap-2 bg-white text-[#3CB52A] font-black px-10 py-4 rounded-xl hover:bg-white/90 transition-colors shadow-xl">
+              Book a Free Consultation <ArrowRight size={18} />
             </Link>
             <Link href="/portfolio" className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/10 transition-colors">
               View Our Work

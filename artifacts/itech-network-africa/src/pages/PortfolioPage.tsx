@@ -509,9 +509,9 @@ export default function PortfolioPage() {
               Join hundreds of organisations that have trusted iTech Network Africa to transform their operations through technology.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/contact"
+              <Link href="/consultation"
                 className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-[0_0_32px_rgba(60,181,42,0.35)] hover:-translate-y-0.5">
-                Get a Free Consultation <ArrowRight size={16} />
+                Book a Free Consultation <ArrowRight size={16} />
               </Link>
               <Link href="/contact"
                 className="inline-flex items-center gap-2 text-white border border-white/20 hover:border-white/40 hover:bg-white/5 font-semibold px-8 py-3.5 rounded-xl transition-all">

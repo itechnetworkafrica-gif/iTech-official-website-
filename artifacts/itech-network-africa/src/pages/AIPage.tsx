@@ -102,8 +102,8 @@ export default function AIPage() {
             Schedule a consultation with our AI architects to discover how artificial intelligence can give your business a competitive edge.
           </motion.p>
           <motion.div {...fadeInUp}>
-            <Link href="/contact" className="inline-flex px-8 py-4 bg-[#3CB52A] text-white font-medium rounded-lg hover:bg-[#2e911f] transition-all shadow-lg shadow-[#3CB52A]/25 text-lg">
-              Talk to an AI Expert
+            <Link href="/consultation" className="inline-flex px-8 py-4 bg-[#3CB52A] text-white font-medium rounded-lg hover:bg-[#2e911f] transition-all shadow-lg shadow-[#3CB52A]/25 text-lg">
+              Book a Consultation
             </Link>
           </motion.div>
         </div>

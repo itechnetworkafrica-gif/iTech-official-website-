@@ -38,6 +38,7 @@ import ClientPortalPage from '@/pages/ClientPortalPage';
 import TeamMemberPage from '@/pages/TeamMemberPage';
 import RefundPolicyPage from '@/pages/RefundPolicyPage';
 import SitemapPage from '@/pages/SitemapPage';
+import ConsultationPage from '@/pages/ConsultationPage';
 
 const queryClient = new QueryClient();
 
@@ -92,6 +93,7 @@ function Router() {
               <Route path="/team/:slug" component={TeamMemberPage} />
               <Route path="/refund-policy" component={RefundPolicyPage} />
               <Route path="/sitemap" component={SitemapPage} />
+              <Route path="/consultation" component={ConsultationPage} />
               <Route component={NotFound} />
             </Switch>
           </motion.div>

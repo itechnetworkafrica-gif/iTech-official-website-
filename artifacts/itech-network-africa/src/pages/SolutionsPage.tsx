@@ -565,7 +565,7 @@ export default function SolutionsPage() {
               Our team will analyse your workflow and recommend the right solution — at no cost. Most clients are live within two weeks.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/contact"
+              <Link href="/consultation"
                 className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-8 py-4 rounded-xl transition-colors shadow-[0_6px_28px_rgba(60,181,42,0.4)]">
                 Book a Free Consultation <ArrowRight size={17} />
               </Link>
