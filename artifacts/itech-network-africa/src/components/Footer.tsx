@@ -37,7 +37,7 @@ const footerSections = [
       { label: 'Blog & Insights', href: '/blog' },
       { label: 'Case Studies', href: '/portfolio' },
       { label: 'Partners', href: '/partners' },
-      { label: 'Sitemap', href: '/sitemap' },
+      { label: 'Sitemap', href: '/sitemap', isNew: true },
     ],
   },
   {
