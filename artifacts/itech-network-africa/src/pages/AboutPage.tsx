@@ -643,17 +643,17 @@ export default function AboutPage() {
             {/* Sliding row — logos duplicated for seamless loop */}
             <div className="itech-marquee-track flex items-center gap-6 w-max">
               {[
-                { src: '/partner-lumigrow.jpg',           name: 'Lumigrow Digital Agency',      url: 'https://lumigrowdigitalagency.online' },
-                { src: '/partner-c4y.jpg',                name: 'Capacity For Youth',            url: 'https://youthcapacity.org'           },
-                { src: '/partner-htl.jpg',                name: 'Health Tech Liberia',           url: 'https://healthtech-liberia.org'      },
-                { src: '/partner-b4p.jpg',                name: 'B4P CODEFOUND',                url: 'https://b4pcodefound.org'            },
-                { src: '/partner-lumigrow-solutions.jpg', name: 'Lumigrow Marketing Solutions',  url: 'https://lumigrowagency.online'       },
-                // duplicated for loop
-                { src: '/partner-lumigrow.jpg',           name: 'Lumigrow Digital Agency',      url: 'https://lumigrowdigitalagency.online' },
-                { src: '/partner-c4y.jpg',                name: 'Capacity For Youth',            url: 'https://youthcapacity.org'           },
-                { src: '/partner-htl.jpg',                name: 'Health Tech Liberia',           url: 'https://healthtech-liberia.org'      },
-                { src: '/partner-b4p.jpg',                name: 'B4P CODEFOUND',                url: 'https://b4pcodefound.org'            },
-                { src: '/partner-lumigrow-solutions.jpg', name: 'Lumigrow Marketing Solutions',  url: 'https://lumigrowagency.online'       },
+                { src: '/partner-lumigrow.jpg', name: 'Lumigrow Digital Agency', url: 'https://lumigrowdigitalagency.online' },
+                { src: '/partner-c4y.jpg',      name: 'Capacity For Youth',       url: 'https://youthcapacity.org'           },
+                { src: '/partner-htl.jpg',      name: 'Health Tech Liberia',      url: 'https://healthtech-liberia.org'      },
+                { src: '/partner-b4p.jpg',      name: 'B4P CODEFOUND',            url: 'https://b4pcodefound.org'            },
+                { src: '/partner-corex.jpg',    name: 'CoreX Digital Solutions',  url: 'https://corexdigital.com'            },
+                // duplicated for seamless loop
+                { src: '/partner-lumigrow.jpg', name: 'Lumigrow Digital Agency', url: 'https://lumigrowdigitalagency.online' },
+                { src: '/partner-c4y.jpg',      name: 'Capacity For Youth',       url: 'https://youthcapacity.org'           },
+                { src: '/partner-htl.jpg',      name: 'Health Tech Liberia',      url: 'https://healthtech-liberia.org'      },
+                { src: '/partner-b4p.jpg',      name: 'B4P CODEFOUND',            url: 'https://b4pcodefound.org'            },
+                { src: '/partner-corex.jpg',    name: 'CoreX Digital Solutions',  url: 'https://corexdigital.com'            },
               ].map((p, i) => (
                 <a
                   key={i}
