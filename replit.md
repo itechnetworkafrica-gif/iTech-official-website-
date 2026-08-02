@@ -1,38 +1,27 @@
 # iTech Network Africa
 
-A multi-page React website for iTech Network Africa — a global technology company offering enterprise software, AI solutions, cloud infrastructure, cybersecurity, and digital services worldwide.
+A React + Vite marketing/landing site for iTech Network Africa — a tech community and services platform based in Africa.
 
 ## Stack
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
-- **Routing:** Wouter (client-side SPA)
-- **UI components:** Radix UI + shadcn/ui
-- **Animations:** Framer Motion
-- **Data fetching:** TanStack Query
-- **Monorepo:** pnpm workspace
+- **Frontend:** React 19, Vite 7, TypeScript, Tailwind CSS v4, Radix UI, Framer Motion, Wouter (routing)
+- **Backend:** Express API server (`artifacts/api-server`)
+- **Monorepo:** pnpm workspaces
 
 ## Project structure
 ```
-artifacts/itech-network-africa/   ← main frontend app
-  src/
-    pages/        ← one file per route (HomePage, AboutPage, etc.)
-    components/   ← shared UI components (Header, Footer, etc.)
-    data/         ← static data files
-    hooks/        ← custom React hooks
-    lib/          ← utilities
-  public/         ← static assets (images, logos, etc.)
-
-artifacts/api-server/             ← Express API server (currently minimal)
+artifacts/
+  itech-network-africa/   # Main web app (React + Vite)
+  api-server/             # Shared Express API server
+  mockup-sandbox/         # Design/mockup sandbox
 ```
 
 ## How to run
-The app runs via the **iTech Network Africa** workflow, which starts the Vite dev server:
+
+The **iTech Network Africa** workflow starts the dev server automatically:
 ```
 PORT=8080 pnpm --filter @workspace/itech-network-africa run dev
 ```
-The app is served at port 8080 (mapped to the root `/` preview path).
 
-## Pages
-Home, About, Services, Service Detail, AI Solutions, Solutions, Products, Portfolio, Projects, Industries, Partners, Resources, Blog, News, Careers, Support, Contact, Pricing, Privacy Policy, Terms, Cookies, Client Portal, Team Member, Refund Policy, Sitemap.
+The app is served at `/` on port 8080.
 
 ## User preferences
-<!-- Add any user preferences here -->
