@@ -1,4 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ── Ropan custom font family ── */
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Thin_1785674186802.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Extralight_1785674186498.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Light_1785674186564.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Regular_1785674186751.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Medium_1785674186630.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Semibold_1785674186691.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Bold_1785674186287.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Extrabold_1785674186341.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ropan';
+  src: url('/fonts/Ropan_Black_1785674186187.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -88,7 +152,7 @@
   --input: 0 0% 90%;
   --ring: 211 100% 50%;
   
-  --app-font-sans: 'Inter', sans-serif;
+  --app-font-sans: 'Ropan', 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
   --app-font-mono: Menlo, monospace;
   --radius: 0.5rem; /* 8px */

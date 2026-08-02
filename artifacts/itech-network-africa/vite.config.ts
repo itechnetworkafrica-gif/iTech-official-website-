@@ -11,9 +11,27 @@ const port = rawPort ? Number(rawPort) : 5173;
 
 const basePath = process.env.BASE_PATH ?? '/';
 
+// Site URL for OG / social meta tags — resolves to the Replit dev domain in dev,
+// or VITE_SITE_URL if set (point this to your production domain in your build env).
+const siteUrl =
+  process.env.VITE_SITE_URL ||
+  (process.env.REPLIT_DEV_DOMAIN
+    ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+    : 'https://itechnetworkafrica.com');
+
 export default defineConfig({
   base: basePath,
+  // Inject the correct absolute site URL into OG / Twitter meta tags at build/dev time
   plugins: [
+    {
+      name: 'inject-site-url',
+      transformIndexHtml: {
+        order: 'pre' as const,
+        handler(html: string) {
+          return html.replace(/%VITE_SITE_URL%/g, siteUrl);
+        },
+      },
+    },
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),

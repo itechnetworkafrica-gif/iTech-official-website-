@@ -1248,6 +1248,139 @@ export default function HomePage() {
       <div id="testimonials"><TestimonialsSlider /></div>
 
       {/* ══════════════════════════════════════
+          PROMO FLYERS — Campaign Highlights
+      ══════════════════════════════════════ */}
+      <section className="py-20 bg-[#060E18] relative overflow-hidden">
+        {/* Decorative background grid */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#3CB52A 1px,transparent 1px),linear-gradient(90deg,#3CB52A 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
+        {/* Ambient glows */}
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-[#3CB52A]/10 blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] rounded-full bg-[#3CB52A]/8 blur-[80px] pointer-events-none" />
+        {/* Rotating ring decorations */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+          className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full border border-[#3CB52A]/10 pointer-events-none"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+          className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full border border-[#3CB52A]/8 pointer-events-none"
+        />
+
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12">
+          {/* Section header */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="text-center mb-14"
+          >
+            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
+              <Zap size={12} /> Latest Campaigns
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
+              What We're Offering Right Now
+            </h2>
+            <p className="text-white/50 mt-3 text-base max-w-xl mx-auto">
+              Stay ahead with our latest promotions — from Liberian domain names to cutting-edge technology solutions.
+            </p>
+          </motion.div>
+
+          {/* Flyer grid */}
+          <div className="grid md:grid-cols-2 gap-8 items-stretch">
+
+            {/* Flyer 1 — Domain promo */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: EASE }}
+              className="group relative"
+            >
+              {/* Glow ring behind card */}
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-[#3CB52A]/40 via-[#3CB52A]/10 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 group-hover:border-[#3CB52A]/50 transition-colors duration-500 shadow-2xl">
+                {/* Corner accent */}
+                <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-[#3CB52A]/30 to-transparent z-10 pointer-events-none" />
+                <div className="absolute top-3 left-3 z-20 w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" />
+                <motion.img
+                  src="/promo-flyer-domain.jpg"
+                  alt="Get your .LR Liberia Pro Domain — iTech Network Africa"
+                  className="w-full object-cover"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                />
+                {/* Bottom overlay on hover */}
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                  <p className="text-[#3CB52A] text-xs font-bold uppercase tracking-widest mb-1">Domain Registration</p>
+                  <h3 className="text-white font-black text-lg leading-tight mb-3">Get Your .LR Liberia Domain Today</h3>
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea020] text-white text-xs font-bold px-5 py-2 rounded-xl transition-colors"
+                  >
+                    Register Now <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Flyer 2 — Technology That Powers Growth */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+              className="group relative"
+            >
+              {/* Glow ring behind card */}
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-[#3CB52A]/30 via-blue-500/10 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 group-hover:border-[#3CB52A]/50 transition-colors duration-500 shadow-2xl">
+                {/* Corner accent */}
+                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-[#3CB52A]/30 to-transparent z-10 pointer-events-none" />
+                <div className="absolute top-3 right-3 z-20 w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" />
+                <motion.img
+                  src="/promo-flyer-tech-growth.jpg"
+                  alt="Technology That Powers Growth — iTech Network Africa"
+                  className="w-full object-cover"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                />
+                {/* Bottom overlay on hover */}
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                  <p className="text-[#3CB52A] text-xs font-bold uppercase tracking-widest mb-1">Powered by Gotecx</p>
+                  <h3 className="text-white font-black text-lg leading-tight mb-3">Technology That Powers Growth</h3>
+                  <Link
+                    href="/ai-solutions"
+                    className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea020] text-white text-xs font-bold px-5 py-2 rounded-xl transition-colors"
+                  >
+                    Explore Solutions <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+
+          {/* Decorative hashtag / social row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          >
+            {['#itechnetworkafrica', '#TechnologyThatPowersGrowth', '#GoTecX', '#LiberiaTech'].map((tag) => (
+              <span key={tag} className="text-white/30 text-sm font-medium hover:text-[#3CB52A] transition-colors cursor-default select-none">
+                {tag}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           CTA
       ══════════════════════════════════════ */}
       <section id="get-started" className="py-24 bg-[#3CB52A] relative overflow-hidden">
