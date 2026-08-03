@@ -97,7 +97,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'software-development',
     icon: <Code size={36} />,
-    accentColor: '#2563EB',
+    accentColor: '#3CB52A',
     title: 'Software Development',
     tagline: 'Bespoke enterprise software engineered around your exact business workflows.',
     description:
@@ -153,7 +153,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'mobile-app-development',
     icon: <Smartphone size={36} />,
-    accentColor: '#7C3AED',
+    accentColor: '#3CB52A',
     title: 'Mobile App Development',
     tagline: 'Native and cross-platform iOS & Android apps that users love.',
     description:
@@ -208,7 +208,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'digital-marketing',
     icon: <Megaphone size={36} />,
-    accentColor: '#EA580C',
+    accentColor: '#3CB52A',
     title: 'Digital Marketing',
     tagline: 'Data-driven campaigns that grow your audience, generate leads, and dominate your market.',
     description:
@@ -263,7 +263,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'branding',
     icon: <PenTool size={36} />,
-    accentColor: '#DB2777',
+    accentColor: '#3CB52A',
     title: 'Graphic Design & Branding',
     tagline: 'Complete brand identities and visual assets that make your organisation unforgettable.',
     description:
@@ -320,7 +320,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'ui-ux-design',
     icon: <Layers size={36} />,
-    accentColor: '#0891B2',
+    accentColor: '#3CB52A',
     title: 'UI/UX Design',
     tagline: 'User-centred interfaces that drive engagement, reduce friction, and convert visitors into customers.',
     description:
@@ -375,7 +375,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'cloud-services',
     icon: <Cloud size={36} />,
-    accentColor: '#0284C7',
+    accentColor: '#3CB52A',
     title: 'Cloud & IT Services',
     tagline: 'Secure, scalable cloud infrastructure on AWS, Azure, and Google Cloud — managed so you can focus on your business.',
     description:
@@ -431,7 +431,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'cybersecurity',
     icon: <Shield size={36} />,
-    accentColor: '#DC2626',
+    accentColor: '#3CB52A',
     title: 'Cybersecurity',
     tagline: 'Enterprise-grade security that protects your data, systems, and reputation from evolving threats.',
     description:
@@ -487,7 +487,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'networking',
     icon: <Network size={36} />,
-    accentColor: '#059669',
+    accentColor: '#3CB52A',
     title: 'Networking & Infrastructure',
     tagline: 'End-to-end network installation, Wi-Fi, CCTV, and structured cabling for any scale.',
     description:
@@ -543,7 +543,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'it-consulting',
     icon: <Briefcase size={36} />,
-    accentColor: '#4F46E5',
+    accentColor: '#3CB52A',
     title: 'IT Consulting',
     tagline: 'Strategic technology advisory that accelerates digital transformation and drives sustainable growth.',
     description:
@@ -598,7 +598,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'creative-media',
     icon: <Camera size={36} />,
-    accentColor: '#B45309',
+    accentColor: '#3CB52A',
     title: 'Creative Media',
     tagline: 'Professional photography, video, and multimedia production that tells your brand story compellingly.',
     description:
@@ -654,7 +654,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'printing-promotional',
     icon: <Printer size={36} />,
-    accentColor: '#7C3AED',
+    accentColor: '#3CB52A',
     title: 'Printing & Promotional',
     tagline: 'High-quality large-format printing, branded merchandise, and signage that makes a lasting impression.',
     description:
@@ -710,7 +710,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'it-support',
     icon: <Headphones size={36} />,
-    accentColor: '#0369A1',
+    accentColor: '#3CB52A',
     title: 'Technical Support',
     tagline: '24/7 remote and on-site IT support that keeps your business running without interruption.',
     description:
@@ -766,7 +766,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'business-solutions',
     icon: <Package size={36} />,
-    accentColor: '#0891B2',
+    accentColor: '#3CB52A',
     title: 'Business Solutions',
     tagline: 'Integrated digital platforms that streamline your operations and delight your customers.',
     description:
@@ -821,7 +821,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
   {
     slug: 'ict-training',
     icon: <BookOpen size={36} />,
-    accentColor: '#16A34A',
+    accentColor: '#3CB52A',
     title: 'ICT Training',
     tagline: 'Practical, hands-on technology training that empowers your team to work smarter and more securely.',
     description:
