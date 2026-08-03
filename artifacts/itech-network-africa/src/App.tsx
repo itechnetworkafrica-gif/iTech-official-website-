@@ -35,6 +35,7 @@ import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import CookiesPage from '@/pages/CookiesPage';
 import ClientPortalPage from '@/pages/ClientPortalPage';
+import AdminDashboardPage from '@/pages/AdminDashboardPage';
 import TeamMemberPage from '@/pages/TeamMemberPage';
 import RefundPolicyPage from '@/pages/RefundPolicyPage';
 import SitemapPage from '@/pages/SitemapPage';
@@ -50,8 +51,25 @@ const PAGE_TRANSITION = {
   transition: { duration: 0.32, ease: PAGE_EASE },
 };
 
+// Routes that manage their own full-screen layout (no shared header/footer)
+const FULLSCREEN_ROUTES = ['/portal', '/admin'];
+
 function Router() {
   const [location] = useLocation();
+  const isFullscreen = FULLSCREEN_ROUTES.some(r => location === r || location.startsWith(r + '/'));
+
+  // Fullscreen pages render without the site header/footer
+  if (isFullscreen) {
+    return (
+      <>
+        <RouteScrollReset />
+        <Switch>
+          <Route path="/portal" component={ClientPortalPage} />
+          <Route path="/admin" component={AdminDashboardPage} />
+        </Switch>
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -89,7 +107,6 @@ function Router() {
               <Route path="/privacy-policy" component={PrivacyPage} />
               <Route path="/terms" component={TermsPage} />
               <Route path="/cookies" component={CookiesPage} />
-              <Route path="/portal" component={ClientPortalPage} />
               <Route path="/team/:slug" component={TeamMemberPage} />
               <Route path="/refund-policy" component={RefundPolicyPage} />
               <Route path="/sitemap" component={SitemapPage} />
