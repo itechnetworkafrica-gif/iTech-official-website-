@@ -395,49 +395,52 @@ function HeroSlider() {
 
   return (
     <section
-      className="relative bg-[#060E18] overflow-hidden"
+      className="relative bg-[#060E18]"
       style={{ minHeight: 'clamp(700px, 96vh, 980px)' }}
     >
-      {/* ── Full-bleed background photo ── */}
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={`img-${active}`}
-          src={slide.img}
-          alt={slide.imgAlt}
-          initial={{ opacity: 0, scale: 1.06 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.75, ease: EASE }}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: slide.imgPosition, filter: 'blur(3px)', transform: 'scale(1.04)' }}
+      {/* ── Background layer (overflow-hidden here only, so content is never clipped) ── */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Full-bleed background photo */}
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={`img-${active}`}
+            src={slide.img}
+            alt={slide.imgAlt}
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.75, ease: EASE }}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: slide.imgPosition, filter: 'blur(3px)', transform: 'scale(1.04)' }}
+          />
+        </AnimatePresence>
+
+        {/* Desktop: hard dark panel left, fade to transparent right */}
+        <div
+          className="absolute inset-0 pointer-events-none hidden md:block"
+          style={{
+            background:
+              'linear-gradient(105deg, #060E18 0%, #060E18 42%, rgba(6,14,24,0.94) 52%, rgba(6,14,24,0.55) 66%, rgba(6,14,24,0.12) 82%, transparent 100%)',
+          }}
         />
-      </AnimatePresence>
+        {/* bottom vignette on desktop */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none hidden md:block"
+          style={{ background: 'linear-gradient(to top, rgba(6,14,24,0.85) 0%, transparent 100%)' }}
+        />
+        {/* Mobile gradient */}
+        <div
+          className="absolute inset-0 pointer-events-none md:hidden"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(6,14,24,0.20) 0%, rgba(6,14,24,0.55) 45%, rgba(6,14,24,0.96) 72%, #060E18 100%)',
+          }}
+        />
 
-      {/* ── Desktop: hard dark panel left, fade to transparent right ── */}
-      <div
-        className="absolute inset-0 pointer-events-none hidden md:block"
-        style={{
-          background:
-            'linear-gradient(105deg, #060E18 0%, #060E18 42%, rgba(6,14,24,0.94) 52%, rgba(6,14,24,0.55) 66%, rgba(6,14,24,0.12) 82%, transparent 100%)',
-        }}
-      />
-      {/* bottom vignette on desktop */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-40 pointer-events-none hidden md:block"
-        style={{ background: 'linear-gradient(to top, rgba(6,14,24,0.85) 0%, transparent 100%)' }}
-      />
-      {/* ── Mobile gradient ── */}
-      <div
-        className="absolute inset-0 pointer-events-none md:hidden"
-        style={{
-          background:
-            'linear-gradient(to bottom, rgba(6,14,24,0.20) 0%, rgba(6,14,24,0.55) 45%, rgba(6,14,24,0.96) 72%, #060E18 100%)',
-        }}
-      />
-
-      {/* ── Floating ambient orbs ── */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <FloatingOrbs count={5} dark />
+        {/* Floating ambient orbs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <FloatingOrbs count={5} dark />
+        </div>
       </div>
 
       {/* ── Full layout wrapper ── */}
