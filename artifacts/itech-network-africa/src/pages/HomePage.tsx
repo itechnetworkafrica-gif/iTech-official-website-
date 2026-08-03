@@ -394,10 +394,7 @@ function HeroSlider() {
   const totalNum = String(total).padStart(2, '0');
 
   return (
-    <section
-      className="relative bg-[#060E18]"
-      style={{ minHeight: 'clamp(700px, 96vh, 980px)' }}
-    >
+    <section className="relative bg-[#060E18]">
       {/* ── Background layer (overflow-hidden here only, so content is never clipped) ── */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Full-bleed background photo */}
@@ -444,7 +441,7 @@ function HeroSlider() {
       </div>
 
       {/* ── Full layout wrapper ── */}
-      <div className="absolute inset-0 z-20 flex flex-col">
+      <div className="relative z-20 flex flex-col" style={{ minHeight: 'clamp(700px, 96vh, 980px)' }}>
 
         {/* ── Top bar: slide counter + prev/next (desktop) ── */}
         <div className="flex items-center justify-between w-full max-w-[1400px] mx-auto px-6 lg:px-16 pt-10 lg:pt-12">
