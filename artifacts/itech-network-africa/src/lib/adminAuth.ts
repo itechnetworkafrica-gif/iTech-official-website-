@@ -14,8 +14,8 @@
 
 export const ADMIN_CREDENTIALS = {
   email: "admin@itechnetworkafrica.com",
-  // iTechAdmin@2004
-  hash: "TmV3UGFzc3dvcmQ6aVRlY2hQb3J0YWwyMDI1",
+  // iTechAdmin@2025
+  hash: "aVRlY2hBZG1pbkAyMDI1OmlUZWNoUG9ydGFsMjAyNQ==",
 };
 
 export function verifyAdminPassword(plain: string): boolean {
