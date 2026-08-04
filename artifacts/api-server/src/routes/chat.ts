@@ -215,6 +215,8 @@ function fallbackResponse(userMessage: string): string {
 
 /* ─────────────────────────────────────────────
    ROUTE: POST /api/chat
+   Returns plain JSON — avoids SSE proxy-buffering
+   issues in reverse-proxy environments.
    ───────────────────────────────────────────── */
 router.post("/chat", async (req, res) => {
   const { messages } = req.body as {
@@ -222,38 +224,25 @@ router.post("/chat", async (req, res) => {
   };
 
   if (!Array.isArray(messages) || messages.length === 0) {
-    res.status(400).json({ message: "messages array is required." });
+    res.status(400).json({ error: "messages array is required." });
     return;
   }
-
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
 
   const apiKey = process.env.OPENAI_API_KEY;
 
-  /* ─── Fallback mode: stream knowledge-base response word-by-word ─── */
+  /* ─── Fallback: built-in knowledge base ─── */
   if (!apiKey) {
-    const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
-    const text = fallbackResponse(lastUserMessage?.content ?? "");
-
-    // Stream it word-by-word for a natural feel
-    const words = text.split(/(\s+)/);
-    for (const word of words) {
-      res.write(`data: ${JSON.stringify({ content: word })}\n\n`);
-      // Small delay for natural streaming effect
-      await new Promise((r) => setTimeout(r, 18));
-    }
-    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-    res.end();
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    const text = fallbackResponse(lastUser?.content ?? "");
+    res.json({ message: text });
     return;
   }
 
-  /* ─── OpenAI streaming mode ─── */
+  /* ─── OpenAI mode ─── */
   const openai = new OpenAI({ apiKey });
 
   try {
-    const stream = await openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_tokens: 600,
       temperature: 0.8,
@@ -261,26 +250,15 @@ router.post("/chat", async (req, res) => {
         { role: "system", content: SYSTEM_PROMPT },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
       ],
-      stream: true,
     });
 
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content;
-      if (content) {
-        res.write(`data: ${JSON.stringify({ content })}\n\n`);
-      }
-    }
-
-    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-    res.end();
+    const text = completion.choices[0]?.message?.content ?? "";
+    res.json({ message: text });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    // On OpenAI error, fall back to knowledge base
-    const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
-    const fallback = fallbackResponse(lastUserMessage?.content ?? "");
-    res.write(`data: ${JSON.stringify({ content: fallback })}\n\n`);
-    res.write(`data: ${JSON.stringify({ done: true, _openaiError: message })}\n\n`);
-    res.end();
+    // On OpenAI error, fall back gracefully to knowledge base
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    const text = fallbackResponse(lastUser?.content ?? "");
+    res.json({ message: text });
   }
 });
 

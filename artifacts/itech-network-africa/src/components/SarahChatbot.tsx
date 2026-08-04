@@ -287,29 +287,19 @@ export const SarahChatbot: React.FC = () => {
 
     const userMsg: Message = { role: 'user', content: text.trim() };
     const withUser = [...currentMessages, userMsg];
-    const withPlaceholder: Message[] = [...withUser, { role: 'assistant', content: '' }];
 
-    setMessages(withPlaceholder);
+    // Show user message + empty assistant placeholder immediately
+    setMessages([...withUser, { role: 'assistant', content: '' }]);
     setLoading(true);
 
-    const errorMsg = "I'm sorry, I had a little hiccup there! 😅 Please try again, or reach us at **itechnetworkafrica@gmail.com** for direct assistance.";
+    const errorMsg = "I'm sorry, I had a little hiccup there! 😅 Please try again, or reach us directly at **itechnetworkafrica@gmail.com**.";
 
-    const updateLast = (content: string) => {
+    const setLast = (content: string) =>
       setMessages(prev => {
         const copy = [...prev];
         copy[copy.length - 1] = { role: 'assistant', content };
         return copy;
       });
-    };
-
-    const appendLast = (chunk: string) => {
-      setMessages(prev => {
-        const copy = [...prev];
-        const last = copy[copy.length - 1];
-        copy[copy.length - 1] = { role: 'assistant', content: last.content + chunk };
-        return copy;
-      });
-    };
 
     try {
       const res = await fetch('/api/chat', {
@@ -318,33 +308,25 @@ export const SarahChatbot: React.FC = () => {
         body: JSON.stringify({ messages: withUser }),
       });
 
-      if (!res.ok || !res.body) {
-        const errData = await res.json().catch(() => ({}));
-        updateLast((errData as { message?: string }).message || errorMsg);
+      if (!res.ok) {
+        setLast(errorMsg);
         return;
       }
 
-      const reader  = res.body.getReader();
-      const decoder = new TextDecoder();
-      let   buffer  = '';
+      const data = await res.json() as { message?: string; error?: string };
+      const fullText = data.message?.trim() || errorMsg;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() ?? '';
-        for (const line of lines) {
-          if (!line.startsWith('data:')) continue;
-          try {
-            const payload = JSON.parse(line.slice(5).trim()) as { content?: string; error?: string; done?: boolean };
-            if (payload.content) appendLast(payload.content);
-            if (payload.error)   updateLast(errorMsg);
-          } catch { /* ignore malformed SSE */ }
-        }
+      // ── Simulate typing: reveal the response word-by-word ──
+      const words = fullText.split(/(\s+)/); // keep whitespace tokens
+      let built = '';
+      for (const word of words) {
+        built += word;
+        setLast(built);
+        // tiny yield so React can flush each frame
+        await new Promise<void>(r => setTimeout(r, 22));
       }
     } catch {
-      updateLast(errorMsg);
+      setLast(errorMsg);
     } finally {
       setLoading(false);
     }
