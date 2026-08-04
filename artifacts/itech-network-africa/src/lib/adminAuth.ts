@@ -13,14 +13,14 @@
  */
 
 export const ADMIN_CREDENTIALS = {
-  email: 'admin@itechnetworkafrica.com',
-  // iTechAdmin@2025
-  hash: 'aVRlY2hBZG1pbkAyMDI1OmlUZWNoUG9ydGFsMjAyNQ==',
+  email: "admin@itechnetworkafrica.com",
+  // iTechAdmin@2004
+  hash: "TmV3UGFzc3dvcmQ6aVRlY2hQb3J0YWwyMDI1",
 };
 
 export function verifyAdminPassword(plain: string): boolean {
   try {
-    return btoa(plain + ':iTechPortal2025') === ADMIN_CREDENTIALS.hash;
+    return btoa(plain + ":iTechPortal2025") === ADMIN_CREDENTIALS.hash;
   } catch {
     return false;
   }
@@ -29,8 +29,8 @@ export function verifyAdminPassword(plain: string): boolean {
 /** Decode a portal client password hash back to the plain-text password */
 export function decodeClientPassword(hash: string): string {
   try {
-    return atob(hash).replace(':iTechPortal2025', '');
+    return atob(hash).replace(":iTechPortal2025", "");
   } catch {
-    return '—';
+    return "—";
   }
 }
