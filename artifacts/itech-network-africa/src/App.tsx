@@ -40,6 +40,12 @@ import TeamMemberPage from '@/pages/TeamMemberPage';
 import RefundPolicyPage from '@/pages/RefundPolicyPage';
 import SitemapPage from '@/pages/SitemapPage';
 import ConsultationPage from '@/pages/ConsultationPage';
+import DocsPage from '@/pages/resources/DocsPage';
+import ApiReferencePage from '@/pages/resources/ApiReferencePage';
+import TutorialsPage from '@/pages/resources/TutorialsPage';
+import DownloadsPage from '@/pages/resources/DownloadsPage';
+import ChangelogPage from '@/pages/resources/ChangelogPage';
+import DeveloperToolsPage from '@/pages/resources/DeveloperToolsPage';
 
 const queryClient = new QueryClient();
 
@@ -98,6 +104,12 @@ function Router() {
               <Route path="/industries" component={IndustriesPage} />
               <Route path="/partners" component={PartnersPage} />
               <Route path="/resources" component={ResourcesPage} />
+              <Route path="/resources/docs" component={DocsPage} />
+              <Route path="/resources/api" component={ApiReferencePage} />
+              <Route path="/resources/tutorials" component={TutorialsPage} />
+              <Route path="/resources/downloads" component={DownloadsPage} />
+              <Route path="/resources/changelog" component={ChangelogPage} />
+              <Route path="/resources/tools" component={DeveloperToolsPage} />
               <Route path="/blog" component={BlogPage} />
               <Route path="/news" component={NewsPage} />
               <Route path="/careers" component={CareersPage} />
