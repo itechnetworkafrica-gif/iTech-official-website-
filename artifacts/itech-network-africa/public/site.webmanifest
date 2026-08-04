@@ -3,7 +3,7 @@
   "short_name": "iTech",
   "description": "Global Technology Company — Software, AI & Cloud Solutions",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#0A1929",
   "theme_color": "#0A1929",
   "icons": [

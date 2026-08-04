@@ -84,7 +84,7 @@ const FEATURED = [
     desc: 'Get your first iTech integration live in under 30 minutes. Covers environment setup, authentication, and your first API call.',
     time: '30 min read',
     date: 'June 2025',
-    href: '/resources/docs',
+    href: '/resources/guides/quick-start',
   },
   {
     icon: Code2,
@@ -92,7 +92,7 @@ const FEATURED = [
     desc: 'Authenticate and make your first API call with code samples in JavaScript, Python, and PHP — ready to copy and run.',
     time: '15 min read',
     date: 'May 2025',
-    href: '/resources/api',
+    href: '/resources/guides/rest-api-quickstart',
   },
   {
     icon: Shield,
@@ -100,7 +100,7 @@ const FEATURED = [
     desc: 'Essential security guidelines: MFA setup, API key management, role-based access, and data encryption for your deployment.',
     time: '20 min read',
     date: 'July 2025',
-    href: '/resources/docs',
+    href: '/resources/guides/security-best-practices',
   },
   {
     icon: Cloud,
@@ -108,7 +108,7 @@ const FEATURED = [
     desc: 'A pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud with African data-residency requirements.',
     time: '25 min read',
     date: 'April 2025',
-    href: '/resources/docs',
+    href: '/resources/guides/cloud-deployment',
   },
   {
     icon: Brain,
@@ -116,7 +116,7 @@ const FEATURED = [
     desc: 'Configure and fine-tune iTech AI modules for your specific business context, data pipeline, and automation workflows.',
     time: '40 min read',
     date: 'June 2025',
-    href: '/resources/docs',
+    href: '/resources/guides/ai-automation',
   },
   {
     icon: Building2,
@@ -124,7 +124,7 @@ const FEATURED = [
     desc: 'Manage roles, permissions, SSO configuration, multi-tenancy, and full audit trails for your organisation at scale.',
     time: '20 min read',
     date: 'March 2025',
-    href: '/resources/docs',
+    href: '/resources/guides/user-management',
   },
 ];
 
@@ -332,34 +332,34 @@ export default function ResourcesPage() {
               {FEATURED.map((guide, i) => {
                 const Icon = guide.icon;
                 return (
-                  <motion.a
-                    key={i}
-                    href={guide.href}
-                    {...fadeUp(i * 0.06)}
-                    className="group bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex flex-col"
-                  >
-                    {/* Icon */}
-                    <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all duration-300 shrink-0">
-                      <Icon size={20} className="text-[#3CB52A] group-hover:text-white transition-colors duration-300" />
-                    </div>
+                  <Link key={i} href={guide.href}>
+                    <motion.a
+                      {...fadeUp(i * 0.06)}
+                      className="group bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
+                    >
+                      {/* Icon */}
+                      <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all duration-300 shrink-0">
+                        <Icon size={20} className="text-[#3CB52A] group-hover:text-white transition-colors duration-300" />
+                      </div>
 
-                    <h3 className="font-black text-[#0A0A0A] text-lg mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
-                    <p className="text-[#6B7280] text-sm leading-relaxed mb-5 flex-grow">{guide.desc}</p>
+                      <h3 className="font-black text-[#0A0A0A] text-lg mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
+                      <p className="text-[#6B7280] text-sm leading-relaxed mb-5 flex-grow">{guide.desc}</p>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-[#F3F4F6] mt-auto">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1.5">
-                          <Clock size={11} /> {guide.time}
-                        </span>
-                        <span className="text-[#C4C4C4] text-[11px] flex items-center gap-1">
-                          <Calendar size={10} /> {guide.date}
+                      <div className="flex items-center justify-between pt-4 border-t border-[#F3F4F6] mt-auto">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1.5">
+                            <Clock size={11} /> {guide.time}
+                          </span>
+                          <span className="text-[#C4C4C4] text-[11px] flex items-center gap-1">
+                            <Calendar size={10} /> {guide.date}
+                          </span>
+                        </div>
+                        <span className="text-[#3CB52A] text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                          Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                         </span>
                       </div>
-                      <span className="text-[#3CB52A] text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                      </span>
-                    </div>
-                  </motion.a>
+                    </motion.a>
+                  </Link>
                 );
               })}
             </div>

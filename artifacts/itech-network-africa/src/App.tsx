@@ -46,6 +46,7 @@ import TutorialsPage from '@/pages/resources/TutorialsPage';
 import DownloadsPage from '@/pages/resources/DownloadsPage';
 import ChangelogPage from '@/pages/resources/ChangelogPage';
 import DeveloperToolsPage from '@/pages/resources/DeveloperToolsPage';
+import GuideDetailPage from '@/pages/resources/GuideDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ function Router() {
               <Route path="/resources/downloads" component={DownloadsPage} />
               <Route path="/resources/changelog" component={ChangelogPage} />
               <Route path="/resources/tools" component={DeveloperToolsPage} />
+              <Route path="/resources/guides/:slug" component={GuideDetailPage} />
               <Route path="/blog" component={BlogPage} />
               <Route path="/news" component={NewsPage} />
               <Route path="/careers" component={CareersPage} />
