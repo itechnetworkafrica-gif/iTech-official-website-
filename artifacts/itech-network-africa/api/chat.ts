@@ -1,0 +1,262 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Vercel Serverless Function: POST /api/chat
+   Mirrors the Express route in artifacts/api-server/src/routes/chat.ts so the
+   Sarah AI chatbot works on the static Vercel deployment (which has no backend).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+const SYSTEM_PROMPT = `You are Sarah, a friendly, warm, and highly knowledgeable 24/7 virtual assistant for iTech Network Africa — a leading full-service technology company delivering cutting-edge ICT solutions across Africa.
+
+Your personality:
+- Warm, enthusiastic, conversational, and genuinely helpful
+- You love technology and get excited when helping people find the right solution
+- You use first person ("I", "we") naturally
+- Keep answers concise but informative; use line breaks for readability
+- Use 1-2 relevant emojis per message to stay engaging — never overdo it
+- Always end with a helpful follow-up offer or next step
+- Never make up specific prices or guarantees — direct users to /pricing or /consultation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ABOUT ITECH NETWORK AFRICA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+A full-service technology company serving individuals, startups, SMEs, and enterprises across Africa.
+Contact: itechnetworkafrica@gmail.com
+Website: itechnetworkafrica.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUR SERVICES (with page links)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Web Design & Development (/services/web-development) — Stunning, fast websites for every industry: landing pages, corporate sites, e-commerce, enterprise portals
+• Software Development (/services/software-development) — Bespoke ERP, CRM, management systems, and custom enterprise software
+• Mobile App Development (/services/mobile-development) — Native and cross-platform iOS & Android apps
+• Digital Marketing (/services/digital-marketing) — SEO, social media management, lead generation, PPC, content marketing
+• Graphic Design & Branding (/services/graphic-design) — Professional visual identities, logos, marketing collateral, creative assets
+• UI/UX Design (/services/ui-ux-design) — User-centred interfaces that drive engagement and conversions
+• Cloud & IT Services (/services/cloud-services) — AWS, Azure, and Google Cloud infrastructure, migration, and management
+• Cybersecurity (/services/cybersecurity) — Security audits, penetration testing, threat protection, compliance
+• Networking & Infrastructure (/services/networking) — Network installation, CCTV, access control, structured cabling, VoIP
+• IT Consulting (/services/it-consulting) — Strategic technology advisory and digital transformation roadmaps
+• AI Solutions (/ai-solutions) — Custom AI tools, chatbots, automation, machine learning, data analytics
+• Creative Media (/services/creative-media) — Professional photography, videography, motion graphics, 3D animation
+• Printing & Promotional (/services/printing) — Large-format printing, branded merchandise, signage, banners
+• Technical Support (/support) — 24/7 remote and on-site IT support, hardware repairs, helpdesk
+• Business Solutions (/services/business-solutions) — Digital payments, customer portals, e-signature, document management
+• ICT Training (/services/ict-training) — Microsoft Office, cybersecurity, AI tools, programming, and tech skills training
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+KEY PAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Home: /
+- About Us: /about
+- Services overview: /services
+- AI Solutions: /ai-solutions
+- Solutions: /solutions
+- Products: /products
+- Portfolio: /portfolio
+- Projects: /projects
+- Industries we serve: /industries
+- Partners: /partners
+- Resources (docs, tutorials, tools): /resources
+- Blog: /blog
+- News: /news
+- Careers: /careers
+- Support: /support
+- Contact: /contact
+- Pricing: /pricing
+- Book a free consultation: /consultation
+- Client Portal: /portal
+- Privacy Policy: /privacy-policy
+- Terms of Service: /terms
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INDUSTRIES WE SERVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Healthcare, Finance & Fintech, Retail & E-commerce, Education & EdTech, Government & Public Sector, Manufacturing, Hospitality & Tourism, NGOs & Nonprofits, Real Estate, Logistics & Supply Chain
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESPONSE GUIDELINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Guide users to the most relevant page using the links above
+- For pricing questions → /pricing or suggest a free consultation at /consultation
+- For technical support → /support
+- For project enquiries → /contact or /consultation
+- For careers → /careers
+- If a user is interested in a service, invite them to book a FREE consultation
+- For complex questions outside your knowledge, offer to connect them via /contact
+- Be reassuring about timelines, quality, and support
+- If asked about response time: we aim to respond within 1 business day for emails, and our support team is available 24/7`;
+
+/* ─────────────────────────────────────────────
+   BUILT-IN KNOWLEDGE BASE FALLBACK
+   Used when OPENAI_API_KEY is not configured.
+   ───────────────────────────────────────────── */
+interface KBEntry {
+  patterns: RegExp[];
+  response: string;
+}
+
+const KNOWLEDGE_BASE: KBEntry[] = [
+  {
+    patterns: [/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|hola|sup|what'?s up)/i],
+    response: "Hi there! 👋 I'm **Sarah**, your 24/7 assistant at **iTech Network Africa**. I'm here to help you with our services, pricing, projects, and more. What can I help you with today?",
+  },
+  {
+    patterns: [/what (services|do you (offer|provide|do))|services (you|do you)|your services/i],
+    response: "We offer a wide range of technology services across Africa! 🛠️\n\n• **Web Design & Development** — Stunning websites for any industry\n• **Mobile App Development** — iOS & Android apps\n• **Software Development** — Custom ERP, CRM & enterprise systems\n• **Digital Marketing** — SEO, social media & lead generation\n• **Cloud & IT Services** — AWS, Azure, Google Cloud\n• **Cybersecurity** — Security audits & threat protection\n• **AI Solutions** — Chatbots, automation & analytics\n• **Graphic Design & Branding**\n• **Networking & Infrastructure**\n• **ICT Training** & much more!\n\nVisit our full services page at **/services** to explore each one. Would you like details on any specific service?",
+  },
+  {
+    patterns: [/pric(e|ing|es)|cost|how much|quote|budget|fees?|rate/i],
+    response: "Our pricing is tailored to each project's needs — we don't believe in one-size-fits-all! 💰\n\nFor a general overview, visit our **Pricing page** at **/pricing**.\n\nFor a custom quote specific to your project, I'd recommend booking a **free consultation** at **/consultation** — our team will assess your needs and give you a detailed proposal at no cost. Shall I help you with that?",
+  },
+  {
+    patterns: [/contact|reach|get in touch|email|phone|call|talk to (someone|a person|the team)/i],
+    response: "You can reach the iTech Network Africa team in several ways! 📩\n\n• **Email:** itechnetworkafrica@gmail.com\n• **Contact form:** Visit **/contact**\n• **Book a consultation:** Visit **/consultation** (it's free!)\n• **Support issues:** Visit **/support**\n\nWe typically respond within 1 business day. How can we assist you?",
+  },
+  {
+    patterns: [/who are you|about (you|the company|itech)|your company|what is itech|tell me about/i],
+    response: "**iTech Network Africa** is a full-service technology company delivering cutting-edge ICT solutions across Africa! 🌍\n\nWe serve individuals, startups, SMEs, and large enterprises — helping them grow through technology. From websites and mobile apps to AI solutions and cybersecurity, we're your one-stop technology partner.\n\nLearn more at **/about**. Is there anything specific you'd like to know about us?",
+  },
+  {
+    patterns: [/web(site|site design| design| development| dev)|(build|create|make) (a |my |our )?(website|web app|web portal|site)/i],
+    response: "We build **stunning, fast, and conversion-optimised websites** for every industry! 🌐\n\nOur web development services include:\n• Corporate & business websites\n• E-commerce stores\n• Landing pages & marketing sites\n• Enterprise web portals\n• Progressive Web Apps (PWAs)\n\nReady to get started? Book a **free consultation** at **/consultation** and let's bring your vision to life! 🚀",
+  },
+  {
+    patterns: [/mobile (app|application)|ios|android|app (development|dev|build)/i],
+    response: "We develop **native and cross-platform mobile apps** for iOS and Android! 📱\n\nOur mobile development team builds:\n• Consumer apps\n• Enterprise & business apps\n• E-commerce & marketplace apps\n• On-demand service apps\n• Custom integrations with your existing systems\n\nInterested? Book a **free consultation** at **/consultation** to discuss your app idea!",
+  },
+  {
+    patterns: [/ai|artificial intelligence|machine learning|chatbot|automation|data analytic/i],
+    response: "Our **AI Solutions** team is ready to transform your business! 🤖\n\nWe build:\n• Custom AI chatbots (like me! 😄)\n• Business process automation\n• Data analytics & dashboards\n• Predictive models & machine learning\n• Document processing & OCR\n• AI-powered recommendations\n\nVisit **/ai-solutions** to see what's possible. Book a **free consultation** at **/consultation** to explore how AI can help your specific business!",
+  },
+  {
+    patterns: [/digital marketing|seo|social media|marketing|lead generation|google ads|ppc/i],
+    response: "Our **Digital Marketing** team helps businesses grow their online presence and generate real leads! 📈\n\nServices include:\n• Search Engine Optimisation (SEO)\n• Social media management & advertising\n• Google Ads & PPC campaigns\n• Content marketing & copywriting\n• Email marketing campaigns\n• Lead generation strategies\n\nReady to grow? Book a **free consultation** at **/consultation** to discuss your marketing goals!",
+  },
+  {
+    patterns: [/cyber(security|security)?|security audit|penetration test|hacking|data breach|protect (my |our )?(data|system|business)/i],
+    response: "Cybersecurity is critical in today's digital world — and we take it seriously! 🔒\n\nOur cybersecurity services include:\n• Security audits & vulnerability assessments\n• Penetration testing\n• Threat monitoring & incident response\n• Data protection & compliance\n• Employee security training\n• Firewall & network security\n\nDon't wait until after a breach! Book a **free consultation** at **/consultation** to assess your current security posture.",
+  },
+  {
+    patterns: [/cloud|aws|azure|google cloud|cloud migration|hosting|server|infrastructure/i],
+    response: "We provide **secure, scalable cloud & IT services** on the world's leading platforms! ☁️\n\nOur cloud services include:\n• Cloud migration & setup (AWS, Azure, Google Cloud)\n• Infrastructure design & management\n• Backup & disaster recovery\n• DevOps & CI/CD pipelines\n• Managed hosting\n• Cost optimisation\n\nLet's find the right cloud solution for your business. Book a **free consultation** at **/consultation**!",
+  },
+  {
+    patterns: [/support|help|issue|problem|not working|broken|fix|technical/i],
+    response: "Our **24/7 support team** is here to help! 🔧\n\nYou can:\n• Submit a support ticket at **/support**\n• Email us at **itechnetworkafrica@gmail.com**\n• For urgent issues, visit **/contact** to reach us directly\n\nCan you tell me more about the issue you're experiencing? I'll help you find the fastest path to resolution!",
+  },
+  {
+    patterns: [/consultation|book|appointment|meeting|schedule|demo|free call/i],
+    response: "Booking a **free consultation** is the perfect first step! 📅\n\nJust head to **/consultation** — fill in a quick form and our team will reach out to schedule a call at your convenience. No commitment, no pressure — just a friendly chat about your technology needs.\n\nWould you like me to guide you there?",
+  },
+  {
+    patterns: [/career|job|hiring|vacancy|opening|work (at|for|with)|join (the |your |itech)/i],
+    response: "We're always on the lookout for talented, passionate people to join the **iTech Network Africa** team! 🚀\n\nVisit our **Careers page** at **/careers** to:\n• See current job openings\n• Learn about our company culture\n• Submit your application\n\nWe value innovation, collaboration, and a passion for technology. Is there a specific role or field you're interested in?",
+  },
+  {
+    patterns: [/portfolio|project(s)?|past work|examples?|case stud(y|ies)|what have you built/i],
+    response: "We're proud of the work we've delivered! 🎨\n\nCheck out our portfolio at **/portfolio** and our projects showcase at **/projects** — you'll see real-world examples across web development, mobile apps, branding, and more.\n\nIs there a specific type of project or industry you'd like to see examples from?",
+  },
+  {
+    patterns: [/partner(ship)?|resell(er)?|referral|affiliate|collaborate/i],
+    response: "We love building win-win partnerships! 🤝\n\nVisit our **Partners page** at **/partners** to learn about our current technology and channel partners.\n\nIf you're interested in partnering with us — whether as a technology vendor, reseller, or referral partner — reach out via **/contact** and let's explore the opportunity together!",
+  },
+  {
+    patterns: [/graphic design|brand(ing)?|logo|visual identity|design(er)?|creative/i],
+    response: "Our creative team delivers **world-class graphic design and branding** that makes your business stand out! 🎨\n\nServices include:\n• Logo design & visual identity\n• Brand guidelines\n• Marketing collateral (brochures, flyers, business cards)\n• Social media graphics\n• Presentation design\n• Packaging design\n\nReady to build a brand that turns heads? Book a **free consultation** at **/consultation**!",
+  },
+  {
+    patterns: [/train(ing)?|course|learn|education|workshop|microsoft office|skill/i],
+    response: "We offer **hands-on ICT training** for individuals and teams! 🎓\n\nTraining programmes include:\n• Microsoft Office Suite (Word, Excel, PowerPoint)\n• Cybersecurity awareness\n• AI tools for business\n• Programming fundamentals\n• Cloud computing basics\n• Digital marketing essentials\n\nVisit **/services** for more details or contact us at **/contact** to arrange corporate training for your team!",
+  },
+  {
+    patterns: [/^(bye|goodbye|thanks?|thank you|cheers|ok thanks|that'?s all|no thanks)/i],
+    response: "You're welcome! 😊 It was great chatting with you. Don't hesitate to come back anytime — I'm here 24/7!\n\nIf you need anything else, you can also reach us at **itechnetworkafrica@gmail.com**. Have a wonderful day! 🌟",
+  },
+  {
+    patterns: [/where (are you|is itech)|locat(ion|ed)|address|country|africa|office/i],
+    response: "**iTech Network Africa** operates across the African continent, delivering technology solutions to clients from startups to large enterprises. 🌍\n\nFor our specific office locations and contact details, visit **/contact** or email us at **itechnetworkafrica@gmail.com**. We'd love to connect!",
+  },
+];
+
+function fallbackResponse(userMessage: string): string {
+  const msg = userMessage.toLowerCase().trim();
+  for (const entry of KNOWLEDGE_BASE) {
+    if (entry.patterns.some((p) => p.test(msg))) {
+      return entry.response;
+    }
+  }
+  return "That's a great question! 🤔 I want to make sure you get the most accurate answer.\n\nFor the best assistance, I'd recommend:\n• **Browsing our website** — most answers are just a click away!\n• **Contacting our team** at **/contact** or **itechnetworkafrica@gmail.com**\n• **Booking a free consultation** at **/consultation** — our experts will personally assist you\n\nIs there anything else I can help you with right now?";
+}
+
+/* ─────────────────────────────────────────────
+   Vercel handler
+   ───────────────────────────────────────────── */
+export default async function handler(req: any, res: any) {
+  // CORS headers — allow the Vercel frontend to call this function
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  const { messages } = req.body as {
+    messages: Array<{ role: 'user' | 'assistant'; content: string }>;
+  };
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    res.status(400).json({ error: 'messages array is required.' });
+    return;
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  /* ─── Fallback: built-in knowledge base ─── */
+  if (!apiKey) {
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    const text = fallbackResponse(lastUser?.content ?? '');
+    res.json({ message: text });
+    return;
+  }
+
+  /* ─── OpenAI mode ─── */
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 600,
+        temperature: 0.8,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...messages.map((m) => ({ role: m.role, content: m.content })),
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      choices: Array<{ message: { content: string } }>;
+    };
+    const text = data.choices[0]?.message?.content ?? '';
+    res.json({ message: text });
+  } catch {
+    // On OpenAI error, fall back gracefully to knowledge base
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    const text = fallbackResponse(lastUser?.content ?? '');
+    res.json({ message: text });
+  }
+}
