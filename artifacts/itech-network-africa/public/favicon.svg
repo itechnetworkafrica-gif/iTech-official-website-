@@ -1,3 +1,23 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+  <!-- Dark navy rounded background -->
+  <rect width="180" height="180" rx="36" fill="#0A1929"/>
+
+  <!-- Green network-node ring -->
+  <circle cx="90" cy="90" r="58" stroke="#3CB52A" stroke-width="6" fill="none" opacity="0.35"/>
+
+  <!-- Connection lines (network motif) -->
+  <line x1="90" y1="32" x2="90" y2="52" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  <line x1="90" y1="128" x2="90" y2="148" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  <line x1="32" y1="90" x2="52" y2="90" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  <line x1="128" y1="90" x2="148" y2="90" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Corner node dots -->
+  <circle cx="90" cy="32" r="5" fill="#3CB52A"/>
+  <circle cx="90" cy="148" r="5" fill="#3CB52A"/>
+  <circle cx="32" cy="90" r="5" fill="#3CB52A"/>
+  <circle cx="148" cy="90" r="5" fill="#3CB52A"/>
+
+  <!-- "i" lettermark -->
+  <rect x="84" y="56" width="12" height="12" rx="6" fill="#3CB52A"/>
+  <rect x="84" y="76" width="12" height="48" rx="6" fill="white"/>
 </svg>
