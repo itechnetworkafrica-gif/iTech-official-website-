@@ -1,50 +1,51 @@
 # iTech Network Africa
 
-A full-service technology company website for iTech Network Africa, providing ICT solutions across Africa.
+A full-stack web application for iTech Network Africa — a technology services company. The project is a pnpm monorepo with a React + Vite frontend, an Express + TypeScript API server, and shared libraries.
 
 ## Project Structure
 
-This is a **pnpm monorepo** with two active artifacts and a shared API server:
-
-| Package | Path | Purpose |
-|---|---|---|
-| `@workspace/itech-network-africa` | `artifacts/itech-network-africa/` | Main website (React + Vite + Tailwind) |
-| `@workspace/api-server` | `artifacts/api-server/` | Express API backend (port 8000) |
-| `@workspace/itech-network-africa-site` | `artifacts/itech-network-africa-site/` | Secondary site artifact (placeholder) |
-
-## Running the Project
-
-Two workflows must both be running:
-
-1. **iTech Network Africa** — `PORT=5173 pnpm --filter @workspace/itech-network-africa run dev`
-2. **API Server** — `PORT=8000 pnpm --filter @workspace/api-server run dev`
-
-Install all dependencies from the root:
-```bash
-pnpm install
+```
+artifacts/
+  itech-network-africa/   # Main React + Vite frontend (port 5173)
+  api-server/             # Express + TypeScript API (port 8000)
+  itech-network-africa-site/  # Public marketing site (not currently configured as a workflow)
+  mockup-sandbox/         # UI prototype sandbox
+lib/
+  api-client-react/       # Generated React Query hooks
+  api-spec/               # OpenAPI spec + codegen
+  api-zod/                # Generated Zod schemas
+  db/                     # Drizzle ORM schema + database client
 ```
 
-## Key Features
+## How to Run
 
-- **Sarah AI Chatbot** — floating chat widget powered by OpenAI (`gpt-4o-mini`), positioned above the scroll-to-top button. Auto-pops up every 30 seconds. Component: `artifacts/itech-network-africa/src/components/SarahChatbot.tsx`. Backend: `artifacts/api-server/src/routes/chat.ts` at `POST /api/chat`.
-- **Consultation booking** — `POST /api/consultation` sends email via nodemailer (requires `EMAIL_USER` / `EMAIL_PASS` secrets)
-- **WhatsApp widget**, **cookie banner**, **scroll-to-top** — all floating UI components
+Both services start automatically via workflows:
 
-## Secrets & Environment Variables
+- **Frontend** — `PORT=5173 pnpm --filter @workspace/itech-network-africa run dev`
+- **API Server** — `PORT=8000 pnpm --filter @workspace/api-server run dev`
 
-| Secret | Required by | Notes |
-|---|---|---|
-| `SESSION_SECRET` | API server | Session signing |
-| `OPENAI_API_KEY` | API server (`/api/chat`) | Powers Sarah chatbot |
-| `EMAIL_USER` | API server (`/api/consultation`) | Gmail address for sending enquiries |
-| `EMAIL_PASS` | API server (`/api/consultation`) | Gmail app password |
+The Vite dev server proxies `/api` requests to `http://localhost:8000`.
+
+## Environment Variables / Secrets Required
+
+The following secrets are needed for full functionality (set them in Replit Secrets):
+
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string (Drizzle ORM) |
+| `OPENAI_API_KEY` | Powers the "Sarah" AI chatbot (`/api/chat`) |
+| `EMAIL_USER` | Email address for sending consultation form submissions |
+| `EMAIL_PASS` | Password / app password for the email account |
+| `SESSION_SECRET` | Already set — used for session signing |
 
 ## Tech Stack
 
-- **Frontend**: React 19, Vite 7, Tailwind CSS 4, Framer Motion, Wouter (routing), TanStack Query, shadcn/ui components
-- **Backend**: Express 5, TypeScript, Pino logging, Nodemailer, OpenAI SDK
-- **Styling**: Brand colours — green `#3CB52A`, dark navy `#0A1929`
+- **Frontend**: React 19, Vite 7, Tailwind CSS v4, Wouter (routing), Framer Motion, shadcn/ui components, React Query
+- **Backend**: Express 5, tsx, pino (logging)
+- **Database**: PostgreSQL via Drizzle ORM
+- **AI**: OpenAI SDK
+- **Email**: Nodemailer
 
 ## User Preferences
 
-- Keep the project's existing structure and stack — do not restructure or migrate
+_None recorded yet._
