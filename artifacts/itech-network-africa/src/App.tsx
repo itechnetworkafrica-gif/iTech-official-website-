@@ -11,6 +11,7 @@ import { ScrollToTop } from '@/components/ScrollToTop';
 import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { RouteScrollReset } from '@/components/RouteScrollReset';
 import { CookieBanner } from '@/components/CookieBanner';
+import { SarahChatbot } from '@/components/SarahChatbot';
 
 // Page Imports
 import HomePage from '@/pages/HomePage';
@@ -133,6 +134,7 @@ function Router() {
       <Footer />
       <ScrollToTop />
       <WhatsAppWidget />
+      <SarahChatbot />
       <CookieBanner />
     </div>
   );
