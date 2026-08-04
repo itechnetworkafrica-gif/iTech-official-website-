@@ -1,23 +1,3 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Dark navy rounded background -->
-  <rect width="180" height="180" rx="36" fill="#0A1929"/>
-
-  <!-- Green network-node ring -->
-  <circle cx="90" cy="90" r="58" stroke="#3CB52A" stroke-width="6" fill="none" opacity="0.35"/>
-
-  <!-- Connection lines (network motif) -->
-  <line x1="90" y1="32" x2="90" y2="52" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
-  <line x1="90" y1="128" x2="90" y2="148" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
-  <line x1="32" y1="90" x2="52" y2="90" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
-  <line x1="128" y1="90" x2="148" y2="90" stroke="#3CB52A" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
-
-  <!-- Corner node dots -->
-  <circle cx="90" cy="32" r="5" fill="#3CB52A"/>
-  <circle cx="90" cy="148" r="5" fill="#3CB52A"/>
-  <circle cx="32" cy="90" r="5" fill="#3CB52A"/>
-  <circle cx="148" cy="90" r="5" fill="#3CB52A"/>
-
-  <!-- "i" lettermark -->
-  <rect x="84" y="56" width="12" height="12" rx="6" fill="#3CB52A"/>
-  <rect x="84" y="76" width="12" height="48" rx="6" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" width="32" height="32">
+  <image href="data:image/png;base64,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" width="32" height="32"/>
 </svg>
