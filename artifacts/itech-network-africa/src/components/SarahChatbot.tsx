@@ -123,56 +123,94 @@ const HIDE_AFTER_MS = 8_000;    // auto-hide banner + button after 8s if untouch
 /* ─── Typing indicator ─── */
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3">
+    <div className="flex items-center gap-1.5 py-1 px-1">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="w-2 h-2 rounded-full bg-[#3CB52A]"
-          animate={{ y: [0, -5, 0] }}
-          transition={{ duration: 0.6, delay: i * 0.15, repeat: Infinity }}
+          className="w-2 h-2 rounded-full bg-[#3CB52A]/70"
+          animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 0.9, delay: i * 0.2, repeat: Infinity }}
         />
       ))}
     </div>
   );
 }
 
-/* ─── Markdown-lite renderer ─── */
-function MessageText({ text }: { text: string }) {
-  const lines = text.split('\n');
+/* ─── Inline markdown: **bold**, /page-links ─── */
+function InlineMarkdown({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*|\/[a-z][a-z0-9\-/]*)/g);
   return (
-    <span>
-      {lines.map((line, li) => {
-        const bullet = line.match(/^[•\-\*]\s+(.+)/);
-        if (bullet) {
-          return (
-            <span key={li} className="flex items-start gap-1.5 mt-1">
-              <span className="text-[#3CB52A] font-bold mt-0.5 flex-shrink-0">•</span>
-              <BoldText text={bullet[1]} />
-            </span>
-          );
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
         }
-        return (
-          <React.Fragment key={li}>
-            <BoldText text={line} />
-            {li < lines.length - 1 && <br />}
-          </React.Fragment>
-        );
+        if (/^\/[a-z][a-z0-9\-/]*$/.test(part)) {
+          return <span key={i} className="text-[#3CB52A] font-medium">{part}</span>;
+        }
+        return <React.Fragment key={i}>{part}</React.Fragment>;
       })}
-    </span>
+    </>
   );
 }
 
-function BoldText({ text }: { text: string }) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return (
-    <>
-      {parts.map((p, i) =>
-        p.startsWith('**') && p.endsWith('**')
-          ? <strong key={i}>{p.slice(2, -2)}</strong>
-          : <React.Fragment key={i}>{p}</React.Fragment>
-      )}
-    </>
-  );
+/* ─── Full message renderer — proper block structure ─── */
+function MessageText({ text, isUser }: { text: string; isUser?: boolean }) {
+  // Normalise: collapse 3+ newlines → 2, strip separator lines (━━━)
+  const cleaned = text
+    .replace(/━+/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  // Split into logical lines, preserving paragraph gaps
+  const lines = cleaned.split('\n');
+
+  const nodes: React.ReactNode[] = [];
+  let key = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const trimmed = raw.trim();
+
+    // Skip blank lines (handled as spacing via space-y)
+    if (!trimmed) {
+      nodes.push(<div key={key++} className="h-1" />);
+      continue;
+    }
+
+    // Bullet item
+    const bullet = trimmed.match(/^[•\-\*]\s+(.+)/);
+    if (bullet) {
+      nodes.push(
+        <div key={key++} className="flex items-start gap-2 leading-relaxed">
+          <span className={`flex-shrink-0 mt-[3px] text-xs ${isUser ? 'text-white/80' : 'text-[#3CB52A]'}`}>●</span>
+          <span className="flex-1 min-w-0"><InlineMarkdown text={bullet[1]} /></span>
+        </div>
+      );
+      continue;
+    }
+
+    // Numbered item  e.g. "1. Something"
+    const numbered = trimmed.match(/^(\d+)\.\s+(.+)/);
+    if (numbered) {
+      nodes.push(
+        <div key={key++} className="flex items-start gap-2 leading-relaxed">
+          <span className={`flex-shrink-0 font-semibold text-xs mt-[3px] ${isUser ? 'text-white/80' : 'text-[#3CB52A]'}`}>{numbered[1]}.</span>
+          <span className="flex-1 min-w-0"><InlineMarkdown text={numbered[2]} /></span>
+        </div>
+      );
+      continue;
+    }
+
+    // Normal text line
+    nodes.push(
+      <p key={key++} className="leading-relaxed">
+        <InlineMarkdown text={trimmed} />
+      </p>
+    );
+  }
+
+  return <div className="space-y-1 text-[13px]">{nodes}</div>;
 }
 
 /* ═══════════════════════════════════════════════
@@ -403,22 +441,25 @@ export const SarahChatbot: React.FC = () => {
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0 mr-2 mt-0.5 shadow-sm">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0 mr-2 mt-1 shadow-sm">
                       <Sparkles size={13} className="text-white" />
                     </div>
                   )}
-                  <div
-                    className={`max-w-[78%] px-3 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white rounded-br-sm shadow-sm'
-                        : 'bg-white text-[#0A1929] rounded-bl-sm shadow-sm border border-gray-100'
-                    }`}
-                  >
-                    {msg.content === '' && msg.role === 'assistant'
-                      ? <TypingDots />
-                      : <MessageText text={msg.content} />
-                    }
-                  </div>
+
+                  {msg.role === 'user' ? (
+                    /* ── User bubble ── */
+                    <div className="max-w-[78%] min-w-0 px-3.5 py-2.5 rounded-2xl rounded-br-sm bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white shadow-sm overflow-hidden">
+                      <MessageText text={msg.content} isUser />
+                    </div>
+                  ) : (
+                    /* ── Assistant: no box, clean text on the chat background ── */
+                    <div className="max-w-[82%] min-w-0 text-[#0A1929]">
+                      {msg.content === ''
+                        ? <TypingDots />
+                        : <MessageText text={msg.content} />
+                      }
+                    </div>
+                  )}
                 </motion.div>
               ))}
 
