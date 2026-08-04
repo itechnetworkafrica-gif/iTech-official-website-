@@ -1,121 +1,124 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, MessageCircle, Minimize2, Bot, Sparkles } from 'lucide-react';
+import { X, Send, MessageCircle, Minimize2, Sparkles } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { getApiUrl } from '@/lib/api';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-/* ─── Per-page contextual popup questions ─── */
+/* ─────────────────────────────────────────────
+   PER-PAGE CONTEXTUAL PROMPTS
+   ───────────────────────────────────────────── */
 interface PagePrompt {
-  bubble: string;       // text shown in the floating bubble
-  greeting: string;     // first assistant message when bubble is clicked
-  chips: string[];      // quick-reply suggestion chips
+  banner: string;   // text shown in the floating banner / popup
+  greeting: string; // first assistant message when chat opens
+  chips: string[];  // quick-reply suggestion chips
 }
 
 const PAGE_PROMPTS: Record<string, PagePrompt> = {
   '/': {
-    bubble: '👋 Welcome! How can I help you today?',
-    greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or just answer any question. What would you like to know?",
+    banner: "👋 Hi! I'm Sarah — can I help you find something today?",
+    greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or answer any question. What would you like to know?",
     chips: ['What services do you offer?', 'How can I get a quote?', 'Tell me about iTech'],
   },
   '/services': {
-    bubble: '🛠️ Exploring our services? I can walk you through each one!',
+    banner: "🛠️ Exploring our services? I can walk you through each one!",
     greeting: "Great timing! 😊 You're browsing our services. We offer everything from **Web Development** and **Mobile Apps** to **Cybersecurity**, **Cloud Services**, and **AI Solutions**. Which area interests you most?",
-    chips: ['Web & Mobile development', 'Cloud & Cybersecurity', 'AI Solutions', 'View all services'],
+    chips: ['Web & Mobile development', 'Cloud & Cybersecurity', 'AI Solutions'],
   },
   '/about': {
-    bubble: '🏢 Want to know more about our story or team?',
-    greeting: "Happy to tell you more about **iTech Network Africa**! 🌍 We're a full-service technology company serving individuals, startups, SMEs, and enterprises across Africa. What would you like to know?",
+    banner: "🏢 Want to know more about our story or team?",
+    greeting: "Happy to tell you more about **iTech Network Africa**! 🌍 We're a full-service technology company serving businesses across Africa. What would you like to know?",
     chips: ["What's your company story?", 'Where are you based?', 'Meet the team'],
   },
   '/ai-solutions': {
-    bubble: "🤖 Curious about our AI solutions? Let me show you what's possible!",
-    greeting: "You're in the right place! 🤖 Our **AI Solutions** team builds intelligent systems — chatbots, automation, data analytics, and custom AI tools tailored to your business. What problem are you trying to solve?",
+    banner: "🤖 Curious about our AI solutions? Let me show you!",
+    greeting: "You're in the right place! 🤖 Our **AI Solutions** team builds intelligent systems — chatbots, automation, data analytics, and custom AI tools. What problem are you trying to solve?",
     chips: ['AI chatbots for my business', 'Business process automation', 'Data analytics & insights'],
   },
   '/solutions': {
-    bubble: '💡 Looking for the right solution? I can help you find it!',
-    greeting: "Let's find the perfect solution for your needs! 💡 We design and deliver end-to-end technology solutions for businesses of all sizes. What challenge are you looking to solve?",
+    banner: "💡 Looking for the right solution? I can help you find it!",
+    greeting: "Let's find the perfect solution for you! 💡 We design end-to-end technology solutions for businesses of all sizes. What challenge are you looking to solve?",
     chips: ['Digital transformation', 'Custom software', 'IT infrastructure'],
   },
   '/products': {
-    bubble: '📦 Browsing our products? Need help finding the right fit?',
-    greeting: "Welcome to our products page! 📦 I can help you understand each product, compare options, or get you connected with our sales team for a demo. What are you looking for?",
+    banner: "📦 Browsing our products? Need help finding the right fit?",
+    greeting: "Welcome to our products page! 📦 I can help you understand each product or connect you with our sales team for a demo. What are you looking for?",
     chips: ['Tell me about your products', 'Get a product demo', 'Pricing information'],
   },
   '/portfolio': {
-    bubble: '🎨 Impressed by our work? Ask me about similar projects!',
-    greeting: "Glad you're checking out our portfolio! 🎨 We've delivered some incredible projects — from enterprise platforms to creative digital campaigns. Want to see work in a specific industry or technology?",
+    banner: "🎨 Impressed by our work? Ask me about similar projects!",
+    greeting: "Glad you're checking out our portfolio! 🎨 We've delivered incredible projects across many industries. Want to see work in a specific area?",
     chips: ['Web development projects', 'Mobile app projects', 'Start a similar project'],
   },
   '/projects': {
-    bubble: '🚀 See something you like? I can connect you with our team!',
-    greeting: "Our project showcase highlights the real impact we've made for clients! 🚀 If any of these inspire you, I can help you start a similar project or get in touch with the right team. What interests you?",
+    banner: "🚀 See something you like? I can connect you with our team!",
+    greeting: "Our project showcase highlights the real impact we've made! 🚀 If any project inspires you, I can help you start something similar. What interests you?",
     chips: ['Start a project like this', 'Get a project quote', 'Talk to the team'],
   },
   '/pricing': {
-    bubble: '💰 Have pricing questions? I can help clarify everything!',
-    greeting: "Great — let's talk pricing! 💰 Our packages are designed to suit every budget, from startups to enterprises. I can walk you through our plans or connect you with our sales team for a custom quote. What's your project type?",
+    banner: "💰 Have pricing questions? I can help clarify everything!",
+    greeting: "Great — let's talk pricing! 💰 Our packages are designed for every budget. I can walk you through our plans or get you a custom quote. What's your project type?",
     chips: ['Website pricing', 'App development cost', 'Get a custom quote'],
   },
   '/consultation': {
-    bubble: '📅 Ready to book a free consultation? It only takes a minute!',
-    greeting: "You're one step away from a **free consultation**! 📅 Our experts will listen to your needs and recommend the best solution — no commitment, no pressure. Do you have any questions before you book?",
+    banner: "📅 Ready to book your free consultation? It only takes a minute!",
+    greeting: "You're one step away from a **free consultation**! 📅 Our experts will listen to your needs and recommend the best solution — no commitment, no pressure. Any questions before you book?",
     chips: ['What happens in a consultation?', 'How long does it take?', 'Book now'],
   },
   '/contact': {
-    bubble: '📩 Need to reach us? I can help you get to the right person fast!',
-    greeting: "I'll help you get in touch with the right team! 📩 Whether it's a sales enquiry, technical support, or a partnership discussion — just let me know and I'll point you in the right direction.",
+    banner: "📩 Need to reach us? I can get you to the right person fast!",
+    greeting: "I'll help you get in touch with the right team! 📩 Whether it's sales, support, or a partnership — just let me know and I'll point you in the right direction.",
     chips: ['Sales enquiry', 'Technical support', 'Partnership opportunity'],
   },
   '/support': {
-    bubble: "🔧 Having an issue? I'm here to help troubleshoot or escalate!",
-    greeting: "Sorry to hear you're experiencing an issue! 🔧 I'm here to help. Our support team is available 24/7. Can you briefly describe what's happening so I can point you to the right resource?",
+    banner: "🔧 Having an issue? I'm here to help troubleshoot or escalate!",
+    greeting: "Sorry to hear you're having an issue! 🔧 Our support team is available 24/7. Can you briefly describe what's happening so I can point you to the right resource?",
     chips: ['Submit a support ticket', 'Check service status', 'Contact support team'],
   },
   '/careers': {
-    bubble: "🚀 Interested in joining the iTech team? Let's talk!",
-    greeting: "Exciting! 🚀 We're always looking for talented people to join the **iTech Network Africa** family. I can tell you about our culture, current openings, and what it's like to work here. What would you like to know?",
+    banner: "🚀 Interested in joining the iTech team? Let's talk!",
+    greeting: "Exciting! 🚀 We're always looking for talented people to join the **iTech Network Africa** family. I can tell you about our culture, current openings, and what it's like to work here!",
     chips: ['Current job openings', 'Company culture', 'How to apply'],
   },
   '/blog': {
-    bubble: "📰 Enjoying our content? Ask me anything you'd like to explore further!",
+    banner: "📰 Enjoying our content? Ask me anything to explore further!",
     greeting: "Glad you're reading our blog! 📰 Our team writes about tech trends, business insights, and behind-the-scenes stories. Is there a topic you'd love to dive deeper into?",
     chips: ['Tech tips for my business', 'Latest news & trends', 'Subscribe to updates'],
   },
   '/news': {
-    bubble: "📰 Stay up to date — any questions about what we've been up to?",
-    greeting: "Welcome to our newsroom! 📰 Stay up to date with iTech Network Africa's latest milestones, partnerships, and industry news. Is there something specific you'd like to know?",
+    banner: "📰 Any questions about what we've been up to recently?",
+    greeting: "Welcome to our newsroom! 📰 Stay up to date with iTech Network Africa's latest milestones, partnerships, and industry news. Anything specific you'd like to know?",
     chips: ['Latest company news', 'New service launches', 'Partnership updates'],
   },
   '/industries': {
-    bubble: '🏭 Curious how we serve your industry? Let me show you!',
-    greeting: "We work across many industries — from **healthcare** and **finance** to **retail**, **education**, and **government**. 🏭 What industry are you in? I can walk you through how we've helped similar organizations.",
+    banner: "🏭 Curious how we serve your industry? Let me show you!",
+    greeting: "We work across many industries — from **healthcare** and **finance** to **retail**, **education**, and **government**. 🏭 What industry are you in?",
     chips: ['Healthcare solutions', 'Finance & fintech', 'Education technology', 'Retail & e-commerce'],
   },
   '/partners': {
-    bubble: "🤝 Interested in partnering with us? Let's explore what's possible!",
-    greeting: "We love building win-win partnerships! 🤝 Whether you're a technology vendor, reseller, or complementary service provider, there could be a great opportunity here. What kind of partnership are you thinking about?",
+    banner: "🤝 Interested in partnering with us? Let's explore what's possible!",
+    greeting: "We love building win-win partnerships! 🤝 Whether you're a technology vendor, reseller, or complementary service provider, there could be a great opportunity here!",
     chips: ['Technology partnership', 'Reseller programme', 'Referral partnership'],
   },
   '/resources': {
-    bubble: '📚 Looking for guides or tools? I can help you find exactly what you need!',
+    banner: "📚 Looking for guides or tools? I can help you find what you need!",
     greeting: "Our resource hub has docs, tutorials, tools, and more! 📚 What are you trying to learn or accomplish? I'll point you to the right resource.",
     chips: ['Developer documentation', 'Video tutorials', 'Download tools'],
   },
 };
 
 const DEFAULT_PROMPT: PagePrompt = {
-  bubble: '💬 Have a question? I\'m Sarah — ask me anything!',
+  banner: "💬 Have a question? I'm Sarah — ask me anything!",
   greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
   chips: ['What services do you offer?', 'Get a quote', 'Contact the team'],
 };
 
-const POPUP_DELAY_MS = 30_000;
+/* Timings */
+const SHOW_AFTER_MS = 15_000;   // appear 15s after last hide / page change
+const HIDE_AFTER_MS = 8_000;    // auto-hide banner + button after 8s if untouched
 
 /* ─── Typing indicator ─── */
 function TypingDots() {
@@ -133,27 +136,25 @@ function TypingDots() {
   );
 }
 
-/* ─── Render markdown-lite: bold, bullet lists, line breaks ─── */
+/* ─── Markdown-lite renderer ─── */
 function MessageText({ text }: { text: string }) {
   const lines = text.split('\n');
   return (
     <span>
-      {lines.map((line, lineIdx) => {
-        // Bullet list item
-        const bulletMatch = line.match(/^[•\-\*]\s+(.+)/);
-        if (bulletMatch) {
+      {lines.map((line, li) => {
+        const bullet = line.match(/^[•\-\*]\s+(.+)/);
+        if (bullet) {
           return (
-            <span key={lineIdx} className="flex items-start gap-1.5 mt-1">
+            <span key={li} className="flex items-start gap-1.5 mt-1">
               <span className="text-[#3CB52A] font-bold mt-0.5 flex-shrink-0">•</span>
-              <BoldText text={bulletMatch[1]} />
-              {lineIdx < lines.length - 1 && !lines[lineIdx + 1].match(/^[•\-\*]\s+/) && <br />}
+              <BoldText text={bullet[1]} />
             </span>
           );
         }
         return (
-          <React.Fragment key={lineIdx}>
+          <React.Fragment key={li}>
             <BoldText text={line} />
-            {lineIdx < lines.length - 1 && <br />}
+            {li < lines.length - 1 && <br />}
           </React.Fragment>
         );
       })}
@@ -165,44 +166,80 @@ function BoldText({ text }: { text: string }) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return (
     <>
-      {parts.map((part, i) =>
-        part.startsWith('**') && part.endsWith('**') ? (
-          <strong key={i}>{part.slice(2, -2)}</strong>
-        ) : (
-          <React.Fragment key={i}>{part}</React.Fragment>
-        )
+      {parts.map((p, i) =>
+        p.startsWith('**') && p.endsWith('**')
+          ? <strong key={i}>{p.slice(2, -2)}</strong>
+          : <React.Fragment key={i}>{p}</React.Fragment>
       )}
     </>
   );
 }
 
+/* ═══════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════ */
 export const SarahChatbot: React.FC = () => {
   const [location] = useLocation();
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showBubble, setShowBubble] = useState(false);
-  const [hasBeenOpened, setHasBeenOpened] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const popupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const openRef = useRef(open);
 
-  openRef.current = open;
+  const [open, setOpen]           = useState(false);
+  const [messages, setMessages]   = useState<Message[]>([]);
+  const [input, setInput]         = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [visible, setVisible]     = useState(false); // button + banner shown
 
-  /* ─── Get prompt for current page ─── */
-  const getPagePrompt = useCallback((path: string): PagePrompt => {
-    // Exact match first
+  const messagesEndRef  = useRef<HTMLDivElement>(null);
+  const inputRef        = useRef<HTMLInputElement>(null);
+  const showTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openRef         = useRef(false);
+  const messagesRef     = useRef<Message[]>([]);
+
+  openRef.current    = open;
+  messagesRef.current = messages;
+
+  /* ─── Helpers ─── */
+  const getPrompt = useCallback((path: string): PagePrompt => {
     if (PAGE_PROMPTS[path]) return PAGE_PROMPTS[path];
-    // Prefix match (e.g. /services/web-development → /services)
-    const prefix = Object.keys(PAGE_PROMPTS)
+    const match = Object.keys(PAGE_PROMPTS)
       .filter(k => k !== '/' && path.startsWith(k))
       .sort((a, b) => b.length - a.length)[0];
-    return prefix ? PAGE_PROMPTS[prefix] : DEFAULT_PROMPT;
+    return match ? PAGE_PROMPTS[match] : DEFAULT_PROMPT;
   }, []);
 
-  /* ─── Auto-scroll to bottom ─── */
+  /* ─── Schedule the next "appear" event ─── */
+  const scheduleAppear = useCallback(() => {
+    if (showTimerRef.current) clearTimeout(showTimerRef.current);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    showTimerRef.current = setTimeout(() => {
+      if (!openRef.current) {
+        setVisible(true);
+        // Auto-hide after HIDE_AFTER_MS if user doesn't interact
+        hideTimerRef.current = setTimeout(() => {
+          setVisible(false);
+          scheduleAppear(); // schedule the next cycle
+        }, HIDE_AFTER_MS);
+      }
+    }, SHOW_AFTER_MS);
+  }, []);
+
+  /* ─── Start cycle on mount ─── */
+  useEffect(() => {
+    scheduleAppear();
+    return () => {
+      if (showTimerRef.current) clearTimeout(showTimerRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, [scheduleAppear]);
+
+  /* ─── Reset cycle on page navigation ─── */
+  useEffect(() => {
+    if (!openRef.current) {
+      setVisible(false);
+      scheduleAppear();
+    }
+  }, [location, scheduleAppear]);
+
+  /* ─── Auto-scroll ─── */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
@@ -212,151 +249,52 @@ export const SarahChatbot: React.FC = () => {
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
 
-  /* ─── Schedule a popup nudge ─── */
-  const schedulePopup = useCallback(() => {
-    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-    popupTimerRef.current = setTimeout(() => {
-      if (!openRef.current) setShowBubble(true);
-    }, POPUP_DELAY_MS);
-  }, []);
-
-  /* ─── Start popup timer on mount ─── */
-  useEffect(() => {
-    schedulePopup();
-    return () => { if (popupTimerRef.current) clearTimeout(popupTimerRef.current); };
-  }, [schedulePopup]);
-
-  /* ─── Reset popup on page navigation ─── */
-  useEffect(() => {
-    setShowBubble(false);
-    if (!openRef.current) schedulePopup();
-  }, [location, schedulePopup]);
-
   /* ─── Open chat ─── */
-  const handleOpen = useCallback((prefilledMessage?: string) => {
-    const prompt = getPagePrompt(location);
+  const handleOpen = useCallback(() => {
+    const prompt = getPrompt(location);
+    setVisible(false);
+    if (showTimerRef.current) clearTimeout(showTimerRef.current);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     setOpen(true);
-    setShowBubble(false);
-    setHasBeenOpened(true);
-    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-
-    // Set initial greeting if no messages yet
-    setMessages(prev => {
-      if (prev.length === 0) {
-        return [{ role: 'assistant', content: prompt.greeting }];
-      }
-      return prev;
-    });
-
-    // Pre-fill a message if triggered by chip or bubble click
-    if (prefilledMessage) {
-      setTimeout(() => {
-        setInput(prefilledMessage);
-        setTimeout(() => inputRef.current?.focus(), 350);
-      }, 100);
-    }
-  }, [location, getPagePrompt]);
+    // Set greeting if this is the first open
+    setMessages(prev => prev.length === 0
+      ? [{ role: 'assistant', content: prompt.greeting }]
+      : prev
+    );
+  }, [location, getPrompt]);
 
   /* ─── Close chat ─── */
   const handleClose = useCallback(() => {
     setOpen(false);
-    schedulePopup();
-  }, [schedulePopup]);
+    openRef.current = false;
+    scheduleAppear();
+  }, [scheduleAppear]);
 
-  /* ─── Send a chip / quick reply ─── */
-  const sendChip = useCallback((text: string) => {
-    setInput('');
-    // Trigger send directly
-    const userMsg: Message = { role: 'user', content: text };
-    const assistantPlaceholder: Message = { role: 'assistant', content: '' };
+  /* ─── Dismiss banner (but keep cycle going) ─── */
+  const handleDismiss = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setVisible(false);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    scheduleAppear(); // restart cycle
+  }, [scheduleAppear]);
 
-    setMessages(prev => [...prev, userMsg, assistantPlaceholder]);
+  /* ─────────────────────────────────────────────
+     UNIFIED SEND — used by typed input & chips
+     Takes the text to send + current messages snapshot
+     ───────────────────────────────────────────── */
+  const doSend = useCallback(async (text: string, currentMessages: Message[]) => {
+    if (!text.trim() || loading) return;
+
+    const userMsg: Message = { role: 'user', content: text.trim() };
+    const withUser = [...currentMessages, userMsg];
+    const withPlaceholder: Message[] = [...withUser, { role: 'assistant', content: '' }];
+
+    setMessages(withPlaceholder);
     setLoading(true);
 
-    const errorMsg = "I'm sorry, I'm having a little trouble right now. Please try again or contact us at **itechnetworkafrica@gmail.com** 💌";
+    const errorMsg = "I'm sorry, I had a little hiccup there! 😅 Please try again, or reach us at **itechnetworkafrica@gmail.com** for direct assistance.";
 
-    const runStream = async () => {
-      try {
-        const allMessages = [...messages, userMsg];
-        const res = await fetch(getApiUrl('api/chat'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: allMessages }),
-        });
-
-        if (!res.ok || !res.body) {
-          const errData = await res.json().catch(() => ({}));
-          setMessages(prev => {
-            const copy = [...prev];
-            copy[copy.length - 1] = { role: 'assistant', content: (errData as { message?: string }).message || errorMsg };
-            return copy;
-          });
-          return;
-        }
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() ?? '';
-          for (const line of lines) {
-            if (!line.startsWith('data:')) continue;
-            try {
-              const payload = JSON.parse(line.slice(5).trim());
-              if (payload.content) {
-                setMessages(prev => {
-                  const copy = [...prev];
-                  copy[copy.length - 1] = {
-                    role: 'assistant',
-                    content: copy[copy.length - 1].content + payload.content,
-                  };
-                  return copy;
-                });
-              }
-              if (payload.error) {
-                setMessages(prev => {
-                  const copy = [...prev];
-                  copy[copy.length - 1] = { role: 'assistant', content: errorMsg };
-                  return copy;
-                });
-              }
-            } catch { /* ignore malformed */ }
-          }
-        }
-      } catch {
-        setMessages(prev => {
-          const copy = [...prev];
-          copy[copy.length - 1] = { role: 'assistant', content: errorMsg };
-          return copy;
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    runStream();
-  }, [messages]);
-
-  /* ─── Send typed message ─── */
-  const sendMessage = useCallback(async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-
-    const userMsg: Message = { role: 'user', content: text };
-    const updatedMessages = [...messages, userMsg];
-
-    setMessages([...updatedMessages, { role: 'assistant', content: '' }]);
-    setInput('');
-    setLoading(true);
-
-    const errorMsg = "I'm sorry, I'm having a little trouble right now. Please try again or contact us at **itechnetworkafrica@gmail.com** 💌";
-
-    const updateAssistant = (content: string) => {
+    const updateLast = (content: string) => {
       setMessages(prev => {
         const copy = [...prev];
         copy[copy.length - 1] = { role: 'assistant', content };
@@ -364,22 +302,31 @@ export const SarahChatbot: React.FC = () => {
       });
     };
 
+    const appendLast = (chunk: string) => {
+      setMessages(prev => {
+        const copy = [...prev];
+        const last = copy[copy.length - 1];
+        copy[copy.length - 1] = { role: 'assistant', content: last.content + chunk };
+        return copy;
+      });
+    };
+
     try {
-      const res = await fetch(getApiUrl('api/chat'), {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ messages: withUser }),
       });
 
       if (!res.ok || !res.body) {
         const errData = await res.json().catch(() => ({}));
-        updateAssistant((errData as { message?: string }).message || errorMsg);
+        updateLast((errData as { message?: string }).message || errorMsg);
         return;
       }
 
-      const reader = res.body.getReader();
+      const reader  = res.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = '';
+      let   buffer  = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -390,42 +337,45 @@ export const SarahChatbot: React.FC = () => {
         for (const line of lines) {
           if (!line.startsWith('data:')) continue;
           try {
-            const payload = JSON.parse(line.slice(5).trim());
-            if (payload.content) {
-              setMessages(prev => {
-                const copy = [...prev];
-                copy[copy.length - 1] = {
-                  role: 'assistant',
-                  content: copy[copy.length - 1].content + payload.content,
-                };
-                return copy;
-              });
-            }
-            if (payload.error) updateAssistant(errorMsg);
-          } catch { /* ignore */ }
+            const payload = JSON.parse(line.slice(5).trim()) as { content?: string; error?: string; done?: boolean };
+            if (payload.content) appendLast(payload.content);
+            if (payload.error)   updateLast(errorMsg);
+          } catch { /* ignore malformed SSE */ }
         }
       }
     } catch {
-      updateAssistant(errorMsg);
+      updateLast(errorMsg);
     } finally {
       setLoading(false);
     }
-  }, [input, loading, messages]);
+  }, [loading]);
+
+  /* ─── Send typed message ─── */
+  const sendMessage = useCallback(() => {
+    if (!input.trim() || loading) return;
+    const text = input.trim();
+    setInput('');
+    doSend(text, messagesRef.current);
+  }, [input, loading, doSend]);
+
+  /* ─── Send chip (quick reply) ─── */
+  const sendChip = useCallback((text: string) => {
+    if (loading) return;
+    doSend(text, messagesRef.current);
+  }, [loading, doSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
 
-  const pagePrompt = getPagePrompt(location);
-  // Show chips only when it's just the greeting (1 message) and not loading
-  const showChips = messages.length === 1 && !loading;
+  const prompt     = getPrompt(location);
+  const showChips  = messages.length === 1 && !loading;
 
   return (
     <>
-      {/* ─── Chat window ─── */}
+      {/* ═══════════════════════════════
+          CHAT WINDOW
+          ═══════════════════════════════ */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -433,8 +383,8 @@ export const SarahChatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-28 right-4 sm:right-8 z-[60] w-[calc(100vw-2rem)] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
-            style={{ maxHeight: 'min(560px, calc(100vh - 160px))' }}
+            className="fixed bottom-8 right-4 sm:right-8 z-[60] w-[calc(100vw-2rem)] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
+            style={{ maxHeight: 'min(560px, calc(100vh - 40px))' }}
           >
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#0A1929] to-[#0f2d47] text-white flex-shrink-0">
@@ -454,7 +404,7 @@ export const SarahChatbot: React.FC = () => {
               <button
                 onClick={handleClose}
                 className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
-                aria-label="Minimize chat"
+                aria-label="Close chat"
               >
                 <Minimize2 size={16} />
               </button>
@@ -482,47 +432,28 @@ export const SarahChatbot: React.FC = () => {
                         : 'bg-white text-[#0A1929] rounded-bl-sm shadow-sm border border-gray-100'
                     }`}
                   >
-                    {msg.content === '' && msg.role === 'assistant' ? (
-                      <TypingDots />
-                    ) : (
-                      <MessageText text={msg.content} />
-                    )}
+                    {msg.content === '' && msg.role === 'assistant'
+                      ? <TypingDots />
+                      : <MessageText text={msg.content} />
+                    }
                   </div>
                 </motion.div>
               ))}
 
-              {/* Typing indicator while streaming */}
-              {loading && messages[messages.length - 1]?.content === '' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-start"
-                >
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0 mr-2 mt-0.5 shadow-sm">
-                    <Sparkles size={13} className="text-white" />
-                  </div>
-                  <div className="bg-white rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
-                    <TypingDots />
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Quick-reply chips */}
+              {/* Quick-reply chips — only after the first greeting */}
               <AnimatePresence>
                 {showChips && (
                   <motion.div
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.2, delay: 0.15 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, delay: 0.1 }}
                     className="flex flex-wrap gap-1.5 pl-9"
                   >
-                    {pagePrompt.chips.map((chip) => (
+                    {prompt.chips.map(chip => (
                       <button
                         key={chip}
-                        onClick={() => {
-                          sendChip(chip);
-                        }}
+                        onClick={() => sendChip(chip)}
                         className="text-xs px-2.5 py-1 rounded-full bg-white border border-[#3CB52A]/40 text-[#3CB52A] hover:bg-[#3CB52A] hover:text-white transition-all duration-200 font-medium shadow-sm"
                       >
                         {chip}
@@ -540,7 +471,7 @@ export const SarahChatbot: React.FC = () => {
               <input
                 ref={inputRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask Sarah anything…"
                 className="flex-1 text-sm px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] placeholder-gray-400 text-[#0A1929] transition-all"
@@ -550,13 +481,13 @@ export const SarahChatbot: React.FC = () => {
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
                 className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3CB52A] to-[#2da822] hover:from-[#2da822] hover:to-[#259a1e] disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all flex-shrink-0 shadow-sm"
-                aria-label="Send message"
+                aria-label="Send"
               >
                 <Send size={15} />
               </button>
             </div>
 
-            {/* Branding footer */}
+            {/* Footer */}
             <div className="px-3 pb-2 text-center flex-shrink-0">
               <p className="text-[10px] text-gray-400">
                 Powered by <span className="font-semibold text-[#3CB52A]">iTech Network Africa</span> · 24/7 AI Assistant
@@ -566,60 +497,79 @@ export const SarahChatbot: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* ─── Popup bubble ─── */}
+      {/* ═══════════════════════════════
+          FLOATING BANNER + BUTTON
+          Appears every 15 s, auto-hides
+          after 8 s if not interacted with
+          ═══════════════════════════════ */}
       <AnimatePresence>
-        {showBubble && !open && (
+        {visible && !open && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            key="nudge"
+            initial={{ opacity: 0, y: 20, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-40 right-4 sm:right-8 z-[60] bg-white rounded-2xl shadow-xl border border-gray-100 px-4 py-3 max-w-[220px] cursor-pointer"
-            onClick={() => handleOpen()}
+            exit={{ opacity: 0, y: 16, scale: 0.92 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-8 right-4 sm:right-8 z-[60] flex flex-col items-end gap-2"
           >
-            <button
-              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 flex items-center justify-center transition-colors"
-              onClick={(e) => { e.stopPropagation(); setShowBubble(false); schedulePopup(); }}
-              aria-label="Dismiss"
+            {/* Banner card */}
+            <div
+              className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 px-4 pt-3 pb-3 max-w-[240px] cursor-pointer group"
+              onClick={handleOpen}
             >
-              <X size={10} />
-            </button>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
-                <Sparkles size={10} className="text-white" />
+              {/* Dismiss ✕ */}
+              <button
+                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center transition-colors z-10"
+                onClick={handleDismiss}
+                aria-label="Dismiss"
+              >
+                <X size={10} />
+              </button>
+
+              {/* Sarah label */}
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
+                  <Sparkles size={10} className="text-white" />
+                </div>
+                <span className="text-[11px] font-bold text-[#0A1929]">Sarah</span>
+                <span className="text-[10px] text-green-500 flex items-center gap-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
+                  online
+                </span>
               </div>
-              <p className="text-xs font-bold text-[#0A1929]">Sarah</p>
+
+              {/* Message */}
+              <p className="text-xs text-gray-700 leading-snug group-hover:text-[#0A1929] transition-colors">
+                {prompt.banner}
+              </p>
+
+              {/* CTA */}
+              <p className="text-[10px] text-[#3CB52A] font-semibold mt-1.5">
+                Tap to chat →
+              </p>
+
+              {/* Tail */}
+              <div className="absolute -bottom-1.5 right-7 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
             </div>
-            <p className="text-xs text-gray-600 leading-snug">{pagePrompt.bubble}</p>
-            {/* tail */}
-            <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
+
+            {/* Chat button */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={handleOpen}
+              aria-label="Chat with Sarah"
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white shadow-[0_8px_32px_rgba(60,181,42,0.45)] flex items-center justify-center"
+            >
+              <MessageCircle size={24} />
+              <span className="absolute w-14 h-14 rounded-full animate-ping bg-[#3CB52A] opacity-20 pointer-events-none" />
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ─── Toggle button ─── */}
-      <AnimatePresence>
-        {!open && (
-          <motion.button
-            initial={hasBeenOpened ? { opacity: 0, scale: 0.8 } : false}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => handleOpen()}
-            aria-label="Chat with Sarah"
-            className="fixed bottom-24 right-4 sm:right-8 z-[60] w-14 h-14 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] hover:from-[#2da822] hover:to-[#259a1e] text-white shadow-[0_8px_32px_rgba(60,181,42,0.5)] flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-          >
-            <MessageCircle size={24} />
-            <span className="absolute inset-0 rounded-full animate-ping bg-[#3CB52A] opacity-20" />
-            {/* Unread dot when bubble was shown */}
-            {showBubble && (
-              <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white" />
-            )}
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* ─── Close button (when open) ─── */}
+      {/* ═══════════════════════════════
+          MINIMISE BUTTON (chat is open)
+          ═══════════════════════════════ */}
       <AnimatePresence>
         {open && (
           <motion.button
@@ -629,9 +579,10 @@ export const SarahChatbot: React.FC = () => {
             transition={{ duration: 0.2 }}
             onClick={handleClose}
             aria-label="Close chat"
-            className="fixed bottom-24 right-4 sm:right-8 z-[60] w-14 h-14 rounded-full bg-[#0A1929] hover:bg-[#0f2d47] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            className="fixed bottom-8 right-4 sm:right-8 z-[70] w-10 h-10 rounded-full bg-[#0A1929] hover:bg-[#0f2d47] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            style={{ bottom: 'calc(min(560px, calc(100vh - 40px)) + 2.5rem)' }}
           >
-            <X size={22} />
+            <X size={18} />
           </motion.button>
         )}
       </AnimatePresence>
