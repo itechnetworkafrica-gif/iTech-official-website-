@@ -137,6 +137,15 @@
 }
 
 @layer utilities {
+  /* ── Hide scrollbar (cross-browser) ── */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
@@ -265,12 +274,30 @@
 }
 
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
     @apply border-border;
   }
 
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   body {
-    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    @apply font-sans antialiased bg-background text-foreground;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  img,
+  video,
+  iframe,
+  svg {
+    max-width: 100%;
   }
 }
 

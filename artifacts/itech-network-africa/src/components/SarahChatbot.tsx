@@ -403,7 +403,7 @@ export const SarahChatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-8 right-4 sm:right-8 z-[60] w-[calc(100vw-2rem)] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
+            className="fixed bottom-8 left-4 right-4 sm:left-auto sm:right-8 sm:w-96 z-[60] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
             style={{ maxHeight: 'min(560px, calc(100vh - 40px))' }}
           >
             {/* Header */}

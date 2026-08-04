@@ -394,7 +394,7 @@ function HeroSlider() {
   const totalNum = String(total).padStart(2, '0');
 
   return (
-    <section className="relative bg-[#060E18]">
+    <section className="relative bg-[#060E18] overflow-hidden">
       {/* ── Background layer (overflow-hidden here only, so content is never clipped) ── */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Full-bleed background photo */}
