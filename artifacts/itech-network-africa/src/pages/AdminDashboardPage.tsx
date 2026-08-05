@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, FileText, Headphones, Settings, LogOut,
@@ -9,7 +9,8 @@ import {
   DollarSign, AlertTriangle, MessageSquare, Filter,
   Megaphone, BarChart2, FolderOpen, FileUp, StickyNote,
   ChevronDown, Zap, Activity, Tag, UserCog, BookTemplate,
-  Bell, Archive,
+  Bell, Archive, Search, Upload, Percent, Flag, UserCheck,
+  MinusCircle, CheckSquare, Square,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { PORTAL_CLIENTS } from '@/lib/portalClients';
@@ -27,10 +28,14 @@ import {
   getActivityLog,
   getInvoiceTemplates, saveInvoiceTemplate, deleteInvoiceTemplate,
   getMonthlyRevenue,
+  getClientUploadedFiles, updateClientUploadStatus, deleteClientUploadedFile,
+  getDisputes, updateDisputeStatus,
+  playNotificationSound,
   fmt$, fmtDate, timeAgo, todayStr, addDays, genId,
   type Invoice, type SupportTicket, type ManagedProject,
   type Announcement, type PortalFile, type QuickReplyTemplate,
-  type ClientNote, type InvoiceTemplate,
+  type ClientNote, type InvoiceTemplate, type ClientUploadedFile,
+  type InvoiceDispute,
 } from '@/lib/portalData';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
@@ -241,10 +246,13 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
   const [err, setErr]           = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
 
-  const client   = PORTAL_CLIENTS.find(c => c.id === clientId);
-  const subtotal = items.reduce((s, i) => s + (i.qty || 0) * (i.rate || 0), 0);
-  const taxAmt   = subtotal * (taxRate || 0) / 100;
-  const total    = subtotal + taxAmt;
+  const [discountPct, setDiscountPct] = useState(editing?.discountPercent ?? 0);
+
+  const client      = PORTAL_CLIENTS.find(c => c.id === clientId);
+  const subtotal    = items.reduce((s, i) => s + (i.qty || 0) * (i.rate || 0), 0);
+  const discAmt     = subtotal * (discountPct || 0) / 100;
+  const taxAmt      = (subtotal - discAmt) * (taxRate || 0) / 100;
+  const total       = subtotal - discAmt + taxAmt;
 
   function loadTemplate(tpl: InvoiceTemplate) {
     setItems(tpl.items.map(i => ({ ...i })));
@@ -262,8 +270,23 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
     if (items.every(i => !i.description.trim())) { setErr('Add at least one line item.'); return; }
     setSaving(status);
     setTimeout(() => {
-      saveInvoice({ ...(editing || {}), clientId, clientName: client!.name, clientEmail: client!.email, clientOrg: client!.organisation, issuedDate: issued, dueDate: due, status, items: items.map(i => ({ ...i, amount: i.qty * i.rate })), taxRate, subtotal, taxAmount: taxAmt, total, notes, paymentTerms: terms });
-      setSaving(null); onSaved();
+      const savedInv = saveInvoice({
+        ...(editing || {}),
+        clientId, clientName: client!.name, clientEmail: client!.email, clientOrg: client!.organisation,
+        issuedDate: issued, dueDate: due, status,
+        items: items.map(i => ({ ...i, amount: i.qty * i.rate })),
+        taxRate, discountPercent: discountPct, discountAmount: discAmt,
+        subtotal, taxAmount: taxAmt, total, notes, paymentTerms: terms,
+        ...(status === 'Sent' ? { emailSentAt: new Date().toISOString() } : {}),
+      });
+      setSaving(null);
+      // If sending to client, open mailto with invoice details
+      if (status === 'Sent' && client) {
+        const body = `Dear ${client.name},\n\nPlease find your invoice details below:\n\nInvoice: ${savedInv.invoiceNumber}\nAmount Due: ${fmt$(total)}\nDue Date: ${fmtDate(due)}\n\nPlease log in to your portal at /portal to view and pay this invoice.\n\nThank you for your business.\n\niTech Network Africa`;
+        const mailto = `mailto:${client.email}?subject=${encodeURIComponent(`Invoice ${savedInv.invoiceNumber} - ${fmt$(total)}`)}&body=${encodeURIComponent(body)}`;
+        window.open(mailto, '_blank');
+      }
+      onSaved();
     }, 400);
   }
 
@@ -334,10 +357,17 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
           </div>
         </div>
         <div className="flex justify-end">
-          <div className="w-64 space-y-2 text-sm">
+          <div className="w-72 space-y-2 text-sm">
             <div className="flex justify-between text-slate-600"><span>Subtotal</span><span className="font-semibold">{fmt$(subtotal)}</span></div>
+            <div className="flex items-center gap-2 text-slate-600">
+              <span className="flex items-center gap-1"><Percent size={12} className="text-amber-500" /> Discount (%)</span>
+              <input type="number" min={0} max={100} step={0.5} value={discountPct}
+                onChange={e => setDiscountPct(Number(e.target.value))}
+                className="ml-auto w-16 text-right text-sm bg-amber-50 border border-amber-200 rounded-lg px-2 py-0.5 focus:outline-none focus:border-amber-400" />
+              <span className="font-semibold text-amber-600">-{fmt$(discAmt)}</span>
+            </div>
             {taxRate > 0 && <div className="flex justify-between text-slate-600"><span>Tax ({taxRate}%)</span><span className="font-semibold">{fmt$(taxAmt)}</span></div>}
-            <div className="flex justify-between font-black text-slate-900 border-t border-slate-200 pt-2 text-base"><span>Total</span><span>{fmt$(total)}</span></div>
+            <div className="flex justify-between font-black text-slate-900 border-t border-slate-200 pt-2 text-base"><span>Total</span><span className="text-[#3CB52A]">{fmt$(total)}</span></div>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -359,14 +389,15 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
 
 function InvoicesSection() {
   const [invoices, setInvoices]     = useState<Invoice[]>([]);
+  const [disputes, setDisputes]     = useState<InvoiceDispute[]>([]);
   const [filter, setFilter]         = useState('All');
   const [showForm, setShowForm]     = useState(false);
   const [editing, setEditing]       = useState<Invoice | null>(null);
   const [previewing, setPreviewing] = useState<Invoice | null>(null);
   const [selected, setSelected]     = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab]   = useState<'invoices' | 'payments'>('invoices');
+  const [activeTab, setActiveTab]   = useState<'invoices' | 'payments' | 'disputes'>('invoices');
 
-  function reload() { setInvoices(getInvoices()); }
+  function reload() { setInvoices(getInvoices()); setDisputes(getDisputes()); }
   useEffect(() => { reload(); }, []);
 
   const filtered = filter === 'All' ? invoices : invoices.filter(i => i.status === filter);
@@ -400,13 +431,20 @@ function InvoicesSection() {
       </div>
 
       {/* Tab switch */}
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
-        {(['invoices', 'payments'] as const).map(t => (
-          <button key={t} onClick={() => setActiveTab(t)}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${activeTab === t ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-            {t === 'payments' ? `Payment Confirmations (${payments.filter(p => p.status === 'Pending').length})` : 'Invoices'}
-          </button>
-        ))}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit flex-wrap">
+        <button onClick={() => setActiveTab('invoices')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'invoices' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          Invoices ({invoices.length})
+        </button>
+        <button onClick={() => setActiveTab('payments')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'payments' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          Payments {payments.filter(p => p.status === 'Pending').length > 0 && <span className="ml-1 bg-amber-500 text-white text-[9px] font-bold rounded-full px-1.5 py-0.5">{payments.filter(p => p.status === 'Pending').length}</span>}
+        </button>
+        <button onClick={() => setActiveTab('disputes')}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'disputes' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          <Flag size={11} /> Disputes
+          {disputes.filter(d => d.status === 'Open').length > 0 && <span className="bg-red-500 text-white text-[9px] font-bold rounded-full px-1.5 py-0.5">{disputes.filter(d => d.status === 'Open').length}</span>}
+        </button>
       </div>
 
       {activeTab === 'invoices' ? (
@@ -475,7 +513,7 @@ function InvoicesSection() {
             }
           </div>
         </>
-      ) : (
+      ) : activeTab === 'payments' ? (
         /* Payment Confirmations */
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-5 py-3 border-b border-slate-50 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -506,6 +544,47 @@ function InvoicesSection() {
                           className="text-xs font-bold border border-red-200 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">Reject</button>
                       </div>
                     )}
+                  </div>
+                );
+              })}
+            </div>
+          }
+        </div>
+      ) : (
+        /* Disputes */
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-slate-50 bg-slate-50 flex items-center gap-2">
+            <Flag size={13} className="text-red-500" />
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Invoice Disputes ({disputes.length})</span>
+          </div>
+          {disputes.length === 0
+            ? <div className="py-16 text-center text-slate-400 text-sm">No disputes submitted. Clients can flag invoices from their portal.</div>
+            : <div className="divide-y divide-slate-50">
+              {[...disputes].reverse().map(d => {
+                const statusCls = d.status === 'Open' ? 'bg-red-50 text-red-700' : d.status === 'Under Review' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700';
+                return (
+                  <div key={d.id} className="flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-slate-50/50">
+                    <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0"><Flag size={15} className="text-red-500" /></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-slate-800 text-sm">{d.invoiceNumber}</span>
+                        <Chip label={d.status} cls={statusCls} />
+                        <Chip label={d.reason} cls="bg-slate-100 text-slate-600" />
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">{d.clientName} · {timeAgo(d.submittedAt)}</div>
+                      {d.details && <div className="text-xs text-slate-600 mt-1 italic">"{d.details}"</div>}
+                      {d.adminNote && <div className="text-xs text-[#3CB52A] mt-1">Admin note: "{d.adminNote}"</div>}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {d.status === 'Open' && (
+                        <button onClick={() => { updateDisputeStatus(d.id, 'Under Review'); reload(); }}
+                          className="text-xs font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-colors">Start Review</button>
+                      )}
+                      {d.status !== 'Resolved' && (
+                        <button onClick={() => { const note = prompt('Resolution note:') || ''; updateDisputeStatus(d.id, 'Resolved', note); reload(); }}
+                          className="text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors">Resolve</button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -554,18 +633,29 @@ function SupportSection() {
   const [selected, setSelected] = useState<string | null>(null);
   const [reply, setReply]       = useState('');
   const [filter, setFilter]     = useState('All');
+  const [search, setSearch]     = useState('');
   const [sending, setSending]   = useState(false);
   const [showQR, setShowQR]     = useState(false);
+  const [prevUnread, setPrevUnread] = useState(0);
   const msgEndRef               = useRef<HTMLDivElement>(null);
 
   function reload() { setTickets(getTickets()); }
   useEffect(() => { reload(); }, []);
   useEffect(() => { msgEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [selected, tickets]);
 
+  // Notification sound when unread count increases
+  useEffect(() => {
+    const current = tickets.reduce((n, t) => n + t.messages.filter(m => m.sender === 'client' && !m.read).length, 0);
+    if (current > prevUnread && prevUnread > 0) playNotificationSound('message');
+    setPrevUnread(current);
+  }, [tickets]);
+
   const ticket  = tickets.find(t => t.id === selected) || null;
   const qrs     = getQuickReplies();
   const FILTERS = ['All', 'Open', 'In Progress', 'Resolved', 'Closed'];
-  const filtered = filter === 'All' ? tickets : tickets.filter(t => t.status === filter);
+  const filtered = tickets
+    .filter(t => filter === 'All' || t.status === filter)
+    .filter(t => !search.trim() || t.subject.toLowerCase().includes(search.toLowerCase()) || t.clientName.toLowerCase().includes(search.toLowerCase()));
   const unread   = (t: SupportTicket) => t.messages.filter(m => m.sender === 'client' && !m.read).length;
 
   function openTicket(id: string) { setSelected(id); markTicketMessagesRead(id, 'admin'); reload(); }
@@ -577,12 +667,19 @@ function SupportSection() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <SectionHeader title="Support Center" sub={`${tickets.filter(t => t.status === 'Open' || t.status === 'In Progress').length} active tickets`} />
-        <button onClick={reload} className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700"><RefreshCw size={15} /></button>
+        <div className="flex gap-2">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tickets…"
+              className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A] w-48" />
+          </div>
+          <button onClick={reload} className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700"><RefreshCw size={15} /></button>
+        </div>
       </div>
 
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit flex-wrap">
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === f ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -1076,13 +1173,44 @@ function ReportsSection() {
 
 // ─── FILES SECTION ────────────────────────────────────────────────────────────
 function FilesSection() {
-  const [files, setFiles]       = useState<PortalFile[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm]         = useState<Partial<PortalFile>>({ clientId: 'all', fileType: 'PDF', category: 'Other' });
-  const [err, setErr]           = useState('');
+  const [files, setFiles]           = useState<PortalFile[]>([]);
+  const [clientUploads, setClientUploads] = useState<ClientUploadedFile[]>([]);
+  const [activeTab, setActiveTab]   = useState<'admin' | 'client'>('admin');
+  const [showForm, setShowForm]     = useState(false);
+  const [form, setForm]             = useState<Partial<PortalFile>>({ clientId: 'all', fileType: 'PDF', category: 'Other' });
+  const [uploading, setUploading]   = useState(false);
+  const [err, setErr]               = useState('');
+  const fileInputRef                = useRef<HTMLInputElement>(null);
 
-  function reload() { setFiles(getFiles()); }
+  function reload() { setFiles(getFiles()); setClientUploads(getClientUploadedFiles()); }
   useEffect(() => { reload(); }, []);
+
+  function pickFile() { fileInputRef.current?.click(); }
+
+  function handleFilePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target?.result as string;
+      const ext = file.name.split('.').pop()?.toUpperCase() || 'Other';
+      const sizeKB = Math.round(file.size / 1024);
+      const sizeLabel = sizeKB >= 1024 ? `${(sizeKB / 1024).toFixed(1)} MB` : `${sizeKB} KB`;
+      setForm(p => ({
+        ...p,
+        name: file.name,
+        fileType: ['PDF','DOCX','XLSX','ZIP','PNG','MP4'].includes(ext) ? ext : 'Other',
+        sizeLabel,
+        dataUrl,
+        downloadUrl: '#',
+      }));
+      setShowForm(true);
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault(); setErr('');
@@ -1091,23 +1219,56 @@ function FilesSection() {
     setShowForm(false); setForm({ clientId: 'all', fileType: 'PDF', category: 'Other' }); reload();
   }
 
+  function downloadFile(f: PortalFile) {
+    if (f.dataUrl) {
+      const a = document.createElement('a'); a.href = f.dataUrl; a.download = f.name; a.click();
+    } else if (f.downloadUrl && f.downloadUrl !== '#') {
+      window.open(f.downloadUrl, '_blank');
+    }
+  }
+
   const FILE_ICON: Record<string, string> = { PDF: '📄', ZIP: '📦', DOCX: '📝', XLSX: '📊', PNG: '🖼️', MP4: '🎬', Other: '📎' };
+  const pendingUploads = clientUploads.filter(f => f.status === 'Pending Review').length;
 
   return (
     <div className="space-y-5">
-      <SectionHeader title="File Manager" sub="Upload files accessible to clients in their portal"
-        action={<GreenBtn onClick={() => setShowForm(true)}><FileUp size={15} /> Upload File</GreenBtn>} />
+      <SectionHeader title="File Manager" sub="Upload files for clients and review client submissions"
+        action={
+          <div className="flex gap-2">
+            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFilePick} />
+            <GreenBtn onClick={pickFile}>
+              {uploading ? <RefreshCw size={15} className="animate-spin" /> : <Upload size={15} />} Upload File
+            </GreenBtn>
+            <button onClick={() => setShowForm(true)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">
+              <ExternalLink size={13} /> Add Link
+            </button>
+          </div>
+        } />
+
+      {/* Tab switch */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+        <button onClick={() => setActiveTab('admin')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'admin' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>
+          Admin Files ({files.length})
+        </button>
+        <button onClick={() => setActiveTab('client')}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'client' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>
+          Client Uploads ({clientUploads.length})
+          {pendingUploads > 0 && <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">{pendingUploads}</span>}
+        </button>
+      </div>
 
       <AnimatePresence>
         {showForm && (
           <Modal onClose={() => setShowForm(false)}>
             <div className="px-6 pb-6">
-              <h3 className="font-black text-slate-900 text-lg mb-4">Upload File</h3>
-              <p className="text-xs text-slate-400 mb-4">Add a file record with a download link. You can link to Google Drive, Dropbox, or any URL.</p>
+              <h3 className="font-black text-slate-900 text-lg mb-4">{form.dataUrl ? 'Save Uploaded File' : 'Add File Link'}</h3>
+              {form.dataUrl && <div className="flex items-center gap-2 bg-[#f0fdf4] border border-[#BBF7D0] rounded-xl px-4 py-3 mb-4 text-sm text-[#166534]"><CheckCircle2 size={15} /> File uploaded and ready. Fill in the details below.</div>}
+              {!form.dataUrl && <p className="text-xs text-slate-400 mb-4">Link to Google Drive, Dropbox, or any direct URL.</p>}
               {err && <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{err}</div>}
               <form onSubmit={submit} className="space-y-4">
                 <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">File Name *</label><input type="text" value={form.name || ''} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Project Proposal v2.pdf" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>
-                <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Download URL</label><input type="text" value={form.downloadUrl || ''} onChange={e => setForm(p => ({ ...p, downloadUrl: e.target.value }))} placeholder="https://drive.google.com/…" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>
+                {!form.dataUrl && <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Download URL</label><input type="text" value={form.downloadUrl || ''} onChange={e => setForm(p => ({ ...p, downloadUrl: e.target.value }))} placeholder="https://drive.google.com/…" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>}
                 <div className="grid grid-cols-2 gap-4">
                   <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Type</label>
                     <select value={form.fileType || 'PDF'} onChange={e => setForm(p => ({ ...p, fileType: e.target.value }))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A] bg-white">
@@ -1121,7 +1282,7 @@ function FilesSection() {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Size (e.g. 2.4 MB)</label><input type="text" value={form.sizeLabel || ''} onChange={e => setForm(p => ({ ...p, sizeLabel: e.target.value }))} placeholder="2.4 MB" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>
+                  <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Size</label><input type="text" value={form.sizeLabel || ''} onChange={e => setForm(p => ({ ...p, sizeLabel: e.target.value }))} placeholder="2.4 MB" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>
                   <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Visible To</label>
                     <select value={typeof form.clientId === 'string' && form.clientId !== 'all' ? form.clientId : 'all'} onChange={e => setForm(p => ({ ...p, clientId: e.target.value }))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A] bg-white">
                       <option value="all">All Clients</option>
@@ -1131,7 +1292,7 @@ function FilesSection() {
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button type="submit" className="flex-1 py-3 rounded-xl bg-[#3CB52A] text-white text-sm font-bold hover:bg-[#2e911f]">Save File</button>
-                  <button type="button" onClick={() => setShowForm(false)} className="px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-500 hover:bg-slate-50">Cancel</button>
+                  <button type="button" onClick={() => { setShowForm(false); setForm({ clientId: 'all', fileType: 'PDF', category: 'Other' }); }} className="px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-500 hover:bg-slate-50">Cancel</button>
                 </div>
               </form>
             </div>
@@ -1139,27 +1300,82 @@ function FilesSection() {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        {files.length === 0
-          ? <div className="py-16 text-center text-slate-400 text-sm">No files yet. Upload files to make them available to clients in their portal.</div>
-          : <div className="divide-y divide-slate-50">
-            {files.map(f => (
-              <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm text-slate-800 truncate">{f.name}</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{f.category} · {f.fileType} · {f.sizeLabel || 'Unknown size'} · {f.clientId === 'all' ? 'All clients' : PORTAL_CLIENTS.find(c => c.id === f.clientId)?.name || f.clientId}</div>
+      {activeTab === 'admin' ? (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          {files.length === 0
+            ? <div className="py-16 text-center text-slate-400 text-sm">No files yet. Upload files to make them available to clients in their portal.</div>
+            : <div className="divide-y divide-slate-50">
+              {files.map(f => (
+                <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors group">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm text-slate-800 truncate">{f.name}</div>
+                    <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{f.category}</span>
+                      <span>{f.fileType}</span>
+                      {f.sizeLabel && <span>{f.sizeLabel}</span>}
+                      {f.dataUrl && <span className="text-[#3CB52A] font-semibold">Direct upload</span>}
+                      <span>→ {f.clientId === 'all' ? 'All clients' : PORTAL_CLIENTS.find(c => c.id === f.clientId)?.name || f.clientId}</span>
+                    </div>
+                  </div>
+                  <div className="text-[11px] text-slate-400 hidden sm:block">{timeAgo(f.uploadedAt)}</div>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => downloadFile(f)} title="Download" className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors"><Download size={14} /></button>
+                    <button onClick={() => { deleteFile(f.id); reload(); }} className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-400 hidden sm:block">{timeAgo(f.uploadedAt)}</div>
-                <div className="flex gap-1">
-                  {f.downloadUrl !== '#' && <a href={f.downloadUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors"><ExternalLink size={14} /></a>}
-                  <button onClick={() => { deleteFile(f.id); reload(); }} className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          }
+        </div>
+      ) : (
+        /* Client Uploads Tab */
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-slate-50 bg-slate-50 flex items-center gap-2">
+            <Upload size={13} className="text-slate-400" />
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Files uploaded by clients ({clientUploads.length})</span>
           </div>
-        }
-      </div>
+          {clientUploads.length === 0
+            ? <div className="py-16 text-center text-slate-400 text-sm">No client uploads yet. Clients can upload files from their portal.</div>
+            : <div className="divide-y divide-slate-50">
+              {[...clientUploads].reverse().map(f => {
+                const statusCls = f.status === 'Pending Review' ? 'bg-amber-50 text-amber-700' : f.status === 'Accepted' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700';
+                return (
+                  <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm text-slate-800 truncate">{f.name}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusCls}`}>{f.status}</span>
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {PORTAL_CLIENTS.find(c => c.id === f.clientId)?.name || f.clientId} · {f.fileType} · {f.sizeLabel}
+                        {f.description && <span className="italic"> · "{f.description}"</span>}
+                      </div>
+                      {f.adminNote && <div className="text-xs text-slate-500 mt-0.5 italic">Admin note: "{f.adminNote}"</div>}
+                    </div>
+                    <div className="text-[11px] text-slate-400">{timeAgo(f.uploadedAt)}</div>
+                    <div className="flex flex-col gap-1">
+                      <button onClick={() => { const a = document.createElement('a'); a.href = f.dataUrl; a.download = f.name; a.click(); }}
+                        className="flex items-center gap-1 text-xs font-bold text-[#3CB52A] hover:underline"><Download size={12} /> Download</button>
+                      <div className="flex gap-1">
+                        {f.status === 'Pending Review' && <>
+                          <button onClick={() => { updateClientUploadStatus(f.id, 'Accepted'); reload(); }}
+                            className="text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded-lg transition-colors">Accept</button>
+                          <button onClick={() => { const note = prompt('Rejection reason (optional):') || ''; updateClientUploadStatus(f.id, 'Rejected', note); reload(); }}
+                            className="text-[10px] font-bold bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1 rounded-lg transition-colors">Reject</button>
+                        </>}
+                        <button onClick={() => { deleteClientUploadedFile(f.id); reload(); }}
+                          className="text-[10px] font-bold text-slate-300 hover:text-red-500 px-2 py-1 rounded-lg transition-colors"><Trash2 size={11} /></button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          }
+        </div>
+      )}
     </div>
   );
 }

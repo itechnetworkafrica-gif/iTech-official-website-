@@ -8,6 +8,7 @@ import {
   ChevronRight, Plus, Send, RefreshCw, Printer, Eye, DollarSign,
   Megaphone, Briefcase, Share2, Bell, Activity, Calendar,
   CheckSquare, Square, CreditCard, Banknote, Smartphone, Bitcoin,
+  Upload, Flag, FileUp, Trash2,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { findClient, verifyPassword, type PortalClient } from '@/lib/portalClients';
@@ -17,8 +18,12 @@ import {
   rateTicket, getClientManagedProjects, toggleMilestone,
   getClientAnnouncements, getClientFiles, submitPaymentConfirmation,
   getClientPayments, getMonthlyRevenue,
+  getClientUploadedFiles, saveClientUploadedFile, deleteClientUploadedFile,
+  getClientDisputes, submitDispute,
+  playNotificationSound,
   fmt$, fmtDate, timeAgo, todayStr, addDays, nowIso,
   type Invoice, type SupportTicket, type Announcement, type PortalFile,
+  type ClientUploadedFile, type InvoiceDispute,
 } from '@/lib/portalData';
 
 // ─── Colours ──────────────────────────────────────────────────────────────────
@@ -48,6 +53,20 @@ function NavBadge({ n }: { n: number }) {
   if (!n) return null;
   return <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">{n > 99 ? '99+' : n}</span>;
 }
+function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
+        className="w-full max-w-lg bg-white rounded-2xl shadow-2xl my-4">
+        <div className="flex justify-end px-4 pt-4 pb-0">
+          <button onClick={onClose} className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors"><X size={16} /></button>
+        </div>
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
 function EmptyState({ icon: Icon, title, message, action }: { icon: React.ElementType; title: string; message: string; action?: { label: string; href?: string; onClick?: () => void } }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -183,11 +202,15 @@ function PaymentConfirmationForm({ invoice, clientId, clientName, onClose, onSub
 // ─── CLIENT INVOICES ──────────────────────────────────────────────────────────
 function ClientInvoices({ client }: { client: PortalClient }) {
   const [invoices, setInvoices]   = useState<Invoice[]>([]);
+  const [myDisputes, setMyDisputes] = useState<InvoiceDispute[]>([]);
   const [viewing, setViewing]     = useState<Invoice | null>(null);
   const [confirming, setConfirming] = useState<Invoice | null>(null);
+  const [disputingInv, setDisputingInv] = useState<Invoice | null>(null);
+  const [disputeReason, setDisputeReason] = useState('Incorrect Amount');
+  const [disputeDetails, setDisputeDetails] = useState('');
   const [activeTab, setActiveTab] = useState<'list' | 'chart'>('list');
 
-  function reload() { setInvoices(getClientInvoices(client.id)); }
+  function reload() { setInvoices(getClientInvoices(client.id)); setMyDisputes(getClientDisputes(client.id)); }
   useEffect(() => { reload(); }, []);
 
   const totalPaid  = invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + i.total, 0);
@@ -296,8 +319,91 @@ function ClientInvoices({ client }: { client: PortalClient }) {
         <a href="mailto:itechnetworkafrica@gmail.com?subject=Invoice%20Query" className="shrink-0 text-sm font-bold text-[#3CB52A] hover:underline flex items-center gap-1">Email Billing <ExternalLink size={13} /></a>
       </div>
 
+      {/* Dispute CTA */}
+      {invoices.some(i => (i.status === 'Sent' || i.status === 'Overdue') && !myDisputes.find(d => d.invoiceId === i.id && d.status !== 'Resolved')) && (
+        <div className="bg-white rounded-2xl border border-red-100 shadow-sm p-4 space-y-3">
+          <div className="text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-1.5"><Flag size={11} /> Dispute an Invoice</div>
+          <p className="text-sm text-slate-500">See an error or unexpected charge? You can flag the invoice and our team will review it.</p>
+          <div className="space-y-2">
+            {invoices.filter(i => (i.status === 'Sent' || i.status === 'Overdue') && !myDisputes.find(d => d.invoiceId === i.id && d.status !== 'Resolved')).map(inv => (
+              <button key={inv.id} onClick={() => { setDisputingInv(inv); setDisputeReason('Incorrect Amount'); setDisputeDetails(''); }}
+                className="w-full flex items-center justify-between gap-3 bg-red-50 hover:bg-red-100 border border-red-100 rounded-xl px-4 py-3 transition-colors group">
+                <div className="text-left"><div className="text-sm font-bold text-slate-800">{inv.invoiceNumber}</div><div className="text-xs text-slate-400">{fmt$(inv.total)} · Due {fmtDate(inv.dueDate)}</div></div>
+                <span className="text-xs font-bold text-red-500 flex items-center gap-1">Dispute <Flag size={12} /></span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Show existing disputes */}
+      {myDisputes.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-2">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Flag size={11} /> My Disputes</div>
+          {myDisputes.map(d => {
+            const sc = d.status === 'Open' ? 'bg-red-50 text-red-700' : d.status === 'Under Review' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700';
+            return (
+              <div key={d.id} className="flex flex-wrap items-center gap-3 py-2 border-t border-slate-50 first:border-t-0">
+                <Flag size={14} className="text-red-400 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-sm text-slate-800">{d.invoiceNumber}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${sc}`}>{d.status}</span>
+                    <span className="text-[10px] text-slate-400">{d.reason}</span>
+                  </div>
+                  {d.details && <p className="text-xs text-slate-500 mt-0.5 italic">"{d.details}"</p>}
+                  {d.adminNote && <p className="text-xs text-[#3CB52A] mt-0.5 font-semibold">iTech note: "{d.adminNote}"</p>}
+                </div>
+                <span className="text-[11px] text-slate-300">{timeAgo(d.submittedAt)}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       <AnimatePresence>{viewing && <InvoiceView invoice={viewing} onClose={() => setViewing(null)} />}</AnimatePresence>
       <AnimatePresence>{confirming && <PaymentConfirmationForm invoice={confirming} clientId={client.id} clientName={client.name} onClose={() => setConfirming(null)} onSubmitted={() => { setConfirming(null); reload(); }} />}</AnimatePresence>
+
+      {/* Dispute Modal */}
+      <AnimatePresence>
+        {disputingInv && (
+          <Modal onClose={() => setDisputingInv(null)}>
+            <div className="px-6 pb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center"><Flag size={18} className="text-red-500" /></div>
+                <div>
+                  <h3 className="font-black text-slate-900">Dispute Invoice</h3>
+                  <p className="text-xs text-slate-400">{disputingInv.invoiceNumber} · {fmt$(disputingInv.total)}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Reason</label>
+                  <select value={disputeReason} onChange={e => setDisputeReason(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-red-400 bg-white">
+                    {(['Incorrect Amount', 'Service Not Delivered', 'Already Paid', 'Duplicate Invoice', 'Other'] as const).map(r => <option key={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Details (optional)</label>
+                  <textarea value={disputeDetails} onChange={e => setDisputeDetails(e.target.value)} rows={3} placeholder="Explain the issue…"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-red-400 resize-none" />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button onClick={() => {
+                    submitDispute({ invoiceId: disputingInv.id, invoiceNumber: disputingInv.invoiceNumber, clientId: client.id, clientName: client.name, reason: disputeReason as InvoiceDispute['reason'], details: disputeDetails });
+                    playNotificationSound('invoice');
+                    setDisputingInv(null); reload();
+                  }} className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                    <Flag size={14} /> Submit Dispute
+                  </button>
+                  <button onClick={() => setDisputingInv(null)} className="px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-500 hover:bg-slate-50">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -320,9 +426,18 @@ function ClientSupport({ client }: { client: PortalClient }) {
   const [ratingComment, setRatingComment] = useState('');
   const msgEndRef               = useRef<HTMLDivElement>(null);
 
+  const [prevUnread, setPrevUnread] = useState(0);
+
   function reload() { setTickets(getClientTickets(client.id)); }
-  useEffect(() => { reload(); }, []);
+  useEffect(() => { reload(); const id = setInterval(reload, 8000); return () => clearInterval(id); }, []);
   useEffect(() => { msgEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [selected, tickets]);
+
+  // Play sound when admin replies arrive
+  useEffect(() => {
+    const cur = tickets.reduce((n, t) => n + t.messages.filter(m => m.sender === 'admin' && !m.read).length, 0);
+    if (cur > prevUnread && prevUnread >= 0) playNotificationSound('message');
+    setPrevUnread(cur);
+  }, [tickets]);
 
   const ticket = tickets.find(t => t.id === selected) || null;
   const FILTERS = ['All', 'Open', 'In Progress', 'Resolved'];
@@ -605,59 +720,178 @@ function Projects({ client }: { client: PortalClient }) {
   );
 }
 
-// ─── DOWNLOADS ────────────────────────────────────────────────────────────────
+// ─── DOWNLOADS & UPLOADS ──────────────────────────────────────────────────────
 function Downloads({ client }: { client: PortalClient }) {
-  const [files, setFiles]   = useState<PortalFile[]>([]);
-  const [filter, setFilter] = useState('All');
+  const [files, setFiles]           = useState<PortalFile[]>([]);
+  const [myUploads, setMyUploads]   = useState<ClientUploadedFile[]>([]);
+  const [filter, setFilter]         = useState('All');
+  const [activeTab, setActiveTab]   = useState<'downloads' | 'myuploads'>('downloads');
+  const [uploading, setUploading]   = useState(false);
+  const [uploadDesc, setUploadDesc] = useState('');
+  const [uploadErr, setUploadErr]   = useState('');
+  const fileInputRef                = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { setFiles(getClientFiles(client.id)); }, []);
+  function reload() {
+    setFiles(getClientFiles(client.id));
+    setMyUploads(getClientUploadedFiles(client.id));
+  }
+  useEffect(() => { reload(); }, []);
 
-  const FILE_ICON: Record<string, string> = { PDF: '📄', ZIP: '📦', DOCX: '📝', XLSX: '📊', PNG: '🖼️', MP4: '🎬', Other: '📎' };
+  function pickFile() { fileInputRef.current?.click(); }
+
+  function handleFilePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadErr('');
+    if (file.size > 10 * 1024 * 1024) { setUploadErr('File is too large. Max 10 MB.'); return; }
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target?.result as string;
+      const ext = file.name.split('.').pop()?.toUpperCase() || 'Other';
+      const sizeKB = Math.round(file.size / 1024);
+      const sizeLabel = sizeKB >= 1024 ? `${(sizeKB / 1024).toFixed(1)} MB` : `${sizeKB} KB`;
+      saveClientUploadedFile({
+        clientId: client.id,
+        name: file.name,
+        fileType: ['PDF','DOCX','XLSX','ZIP','PNG','MP4','JPG','JPEG'].includes(ext) ? ext : 'Other',
+        sizeLabel,
+        dataUrl,
+        description: uploadDesc.trim() || undefined,
+      });
+      playNotificationSound('upload');
+      setUploading(false);
+      setUploadDesc('');
+      reload();
+      setActiveTab('myuploads');
+    };
+    reader.onerror = () => { setUploadErr('Failed to read file. Please try again.'); setUploading(false); };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }
+
+  const FILE_ICON: Record<string, string> = { PDF: '📄', ZIP: '📦', DOCX: '📝', XLSX: '📊', PNG: '🖼️', MP4: '🎬', JPG: '🖼️', JPEG: '🖼️', Other: '📎' };
   const CAT_COLOR: Record<string, string> = { Contract: 'bg-violet-50 text-violet-700', Report: 'bg-blue-50 text-blue-700', Design: 'bg-pink-50 text-pink-700', Invoice: 'bg-emerald-50 text-emerald-700', Proposal: 'bg-amber-50 text-amber-700', Other: 'bg-slate-100 text-slate-600' };
 
   const categories = ['All', ...Array.from(new Set(files.map(f => f.category)))];
   const filtered = filter === 'All' ? files : files.filter(f => f.category === filter);
 
+  function downloadPortalFile(f: PortalFile) {
+    if (f.dataUrl) { const a = document.createElement('a'); a.href = f.dataUrl; a.download = f.name; a.click(); }
+    else if (f.downloadUrl && f.downloadUrl !== '#') { window.open(f.downloadUrl, '_blank'); }
+  }
+  function downloadMyFile(f: ClientUploadedFile) { const a = document.createElement('a'); a.href = f.dataUrl; a.download = f.name; a.click(); }
+
   return (
     <div className="space-y-5">
-      <div><h2 className="text-xl font-black text-[#0A1929]">Downloads</h2><p className="text-sm text-slate-400 mt-0.5">Project files, reports, and deliverable assets</p></div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-xl font-black text-[#0A1929]">Files</h2><p className="text-sm text-slate-400 mt-0.5">Downloads from iTech & your uploaded documents</p></div>
+        <button onClick={pickFile} disabled={uploading}
+          className="flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2e911f] text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50">
+          {uploading ? <RefreshCw size={15} className="animate-spin" /> : <Upload size={15} />} Upload File
+        </button>
+      </div>
 
-      {files.length > 0 && categories.length > 2 && (
-        <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit flex-wrap">
-          {categories.map(c => (
-            <button key={c} onClick={() => setFilter(c)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === c ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{c}</button>
-          ))}
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFilePick} />
+
+      {/* Upload description helper */}
+      <div className="bg-[#f0fdf4] border border-[#BBF7D0] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <Upload size={16} className="text-[#3CB52A] shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-[#166534]">Upload documents for iTech to review</p>
+          <input value={uploadDesc} onChange={e => setUploadDesc(e.target.value)} placeholder="Optional: add a description before uploading…"
+            className="w-full mt-2 px-3 py-2 rounded-xl border border-[#BBF7D0] bg-white/80 text-sm focus:outline-none focus:border-[#3CB52A] text-slate-700 placeholder:text-slate-300" />
+          {uploadErr && <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1"><AlertCircle size={12} /> {uploadErr}</p>}
+        </div>
+      </div>
+
+      {/* Tab switch */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+        <button onClick={() => setActiveTab('downloads')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'downloads' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          Downloads ({files.length})
+        </button>
+        <button onClick={() => setActiveTab('myuploads')}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'myuploads' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          My Uploads ({myUploads.length})
+          {myUploads.filter(f => f.status === 'Accepted').length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A]" />}
+        </button>
+      </div>
+
+      {activeTab === 'downloads' ? (
+        <>
+          {files.length > 0 && categories.length > 2 && (
+            <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit flex-wrap">
+              {categories.map(c => (
+                <button key={c} onClick={() => setFilter(c)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === c ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{c}</button>
+              ))}
+            </div>
+          )}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            {filtered.length === 0 ? (
+              <EmptyState icon={HardDrive} title="No files yet" message="Downloadable assets and project deliverables will appear here once uploaded by your account manager." action={{ label: 'Request a file', href: 'mailto:itechnetworkafrica@gmail.com?subject=File%20Request' }} />
+            ) : (
+              <div className="divide-y divide-slate-50">
+                {filtered.map(f => (
+                  <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors group">
+                    <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm text-slate-800 truncate">{f.name}</div>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${CAT_COLOR[f.category]}`}>{f.category}</span>
+                        <span className="text-[10px] text-slate-400">{f.fileType}</span>
+                        <span className="text-[10px] text-slate-400">{f.sizeLabel}</span>
+                        <span className="text-[10px] text-slate-300">· {timeAgo(f.uploadedAt)}</span>
+                      </div>
+                    </div>
+                    <button onClick={() => downloadPortalFile(f)}
+                      disabled={!f.dataUrl && f.downloadUrl === '#'}
+                      className={`flex items-center gap-1.5 text-sm font-bold px-3 py-2 rounded-xl transition-colors shrink-0 ${(!f.dataUrl && f.downloadUrl === '#') ? 'text-slate-300 cursor-not-allowed' : 'text-[#3CB52A] hover:bg-[#f0fdf4]'}`}>
+                      <Download size={14} /> Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        /* My Uploads Tab */
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          {myUploads.length === 0 ? (
+            <EmptyState icon={FileUp} title="No uploads yet" message="Upload documents for iTech to review — contracts, references, images, or anything else needed for your project." action={{ onClick: pickFile, label: 'Upload your first file' }} />
+          ) : (
+            <div className="divide-y divide-slate-50">
+              {[...myUploads].reverse().map(f => {
+                const statusCls = f.status === 'Pending Review' ? 'bg-amber-50 text-amber-700' : f.status === 'Accepted' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700';
+                const statusIcon = f.status === 'Pending Review' ? '⏳' : f.status === 'Accepted' ? '✅' : '❌';
+                return (
+                  <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors group">
+                    <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm text-slate-800 truncate">{f.name}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusCls}`}>{statusIcon} {f.status}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className="text-[10px] text-slate-400">{f.fileType} · {f.sizeLabel}</span>
+                        <span className="text-[10px] text-slate-300">· {timeAgo(f.uploadedAt)}</span>
+                      </div>
+                      {f.description && <p className="text-xs text-slate-500 mt-1 italic">"{f.description}"</p>}
+                      {f.adminNote && <p className={`text-xs mt-1 font-semibold ${f.status === 'Accepted' ? 'text-emerald-600' : 'text-red-500'}`}>iTech note: "{f.adminNote}"</p>}
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => downloadMyFile(f)} className="flex items-center gap-1.5 text-sm font-bold text-[#3CB52A] hover:underline px-2 py-1"><Download size={14} /></button>
+                      <button onClick={() => { deleteClientUploadedFile(f.id); reload(); }} className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
-
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        {filtered.length === 0 ? (
-          <EmptyState icon={HardDrive} title="No files yet" message="Downloadable assets and project deliverables will appear here once uploaded by your account manager." action={{ label: 'Request a file', href: 'mailto:itechnetworkafrica@gmail.com?subject=File%20Request' }} />
-        ) : (
-          <div className="divide-y divide-slate-50">
-            {filtered.map(f => (
-              <div key={f.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors">
-                <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-xl shrink-0">{FILE_ICON[f.fileType] || '📎'}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm text-slate-800 truncate">{f.name}</div>
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${CAT_COLOR[f.category]}`}>{f.category}</span>
-                    <span className="text-[10px] text-slate-400">{f.fileType}</span>
-                    <span className="text-[10px] text-slate-400">{f.sizeLabel}</span>
-                    <span className="text-[10px] text-slate-300">· {timeAgo(f.uploadedAt)}</span>
-                  </div>
-                </div>
-                <a href={f.downloadUrl} target="_blank" rel="noreferrer"
-                  className={`flex items-center gap-1.5 text-sm font-bold px-3 py-2 rounded-xl transition-colors shrink-0 ${f.downloadUrl === '#' ? 'text-slate-300 cursor-not-allowed' : 'text-[#3CB52A] hover:bg-[#f0fdf4]'}`}
-                  onClick={e => f.downloadUrl === '#' && e.preventDefault()}>
-                  <Download size={14} /> Download
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
       <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-sm text-slate-500">
         <p><strong className="text-slate-700">Need a specific file?</strong> Contact your account manager directly.</p>
@@ -1081,7 +1315,7 @@ function PortalShell({ client, onLogout }: { client: PortalClient; onLogout: () 
     { id: 'projects',      label: 'Projects',        icon: FolderOpen,      badge: 0                      },
     { id: 'invoices',      label: 'Invoices',        icon: FileText,        badge: unread.invoices         },
     { id: 'support',       label: 'Support',         icon: Headphones,      badge: unread.support          },
-    { id: 'downloads',     label: 'Downloads',       icon: Download,        badge: 0                      },
+    { id: 'downloads',     label: 'Files',           icon: FolderOpen,      badge: getClientUploadedFiles(client.id).filter(f => f.status === 'Accepted').length },
     { id: 'announcements', label: 'Announcements',   icon: Megaphone,       badge: 0                      },
     { id: 'services',      label: 'Services',        icon: Briefcase,       badge: 0                      },
     { id: 'profile',       label: 'Profile',         icon: User,            badge: 0                      },

@@ -29,12 +29,15 @@ export interface Invoice {
   notes: string;
   paymentTerms: string;
   taxRate: number;
+  discountPercent: number;
+  discountAmount: number;
   subtotal: number;
   taxAmount: number;
   total: number;
   createdAt: string;
   updatedAt: string;
   viewedByClient: boolean;
+  emailSentAt?: string;
 }
 
 export interface TicketMessage {
@@ -105,8 +108,36 @@ export interface PortalFile {
   fileType: string;
   category: 'Contract' | 'Report' | 'Design' | 'Invoice' | 'Proposal' | 'Other';
   downloadUrl: string;
+  dataUrl?: string;          // base64 for directly-uploaded files
   uploadedAt: string;
   uploadedBy: string;
+}
+
+export interface ClientUploadedFile {
+  id: string;
+  clientId: string;
+  name: string;
+  fileType: string;
+  sizeLabel: string;
+  dataUrl: string;           // base64 data URL
+  description?: string;
+  uploadedAt: string;
+  status: 'Pending Review' | 'Accepted' | 'Rejected';
+  adminNote?: string;
+}
+
+export interface InvoiceDispute {
+  id: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  clientId: string;
+  clientName: string;
+  reason: 'Incorrect Amount' | 'Duplicate Invoice' | 'Service Not Delivered' | 'Already Paid' | 'Other';
+  details: string;
+  status: 'Open' | 'Under Review' | 'Resolved';
+  submittedAt: string;
+  resolvedAt?: string;
+  adminNote?: string;
 }
 
 export interface PaymentConfirmation {
@@ -158,16 +189,18 @@ export interface InvoiceTemplate {
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
-const INVOICES_KEY       = 'itech_portal_invoices_v2';
-const TICKETS_KEY        = 'itech_portal_tickets_v2';
-const PROJECTS_KEY       = 'itech_portal_projects_v1';
-const ANNOUNCEMENTS_KEY  = 'itech_portal_announcements_v1';
-const FILES_KEY          = 'itech_portal_files_v1';
-const PAYMENTS_KEY       = 'itech_portal_payments_v1';
-const QUICK_REPLIES_KEY  = 'itech_portal_quick_replies_v1';
-const CLIENT_NOTES_KEY   = 'itech_portal_notes_v1';
-const ACTIVITY_LOG_KEY   = 'itech_portal_activity_v1';
-const INV_TEMPLATES_KEY  = 'itech_portal_inv_templates_v1';
+const INVOICES_KEY        = 'itech_portal_invoices_v3';
+const TICKETS_KEY         = 'itech_portal_tickets_v2';
+const PROJECTS_KEY        = 'itech_portal_projects_v1';
+const ANNOUNCEMENTS_KEY   = 'itech_portal_announcements_v1';
+const FILES_KEY           = 'itech_portal_files_v1';
+const PAYMENTS_KEY        = 'itech_portal_payments_v1';
+const QUICK_REPLIES_KEY   = 'itech_portal_quick_replies_v1';
+const CLIENT_NOTES_KEY    = 'itech_portal_notes_v1';
+const ACTIVITY_LOG_KEY    = 'itech_portal_activity_v1';
+const INV_TEMPLATES_KEY   = 'itech_portal_inv_templates_v1';
+const CLIENT_UPLOADS_KEY  = 'itech_portal_client_uploads_v1';
+const DISPUTES_KEY        = 'itech_portal_disputes_v1';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -199,7 +232,8 @@ export function saveInvoice(data: Partial<Invoice> & { clientId: string }): Invo
   const num   = String(all.length + 1).padStart(3, '0');
   const full: Invoice = {
     notes: '', paymentTerms: 'Payment due within 30 days of invoice date.',
-    taxRate: 0, subtotal: 0, taxAmount: 0, total: 0, viewedByClient: false,
+    taxRate: 0, discountPercent: 0, discountAmount: 0,
+    subtotal: 0, taxAmount: 0, total: 0, viewedByClient: false,
     ...data,
     id: data.id || genId(),
     invoiceNumber: data.invoiceNumber || `INV-${year}-${num}`,
@@ -385,6 +419,57 @@ export function deleteFile(id: string): void {
   save(FILES_KEY, getFiles().filter(f => f.id !== id));
 }
 
+// ─── Client Uploaded Files ────────────────────────────────────────────────────
+
+export function getClientUploadedFiles(clientId?: string): ClientUploadedFile[] {
+  const all = load<ClientUploadedFile>(CLIENT_UPLOADS_KEY);
+  return clientId ? all.filter(f => f.clientId === clientId) : all;
+}
+export function saveClientUploadedFile(data: Omit<ClientUploadedFile, 'id' | 'uploadedAt' | 'status'>): ClientUploadedFile {
+  const all = getClientUploadedFiles();
+  const file: ClientUploadedFile = { ...data, id: genId(), uploadedAt: nowIso(), status: 'Pending Review' };
+  all.push(file);
+  save(CLIENT_UPLOADS_KEY, all);
+  logActivity('Client uploaded file', `${file.name} from ${file.clientId}`, 'File');
+  return file;
+}
+export function updateClientUploadStatus(id: string, status: ClientUploadedFile['status'], adminNote?: string): void {
+  const all = load<ClientUploadedFile>(CLIENT_UPLOADS_KEY);
+  const idx = all.findIndex(f => f.id === id);
+  if (idx >= 0) { all[idx].status = status; if (adminNote !== undefined) all[idx].adminNote = adminNote; }
+  save(CLIENT_UPLOADS_KEY, all);
+  logActivity('Updated client upload status', `→ ${status}`, 'File');
+}
+export function deleteClientUploadedFile(id: string): void {
+  save(CLIENT_UPLOADS_KEY, load<ClientUploadedFile>(CLIENT_UPLOADS_KEY).filter(f => f.id !== id));
+}
+
+// ─── Invoice Disputes ─────────────────────────────────────────────────────────
+
+export function getDisputes(): InvoiceDispute[] { return load<InvoiceDispute>(DISPUTES_KEY); }
+export function getClientDisputes(clientId: string): InvoiceDispute[] {
+  return getDisputes().filter(d => d.clientId === clientId);
+}
+export function submitDispute(data: Omit<InvoiceDispute, 'id' | 'submittedAt' | 'status'>): InvoiceDispute {
+  const all = getDisputes();
+  const dispute: InvoiceDispute = { ...data, id: genId(), submittedAt: nowIso(), status: 'Open' };
+  all.push(dispute);
+  save(DISPUTES_KEY, all);
+  logActivity('Invoice dispute submitted', `${dispute.invoiceNumber} by ${dispute.clientName}`, 'Invoice');
+  return dispute;
+}
+export function updateDisputeStatus(id: string, status: InvoiceDispute['status'], adminNote?: string): void {
+  const all = getDisputes();
+  const idx = all.findIndex(d => d.id === id);
+  if (idx >= 0) {
+    all[idx].status = status;
+    if (adminNote !== undefined) all[idx].adminNote = adminNote;
+    if (status === 'Resolved') all[idx].resolvedAt = nowIso();
+  }
+  save(DISPUTES_KEY, all);
+  logActivity('Updated dispute status', `→ ${status}`, 'Invoice');
+}
+
 // ─── Payment Confirmations ────────────────────────────────────────────────────
 
 export function getPaymentConfirmations(): PaymentConfirmation[] { return load<PaymentConfirmation>(PAYMENTS_KEY); }
@@ -510,6 +595,50 @@ export function saveInvoiceTemplate(data: Partial<InvoiceTemplate>): InvoiceTemp
 }
 export function deleteInvoiceTemplate(id: string): void {
   save(INV_TEMPLATES_KEY, getInvoiceTemplates().filter(t => t.id !== id));
+}
+
+// ─── Notification Sound ───────────────────────────────────────────────────────
+
+export function playNotificationSound(type: 'message' | 'invoice' | 'upload' = 'message'): void {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    if (type === 'message') {
+      // Two-tone ping
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.45);
+    } else if (type === 'invoice') {
+      // Three-note chime
+      const notes = [523.25, 659.25, 783.99];
+      notes.forEach((freq, i) => {
+        const o2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.type = 'sine'; o2.frequency.value = freq;
+        g2.gain.setValueAtTime(0, ctx.currentTime + i * 0.1);
+        g2.gain.linearRampToValueAtTime(0.2, ctx.currentTime + i * 0.1 + 0.02);
+        g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.3);
+        o2.start(ctx.currentTime + i * 0.1);
+        o2.stop(ctx.currentTime + i * 0.1 + 0.3);
+      });
+    } else {
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.setValueAtTime(550, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    }
+    setTimeout(() => ctx.close(), 1000);
+  } catch { /* AudioContext not available */ }
 }
 
 // ─── Notification Counts ─────────────────────────────────────────────────────
