@@ -691,3 +691,77 @@ export function getMonthlyRevenue(months = 6): MonthRevenue[] {
   }
   return result;
 }
+
+// ─── API Sync — Cross-device persistence ──────────────────────────────────────
+// Hydrate localStorage from server data (call once after login).
+// Fire-and-forget bulk sync pushes local writes back to the server.
+
+/** Hydrate localStorage with fresh data from the server after client login. */
+export async function hydrateClientFromAPI(): Promise<void> {
+  try {
+    const res = await fetch('/api/portal/data', { credentials: 'include' });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.invoices?.length)       save(INVOICES_KEY,       data.invoices);
+    if (data.tickets?.length)        save(TICKETS_KEY,        data.tickets);
+    if (data.projects?.length)       save(PROJECTS_KEY,       data.projects);
+    if (data.announcements?.length)  save(ANNOUNCEMENTS_KEY,  data.announcements);
+    if (data.files?.length)          save(FILES_KEY,          data.files);
+    if (data.uploads?.length)        save(CLIENT_UPLOADS_KEY, data.uploads);
+    if (data.disputes?.length)       save(DISPUTES_KEY,       data.disputes);
+    if (data.payments?.length)       save(PAYMENTS_KEY,       data.payments);
+  } catch (e) {
+    console.warn('[iTech] Portal hydration failed:', e);
+  }
+}
+
+/** Hydrate localStorage with fresh data from the server after admin login. */
+export async function hydrateAdminFromAPI(): Promise<void> {
+  try {
+    const res = await fetch('/api/admin/data', { credentials: 'include' });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.invoices?.length)          save(INVOICES_KEY,       data.invoices);
+    if (data.tickets?.length)           save(TICKETS_KEY,        data.tickets);
+    if (data.projects?.length)          save(PROJECTS_KEY,       data.projects);
+    if (data.announcements?.length)     save(ANNOUNCEMENTS_KEY,  data.announcements);
+    if (data.files?.length)             save(FILES_KEY,          data.files);
+    if (data.uploads?.length)           save(CLIENT_UPLOADS_KEY, data.uploads);
+    if (data.disputes?.length)          save(DISPUTES_KEY,       data.disputes);
+    if (data.payments?.length)          save(PAYMENTS_KEY,       data.payments);
+    if (data.quickReplies?.length)      save(QUICK_REPLIES_KEY,  data.quickReplies);
+    if (data.invoiceTemplates?.length)  save(INV_TEMPLATES_KEY,  data.invoiceTemplates);
+  } catch (e) {
+    console.warn('[iTech] Admin hydration failed:', e);
+  }
+}
+
+let _syncTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Push current localStorage state to the API (debounced 1s, fire-and-forget). */
+export function scheduleSyncToAPI(isAdmin: boolean): void {
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => {
+    if (isAdmin) {
+      fetch('/api/admin/bulk-sync', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invoices: getInvoices(), tickets: getTickets(), projects: getManagedProjects(),
+          announcements: getAnnouncements(), quickReplies: getQuickReplies(),
+          invoiceTemplates: getInvoiceTemplates(),
+        }),
+      }).catch(() => {});
+    } else {
+      fetch('/api/portal/bulk-sync', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uploads: getClientUploadedFiles(),
+          disputes: getDisputes(),
+          payments: getPaymentConfirmations(),
+        }),
+      }).catch(() => {});
+    }
+  }, 1000);
+}

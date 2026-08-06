@@ -30,7 +30,7 @@ import {
   getMonthlyRevenue,
   getClientUploadedFiles, updateClientUploadStatus, deleteClientUploadedFile,
   getDisputes, updateDisputeStatus,
-  playNotificationSound,
+  playNotificationSound, hydrateAdminFromAPI, scheduleSyncToAPI,
   fmt$, fmtDate, timeAgo, todayStr, addDays, genId,
   type Invoice, type SupportTicket, type ManagedProject,
   type Announcement, type PortalFile, type QuickReplyTemplate,
@@ -245,10 +245,16 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
   const [saving, setSaving]     = useState<'Draft' | 'Sent' | null>(null);
   const [err, setErr]           = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
+  const [dbClients, setDbClients] = useState<DbClient[]>([]);
 
   const [discountPct, setDiscountPct] = useState(editing?.discountPercent ?? 0);
 
-  const client      = PORTAL_CLIENTS.find(c => c.id === clientId);
+  useEffect(() => {
+    fetch('/api/admin/clients', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : []).then(setDbClients).catch(() => {});
+  }, []);
+
+  const client = dbClients.find(c => c.id === clientId);
   const subtotal    = items.reduce((s, i) => s + (i.qty || 0) * (i.rate || 0), 0);
   const discAmt     = subtotal * (discountPct || 0) / 100;
   const taxAmt      = (subtotal - discAmt) * (taxRate || 0) / 100;
@@ -806,27 +812,81 @@ function SupportSection() {
 }
 
 // ─── CLIENTS SECTION ──────────────────────────────────────────────────────────
+interface DbClient { id: string; name: string; email: string; organisation: string; role: string; phone: string; memberSince: string; tier: string; isActive: boolean; }
+
 function ClientsSection() {
-  const [revealed, setRevealed]   = useState<Set<string>>(new Set());
-  const [copied, setCopied]       = useState<string | null>(null);
+  const [clients, setClients]     = useState<DbClient[]>([]);
+  const [loading, setLoading]     = useState(true);
   const [openClient, setOpenClient] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addForm, setAddForm]     = useState({ name: '', email: '', password: '', organisation: '', role: 'Client', phone: '', tier: 'Standard' as string });
+  const [addErr, setAddErr]       = useState('');
+  const [addLoading, setAddLoading] = useState(false);
+  const [editingPw, setEditingPw] = useState<string | null>(null);
+  const [newPw, setNewPw]         = useState('');
+  const [copied, setCopied]       = useState<string | null>(null);
   const [noteText, setNoteText]   = useState('');
   const [showProjForm, setShowProjForm] = useState<string | null>(null);
   const [projForm, setProjForm]   = useState<Partial<ManagedProject>>({});
   const [milestoneInput, setMilestoneInput] = useState('');
   const [, forceUpdate]           = useState(0);
 
-  function reload() { forceUpdate(n => n + 1); }
+  function reloadLocal() { forceUpdate(n => n + 1); }
   function copy(text: string, key: string) { navigator.clipboard.writeText(text).catch(() => {}); setCopied(key); setTimeout(() => setCopied(null), 2000); }
+
+  async function reloadClients() {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/clients', { credentials: 'include' });
+      if (res.ok) setClients(await res.json());
+    } catch {}
+    setLoading(false);
+  }
+
+  useEffect(() => { reloadClients(); }, []);
+
+  async function handleAddClient(e: React.FormEvent) {
+    e.preventDefault(); setAddErr('');
+    if (!addForm.name.trim() || !addForm.email.trim() || !addForm.password) { setAddErr('Name, email, and password are required.'); return; }
+    setAddLoading(true);
+    const res = await fetch('/api/admin/clients', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(addForm),
+    });
+    const data = await res.json();
+    if (!res.ok) { setAddErr(data.error || 'Failed to add client.'); setAddLoading(false); return; }
+    setAddForm({ name: '', email: '', password: '', organisation: '', role: 'Client', phone: '', tier: 'Standard' });
+    setShowAddForm(false); setAddLoading(false);
+    reloadClients();
+  }
+
+  async function handleDeactivate(clientId: string) {
+    if (!confirm('Deactivate this client? They will no longer be able to log in.')) return;
+    await fetch(`/api/admin/clients/${clientId}`, { method: 'DELETE', credentials: 'include' });
+    reloadClients();
+  }
+
+  async function handleResetPassword(clientId: string) {
+    if (!newPw || newPw.length < 8) { alert('Password must be at least 8 characters.'); return; }
+    await fetch(`/api/admin/clients/${clientId}`, {
+      method: 'PUT', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newPassword: newPw }),
+    });
+    setEditingPw(null); setNewPw('');
+    alert('Password reset successfully.');
+  }
+
   function addNote(clientId: string) {
     if (!noteText.trim()) return;
     saveClientNote({ clientId, text: noteText.trim(), authorName: 'Admin', pinned: false });
-    setNoteText(''); reload();
+    setNoteText(''); reloadLocal();
   }
   function submitProject(clientId: string) {
     if (!projForm.name?.trim()) return;
     saveProject({ ...projForm, clientId });
-    setProjForm({}); setShowProjForm(null); reload();
+    setProjForm({}); setShowProjForm(null); reloadLocal();
   }
   function addMilestone() {
     if (!milestoneInput.trim()) return;
@@ -837,16 +897,42 @@ function ClientsSection() {
 
   return (
     <div className="space-y-5">
-      <SectionHeader title="Client Management" sub={`${PORTAL_CLIENTS.length} registered clients`} />
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3 items-start text-sm text-amber-800">
-        <Key size={15} className="text-amber-500 shrink-0 mt-0.5" />
-        <span>To add a client, edit <code className="bg-amber-100 px-1 rounded text-xs">src/lib/portalClients.ts</code>. Projects, notes, and tier changes are managed here.</span>
-      </div>
+      <SectionHeader title="Client Management" sub={`${clients.length} registered client${clients.length !== 1 ? 's' : ''}`}
+        action={<GreenBtn onClick={() => setShowAddForm(v => !v)}><Plus size={15} /> Add Client</GreenBtn>} />
+
+      {/* Add client form */}
+      <AnimatePresence>
+        {showAddForm && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <div className="bg-[#f0fdf4] border border-[#BBF7D0] rounded-2xl p-6 space-y-4">
+              <h3 className="font-black text-slate-800 flex items-center gap-2"><UserCheck size={16} className="text-[#3CB52A]" /> New Client Account</h3>
+              {addErr && <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-2">{addErr}</div>}
+              <form onSubmit={handleAddClient} className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input type="text" placeholder="Full name *" required value={addForm.name} onChange={e => setAddForm(p => ({ ...p, name: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <input type="email" placeholder="Email address *" required value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <input type="password" placeholder="Initial password *" required value={addForm.password} onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <input type="text" placeholder="Organisation" value={addForm.organisation} onChange={e => setAddForm(p => ({ ...p, organisation: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <input type="text" placeholder="Role (e.g. CEO)" value={addForm.role} onChange={e => setAddForm(p => ({ ...p, role: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <input type="text" placeholder="Phone" value={addForm.phone} onChange={e => setAddForm(p => ({ ...p, phone: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                  <select value={addForm.tier} onChange={e => setAddForm(p => ({ ...p, tier: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A] bg-white">
+                    {['Standard', 'Business', 'Enterprise'].map(t => <option key={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-3 pt-1">
+                  <button type="submit" disabled={addLoading} className="px-5 py-2.5 rounded-xl bg-[#3CB52A] text-white text-sm font-bold hover:bg-[#2e911f] disabled:opacity-50">{addLoading ? 'Creating…' : 'Create Client Account'}</button>
+                  <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-500 hover:bg-slate-50">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {loading && <div className="flex justify-center py-8"><div className="w-7 h-7 rounded-full border-2 border-[#3CB52A] border-t-transparent animate-spin" /></div>}
 
       <div className="space-y-4">
-        {PORTAL_CLIENTS.map(client => {
-          const plainPw        = decodeClientPassword(client.passwordHash);
-          const isRevealed     = revealed.has(client.id);
+        {clients.filter(c => c.isActive).map(client => {
           const isOpen         = openClient === client.id;
           const clientInvoices = getInvoices().filter(i => i.clientId === client.id);
           const clientTickets  = getTickets().filter(t => t.clientId === client.id);
@@ -857,17 +943,17 @@ function ClientsSection() {
             <div key={client.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="px-6 py-5 flex flex-wrap items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-[#f0fdf4] border-2 border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-xl shrink-0">{client.name[0]}</div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-black text-slate-900">{client.name}</span>
-                    <Chip label={client.tier} cls={TIER_COLOR[client.tier]} />
+                    <Chip label={client.tier} cls={TIER_COLOR[client.tier] || 'bg-slate-100 text-slate-600'} />
                   </div>
-                  <div className="text-sm text-slate-400">{client.role} · {client.organisation}</div>
+                  <div className="text-sm text-slate-400 truncate">{client.role} · {client.organisation || client.email}</div>
                 </div>
                 <div className="flex gap-4 text-center text-xs">
                   <div><div className="font-black text-slate-800">{clientInvoices.length}</div><div className="text-slate-400">Invoices</div></div>
                   <div><div className="font-black text-slate-800">{clientTickets.length}</div><div className="text-slate-400">Tickets</div></div>
-                  <div><div className="font-black text-slate-800">{client.projects.length + projects.length}</div><div className="text-slate-400">Projects</div></div>
+                  <div><div className="font-black text-slate-800">{projects.length}</div><div className="text-slate-400">Projects</div></div>
                 </div>
                 <button onClick={() => setOpenClient(isOpen ? null : client.id)}
                   className="flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-[#3CB52A] transition-colors">
@@ -881,38 +967,42 @@ function ClientsSection() {
                     <div className="border-t border-slate-50 px-6 py-4 space-y-5">
                       {/* Contact info */}
                       <div className="flex flex-wrap gap-4 text-sm">
-                        {[{ icon: Mail, v: client.email }, { icon: Phone, v: client.phone }, { icon: Building2, v: client.organisation }, { icon: Star, v: `Since ${client.memberSince}` }].map(({ icon: Icon, v }, i) => (
+                        {[{ icon: Mail, v: client.email }, { icon: Phone, v: client.phone || '—' }, { icon: Building2, v: client.organisation || '—' }, { icon: Star, v: `Since ${client.memberSince}` }].map(({ icon: Icon, v }, i) => (
                           <div key={i} className="flex items-center gap-2"><Icon size={13} className="text-slate-400" /><span className="text-slate-600">{v}</span></div>
                         ))}
                       </div>
 
-                      {/* Credentials */}
+                      {/* Portal credentials */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><Key size={11} /> Portal Credentials</span>
-                          <button onClick={() => setRevealed(p => { const n = new Set(p); n.has(client.id) ? n.delete(client.id) : n.add(client.id); return n; })}
-                            className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1">
-                            {isRevealed ? <EyeOff size={12} /> : <Eye size={12} />} {isRevealed ? 'Hide' : 'Show'}
-                          </button>
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><Key size={11} /> Portal Access</span>
                         </div>
-                        <AnimatePresence>
-                          {isRevealed && (
-                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden space-y-2">
-                              {[{ label: 'URL', value: '/portal', key: `url-${client.id}` }, { label: 'Email', value: client.email, key: `em-${client.id}` }, { label: 'Password', value: plainPw, key: `pw-${client.id}` }].map(({ label, value, key }) => (
-                                <div key={key} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200">
-                                  <div className="flex-1"><div className="text-[10px] text-slate-400 font-semibold">{label}</div><div className="text-sm font-mono text-slate-800">{value}</div></div>
-                                  <button onClick={() => copy(value, key)} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#3CB52A] transition-colors">
-                                    {copied === key ? <Check size={14} className="text-[#3CB52A]" /> : <Copy size={14} />}
-                                  </button>
-                                </div>
-                              ))}
-                              <a href={`mailto:${client.email}?subject=Your%20iTech%20Portal%20Access&body=Hello%20${encodeURIComponent(client.name)}%2C%0A%0AURL%3A%20/portal%0AEmail%3A%20${encodeURIComponent(client.email)}%0APassword%3A%20${encodeURIComponent(plainPw)}`}
-                                className="flex items-center gap-1.5 text-xs font-bold text-[#3CB52A] hover:underline mt-1">
-                                <Mail size={12} /> Email credentials <ExternalLink size={11} />
-                              </a>
-                            </motion.div>
+                        <div className="space-y-2">
+                          {[{ label: 'Portal URL', value: '/portal', key: `url-${client.id}` }, { label: 'Email', value: client.email, key: `em-${client.id}` }].map(({ label, value, key }) => (
+                            <div key={key} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200">
+                              <div className="flex-1"><div className="text-[10px] text-slate-400 font-semibold">{label}</div><div className="text-sm font-mono text-slate-800">{value}</div></div>
+                              <button onClick={() => copy(value, key)} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#3CB52A] transition-colors">
+                                {copied === key ? <Check size={14} className="text-[#3CB52A]" /> : <Copy size={14} />}
+                              </button>
+                            </div>
+                          ))}
+                          {/* Password reset */}
+                          {editingPw === client.id ? (
+                            <div className="flex gap-2">
+                              <input type="password" placeholder="New password (min 8 chars)" value={newPw} onChange={e => setNewPw(e.target.value)} className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+                              <button onClick={() => handleResetPassword(client.id)} className="px-3 py-2 rounded-xl bg-[#3CB52A] text-white text-xs font-bold">Reset</button>
+                              <button onClick={() => { setEditingPw(null); setNewPw(''); }} className="px-3 py-2 rounded-xl border border-slate-200 text-xs">Cancel</button>
+                            </div>
+                          ) : (
+                            <button onClick={() => setEditingPw(client.id)} className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-[#3CB52A] transition-colors mt-1">
+                              <Key size={12} /> Reset client password
+                            </button>
                           )}
-                        </AnimatePresence>
+                          <a href={`mailto:${client.email}?subject=Your%20iTech%20Portal%20Access&body=Hello%20${encodeURIComponent(client.name)}%2C%0A%0AYour%20client%20portal%20is%20ready!%0APortal%20URL%3A%20%2Fportal%0AEmail%3A%20${encodeURIComponent(client.email)}%0A%0APlease%20use%20the%20password%20we%20sent%20you%20separately%20for%20security.%0A%0ABest%20regards%2C%0AiTech%20Network%20Africa`}
+                            className="flex items-center gap-1.5 text-xs font-bold text-[#3CB52A] hover:underline mt-1">
+                            <Mail size={12} /> Email client portal link <ExternalLink size={11} />
+                          </a>
+                        </div>
                       </div>
 
                       {/* Projects */}
@@ -922,16 +1012,14 @@ function ClientsSection() {
                           <button onClick={() => { setProjForm({ clientId: client.id, milestones: [] }); setShowProjForm(client.id); }} className="text-xs font-bold text-[#3CB52A] hover:underline flex items-center gap-1"><Plus size={12} /> Add Project</button>
                         </div>
                         <div className="space-y-2">
-                          {[...client.projects.map(p => ({ ...p, _static: true })), ...projects.map(p => ({ ...p, _static: false }))].map(p => (
+                          {projects.map(p => (
                             <div key={p.id} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
                               <div className={`w-2 h-2 rounded-full shrink-0 ${p.status === 'Active' ? 'bg-emerald-400' : p.status === 'Completed' ? 'bg-sky-400' : 'bg-amber-400'}`} />
-                              <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-slate-700 truncate">{p.name}</div><div className="text-xs text-slate-400">{p.type} · {p.status}</div></div>
-                              {!p._static && (
-                                <button onClick={() => { deleteProject(p.id); reload(); }} className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={13} /></button>
-                              )}
+                              <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-slate-700 truncate">{p.name}</div><div className="text-xs text-slate-400">{p.type} · {p.status} · {p.progress}%</div></div>
+                              <button onClick={() => { deleteProject(p.id); reloadLocal(); }} className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={13} /></button>
                             </div>
                           ))}
-                          {client.projects.length + projects.length === 0 && <div className="text-xs text-slate-400 py-2 text-center">No projects yet.</div>}
+                          {projects.length === 0 && <div className="text-xs text-slate-400 py-2 text-center">No projects yet.</div>}
                         </div>
                         {showProjForm === client.id && (
                           <div className="mt-3 p-4 bg-[#f0fdf4] border border-[#BBF7D0] rounded-xl space-y-3">
@@ -943,7 +1031,8 @@ function ClientsSection() {
                                 {['Active', 'Completed', 'On Hold'].map(s => <option key={s}>{s}</option>)}
                               </select>
                             </div>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-slate-500">Progress:</span>
                               <input type="range" min={0} max={100} value={projForm.progress || 0} onChange={e => setProjForm(p => ({ ...p, progress: Number(e.target.value) }))} className="flex-1 accent-[#3CB52A]" />
                               <span className="text-xs font-bold text-[#3CB52A] w-10 text-right">{projForm.progress || 0}%</span>
                             </div>
@@ -962,14 +1051,14 @@ function ClientsSection() {
                         )}
                       </div>
 
-                      {/* Notes */}
+                      {/* Internal notes */}
                       <div>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5"><StickyNote size={11} /> Internal Notes</p>
                         <div className="space-y-2 mb-2">
                           {notes.map(n => (
                             <div key={n.id} className="flex gap-3 items-start bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
                               <div className="flex-1"><p className="text-sm text-slate-700">{n.text}</p><p className="text-[10px] text-slate-400 mt-1">{n.authorName} · {timeAgo(n.createdAt)}</p></div>
-                              <button onClick={() => { deleteClientNote(n.id); reload(); }} className="text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={13} /></button>
+                              <button onClick={() => { deleteClientNote(n.id); reloadLocal(); }} className="text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={13} /></button>
                             </div>
                           ))}
                           {notes.length === 0 && <div className="text-xs text-slate-400">No notes yet.</div>}
@@ -979,6 +1068,13 @@ function ClientsSection() {
                           <button onClick={() => addNote(client.id)} className="px-4 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-200">Add</button>
                         </div>
                       </div>
+
+                      {/* Danger zone */}
+                      <div className="pt-2 border-t border-slate-100">
+                        <button onClick={() => handleDeactivate(client.id)} className="flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
+                          <MinusCircle size={13} /> Deactivate account
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -986,6 +1082,13 @@ function ClientsSection() {
             </div>
           );
         })}
+        {!loading && clients.filter(c => c.isActive).length === 0 && (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
+            <Users size={32} className="mx-auto text-slate-200 mb-3" />
+            <p className="text-slate-400 text-sm font-semibold">No clients yet</p>
+            <p className="text-slate-300 text-xs mt-1">Click "Add Client" to create the first account</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1315,7 +1418,7 @@ function FilesSection() {
                       <span>{f.fileType}</span>
                       {f.sizeLabel && <span>{f.sizeLabel}</span>}
                       {f.dataUrl && <span className="text-[#3CB52A] font-semibold">Direct upload</span>}
-                      <span>→ {f.clientId === 'all' ? 'All clients' : PORTAL_CLIENTS.find(c => c.id === f.clientId)?.name || f.clientId}</span>
+                      <span>→ {f.clientId === 'all' ? 'All clients' : f.clientId}</span>
                     </div>
                   </div>
                   <div className="text-[11px] text-slate-400 hidden sm:block">{timeAgo(f.uploadedAt)}</div>
@@ -1382,27 +1485,56 @@ function FilesSection() {
 
 // ─── SETTINGS ─────────────────────────────────────────────────────────────────
 function AdminSettings() {
-  const [copied, setCopied]   = useState<string | null>(null);
-  const [qrs, setQrs]         = useState<QuickReplyTemplate[]>([]);
+  const [copied, setCopied]       = useState<string | null>(null);
+  const [qrs, setQrs]             = useState<QuickReplyTemplate[]>([]);
   const [showQRForm, setShowQRForm] = useState(false);
-  const [qrForm, setQrForm]   = useState<Partial<QuickReplyTemplate>>({});
+  const [qrForm, setQrForm]       = useState<Partial<QuickReplyTemplate>>({});
+  const [pwForm, setPwForm]       = useState({ current: '', next: '', confirm: '' });
+  const [pwStatus, setPwStatus]   = useState<'idle' | 'success' | 'error'>('idle');
+  const [pwMsg, setPwMsg]         = useState('');
+  const [showPw, setShowPw]       = useState(false);
 
-  function reload() { setQrs(getQuickReplies()); }
-  useEffect(() => { reload(); }, []);
+  function reloadQrs() { setQrs(getQuickReplies()); }
+  useEffect(() => { reloadQrs(); }, []);
   function copy(v: string, k: string) { navigator.clipboard.writeText(v).catch(() => {}); setCopied(k); setTimeout(() => setCopied(null), 2000); }
   function saveQR(e: React.FormEvent) {
     e.preventDefault(); if (!qrForm.title?.trim() || !qrForm.body?.trim()) return;
-    saveQuickReply(qrForm); setShowQRForm(false); setQrForm({}); reload();
+    saveQuickReply(qrForm); setShowQRForm(false); setQrForm({}); reloadQrs();
+  }
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault(); setPwStatus('idle'); setPwMsg('');
+    if (!pwForm.current) { setPwStatus('error'); setPwMsg('Enter current password.'); return; }
+    if (pwForm.next.length < 8) { setPwStatus('error'); setPwMsg('New password must be at least 8 characters.'); return; }
+    if (pwForm.next !== pwForm.confirm) { setPwStatus('error'); setPwMsg('Passwords do not match.'); return; }
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        setPwStatus('error'); setPwMsg(d.error || 'Current password is incorrect.');
+      } else {
+        setPwStatus('success'); setPwMsg('Password updated successfully.');
+        setPwForm({ current: '', next: '', confirm: '' });
+      }
+    } catch { setPwStatus('error'); setPwMsg('Connection error. Please try again.'); }
   }
 
   return (
     <div className="space-y-6 max-w-xl">
       <SectionHeader title="Settings" sub="Admin account, quick replies, and system configuration" />
 
+      {/* Admin account card */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
         <div className="flex items-center gap-4 pb-5 border-b border-slate-50">
           <div className="w-14 h-14 rounded-2xl bg-[#0A1929] flex items-center justify-center text-[#3CB52A]"><Shield size={26} /></div>
-          <div><div className="font-black text-slate-900 text-lg">iTech Admin</div><div className="text-sm text-slate-400">Super Administrator</div></div>
+          <div>
+            <div className="font-black text-slate-900 text-lg">iTech Admin</div>
+            <div className="text-sm text-slate-400">Super Administrator · {ADMIN_CREDENTIALS.email}</div>
+          </div>
         </div>
         {[{ label: 'Admin URL', value: '/admin', key: 'url' }, { label: 'Email', value: ADMIN_CREDENTIALS.email, key: 'email' }].map(({ label, value, key }) => (
           <div key={key} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3">
@@ -1412,9 +1544,21 @@ function AdminSettings() {
             </button>
           </div>
         ))}
-        <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-4 text-sm text-[#166534]">
-          <strong>To change the admin password:</strong> Open <code className="bg-[#dcfce7] px-1 rounded text-xs">src/lib/adminAuth.ts</code> and update the <code className="bg-[#dcfce7] px-1 rounded text-xs">hash</code>.
-          Run: <code className="bg-[#dcfce7] px-1 rounded text-xs">btoa("Password:iTechPortal2025")</code>
+
+        {/* Change password form */}
+        <div className="pt-1">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5"><Key size={11} /> Change Password</p>
+          {pwStatus === 'success' && <div className="mb-3 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 flex items-center gap-2"><CheckCircle2 size={14} />{pwMsg}</div>}
+          {pwStatus === 'error'   && <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2 flex items-center gap-2"><AlertCircle size={14} />{pwMsg}</div>}
+          <form onSubmit={changePassword} className="space-y-3">
+            <div className="relative">
+              <input type={showPw ? 'text' : 'password'} placeholder="Current password" value={pwForm.current} onChange={e => setPwForm(p => ({ ...p, current: e.target.value }))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A] pr-10" />
+              <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">{showPw ? <EyeOff size={14} /> : <Eye size={14} />}</button>
+            </div>
+            <input type="password" placeholder="New password (min 8 chars)" value={pwForm.next} onChange={e => setPwForm(p => ({ ...p, next: e.target.value }))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+            <input type="password" placeholder="Confirm new password" value={pwForm.confirm} onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" />
+            <button type="submit" className="px-5 py-2.5 rounded-xl bg-[#0A1929] text-white text-sm font-bold hover:bg-[#0f2a3d] transition-colors">Update Password</button>
+          </form>
         </div>
       </div>
 
@@ -1441,21 +1585,36 @@ function AdminSettings() {
             <div key={qr.id} className="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm text-slate-700">{qr.title}</div>
-                <div className="text-xs text-slate-400 truncate">{qr.body.slice(0, 80)}…</div>
+                <div className="text-xs text-slate-400 truncate">{qr.body.slice(0, 80)}{qr.body.length > 80 ? '…' : ''}</div>
               </div>
-              <button onClick={() => { deleteQuickReply(qr.id); reload(); }} className="text-slate-300 hover:text-red-500 transition-colors shrink-0"><Trash2 size={13} /></button>
+              <button onClick={() => { deleteQuickReply(qr.id); reloadQrs(); }} className="text-slate-300 hover:text-red-500 transition-colors shrink-0"><Trash2 size={13} /></button>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-        <h3 className="font-bold text-slate-800 mb-3">Data Storage</h3>
-        <p className="text-sm text-slate-500">All portal data is stored in the browser's <code className="bg-slate-100 px-1 rounded text-xs">localStorage</code>. It persists across sessions on the same device.</p>
-        <button onClick={() => { if (confirm('Clear ALL portal data? This cannot be undone.')) { ['itech_portal_invoices_v2', 'itech_portal_tickets_v2', 'itech_portal_projects_v1', 'itech_portal_announcements_v1', 'itech_portal_files_v1', 'itech_portal_payments_v1', 'itech_portal_activity_v1'].forEach(k => localStorage.removeItem(k)); window.location.reload(); } }}
-          className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors">
-          <Trash2 size={14} /> Clear all data
-        </button>
+      {/* Data & backend */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-3">
+        <h3 className="font-bold text-slate-800 flex items-center gap-2"><Activity size={15} className="text-[#3CB52A]" /> Data & Backend</h3>
+        <div className="space-y-2 text-sm text-slate-500">
+          <p>All portal data — clients, invoices, tickets, projects, announcements — is stored in a <strong className="text-slate-700">PostgreSQL database</strong> and synced across devices.</p>
+          <p>Sessions last <strong className="text-slate-700">30 days</strong> and are stored server-side with HTTP-only cookies. Logging in on any device loads the latest data automatically.</p>
+        </div>
+        <div className="flex flex-wrap gap-3 pt-1">
+          {[
+            { label: 'API Server', value: 'http://localhost:8000', key: 'api' },
+            { label: 'Client Portal', value: '/portal', key: 'portal' },
+            { label: 'Admin Dashboard', value: '/admin', key: 'admin' },
+          ].map(({ label, value, key }) => (
+            <div key={key} className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200">
+              <div className="text-[10px] text-slate-400 font-semibold">{label}</div>
+              <code className="text-xs font-mono text-slate-700">{value}</code>
+              <button onClick={() => copy(value, key)} className="w-6 h-6 rounded-lg flex items-center justify-center text-slate-300 hover:text-[#3CB52A] transition-colors">
+                {copied === key ? <Check size={11} className="text-[#3CB52A]" /> : <Copy size={11} />}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1481,6 +1640,13 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
   useEffect(() => {
     function refresh() { setUnread(getAdminUnread()); }
     refresh(); const id = setInterval(refresh, 3000); return () => clearInterval(id);
+  }, []);
+
+  // Periodically sync admin writes to the server (cross-device persistence)
+  useEffect(() => {
+    scheduleSyncToAPI(true);
+    const id = setInterval(() => scheduleSyncToAPI(true), 30000);
+    return () => clearInterval(id);
   }, []);
 
   function navTo(s: string) { setSection(s); setMobileNav(false); }
@@ -1566,15 +1732,24 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault(); setError('');
     if (!email.trim() || !password) { setError('Enter email and password.'); return; }
-    if (email.trim().toLowerCase() !== ADMIN_CREDENTIALS.email.toLowerCase()) { setError('Invalid admin credentials.'); return; }
     setLoading(true);
-    setTimeout(() => {
-      if (!verifyAdminPassword(password)) { setError('Invalid admin credentials.'); setLoading(false); return; }
-      setLoading(false); onLogin();
-    }, 600);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password, userType: 'admin' }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || 'Invalid admin credentials.'); setLoading(false); return; }
+      await hydrateAdminFromAPI();
+      onLogin();
+    } catch {
+      setError('Connection error. Please try again.');
+    }
+    setLoading(false);
   }
 
   return (
@@ -1609,6 +1784,36 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
-  const [authed, setAuthed] = useState(false);
-  return authed ? <AdminShell onLogout={() => setAuthed(false)} /> : <AdminLoginScreen onLogin={() => setAuthed(true)} />;
+  const [authed, setAuthed]     = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    // Restore admin session on page load/refresh
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(async data => {
+        if (data?.user?.userType === 'admin') {
+          await hydrateAdminFromAPI();
+          setAuthed(true);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setChecking(false));
+  }, []);
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    setAuthed(false);
+  }
+
+  if (checking) return (
+    <div className="min-h-screen bg-[#060E18] flex items-center justify-center">
+      <div className="text-center space-y-3">
+        <div className="w-10 h-10 rounded-full border-2 border-[#3CB52A] border-t-transparent animate-spin mx-auto" />
+        <p className="text-white/30 text-sm">Loading dashboard…</p>
+      </div>
+    </div>
+  );
+
+  return authed ? <AdminShell onLogout={handleLogout} /> : <AdminLoginScreen onLogin={() => setAuthed(true)} />;
 }

@@ -11,7 +11,7 @@ import {
   Upload, Flag, FileUp, Trash2,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { findClient, verifyPassword, type PortalClient } from '@/lib/portalClients';
+import { type PortalClient } from '@/lib/portalClients';
 import {
   getClientInvoices, getClientTickets, createTicket, addTicketMessage,
   markTicketMessagesRead, markInvoiceViewed, getClientUnread, updateTicketStatus,
@@ -20,7 +20,7 @@ import {
   getClientPayments, getMonthlyRevenue,
   getClientUploadedFiles, saveClientUploadedFile, deleteClientUploadedFile,
   getClientDisputes, submitDispute,
-  playNotificationSound,
+  playNotificationSound, hydrateClientFromAPI, scheduleSyncToAPI,
   fmt$, fmtDate, timeAgo, todayStr, addDays, nowIso,
   type Invoice, type SupportTicket, type Announcement, type PortalFile,
   type ClientUploadedFile, type InvoiceDispute,
@@ -1015,14 +1015,27 @@ function Profile({ client }: { client: PortalClient }) {
   const [referralCopied, setReferralCopied] = useState(false);
   const referralLink = `https://itechnetworkafrica.com/?ref=${client.id}`;
 
-  function changePassword(e: React.FormEvent) {
+  async function changePassword(e: React.FormEvent) {
     e.preventDefault(); setPwStatus('idle'); setPwMsg('');
-    if (!verifyPassword(pwForm.current, client.passwordHash)) { setPwStatus('error'); setPwMsg('Current password is incorrect.'); return; }
+    if (!pwForm.current) { setPwStatus('error'); setPwMsg('Please enter your current password.'); return; }
     if (pwForm.next.length < 8) { setPwStatus('error'); setPwMsg('New password must be at least 8 characters.'); return; }
     if (pwForm.next !== pwForm.confirm) { setPwStatus('error'); setPwMsg('Passwords do not match.'); return; }
-    // In a real system this would call the backend. Here we just confirm success.
-    setPwStatus('success'); setPwMsg('Password updated! Your new password takes effect on next login.');
-    setPwForm({ current: '', next: '', confirm: '' });
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        setPwStatus('error'); setPwMsg(d.error || 'Current password is incorrect.');
+      } else {
+        setPwStatus('success'); setPwMsg('Password updated! Your new password is active immediately.');
+        setPwForm({ current: '', next: '', confirm: '' });
+      }
+    } catch {
+      setPwStatus('error'); setPwMsg('Connection error. Please try again.');
+    }
   }
 
   function copyReferral() {
@@ -1308,6 +1321,13 @@ function PortalShell({ client, onLogout }: { client: PortalClient; onLogout: () 
     refresh(); const id = setInterval(refresh, 4000); return () => clearInterval(id);
   }, []);
 
+  // Periodically sync client-side writes to the server (cross-device persistence)
+  useEffect(() => {
+    scheduleSyncToAPI(false);
+    const id = setInterval(() => scheduleSyncToAPI(false), 30000);
+    return () => clearInterval(id);
+  }, []);
+
   function navTo(s: string) { setSection(s); setMobileNav(false); }
 
   const NAV = [
@@ -1425,15 +1445,30 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault(); setError('');
     if (!email.trim() || !password) { setError('Please enter your email and password.'); return; }
     setLoading(true);
-    setTimeout(() => {
-      const client = findClient(email);
-      if (!client || !verifyPassword(password, client.passwordHash)) { setError('Invalid email or password. Contact us if you need access.'); setLoading(false); return; }
-      setLoading(false); onLogin(client);
-    }, 900);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password, userType: 'client' }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || 'Invalid email or password. Contact us if you need access.'); setLoading(false); return; }
+      await hydrateClientFromAPI();
+      onLogin({
+        id: data.user.id, name: data.user.name, email: data.user.email,
+        passwordHash: '', organisation: data.user.organisation || '',
+        role: data.user.role || 'Client', phone: data.user.phone || '—',
+        memberSince: data.user.memberSince || '', tier: data.user.tier || 'Standard',
+        projects: [],
+      });
+    } catch {
+      setError('Connection error. Please try again.');
+    }
+    setLoading(false);
   }
 
   return (
@@ -1502,5 +1537,42 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function ClientPortalPage() {
   const [client, setClient] = useState<PortalClient | null>(null);
-  return client ? <PortalShell client={client} onLogout={() => setClient(null)} /> : <LoginScreen onLogin={setClient} />;
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    // Restore session on page load/refresh (cross-device: also hydrates from server)
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(async data => {
+        if (data?.user?.userType === 'client') {
+          await hydrateClientFromAPI();
+          setClient({
+            id: data.user.id, name: data.user.name, email: data.user.email,
+            passwordHash: '', organisation: data.user.organisation || '',
+            role: data.user.role || 'Client', phone: data.user.phone || '—',
+            memberSince: data.user.memberSince || '',
+            tier: (data.user.tier || 'Standard') as PortalClient['tier'],
+            projects: [],
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setChecking(false));
+  }, []);
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    setClient(null);
+  }
+
+  if (checking) return (
+    <div className="min-h-screen bg-[#060E18] flex items-center justify-center">
+      <div className="text-center space-y-3">
+        <div className="w-10 h-10 rounded-full border-2 border-[#3CB52A] border-t-transparent animate-spin mx-auto" />
+        <p className="text-white/30 text-sm">Loading portal…</p>
+      </div>
+    </div>
+  );
+
+  return client ? <PortalShell client={client} onLogout={handleLogout} /> : <LoginScreen onLogin={setClient} />;
 }
