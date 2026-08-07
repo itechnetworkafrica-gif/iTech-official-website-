@@ -26,45 +26,81 @@ Both services start automatically via workflows:
 
 The Vite dev server proxies `/api` requests to `http://localhost:8000`.
 
+## Database
+
+The Replit workspace has a managed PostgreSQL database. The full schema (all 15 portal tables) is
+initialized and ready. A reference copy of the schema is in `schema.sql` at the project root —
+use this file to set up any external PostgreSQL provider.
+
+### Default admin account
+
+| Field | Value |
+|---|---|
+| Email | `admin@itechnetworkafrica.com` |
+| Password | `Admin@iTech2025!` |
+| Type | `admin` |
+
+**Change this password immediately after your first login via the Admin Dashboard → Settings.**
+
+### Tables created
+
+`portal_users`, `portal_sessions`, `invoices`, `support_tickets`, `ticket_messages`,
+`projects`, `announcements`, `portal_files`, `client_uploads`, `invoice_disputes`,
+`payment_confirmations`, `quick_replies`, `client_notes`, `invoice_templates`, `activity_log`
+
 ## Environment Variables / Secrets Required
 
-The API server owns the PostgreSQL connection. Never put `DATABASE_URL` in the
-Vercel frontend's `VITE_*` variables or in browser code.
-
-For the Replit workspace, `DATABASE_URL` is provided by the managed PostgreSQL
-service. The portal schema and starter accounts are already initialized.
+The API server owns the PostgreSQL connection. **Never** put `DATABASE_URL` in
+Vercel frontend variables or in any browser-side code.
 
 The following secrets are needed for optional/full functionality (set them in Replit Secrets):
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection string for the API server only |
+| `DATABASE_URL` | Auto-managed by Replit — do not set manually |
 | `OPENAI_API_KEY` | Powers the "Sarah" AI chatbot (`/api/chat`) |
 | `EMAIL_USER` | Email address for sending consultation form submissions |
 | `EMAIL_PASS` | Password / app password for the email account |
 | `SESSION_SECRET` | Already set — used for session signing |
 
-### Deploying the frontend separately on Vercel
+### Architecture: Vercel frontend + separate API server
 
-Set these variables in the Vercel project:
+```
+Browser → Vercel (React frontend) → API Server (Express) → PostgreSQL
+```
+
+The Vercel site is **static frontend only** (`vercel.json` has no serverless functions).
+The API server must be deployed separately (e.g. Replit Deploy, Railway, Render).
+
+**Vercel environment variables** (set in Vercel project settings):
 
 | Variable | Value |
 |---|---|
-| `VITE_API_URL` | The public origin of the deployed API server, without a trailing slash |
-| `VITE_SITE_URL` | The public website origin used for metadata |
+| `VITE_API_URL` | Public URL of your deployed API server, no trailing slash — e.g. `https://your-api.up.railway.app` |
+| `VITE_SITE_URL` | Your production website domain — e.g. `https://itechnetworkafrica.com` |
 
-Set these variables on the API server/deployment:
+**API server environment variables** (set wherever the API is hosted):
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | The PostgreSQL URL, server-side only |
-| `CORS_ORIGINS` | The exact Vercel origin, for example `https://your-site.vercel.app` |
-| `COOKIE_CROSS_SITE` | `true` when the frontend and API use different sites/domains |
+| `DATABASE_URL` | Your PostgreSQL connection string (see below for getting it) |
+| `PORT` | Port to listen on (usually assigned by the host) |
+| `SESSION_SECRET` | A long random secret for cookie signing |
+| `CORS_ORIGINS` | Exact Vercel origin — e.g. `https://your-site.vercel.app` |
+| `COOKIE_CROSS_SITE` | `true` (required since frontend and API are on different domains) |
+| `OPENAI_API_KEY` | Optional — for the AI chatbot |
+| `EMAIL_USER` | Optional — for consultation emails |
+| `EMAIL_PASS` | Optional — for consultation emails |
 
-The browser flow is `Vercel frontend → API server → PostgreSQL`. A browser
-must never connect directly to PostgreSQL. The API deployment must be public
-for a separately hosted Vercel frontend to reach it, and the API URL must use
-HTTPS in production.
+### Getting the DATABASE_URL for external deployment
+
+The Replit-managed `DATABASE_URL` is only available inside this Replit workspace.
+For deploying the API server externally, use one of:
+- **Neon** (https://neon.tech) — free PostgreSQL, copy the connection string
+- **Supabase** (https://supabase.com) — free PostgreSQL, use the "connection string" URI
+- **Railway** — provision a PostgreSQL plugin, copy the `DATABASE_URL` variable
+
+Then run `schema.sql` against your external database to create all the tables.
 
 ## Tech Stack
 
