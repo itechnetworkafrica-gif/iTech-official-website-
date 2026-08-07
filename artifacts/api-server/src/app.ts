@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
+import { buildOriginValidator } from "./middleware/validateOrigin.js";
 
 const app: Express = express();
 
@@ -33,6 +34,15 @@ app.use(
 
 // Trust proxy for cookies in production
 app.set("trust proxy", 1);
+
+// CSRF defence: reject unsafe cross-origin requests whose Origin is not
+// in the allowlist. Required when COOKIE_CROSS_SITE=true because
+// SameSite=None cookies are sent on cross-origin form submissions that
+// bypass preflight checks. Registered before CORS so blocked requests get
+// a clean 403 instead of a CORS error.
+if (!allowAnyOrigin || allowCrossSiteCookies) {
+  app.use(buildOriginValidator(configuredCorsOrigins, allowCrossSiteCookies));
+}
 
 app.use(
   cors({
