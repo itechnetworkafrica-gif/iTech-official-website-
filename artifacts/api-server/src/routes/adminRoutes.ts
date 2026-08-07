@@ -151,13 +151,13 @@ router.put("/admin/clients/:id", auth, async (req: Request, res: Response) => {
     );
   }
 
-  await logActivity("Updated client", req.params.id, "Client");
+  await logActivity("Updated client", String(req.params.id), "Client");
   res.json({ ok: true });
 });
 
 router.delete("/admin/clients/:id", auth, async (req: Request, res: Response) => {
   await query("UPDATE portal_users SET is_active = false WHERE id = $1", [req.params.id]);
-  await logActivity("Deactivated client", req.params.id, "Client");
+  await logActivity("Deactivated client", String(req.params.id), "Client");
   res.json({ ok: true });
 });
 
@@ -211,7 +211,7 @@ router.put("/admin/invoices/:id", auth, async (req: Request, res: Response) => {
       req.params.id,
     ]
   );
-  await logActivity("Updated invoice", req.params.id, "Invoice");
+  await logActivity("Updated invoice", String(req.params.id), "Invoice");
   res.json({ ok: true });
 });
 
@@ -258,7 +258,7 @@ router.post("/admin/tickets/:id/messages", auth, async (req: Request, res: Respo
     await query("UPDATE support_tickets SET updated_at = NOW() WHERE id = $1", [req.params.id]);
   }
 
-  await logActivity("Replied to ticket", req.params.id, "Ticket");
+  await logActivity("Replied to ticket", String(req.params.id), "Ticket");
   res.json({ ok: true });
 });
 
@@ -325,7 +325,7 @@ router.put("/admin/projects/:id", auth, async (req: Request, res: Response) => {
 
 router.delete("/admin/projects/:id", auth, async (req: Request, res: Response) => {
   await query("DELETE FROM projects WHERE id = $1", [req.params.id]);
-  await logActivity("Deleted project", req.params.id, "Project");
+  await logActivity("Deleted project", String(req.params.id), "Project");
   res.json({ ok: true });
 });
 

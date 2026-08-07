@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { type PortalClient } from '@/lib/portalClients';
+import { apiUrl } from '@/lib/apiBase';
 import {
   getClientInvoices, getClientTickets, createTicket, addTicketMessage,
   markTicketMessagesRead, markInvoiceViewed, getClientUnread, updateTicketStatus,
@@ -1021,7 +1022,7 @@ function Profile({ client }: { client: PortalClient }) {
     if (pwForm.next.length < 8) { setPwStatus('error'); setPwMsg('New password must be at least 8 characters.'); return; }
     if (pwForm.next !== pwForm.confirm) { setPwStatus('error'); setPwMsg('Passwords do not match.'); return; }
     try {
-      const res = await fetch('/api/auth/change-password', {
+      const res = await fetch(apiUrl('/api/auth/change-password'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
@@ -1450,7 +1451,7 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
     if (!email.trim() || !password) { setError('Please enter your email and password.'); return; }
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password, userType: 'client' }),
@@ -1541,7 +1542,7 @@ export default function ClientPortalPage() {
 
   useEffect(() => {
     // Restore session on page load/refresh (cross-device: also hydrates from server)
-    fetch('/api/auth/me', { credentials: 'include' })
+    fetch(apiUrl('/api/auth/me'), { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then(async data => {
         if (data?.user?.userType === 'client') {
@@ -1561,7 +1562,7 @@ export default function ClientPortalPage() {
   }, []);
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' }).catch(() => {});
     setClient(null);
   }
 

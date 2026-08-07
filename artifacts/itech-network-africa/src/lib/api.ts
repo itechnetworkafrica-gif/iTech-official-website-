@@ -1,3 +1,5 @@
+import { apiUrl } from "./apiBase";
+
 /**
  * iTech Network Africa — Portal API Client
  *
@@ -8,7 +10,7 @@
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 
 async function apiFetch(path: string, opts?: RequestInit): Promise<any> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetch(apiUrl(`${BASE}${path}`), {
     credentials: "include",
     headers: { "Content-Type": "application/json", ...opts?.headers },
     ...opts,

@@ -7,6 +7,13 @@ import { logger } from "./lib/logger.js";
 
 const app: Express = express();
 
+const configuredCorsOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const allowAnyOrigin = configuredCorsOrigins.length === 0;
+const allowCrossSiteCookies = process.env.COOKIE_CROSS_SITE === "true";
+
 app.use(
   pinoHttp({
     logger,
@@ -26,7 +33,15 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: true,
+    origin: allowAnyOrigin
+      ? true
+      : (origin, callback) => {
+          if (!origin || configuredCorsOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            callback(new Error("Origin is not allowed by CORS"));
+          }
+        },
     credentials: true,
   }),
 );

@@ -1,3 +1,5 @@
+import { apiUrl } from "./apiBase";
+
 /**
  * iTech Network Africa — Portal Data Layer
  *
@@ -699,7 +701,7 @@ export function getMonthlyRevenue(months = 6): MonthRevenue[] {
 /** Hydrate localStorage with fresh data from the server after client login. */
 export async function hydrateClientFromAPI(): Promise<void> {
   try {
-    const res = await fetch('/api/portal/data', { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/portal/data'), { credentials: 'include' });
     if (!res.ok) return;
     const data = await res.json();
     if (data.invoices?.length)       save(INVOICES_KEY,       data.invoices);
@@ -718,7 +720,7 @@ export async function hydrateClientFromAPI(): Promise<void> {
 /** Hydrate localStorage with fresh data from the server after admin login. */
 export async function hydrateAdminFromAPI(): Promise<void> {
   try {
-    const res = await fetch('/api/admin/data', { credentials: 'include' });
+    const res = await fetch(apiUrl('/api/admin/data'), { credentials: 'include' });
     if (!res.ok) return;
     const data = await res.json();
     if (data.invoices?.length)          save(INVOICES_KEY,       data.invoices);
@@ -743,7 +745,7 @@ export function scheduleSyncToAPI(isAdmin: boolean): void {
   if (_syncTimer) clearTimeout(_syncTimer);
   _syncTimer = setTimeout(() => {
     if (isAdmin) {
-      fetch('/api/admin/bulk-sync', {
+      fetch(apiUrl('/api/admin/bulk-sync'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -753,7 +755,7 @@ export function scheduleSyncToAPI(isAdmin: boolean): void {
         }),
       }).catch(() => {});
     } else {
-      fetch('/api/portal/bulk-sync', {
+      fetch(apiUrl('/api/portal/bulk-sync'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

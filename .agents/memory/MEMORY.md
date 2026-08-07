@@ -1,0 +1,1 @@
+- [Portal deployment boundary](portal-deployment-boundary.md) — PostgreSQL stays server-side; separately hosted frontends use a configurable API origin and cross-site session settings.

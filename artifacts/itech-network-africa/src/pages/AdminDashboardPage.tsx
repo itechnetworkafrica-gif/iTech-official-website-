@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { PORTAL_CLIENTS } from '@/lib/portalClients';
+import { apiUrl } from '@/lib/apiBase';
 import { ADMIN_CREDENTIALS, verifyAdminPassword, decodeClientPassword } from '@/lib/adminAuth';
 import {
   getInvoices, saveInvoice, deleteInvoice, updateInvoiceStatus,
@@ -250,7 +251,7 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
   const [discountPct, setDiscountPct] = useState(editing?.discountPercent ?? 0);
 
   useEffect(() => {
-    fetch('/api/admin/clients', { credentials: 'include' })
+    fetch(apiUrl('/api/admin/clients'), { credentials: 'include' })
       .then(r => r.ok ? r.json() : []).then(setDbClients).catch(() => {});
   }, []);
 
@@ -837,7 +838,7 @@ function ClientsSection() {
   async function reloadClients() {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/clients', { credentials: 'include' });
+      const res = await fetch(apiUrl('/api/admin/clients'), { credentials: 'include' });
       if (res.ok) setClients(await res.json());
     } catch {}
     setLoading(false);
@@ -849,7 +850,7 @@ function ClientsSection() {
     e.preventDefault(); setAddErr('');
     if (!addForm.name.trim() || !addForm.email.trim() || !addForm.password) { setAddErr('Name, email, and password are required.'); return; }
     setAddLoading(true);
-    const res = await fetch('/api/admin/clients', {
+    const res = await fetch(apiUrl('/api/admin/clients'), {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(addForm),
@@ -863,13 +864,13 @@ function ClientsSection() {
 
   async function handleDeactivate(clientId: string) {
     if (!confirm('Deactivate this client? They will no longer be able to log in.')) return;
-    await fetch(`/api/admin/clients/${clientId}`, { method: 'DELETE', credentials: 'include' });
+    await fetch(apiUrl(`/api/admin/clients/${clientId}`), { method: 'DELETE', credentials: 'include' });
     reloadClients();
   }
 
   async function handleResetPassword(clientId: string) {
     if (!newPw || newPw.length < 8) { alert('Password must be at least 8 characters.'); return; }
-    await fetch(`/api/admin/clients/${clientId}`, {
+    await fetch(apiUrl(`/api/admin/clients/${clientId}`), {
       method: 'PUT', credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ newPassword: newPw }),
@@ -1508,7 +1509,7 @@ function AdminSettings() {
     if (pwForm.next.length < 8) { setPwStatus('error'); setPwMsg('New password must be at least 8 characters.'); return; }
     if (pwForm.next !== pwForm.confirm) { setPwStatus('error'); setPwMsg('Passwords do not match.'); return; }
     try {
-      const res = await fetch('/api/auth/change-password', {
+      const res = await fetch(apiUrl('/api/auth/change-password'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
@@ -1737,7 +1738,7 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
     if (!email.trim() || !password) { setError('Enter email and password.'); return; }
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password, userType: 'admin' }),
@@ -1789,7 +1790,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     // Restore admin session on page load/refresh
-    fetch('/api/auth/me', { credentials: 'include' })
+    fetch(apiUrl('/api/auth/me'), { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then(async data => {
         if (data?.user?.userType === 'admin') {
@@ -1802,7 +1803,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' }).catch(() => {});
     setAuthed(false);
   }
 

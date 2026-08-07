@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, MessageCircle, Minimize2, Sparkles } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { apiUrl } from '@/lib/apiBase';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -340,7 +341,7 @@ export const SarahChatbot: React.FC = () => {
       });
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: withUser }),

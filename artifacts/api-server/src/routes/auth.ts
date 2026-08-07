@@ -7,8 +7,8 @@ const router = Router();
 const SESSION_TTL_DAYS = 30;
 const COOKIE_OPTS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production" || process.env.COOKIE_CROSS_SITE === "true",
+  sameSite: (process.env.COOKIE_CROSS_SITE === "true" ? "none" : "lax") as "none" | "lax",
   maxAge: SESSION_TTL_DAYS * 24 * 60 * 60 * 1000,
   path: "/",
 };
