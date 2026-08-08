@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Link } from 'wouter';
 import {
-  Search, MessageSquare, Phone, Mail, FileText, BookOpen,
+  Search, MessageSquare, Phone, Mail, BookOpen,
   Zap, Shield, Cloud, Code2, Globe, Cpu, Server, Users,
   ChevronDown, ArrowRight, CheckCircle2, Clock, LifeBuoy,
   Video, Headphones, AlertCircle, TicketCheck, MonitorCheck,
   Star, ChevronRight, ExternalLink, HelpCircle, Wrench,
-  Database, Wifi, Lock, RefreshCw, Activity, Sparkles,
-  MapPin, Radio, Building2, Layers, TrendingUp, Award,
+  Database, Lock, RefreshCw, Activity, Sparkles,
+  Layers, Award, KeyRound, WifiOff, CreditCard, Rocket,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import {
@@ -22,9 +22,9 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { apiUrl } from '@/lib/apiBase';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-import { apiUrl } from '@/lib/apiBase';
 
 /* ─── data ─────────────────────────────────────────────────────────────── */
 
@@ -96,16 +96,52 @@ const CHANNELS = [
   },
 ];
 
+const QUICK_FIXES = [
+  {
+    icon: <KeyRound size={20} />,
+    title: 'Reset Your Password',
+    desc: 'Locked out of the Client Portal? Reset your password in under a minute.',
+    steps: ['Open the Portal login page', 'Click "Forgot password"', 'Check your email for the reset link'],
+  },
+  {
+    icon: <WifiOff size={20} />,
+    title: 'Site or App Unreachable',
+    desc: 'Before opening a ticket, run these quick checks to rule out local issues.',
+    steps: ['Hard-refresh (Ctrl/Cmd + Shift + R)', 'Try another network or device', 'Check the live status board above'],
+  },
+  {
+    icon: <CreditCard size={20} />,
+    title: 'Billing & Invoices',
+    desc: 'Download invoices and update payment details from your Client Portal.',
+    steps: ['Log in to the Client Portal', 'Open Billing → Invoices', 'Email us for any corrections'],
+  },
+  {
+    icon: <RefreshCw size={20} />,
+    title: 'Request a Software Update',
+    desc: 'Need a new feature or patch on a system we built for you?',
+    steps: ['Submit a ticket with category "Software"', 'Describe the change you need', 'We scope it and send a timeline'],
+  },
+];
+
 const HELP_CATEGORIES = [
-  { icon: <Globe size={20} />, title: 'Web & Mobile Apps', count: 34, color: 'from-blue-500/20 to-blue-600/5' },
-  { icon: <Cloud size={20} />, title: 'Cloud & Hosting', count: 28, color: 'from-sky-500/20 to-sky-600/5' },
-  { icon: <Shield size={20} />, title: 'Cybersecurity', count: 19, color: 'from-red-500/20 to-red-600/5' },
-  { icon: <Code2 size={20} />, title: 'Software Development', count: 41, color: 'from-violet-500/20 to-violet-600/5' },
-  { icon: <Cpu size={20} />, title: 'AI & Automation', count: 16, color: 'from-emerald-500/20 to-emerald-600/5' },
-  { icon: <Server size={20} />, title: 'IT Infrastructure', count: 23, color: 'from-amber-500/20 to-amber-600/5' },
-  { icon: <Users size={20} />, title: 'Digital Marketing', count: 15, color: 'from-pink-500/20 to-pink-600/5' },
-  { icon: <Database size={20} />, title: 'Data & Databases', count: 12, color: 'from-teal-500/20 to-teal-600/5' },
-  { icon: <Lock size={20} />, title: 'Account & Billing', count: 9, color: 'from-orange-500/20 to-orange-600/5' },
+  { icon: <Globe size={20} />, title: 'Web & Mobile Apps', count: 34, color: 'bg-blue-50 text-blue-600' },
+  { icon: <Cloud size={20} />, title: 'Cloud & Hosting', count: 28, color: 'bg-sky-50 text-sky-600' },
+  { icon: <Shield size={20} />, title: 'Cybersecurity', count: 19, color: 'bg-red-50 text-red-500' },
+  { icon: <Code2 size={20} />, title: 'Software Development', count: 41, color: 'bg-violet-50 text-violet-600' },
+  { icon: <Cpu size={20} />, title: 'AI & Automation', count: 16, color: 'bg-emerald-50 text-emerald-600' },
+  { icon: <Server size={20} />, title: 'IT Infrastructure', count: 23, color: 'bg-amber-50 text-amber-600' },
+  { icon: <Users size={20} />, title: 'Digital Marketing', count: 15, color: 'bg-pink-50 text-pink-500' },
+  { icon: <Database size={20} />, title: 'Data & Databases', count: 12, color: 'bg-teal-50 text-teal-600' },
+  { icon: <Lock size={20} />, title: 'Account & Billing', count: 9, color: 'bg-orange-50 text-orange-500' },
+];
+
+const POPULAR_ARTICLES = [
+  { title: 'Getting started with your Client Portal account', category: 'Account', readTime: '3 min' },
+  { title: 'Connecting a custom domain to your hosted website', category: 'Hosting', readTime: '5 min' },
+  { title: 'Understanding your monthly system health report', category: 'Monitoring', readTime: '4 min' },
+  { title: 'Setting up two-factor authentication', category: 'Security', readTime: '2 min' },
+  { title: 'Requesting API access tokens for your integration', category: 'Developers', readTime: '6 min' },
+  { title: 'How our support ticket priorities and SLAs work', category: 'Support', readTime: '3 min' },
 ];
 
 const TIME_ZONES = [
@@ -129,7 +165,7 @@ const SLA_TIERS = [
       'Monthly system reports',
     ],
     cta: 'Your current plan',
-    ctaStyle: 'border-2 border-[#E5E7EB] text-[#6B7280] hover:border-[#3CB52A]/30 hover:text-[#3CB52A]',
+    ctaStyle: 'border-2 border-[#E5E7EB] text-[#6B7280] hover:border-[#3CB52A]/40 hover:text-[#3CB52A]',
     popular: false,
   },
   {
@@ -145,7 +181,7 @@ const SLA_TIERS = [
       'Incident post-mortems',
     ],
     cta: 'Get Priority Support',
-    ctaStyle: 'bg-[#3CB52A] text-white shadow-[0_8px_24px_rgba(60,181,42,0.40)] hover:bg-[#2da822]',
+    ctaStyle: 'bg-[#3CB52A] text-white shadow-[0_8px_24px_rgba(60,181,42,0.35)] hover:bg-[#2da822]',
     popular: true,
   },
   {
@@ -161,7 +197,7 @@ const SLA_TIERS = [
       'Onsite support available',
     ],
     cta: 'Contact Sales',
-    ctaStyle: 'bg-[#060E18] text-white border border-white/10 hover:bg-[#0A1929]',
+    ctaStyle: 'bg-[#0A1929] text-white hover:bg-[#132B45]',
     popular: false,
   },
 ];
@@ -175,6 +211,13 @@ const FAQS = [
   { q: 'Do you provide end-user training?', a: 'Yes. All major deployments include comprehensive training sessions for administrators and end-users, plus digital manuals and on-demand video tutorials.' },
   { q: 'What security and compliance standards do you follow?', a: 'We build systems compliant with ISO 27001, GDPR, and regional African data protection regulations. Security audits are available for enterprise clients.' },
   { q: 'Where can I find API documentation?', a: 'Full API documentation is in the Resources section. Developer access tokens can be issued from the Client Portal. Contact us if you need elevated API access.' },
+];
+
+const SUPPORT_JOURNEY = [
+  { icon: <TicketCheck size={20} />, title: 'Submit', desc: 'Open a ticket through any channel — chat, form, phone, or email.' },
+  { icon: <Users size={20} />, title: 'Assigned', desc: 'A specialist engineer picks it up within your SLA window.' },
+  { icon: <Wrench size={20} />, title: 'Resolved', desc: 'We diagnose, fix, and keep you updated at every step.' },
+  { icon: <Sparkles size={20} />, title: 'Follow-up', desc: 'You confirm closure and rate the experience — we learn from every case.' },
 ];
 
 const formSchema = z.object({
@@ -207,17 +250,17 @@ function FAQItem({ q, a, i }: { q: string; a: string; i: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.3, delay: i * 0.04 }}
-      className="group border border-white/8 rounded-2xl overflow-hidden bg-white/4 backdrop-blur-sm hover:border-[#3CB52A]/30 transition-colors duration-300"
+      className="border border-[#E7ECF2] rounded-2xl overflow-hidden bg-white hover:border-[#3CB52A]/40 transition-colors duration-300 shadow-sm"
     >
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-6 py-5 text-left"
         aria-expanded={open}
       >
-        <span className="font-semibold text-white pr-4 text-[15px] leading-snug">{q}</span>
+        <span className="font-semibold text-[#0A1929] pr-4 text-[15px] leading-snug">{q}</span>
         <ChevronDown
           size={18}
-          className={`flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-[#3CB52A]' : 'text-white/30'}`}
+          className={`flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-[#3CB52A]' : 'text-[#64748B]'}`}
         />
       </button>
       <AnimatePresence initial={false}>
@@ -230,7 +273,7 @@ function FAQItem({ q, a, i }: { q: string; a: string; i: number }) {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-5 pt-1 text-white/55 text-sm leading-relaxed border-t border-white/8">{a}</p>
+            <p className="px-6 pb-5 pt-1 text-[#5B6B7B] text-sm leading-relaxed border-t border-[#EEF2F6]">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -242,7 +285,7 @@ function UptimeBar({ pct }: { pct: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
   return (
-    <div ref={ref} className="w-20 h-1.5 rounded-full bg-white/10 overflow-hidden">
+    <div ref={ref} className="w-20 h-1.5 rounded-full bg-[#E7ECF2] overflow-hidden">
       <motion.div
         className="h-full rounded-full bg-[#3CB52A]"
         initial={{ width: 0 }}
@@ -253,6 +296,14 @@ function UptimeBar({ pct }: { pct: number }) {
   );
 }
 
+function SectionBadge({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/8 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
+      {icon} {label}
+    </span>
+  );
+}
+
 /* ─── main page ──────────────────────────────────────────────────────────── */
 
 export default function SupportPage() {
@@ -260,6 +311,11 @@ export default function SupportPage() {
   const [search, setSearch] = useState('');
   const [heroSearch, setHeroSearch] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  function runHeroSearch() {
+    setSearch(heroSearch.trim());
+    document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   const filteredFaqs = FAQS.filter(
     ({ q, a }) =>
@@ -296,45 +352,32 @@ export default function SupportPage() {
     }
   }
 
+  const fieldClass = 'rounded-xl bg-white border-[#E0E6ED] text-[#0A1929] placeholder-[#9AA6B2] focus-visible:ring-[#3CB52A]/30 focus-visible:border-[#3CB52A]/60';
+
   return (
-    <div className="flex flex-col w-full bg-[#060E18] min-h-screen overflow-x-clip">
+    <div className="flex flex-col w-full bg-[#F7FAFC] min-h-screen overflow-x-clip">
 
       {/* ══════════════════════════════════════════════════════
-          HERO — Mission control
+          HERO — Light help center
       ══════════════════════════════════════════════════════ */}
-      <section className="relative bg-[#060E18] pt-28 pb-20 overflow-hidden">
+      <section className="relative bg-white pt-28 pb-20 overflow-hidden">
 
-        {/* Animated grid */}
+        {/* Subtle grid */}
         <div className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'linear-gradient(rgba(60,181,42,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(60,181,42,0.06) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(rgba(10,25,41,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(10,25,41,0.035) 1px, transparent 1px)',
             backgroundSize: '64px 64px',
           }}
         />
-
-        {/* Radial vignette over grid */}
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 70% at 50% 0%, transparent 30%, #060E18 100%)' }}
+          style={{ background: 'radial-gradient(ellipse 80% 70% at 50% 0%, transparent 30%, #ffffff 100%)' }}
         />
 
-        {/* Glow orbs */}
+        {/* Soft green glow */}
         <motion.div className="absolute left-1/2 top-0 -translate-x-1/2 w-[700px] h-[380px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, rgba(60,181,42,0.12) 0%, transparent 70%)', filter: 'blur(40px)' }}
+          style={{ background: 'radial-gradient(ellipse, rgba(60,181,42,0.10) 0%, transparent 70%)', filter: 'blur(40px)' }}
           animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div className="absolute -right-40 top-20 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.07) 0%, transparent 60%)', filter: 'blur(60px)' }}
-          animate={{ y: [0, -30, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Scan line */}
-        <motion.div
-          className="absolute left-0 right-0 h-px pointer-events-none"
-          style={{ background: 'linear-gradient(to right, transparent, rgba(60,181,42,0.45), transparent)' }}
-          animate={{ y: [-20, 700] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'linear', repeatDelay: 3 }}
         />
 
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
@@ -348,7 +391,7 @@ export default function SupportPage() {
           >
             <a
               href="#status"
-              className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/25 text-[#3CB52A] text-[10px] sm:text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/15 transition-colors text-center max-w-full"
+              className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#3CB52A]/8 border border-[#3CB52A]/25 text-[#1E7A12] text-[10px] sm:text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/14 transition-colors text-center max-w-full"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3CB52A] opacity-60" />
@@ -365,11 +408,10 @@ export default function SupportPage() {
             transition={{ duration: 0.6, delay: 0.08 }}
             className="text-center mb-6"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight mb-5 break-words">
-              World-Class Support,<br />
-              <span className="text-[#3CB52A]">Everywhere You Are.</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#0A1929] leading-[1.08] tracking-tight mb-5 break-words">
+              How Can We <span className="text-[#3CB52A]">Help You</span> Today?
             </h1>
-            <p className="text-white/55 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-[#5B6B7B] text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               From Monrovia to the world — our engineering team is available around the clock to keep your technology running at peak performance.
             </p>
           </motion.div>
@@ -382,16 +424,17 @@ export default function SupportPage() {
             className="max-w-2xl mx-auto mt-10"
           >
             <div className="relative group">
-              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#3CB52A]/40 via-[#3CB52A]/20 to-[#3CB52A]/40 blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-              <div className="relative flex items-center bg-white/6 border border-white/12 rounded-2xl overflow-hidden backdrop-blur-md group-focus-within:border-[#3CB52A]/40 transition-colors">
-                <Search size={18} className="absolute left-5 text-white/35 pointer-events-none" />
+              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#3CB52A]/30 via-[#3CB52A]/10 to-[#3CB52A]/30 blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+              <div className="relative flex items-center bg-white border border-[#E0E6ED] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(10,25,41,0.07)] group-focus-within:border-[#3CB52A]/50 transition-colors">
+                <Search size={18} className="absolute left-5 text-[#64748B] pointer-events-none" />
                 <input
                   value={heroSearch}
                   onChange={(e) => setHeroSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && runHeroSearch()}
                   placeholder="Search the knowledge base, FAQs, and guides…"
-                  className="w-full pl-12 pr-24 sm:pr-36 py-4 bg-transparent text-white text-sm placeholder-white/30 focus:outline-none"
+                  className="w-full pl-12 pr-24 sm:pr-36 py-4 bg-transparent text-[#0A1929] text-sm placeholder-[#9AA6B2] focus:outline-none"
                 />
-                <button className="absolute right-2 px-3 sm:px-5 py-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white text-sm font-bold rounded-xl transition-colors whitespace-nowrap">
+                <button onClick={runHeroSearch} className="absolute right-2 px-3 sm:px-5 py-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white text-sm font-bold rounded-xl transition-colors whitespace-nowrap">
                   Search
                 </button>
               </div>
@@ -401,7 +444,7 @@ export default function SupportPage() {
                 <button
                   key={tag}
                   onClick={() => setHeroSearch(tag)}
-                  className="text-xs text-white/35 hover:text-[#3CB52A] border border-white/8 hover:border-[#3CB52A]/30 px-3 py-1 rounded-full transition-colors"
+                  className="text-xs text-[#5B6B7B] hover:text-[#3CB52A] border border-[#E0E6ED] hover:border-[#3CB52A]/40 bg-white px-3 py-1 rounded-full transition-colors"
                 >
                   {tag}
                 </button>
@@ -414,28 +457,23 @@ export default function SupportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.36 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/8 rounded-2xl overflow-hidden border border-white/8"
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-[#E7ECF2] rounded-2xl overflow-hidden border border-[#E7ECF2] shadow-sm"
           >
             {STATS.map((s) => (
-              <div key={s.label} className="flex flex-col items-center gap-1.5 py-6 px-4 bg-[#060E18]">
+              <div key={s.label} className="flex flex-col items-center gap-1.5 py-6 px-4 bg-white">
                 <span className="text-[#3CB52A]">{s.icon}</span>
-                <span className="text-2xl font-black text-white">{s.value}</span>
-                <span className="text-xs text-white/35 font-medium">{s.label}</span>
+                <span className="text-2xl font-black text-[#0A1929]">{s.value}</span>
+                <span className="text-xs text-[#5B6B7B] font-medium">{s.label}</span>
               </div>
             ))}
           </motion.div>
         </div>
-
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, transparent, #060E18)' }}
-        />
       </section>
 
       {/* ══════════════════════════════════════════════════════
           SUPPORT CHANNELS
       ══════════════════════════════════════════════════════ */}
-      <section id="help" className="py-24 bg-[#060E18]">
+      <section id="help" className="py-24 bg-[#F7FAFC]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -443,12 +481,10 @@ export default function SupportPage() {
             viewport={{ once: true }}
             className="mb-14"
           >
-            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
-              <Zap size={11} /> Contact
-            </span>
+            <SectionBadge icon={<Zap size={11} />} label="Contact" />
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <h2 className="text-3xl md:text-4xl font-black text-white">Choose Your Support Channel</h2>
-              <p className="text-white/40 text-sm max-w-xs">Multiple ways to reach us — same team, same expertise.</p>
+              <h2 className="text-3xl md:text-4xl font-black text-[#0A1929]">Choose Your Support Channel</h2>
+              <p className="text-[#5B6B7B] text-sm max-w-xs">Multiple ways to reach us — same team, same expertise.</p>
             </div>
           </motion.div>
 
@@ -462,30 +498,27 @@ export default function SupportPage() {
                 transition={{ duration: 0.4, delay: i * 0.07, ease: EASE }}
                 className={`group relative rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 cursor-default overflow-hidden ${
                   ch.accent
-                    ? 'bg-[#3CB52A]/10 border-[#3CB52A]/30 hover:border-[#3CB52A]/60 hover:bg-[#3CB52A]/15'
-                    : 'bg-white/3 border-white/8 hover:border-white/20 hover:bg-white/6'
+                    ? 'bg-[#3CB52A]/6 border-[#3CB52A]/30 hover:border-[#3CB52A]/60 shadow-[0_10px_30px_rgba(60,181,42,0.10)]'
+                    : 'bg-white border-[#E7ECF2] hover:border-[#3CB52A]/30 shadow-sm hover:shadow-[0_14px_36px_rgba(10,25,41,0.08)]'
                 }`}
               >
-                {/* Corner glow on hover */}
-                <div className={`absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${ch.accent ? 'bg-[#3CB52A]/25' : 'bg-white/5'}`} />
-
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-5">
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${ch.accent ? 'bg-[#3CB52A]/20 text-[#3CB52A]' : 'bg-white/8 text-white/70'}`}>
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${ch.accent ? 'bg-[#3CB52A]/15 text-[#3CB52A]' : 'bg-[#F1F5F9] text-[#0A1929]'}`}>
                       {ch.icon}
                     </div>
                     <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full ${
-                      ch.accent ? 'bg-[#3CB52A]/20 text-[#3CB52A]' : 'bg-white/6 text-white/45'
+                      ch.accent ? 'bg-[#3CB52A]/15 text-[#1E7A12]' : 'bg-[#F1F5F9] text-[#5B6B7B]'
                     }`}>
                       {ch.badgeDot && <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />}
                       {ch.badge}
                     </span>
                   </div>
-                  <h3 className={`font-bold text-lg mb-2 ${ch.accent ? 'text-white' : 'text-white/90'}`}>{ch.title}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed mb-5">{ch.description}</p>
+                  <h3 className="font-bold text-lg mb-2 text-[#0A1929]">{ch.title}</h3>
+                  <p className="text-[#5B6B7B] text-sm leading-relaxed mb-5">{ch.description}</p>
                   <a
                     href={ch.action.href}
-                    className={`inline-flex items-center gap-1.5 text-sm font-bold transition-all group-hover:gap-2.5 ${ch.accent ? 'text-[#3CB52A]' : 'text-white/55 hover:text-white'}`}
+                    className="inline-flex items-center gap-1.5 text-sm font-bold transition-all group-hover:gap-2.5 text-[#3CB52A]"
                   >
                     {ch.action.label} <ArrowRight size={14} />
                   </a>
@@ -497,9 +530,9 @@ export default function SupportPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          SYSTEM STATUS — Dashboard strip
+          SYSTEM STATUS
       ══════════════════════════════════════════════════════ */}
-      <section id="status" className="py-16 bg-[#0A1929] border-y border-white/6">
+      <section id="status" className="py-16 bg-white border-y border-[#EEF2F6]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
             <div>
@@ -508,16 +541,16 @@ export default function SupportPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3CB52A] opacity-50" />
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#3CB52A]" />
                 </span>
-                <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Live System Status</span>
+                <span className="text-[#1E7A12] text-xs font-bold tracking-widest uppercase">Live System Status</span>
               </div>
-              <h2 className="text-2xl font-black text-white">All Systems Operational</h2>
-              <p className="text-white/35 text-sm mt-1">Last checked: just now · 99.9% uptime over the last 30 days</p>
+              <h2 className="text-2xl font-black text-[#0A1929]">All Systems Operational</h2>
+              <p className="text-[#5B6B7B] text-sm mt-1">Last checked: just now · 99.9% uptime over the last 30 days</p>
             </div>
             <a
               href="https://status.itechnetworkafrica.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/12 text-sm font-semibold text-white/60 hover:border-[#3CB52A]/40 hover:text-[#3CB52A] transition-colors self-start"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E0E6ED] text-sm font-semibold text-[#5B6B7B] hover:border-[#3CB52A]/50 hover:text-[#3CB52A] transition-colors self-start"
             >
               Full Status Page <ExternalLink size={13} />
             </a>
@@ -531,15 +564,15 @@ export default function SupportPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.28, delay: i * 0.05 }}
-                className="flex items-center justify-between px-4 py-4 rounded-xl bg-white/3 border border-white/6 hover:border-white/12 transition-colors"
+                className="flex items-center justify-between px-4 py-4 rounded-xl bg-[#F7FAFC] border border-[#EEF2F6] hover:border-[#DDE5EC] transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <CheckCircle2 size={15} className="text-[#3CB52A] flex-shrink-0" />
-                  <span className="text-sm font-medium text-white/70 truncate">{svc.name}</span>
+                  <span className="text-sm font-medium text-[#3B4A59] truncate">{svc.name}</span>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                   <UptimeBar pct={svc.uptime} />
-                  <span className="text-xs font-bold text-[#3CB52A]">{svc.uptime}%</span>
+                  <span className="text-xs font-bold text-[#1E7A12]">{svc.uptime}%</span>
                 </div>
               </motion.div>
             ))}
@@ -548,17 +581,145 @@ export default function SupportPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
+          QUICK FIXES — Self-help (new)
+      ══════════════════════════════════════════════════════ */}
+      <section id="quick-fixes" className="py-24 bg-[#F7FAFC]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <SectionBadge icon={<Wrench size={11} />} label="Quick Fixes" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <h2 className="text-3xl md:text-4xl font-black text-[#0A1929]">Solve It Yourself in Minutes</h2>
+              <p className="text-[#5B6B7B] text-sm max-w-xs">The most common issues — with step-by-step fixes.</p>
+            </div>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {QUICK_FIXES.map((fix, i) => (
+              <motion.div
+                key={fix.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08, ease: EASE }}
+                className="bg-white rounded-2xl border border-[#E7ECF2] p-6 shadow-sm hover:shadow-[0_14px_36px_rgba(10,25,41,0.08)] hover:border-[#3CB52A]/30 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="w-11 h-11 rounded-xl bg-[#3CB52A]/10 text-[#3CB52A] flex items-center justify-center mb-4">
+                  {fix.icon}
+                </div>
+                <h3 className="font-bold text-[#0A1929] mb-1.5">{fix.title}</h3>
+                <p className="text-[#5B6B7B] text-sm leading-relaxed mb-4">{fix.desc}</p>
+                <ol className="space-y-2">
+                  {fix.steps.map((step, si) => (
+                    <li key={si} className="flex items-start gap-2.5 text-[13px] text-[#3B4A59]">
+                      <span className="flex-shrink-0 w-[18px] h-[18px] min-w-[18px] rounded-full bg-[#F1F5F9] text-[#5B6B7B] text-[10px] font-black flex items-center justify-center mt-0.5">{si + 1}</span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          KNOWLEDGE BASE + POPULAR ARTICLES
+      ══════════════════════════════════════════════════════ */}
+      <section id="knowledge-base" className="py-24 bg-white border-y border-[#EEF2F6]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <SectionBadge icon={<BookOpen size={11} />} label="Knowledge Base" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <h2 className="text-3xl md:text-4xl font-black text-[#0A1929]">Browse by Topic</h2>
+              <p className="text-[#5B6B7B] text-sm">200+ guides, tutorials, and API references.</p>
+            </div>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-5 gap-10">
+            {/* Categories */}
+            <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+              {HELP_CATEGORIES.map((cat, i) => (
+                <motion.a
+                  key={cat.title}
+                  href="/resources"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.32, delay: i * 0.05 }}
+                  className="group flex items-center gap-4 p-4 bg-[#F7FAFC] rounded-xl border border-[#EEF2F6] hover:border-[#3CB52A]/40 hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${cat.color} flex items-center justify-center`}>
+                    {cat.icon}
+                  </div>
+                  <div className="flex-grow min-w-0">
+                    <p className="font-semibold text-[#0A1929] text-sm">{cat.title}</p>
+                    <p className="text-xs text-[#64748B] mt-0.5">{cat.count} articles</p>
+                  </div>
+                  <ChevronRight size={15} className="flex-shrink-0 text-[#C4CDD6] group-hover:text-[#3CB52A] transition-colors" />
+                </motion.a>
+              ))}
+            </div>
+
+            {/* Popular articles */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="lg:col-span-2 bg-[#0A1929] rounded-2xl p-7 self-start"
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <Rocket size={16} className="text-[#3CB52A]" />
+                <h3 className="font-bold text-white">Most Popular Articles</h3>
+              </div>
+              <div className="space-y-1">
+                {POPULAR_ARTICLES.map((art, i) => (
+                  <Link
+                    key={art.title}
+                    href="/resources"
+                    className="group flex items-start gap-3 py-3 border-b border-white/8 last:border-0 hover:bg-white/4 rounded-lg px-2 -mx-2 transition-colors"
+                  >
+                    <span className="flex-shrink-0 text-[#3CB52A] font-black text-sm mt-0.5">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-white/85 group-hover:text-white leading-snug transition-colors">{art.title}</p>
+                      <p className="text-[11px] text-white/35 mt-1">{art.category} · {art.readTime} read</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/resources"
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[#3CB52A] hover:gap-2.5 transition-all"
+              >
+                View All Articles <ArrowRight size={14} />
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
           GLOBAL COVERAGE — Time zones
       ══════════════════════════════════════════════════════ */}
-      <section className="py-16 bg-[#060E18] border-b border-white/6 overflow-hidden">
+      <section className="py-16 bg-[#F7FAFC] overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex flex-col md:flex-row md:items-center gap-8">
             <div className="md:w-72 flex-shrink-0">
               <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">
                 <Globe size={11} /> Global Coverage
               </span>
-              <h2 className="text-2xl font-black text-white mb-2">We're in Your Time Zone</h2>
-              <p className="text-white/40 text-sm leading-relaxed">Enterprise clients get round-the-clock support from engineers across multiple regions.</p>
+              <h2 className="text-2xl font-black text-[#0A1929] mb-2">We're in Your Time Zone</h2>
+              <p className="text-[#5B6B7B] text-sm leading-relaxed">Enterprise clients get round-the-clock support from engineers across multiple regions.</p>
             </div>
             <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {TIME_ZONES.map((tz, i) => (
@@ -568,12 +729,12 @@ export default function SupportPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: i * 0.07 }}
-                  className={`rounded-xl p-4 border text-center ${tz.hq ? 'bg-[#3CB52A]/10 border-[#3CB52A]/30' : 'bg-white/3 border-white/8'}`}
+                  className={`rounded-xl p-4 border text-center ${tz.hq ? 'bg-[#3CB52A]/8 border-[#3CB52A]/35' : 'bg-white border-[#E7ECF2] shadow-sm'}`}
                 >
-                  <div className="text-lg font-black text-white mb-0.5">{getLocalTime(tz.offset)}</div>
-                  <div className={`text-xs font-bold mb-1 ${tz.hq ? 'text-[#3CB52A]' : 'text-white/45'}`}>{tz.tz}</div>
-                  <div className="text-xs text-white/50 font-medium">{tz.city}</div>
-                  {tz.hq && <div className="mt-1.5 text-[10px] font-bold text-[#3CB52A] uppercase tracking-wide">HQ</div>}
+                  <div className="text-lg font-black text-[#0A1929] mb-0.5">{getLocalTime(tz.offset)}</div>
+                  <div className={`text-xs font-bold mb-1 ${tz.hq ? 'text-[#1E7A12]' : 'text-[#5B6B7B]'}`}>{tz.tz}</div>
+                  <div className="text-xs text-[#5B6B7B] font-medium">{tz.city}</div>
+                  {tz.hq && <div className="mt-1.5 text-[10px] font-bold text-[#1E7A12] uppercase tracking-wide">HQ</div>}
                 </motion.div>
               ))}
             </div>
@@ -582,45 +743,45 @@ export default function SupportPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          KNOWLEDGE BASE
+          SUPPORT JOURNEY — How it works (new)
       ══════════════════════════════════════════════════════ */}
-      <section id="knowledge-base" className="py-24 bg-[#060E18]">
+      <section className="py-20 bg-white border-y border-[#EEF2F6]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-14"
+            className="text-center mb-14"
           >
-            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
-              <BookOpen size={11} /> Knowledge Base
-            </span>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <h2 className="text-3xl md:text-4xl font-black text-white">Browse by Topic</h2>
-              <p className="text-white/40 text-sm">200+ guides, tutorials, and API references.</p>
-            </div>
+            <SectionBadge icon={<LifeBuoy size={11} />} label="How It Works" />
+            <h2 className="text-3xl md:text-4xl font-black text-[#0A1929] mb-3">Your Support Journey</h2>
+            <p className="text-[#5B6B7B]">Four simple steps from problem to resolution.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {HELP_CATEGORIES.map((cat, i) => (
-              <motion.a
-                key={cat.title}
-                href="/resources"
-                initial={{ opacity: 0, y: 16 }}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {SUPPORT_JOURNEY.map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.32, delay: i * 0.05 }}
-                className="group flex items-center gap-4 p-4 bg-white/3 rounded-xl border border-white/8 hover:border-[#3CB52A]/35 hover:bg-white/6 transition-all duration-250"
+                transition={{ duration: 0.4, delay: i * 0.1, ease: EASE }}
+                className="relative text-center px-4"
               >
-                <div className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center text-white/70 group-hover:text-[#3CB52A] transition-colors`}>
-                  {cat.icon}
+                <div className="relative inline-flex mb-5">
+                  <div className="w-14 h-14 rounded-2xl bg-[#3CB52A]/10 text-[#3CB52A] flex items-center justify-center">
+                    {step.icon}
+                  </div>
+                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#0A1929] text-white text-xs font-black flex items-center justify-center">{i + 1}</span>
                 </div>
-                <div className="flex-grow min-w-0">
-                  <p className="font-semibold text-white/80 text-sm group-hover:text-white transition-colors">{cat.title}</p>
-                  <p className="text-xs text-white/30 mt-0.5">{cat.count} articles</p>
-                </div>
-                <ChevronRight size={15} className="flex-shrink-0 text-white/20 group-hover:text-[#3CB52A] transition-colors" />
-              </motion.a>
+                <h3 className="font-bold text-[#0A1929] mb-2">{step.title}</h3>
+                <p className="text-[#5B6B7B] text-sm leading-relaxed">{step.desc}</p>
+                {i < SUPPORT_JOURNEY.length - 1 && (
+                  <div className="hidden lg:block absolute top-7 -right-3 text-[#C4CDD6]">
+                    <ArrowRight size={18} />
+                  </div>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>
@@ -629,7 +790,7 @@ export default function SupportPage() {
       {/* ══════════════════════════════════════════════════════
           SUBMIT TICKET
       ══════════════════════════════════════════════════════ */}
-      <section id="ticket" className="py-24 bg-[#0A1929] border-t border-white/6">
+      <section id="ticket" className="py-24 bg-[#F7FAFC]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="grid lg:grid-cols-5 gap-14 items-start">
 
@@ -641,11 +802,9 @@ export default function SupportPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4 }}
               >
-                <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-5">
-                  <TicketCheck size={11} /> Support Ticket
-                </span>
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Log a Support Request</h2>
-                <p className="text-white/45 mb-8 leading-relaxed">Our engineers respond based on priority level. All tickets are tracked to resolution.</p>
+                <SectionBadge icon={<TicketCheck size={11} />} label="Support Ticket" />
+                <h2 className="text-3xl md:text-4xl font-black text-[#0A1929] mb-2">Log a Support Request</h2>
+                <p className="text-[#5B6B7B] mb-8 leading-relaxed">Our engineers respond based on priority level. All tickets are tracked to resolution.</p>
 
                 <AnimatePresence mode="wait">
                   {submitted ? (
@@ -653,13 +812,13 @@ export default function SupportPage() {
                       key="success"
                       initial={{ opacity: 0, scale: 0.96 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex flex-col items-center justify-center py-20 text-center bg-[#3CB52A]/8 rounded-2xl border border-[#3CB52A]/20"
+                      className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-[#3CB52A]/30 shadow-sm"
                     >
-                      <div className="w-16 h-16 rounded-full bg-[#3CB52A]/15 flex items-center justify-center mb-5">
+                      <div className="w-16 h-16 rounded-full bg-[#3CB52A]/12 flex items-center justify-center mb-5">
                         <CheckCircle2 size={32} className="text-[#3CB52A]" />
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2">Ticket Submitted!</h3>
-                      <p className="text-white/45 text-sm max-w-xs">We've received your request and will respond within your SLA window. Check your email for confirmation.</p>
+                      <h3 className="text-xl font-bold text-[#0A1929] mb-2">Ticket Submitted!</h3>
+                      <p className="text-[#5B6B7B] text-sm max-w-xs">We've received your request and will respond within your SLA window. Check your email for confirmation.</p>
                       <button
                         onClick={() => setSubmitted(false)}
                         className="mt-6 text-sm font-semibold text-[#3CB52A] hover:underline"
@@ -668,28 +827,24 @@ export default function SupportPage() {
                       </button>
                     </motion.div>
                   ) : (
-                    <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white rounded-3xl border border-[#E7ECF2] shadow-sm p-6 sm:p-8">
                       <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                           <div className="grid sm:grid-cols-2 gap-5">
                             <FormField control={form.control} name="name" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Full Name *</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Full Name *</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Jane Doe"
-                                    className="rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50"
-                                    {...field} />
+                                  <Input placeholder="Jane Doe" className={fieldClass} {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )} />
                             <FormField control={form.control} name="email" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Email Address *</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Email Address *</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="jane@company.com"
-                                    className="rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50"
-                                    {...field} />
+                                  <Input placeholder="jane@company.com" className={fieldClass} {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -699,22 +854,18 @@ export default function SupportPage() {
                           <div className="grid sm:grid-cols-2 gap-5">
                             <FormField control={form.control} name="phone" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Phone (optional)</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Phone (optional)</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="+231 7XX XXX XXX"
-                                    className="rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50"
-                                    {...field} />
+                                  <Input placeholder="+231 7XX XXX XXX" className={fieldClass} {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )} />
                             <FormField control={form.control} name="company" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Company (optional)</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Company (optional)</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Your Organization"
-                                    className="rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50"
-                                    {...field} />
+                                  <Input placeholder="Your Organization" className={fieldClass} {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -724,10 +875,10 @@ export default function SupportPage() {
                           <div className="grid sm:grid-cols-2 gap-5">
                             <FormField control={form.control} name="category" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Category *</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Category *</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                   <FormControl>
-                                    <SelectTrigger className="rounded-xl bg-white/5 border-white/10 text-white/70">
+                                    <SelectTrigger className="rounded-xl bg-white border-[#E0E6ED] text-[#3B4A59]">
                                       <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                   </FormControl>
@@ -747,10 +898,10 @@ export default function SupportPage() {
                             )} />
                             <FormField control={form.control} name="priority" render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-semibold text-white/60">Priority *</FormLabel>
+                                <FormLabel className="text-sm font-semibold text-[#3B4A59]">Priority *</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                   <FormControl>
-                                    <SelectTrigger className="rounded-xl bg-white/5 border-white/10 text-white/70">
+                                    <SelectTrigger className="rounded-xl bg-white border-[#E0E6ED] text-[#3B4A59]">
                                       <SelectValue placeholder="Select priority" />
                                     </SelectTrigger>
                                   </FormControl>
@@ -768,11 +919,9 @@ export default function SupportPage() {
 
                           <FormField control={form.control} name="subject" render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-semibold text-white/60">Subject *</FormLabel>
+                              <FormLabel className="text-sm font-semibold text-[#3B4A59]">Subject *</FormLabel>
                               <FormControl>
-                                <Input placeholder="Brief summary of your issue"
-                                  className="rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50"
-                                  {...field} />
+                                <Input placeholder="Brief summary of your issue" className={fieldClass} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -780,11 +929,11 @@ export default function SupportPage() {
 
                           <FormField control={form.control} name="message" render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-semibold text-white/60">Issue Description *</FormLabel>
+                              <FormLabel className="text-sm font-semibold text-[#3B4A59]">Issue Description *</FormLabel>
                               <FormControl>
                                 <Textarea
                                   placeholder="Describe your issue in detail — include error messages, steps to reproduce, and any screenshots if available."
-                                  className="resize-none rounded-xl bg-white/5 border-white/10 text-white placeholder-white/25 focus-visible:ring-[#3CB52A]/40 focus-visible:border-[#3CB52A]/50 min-h-[140px]"
+                                  className={`resize-none min-h-[140px] ${fieldClass}`}
                                   {...field}
                                 />
                               </FormControl>
@@ -794,12 +943,12 @@ export default function SupportPage() {
 
                           <button
                             type="submit"
-                            className="w-full bg-[#3CB52A] hover:bg-[#2da822] text-white py-4 rounded-xl font-bold transition-all shadow-[0_8px_32px_rgba(60,181,42,0.30)] hover:shadow-[0_12px_40px_rgba(60,181,42,0.45)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            className="w-full bg-[#3CB52A] hover:bg-[#2da822] text-white py-4 rounded-xl font-bold transition-all shadow-[0_8px_28px_rgba(60,181,42,0.30)] hover:shadow-[0_12px_36px_rgba(60,181,42,0.40)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
                           >
                             Submit Ticket <ArrowRight size={16} />
                           </button>
 
-                          <p className="text-center text-xs text-white/25">
+                          <p className="text-center text-xs text-[#64748B]">
                             Urgent? Call us directly:{' '}
                             <a href="tel:+231761798796" className="text-[#3CB52A] font-semibold">+231 761 798 796</a>
                           </p>
@@ -818,9 +967,9 @@ export default function SupportPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="bg-white/4 rounded-2xl border border-white/8 p-6 space-y-4"
+                className="bg-white rounded-2xl border border-[#E7ECF2] shadow-sm p-6 space-y-4"
               >
-                <h3 className="font-bold text-white flex items-center gap-2">
+                <h3 className="font-bold text-[#0A1929] flex items-center gap-2">
                   <Phone size={15} className="text-[#3CB52A]" /> Direct Contact
                 </h3>
                 {[
@@ -831,12 +980,12 @@ export default function SupportPage() {
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-lg bg-[#3CB52A]/10 text-[#3CB52A] flex items-center justify-center">{item.icon}</div>
-                    <div>
-                      <p className="text-xs text-white/30 font-medium">{item.label}</p>
+                    <div className="min-w-0">
+                      <p className="text-xs text-[#64748B] font-medium">{item.label}</p>
                       {item.href ? (
-                        <a href={item.href} className="text-sm font-semibold text-white/80 hover:text-[#3CB52A] transition-colors">{item.value}</a>
+                        <a href={item.href} className="text-sm font-semibold text-[#0A1929] hover:text-[#3CB52A] transition-colors break-all">{item.value}</a>
                       ) : (
-                        <p className="text-sm font-semibold text-white/80">{item.value}</p>
+                        <p className="text-sm font-semibold text-[#0A1929]">{item.value}</p>
                       )}
                     </div>
                   </div>
@@ -848,11 +997,11 @@ export default function SupportPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.16 }}
-                className="bg-white/4 rounded-2xl border border-white/8 p-6"
+                className="bg-white rounded-2xl border border-[#E7ECF2] shadow-sm p-6"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <AlertCircle size={15} className="text-[#3CB52A]" />
-                  <h3 className="font-bold text-white text-sm">Response Time Guide</h3>
+                  <h3 className="font-bold text-[#0A1929] text-sm">Response Time Guide</h3>
                 </div>
                 <div className="space-y-3">
                   {[
@@ -862,12 +1011,12 @@ export default function SupportPage() {
                     { level: 'Low', emoji: '🟢', time: '< 24 hours' },
                   ].map((r) => (
                     <div key={r.level} className="flex items-center justify-between">
-                      <span className="text-sm text-white/50">{r.emoji} {r.level}</span>
-                      <span className="text-sm font-bold text-white">{r.time}</span>
+                      <span className="text-sm text-[#5B6B7B]">{r.emoji} {r.level}</span>
+                      <span className="text-sm font-bold text-[#0A1929]">{r.time}</span>
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-white/25 pt-3 mt-3 border-t border-white/8">Priority & Dedicated SLA clients get faster routing.</p>
+                <p className="text-xs text-[#64748B] pt-3 mt-3 border-t border-[#EEF2F6]">Priority & Dedicated SLA clients get faster routing.</p>
               </motion.div>
 
               <motion.div
@@ -875,7 +1024,7 @@ export default function SupportPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.22 }}
-                className="bg-white/4 rounded-2xl border border-white/8 p-6"
+                className="bg-[#0A1929] rounded-2xl p-6"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <MonitorCheck size={15} className="text-[#3CB52A]" />
@@ -888,8 +1037,8 @@ export default function SupportPage() {
                     'We diagnose and communicate our findings.',
                     'Issue is resolved and you confirm closure.',
                   ].map((step, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-white/45">
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#3CB52A]/12 text-[#3CB52A] text-xs font-black flex items-center justify-center mt-0.5">{i + 1}</span>
+                    <li key={i} className="flex items-start gap-3 text-sm text-white/55">
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#3CB52A]/15 text-[#3CB52A] text-xs font-black flex items-center justify-center mt-0.5">{i + 1}</span>
                       {step}
                     </li>
                   ))}
@@ -903,10 +1052,9 @@ export default function SupportPage() {
       {/* ══════════════════════════════════════════════════════
           SLA TIERS
       ══════════════════════════════════════════════════════ */}
-      <section id="plans" className="py-24 bg-[#060E18] relative overflow-hidden">
-        {/* Background gradient accent */}
+      <section id="plans" className="py-24 bg-white border-t border-[#EEF2F6] relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(60,181,42,0.06) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(60,181,42,0.05) 0%, transparent 70%)' }}
         />
 
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
@@ -916,11 +1064,9 @@ export default function SupportPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
-              <Layers size={11} /> Support Plans
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">Choose Your Support Tier</h2>
-            <p className="text-white/40 text-lg">Upgrade anytime to unlock faster responses and dedicated engineering access.</p>
+            <SectionBadge icon={<Layers size={11} />} label="Support Plans" />
+            <h2 className="text-3xl md:text-4xl font-black text-[#0A1929] mb-3">Choose Your Support Tier</h2>
+            <p className="text-[#5B6B7B] text-lg">Upgrade anytime to unlock faster responses and dedicated engineering access.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-5 items-center">
@@ -933,25 +1079,25 @@ export default function SupportPage() {
                 transition={{ duration: 0.4, delay: i * 0.09, ease: EASE }}
                 className={`relative flex flex-col rounded-3xl border p-8 transition-all hover:-translate-y-1 ${
                   tier.popular
-                    ? 'bg-[#3CB52A]/8 border-[#3CB52A]/40 shadow-[0_0_60px_rgba(60,181,42,0.12)] scale-[1.03] z-10'
-                    : 'bg-white/3 border-white/8 hover:border-white/16'
+                    ? 'bg-white border-[#3CB52A]/50 shadow-[0_20px_60px_rgba(60,181,42,0.15)] scale-[1.03] z-10'
+                    : 'bg-[#F7FAFC] border-[#E7ECF2] hover:border-[#DDE5EC]'
                 }`}
               >
                 {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-[#3CB52A] text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap shadow-[0_4px_16px_rgba(60,181,42,0.5)]">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-[#3CB52A] text-white text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap shadow-[0_4px_16px_rgba(60,181,42,0.4)]">
                     <Star size={10} fill="white" /> Most Chosen
                   </div>
                 )}
 
                 <div className="mb-7">
-                  <p className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-1">{tier.tagline}</p>
-                  <h3 className="text-2xl font-black text-white mb-1">{tier.name}</h3>
-                  <p className={`text-lg font-bold ${tier.popular ? 'text-[#3CB52A]' : 'text-white/50'}`}>{tier.price}</p>
+                  <p className="text-[#1E7A12] text-xs font-bold tracking-widest uppercase mb-1">{tier.tagline}</p>
+                  <h3 className="text-2xl font-black text-[#0A1929] mb-1">{tier.name}</h3>
+                  <p className={`text-lg font-bold ${tier.popular ? 'text-[#3CB52A]' : 'text-[#5B6B7B]'}`}>{tier.price}</p>
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-grow">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-white/60">
+                    <li key={f} className="flex items-start gap-3 text-sm text-[#3B4A59]">
                       <CheckCircle2 size={15} className="text-[#3CB52A] flex-shrink-0 mt-0.5" />
                       {f}
                     </li>
@@ -971,9 +1117,9 @@ export default function SupportPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FAQ — Dark
+          FAQ
       ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-[#0A1929] border-t border-white/6">
+      <section id="faq" className="py-24 bg-[#F7FAFC] border-t border-[#EEF2F6]">
         <div className="max-w-3xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -981,25 +1127,23 @@ export default function SupportPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full mb-4">
-              <HelpCircle size={11} /> FAQ
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">Frequently Asked Questions</h2>
-            <p className="text-white/40 mb-8">Quick answers — search or scroll through.</p>
+            <SectionBadge icon={<HelpCircle size={11} />} label="FAQ" />
+            <h2 className="text-3xl md:text-4xl font-black text-[#0A1929] mb-3">Frequently Asked Questions</h2>
+            <p className="text-[#5B6B7B] mb-8">Quick answers — search or scroll through.</p>
             <div className="relative max-w-md mx-auto">
-              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search questions…"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#3CB52A]/40 focus:ring-2 focus:ring-[#3CB52A]/15 transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-[#E0E6ED] text-[#0A1929] text-sm placeholder-[#9AA6B2] focus:outline-none focus:border-[#3CB52A]/50 focus:ring-2 focus:ring-[#3CB52A]/15 transition-colors shadow-sm"
               />
             </div>
           </motion.div>
 
           <div className="space-y-2">
             {filteredFaqs.length === 0 ? (
-              <p className="text-center text-white/30 py-8 text-sm">No results for "<strong className="text-white/50">{search}</strong>". Try a different term.</p>
+              <p className="text-center text-[#64748B] py-8 text-sm">No results for "<strong className="text-[#5B6B7B]">{search}</strong>". Try a different term.</p>
             ) : (
               filteredFaqs.map((f, i) => <FAQItem key={f.q} q={f.q} a={f.a} i={i} />)
             )}
@@ -1008,67 +1152,61 @@ export default function SupportPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FINAL CTA — Trust strip + CTA
+          FINAL CTA — dark contrast band
       ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-[#060E18] relative overflow-hidden border-t border-white/6">
-        {/* Glow */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 100%, rgba(60,181,42,0.08) 0%, transparent 70%)' }}
-        />
-
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-wrap items-center justify-center gap-6 mb-16 pb-16 border-b border-white/8"
-          >
-            {[
-              { icon: <Shield size={14} />, label: 'ISO 27001 Ready' },
-              { icon: <Lock size={14} />, label: 'GDPR Compliant' },
-              { icon: <Activity size={14} />, label: '99.9% Uptime SLA' },
-              { icon: <Award size={14} />, label: 'Certified Engineers' },
-              { icon: <Globe size={14} />, label: '10+ Countries Served' },
-            ].map((badge) => (
-              <div key={badge.label} className="flex items-center gap-2 text-white/35 text-xs font-semibold">
-                <span className="text-[#3CB52A]">{badge.icon}</span>
-                {badge.label}
-              </div>
-            ))}
-          </motion.div>
-
-          {/* CTA */}
+      <section className="py-24 bg-[#F7FAFC]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center"
+            className="relative overflow-hidden rounded-3xl bg-[#060E18] px-8 py-16 lg:px-16 text-center"
           >
-            <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-[#3CB52A]/12 border border-[#3CB52A]/25">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
-              <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">We're Here for You</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
-              Still Need Help?
-            </h2>
-            <p className="text-white/45 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-              Our team of certified engineers is ready to help — from quick questions to complex enterprise-scale challenges.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a
-                href="#ticket"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold rounded-full transition-all shadow-[0_8px_32px_rgba(60,181,42,0.40)] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(60,181,42,0.55)]"
-              >
-                Submit a Ticket <ArrowRight size={16} />
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
-              >
-                Contact Us
-              </Link>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse 60% 70% at 50% 100%, rgba(60,181,42,0.12) 0%, transparent 70%)' }}
+            />
+            <div className="relative z-10">
+              {/* Trust badges */}
+              <div className="flex flex-wrap items-center justify-center gap-6 mb-12 pb-10 border-b border-white/8">
+                {[
+                  { icon: <Shield size={14} />, label: 'ISO 27001 Ready' },
+                  { icon: <Lock size={14} />, label: 'GDPR Compliant' },
+                  { icon: <Activity size={14} />, label: '99.9% Uptime SLA' },
+                  { icon: <Award size={14} />, label: 'Certified Engineers' },
+                  { icon: <Globe size={14} />, label: '10+ Countries Served' },
+                ].map((badge) => (
+                  <div key={badge.label} className="flex items-center gap-2 text-white/40 text-xs font-semibold">
+                    <span className="text-[#3CB52A]">{badge.icon}</span>
+                    {badge.label}
+                  </div>
+                ))}
+              </div>
+
+              <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-[#3CB52A]/12 border border-[#3CB52A]/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+                <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">We're Here for You</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
+                Still Need Help?
+              </h2>
+              <p className="text-white/50 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+                Our team of certified engineers is ready to help — from quick questions to complex enterprise-scale challenges.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <a
+                  href="#ticket"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold rounded-full transition-all shadow-[0_8px_32px_rgba(60,181,42,0.40)] hover:-translate-y-0.5"
+                >
+                  Submit a Ticket <ArrowRight size={16} />
+                </a>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
