@@ -271,7 +271,7 @@ const WHY = [
 const TESTIMONIALS = [
   { name: 'Health Tech Liberia', role: 'Digital Health Platform', quote: 'iTech Network Africa built our entire patient-provider platform from the ground up. The digital health records system and telemedicine integration have transformed how we deliver care across Liberia.', rating: 5 },
   { name: 'Galaxy International', role: 'International Business Group', quote: 'Our corporate website and CMS delivered by iTech is exactly what we envisioned — clean, responsive, and easy for our team to manage. Their design sense and attention to brand detail is outstanding.', rating: 5 },
-  { name: 'B4P CODEFOUND', role: 'Women & Youth-Led NGO · Liberia & Diaspora', quote: 'iTech built us a platform that truly represents our mission. The donation integration works flawlessly and the programme pages have helped us reach thousands more young coders across Liberia and the diaspora.', rating: 5 },
+  { name: 'B4P CODEFOUND', role: 'Youth & Women-Focused NGO · Liberia & Diaspora', quote: 'iTech built us a platform that truly represents our mission. The donation integration works flawlessly and the programme pages have helped us reach thousands more young coders across Liberia and the diaspora.', rating: 5 },
   { name: 'DKS Incubation Center', role: 'Startup Incubation Institution', quote: 'The online application portal iTech developed has completely streamlined how we receive and review applicants. What used to take weeks now takes days. The team was professional from day one.', rating: 5 },
   { name: 'Lewanah LLC', role: 'E-commerce · US Market', quote: 'Running a digital brand across borders is complex, but iTech made it seamless. Our e-commerce platform handles orders, payments, and product management without a hitch. Highly recommended.', rating: 5 },
   { name: 'Agrolite', role: 'Agricultural Organisation', quote: 'Our website finally reflects the quality of work we do in the field. The blog, gallery, and outreach pages iTech built have helped us connect with farming communities in ways we never could before.', rating: 5 },
@@ -872,45 +872,6 @@ function VideoCard({ reel, index }: { reel: (typeof VIDEO_REELS)[number]; index:
   );
 }
 
-/* ─── Video Showcase Section (reel grid) ─── */
-function VideoShowcaseSection() {
-  return (
-    <section className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-      <FloatingOrbs count={4} dark />
-      <div
-        className="absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#3CB52A 1px,transparent 1px),linear-gradient(90deg,#3CB52A 1px,transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        {/* Header */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14"
-        >
-          <div>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="text-4xl md:text-5xl font-black text-white leading-tight"
-            >
-              Real Projects.<br />Real Results.
-            </motion.h2>
-          </div>
-        </motion.div>
-
-      </div>
-    </section>
-  );
-}
-
 const FEATURED_SCENES = [
   {
     label: 'Our Mission',
@@ -1238,15 +1199,17 @@ function FeaturedVideoSection() {
 /* ─── Testimonials Slider ─── */
 function TestimonialsSlider() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const total = TESTIMONIALS.length;
 
   const prev = useCallback(() => setActive((a) => (a - 1 + total) % total), [total]);
   const next = useCallback(() => setActive((a) => (a + 1) % total), [total]);
 
   useEffect(() => {
-    const id = setInterval(next, 5000);
+    if (paused) return;
+    const id = setInterval(next, 6000);
     return () => clearInterval(id);
-  }, [next]);
+  }, [next, paused]);
 
   return (
     <section className="py-24 lg:py-32 bg-[#F8FFFE] relative overflow-hidden">
@@ -1269,95 +1232,70 @@ function TestimonialsSlider() {
         </motion.div>
 
         {/* Slider */}
-        <div className="relative">
-
-          {/* ── Mobile: single card ── */}
-          <div className="md:hidden overflow-hidden rounded-3xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="relative bg-white rounded-3xl p-7 border border-[#3CB52A]/25 shadow-xl"
-              >
-                <div className="absolute top-0 left-7 w-1 h-10 bg-[#3CB52A] rounded-b-full" />
-                <Quote size={26} className="mb-4 text-[#3CB52A]" />
-                <p className="text-[#374151] text-base leading-relaxed mb-6 italic">"{TESTIMONIALS[active].quote}"</p>
-                <div className="flex gap-0.5 mb-4">
-                  {[...Array(TESTIMONIALS[active].rating)].map((_, j) => (
-                    <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />
-                  ))}
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-sm shrink-0">
-                    {TESTIMONIALS[active].name[0]}
-                  </div>
-                  <div>
-                    <div className="text-[#111827] font-bold text-sm">{TESTIMONIALS[active].name}</div>
-                    <div className="text-[#9CA3AF] text-xs mt-0.5">{TESTIMONIALS[active].role}</div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* ── Desktop: 3 cards ── */}
-          <div className="hidden md:block overflow-hidden rounded-3xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.45, ease: EASE }}
-                className="grid md:grid-cols-3 gap-6"
-              >
-                {[0, 1, 2].map((offset) => {
-                  const idx = (active + offset) % total;
-                  const t = TESTIMONIALS[idx];
-                  const isMain = offset === 0;
-                  return (
+        <div
+          className="relative"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* Sliding track — 1 card mobile, 2 tablet, 3 desktop */}
+          <div className="overflow-hidden -mx-3 px-1 py-2">
+            <div
+              className="flex transition-transform duration-[650ms]"
+              style={{
+                transform: `translateX(-${(active * 100) / (total + 2)}%)`,
+                transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              }}
+            >
+              {[...TESTIMONIALS, ...TESTIMONIALS.slice(0, 2)].map((t, i) => {
+                const isMain = i % total === active;
+                return (
+                  <div key={i} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3">
                     <div
-                      key={idx}
-                      className={`relative rounded-3xl p-8 border transition-all duration-300 ${
+                      className={`relative h-full rounded-3xl p-8 border flex flex-col transition-all duration-500 ${
                         isMain
-                          ? 'bg-white border-[#3CB52A]/25 shadow-xl shadow-[#3CB52A]/8 scale-[1.02]'
-                          : 'bg-white border-[#E5E7EB] shadow-sm opacity-70 hover:opacity-90'
+                          ? 'bg-gradient-to-b from-white to-[#f6fef4] border-[#3CB52A]/30 shadow-[0_20px_60px_rgba(60,181,42,0.14)] lg:scale-[1.02]'
+                          : 'bg-white border-[#E5E7EB] shadow-sm lg:opacity-75'
                       }`}
                     >
-                      {isMain && (
-                        <div className="absolute top-0 left-8 w-1 h-10 bg-[#3CB52A] rounded-b-full" />
-                      )}
-                      <Quote size={28} className={`mb-4 ${isMain ? 'text-[#3CB52A]' : 'text-[#D1D5DB]'}`} />
-                      <p className="text-[#374151] text-sm leading-relaxed mb-6 italic">"{t.quote}"</p>
-                      <div className="flex gap-0.5 mb-4">
+                      {/* Top accent + quote mark */}
+                      <div className={`absolute top-0 left-8 w-1 h-10 rounded-b-full ${isMain ? 'bg-[#3CB52A]' : 'bg-[#E5E7EB]'}`} />
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 ${isMain ? 'bg-[#3CB52A] shadow-lg shadow-[#3CB52A]/30' : 'bg-[#F3F4F6]'}`}>
+                        <Quote size={20} className={isMain ? 'text-white' : 'text-[#9CA3AF]'} />
+                      </div>
+
+                      <p className="text-[#374151] text-[15px] leading-relaxed mb-6 flex-1">"{t.quote}"</p>
+
+                      <div className="flex gap-1 mb-5">
                         {[...Array(t.rating)].map((_, j) => (
-                          <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />
+                          <Star key={j} size={15} className="text-[#f5a623] fill-[#f5a623]" />
                         ))}
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-sm shrink-0">
+
+                      <div className="flex items-center gap-3 pt-5 border-t border-[#E5E7EB]/80">
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-sm shrink-0 ${
+                          isMain
+                            ? 'bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white shadow-md shadow-[#3CB52A]/25'
+                            : 'bg-[#f0fdf4] border border-[#3CB52A]/20 text-[#3CB52A]'
+                        }`}>
                           {t.name[0]}
                         </div>
-                        <div>
-                          <div className="text-[#111827] font-bold text-sm">{t.name}</div>
-                          <div className="text-[#9CA3AF] text-xs mt-0.5">{t.role}</div>
+                        <div className="min-w-0">
+                          <div className="text-[#111827] font-bold text-sm truncate">{t.name}</div>
+                          <div className="text-[#9CA3AF] text-xs mt-0.5 truncate">{t.role}</div>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </motion.div>
-            </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Controls */}
           <div className="flex items-center justify-center gap-6 mt-10">
             <button
               onClick={prev}
-              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all"
+              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               aria-label="Previous"
             >
               <ChevronLeft size={20} />
@@ -1370,7 +1308,7 @@ function TestimonialsSlider() {
                   key={i}
                   onClick={() => setActive(i)}
                   className={`rounded-full transition-all duration-300 ${
-                    i === active ? 'w-7 h-2.5 bg-[#3CB52A]' : 'w-2.5 h-2.5 bg-[#D1D5DB] hover:bg-[#3CB52A]/50'
+                    i === active ? 'w-8 h-2.5 bg-gradient-to-r from-[#3CB52A] to-[#2da822]' : 'w-2.5 h-2.5 bg-[#D1D5DB] hover:bg-[#3CB52A]/50'
                   }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
@@ -1379,7 +1317,7 @@ function TestimonialsSlider() {
 
             <button
               onClick={next}
-              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all"
+              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               aria-label="Next"
             >
               <ArrowRight size={20} />
@@ -1765,7 +1703,6 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           VIDEO SHOWCASE REEL
       ══════════════════════════════════════ */}
-      <VideoShowcaseSection />
 
       {/* ══════════════════════════════════════
           TESTIMONIALS — Light mode slider

@@ -99,7 +99,7 @@ const partnerLogos = [
     url: 'https://b4pcodefound.org',
     domain: 'b4pcodefound.org',
     category: 'Tech Education',
-    desc: 'Women and youth-led NGO bridging the coding skills gap for Liberians in the diaspora and at home through bootcamps and scholarships.',
+    desc: 'Youth and women-focused NGO operating in Liberia and the diaspora, bridging the coding skills gap through bootcamps and scholarships.',
   },
 ];
 
@@ -124,7 +124,7 @@ const portfolioProjects = [
     name: 'B4P CODEFOUND',
     url: 'https://b4pcodefound.org',
     domain: 'b4pcodefound.org',
-    desc: 'Website for a women and youth-led NGO operating in Liberia and the diaspora — featuring program pages, impact reporting, and donation integration for coding education.',
+    desc: 'Website for a youth and women-focused NGO operating in Liberia and the diaspora — featuring program pages, impact reporting, and donation integration for coding education.',
     tags: ['NGO', 'Diaspora', 'Donation Integration'],
     color: '#F59E0B',
   },
