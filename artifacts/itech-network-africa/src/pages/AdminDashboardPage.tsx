@@ -1666,6 +1666,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
   const prevUnread          = useRef(-1);   // -1 = first load, skip notification
   const prevPartnerCount    = useRef(-1);
   const prevTicketCount     = useRef(-1);
+  const prevBillingCount    = useRef(-1);
   const notifyRef           = useRef(notifs.notify);
   useEffect(() => { notifyRef.current = notifs.notify; }, [notifs.notify]);
 
@@ -1737,6 +1738,29 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
       } catch { /* ignore */ }
     }
     pollPartnerships(); const id = setInterval(pollPartnerships, 15000); return () => clearInterval(id);
+  }, []);
+
+  // Poll for new billing / payment submissions
+  useEffect(() => {
+    async function pollBilling() {
+      try {
+        const res = await fetch(apiUrl('/api/admin/billing'), { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json() as { name?: string; plan?: string; amount?: number; currency?: string }[];
+        if (prevBillingCount.current >= 0 && data.length > prevBillingCount.current) {
+          const newest = data[0];
+          notifyRef.current({
+            type: 'invoice',
+            title: '💳 New payment submission',
+            body: `${newest.name || 'A client'} submitted a payment${newest.plan ? ` for ${newest.plan}` : ''}. Review now.`,
+            sound: 'invoice',
+            section: 'billing',
+          });
+        }
+        prevBillingCount.current = data.length;
+      } catch { /* ignore */ }
+    }
+    pollBilling(); const id = setInterval(pollBilling, 15000); return () => clearInterval(id);
   }, []);
 
   // Poll for new support tickets submitted
