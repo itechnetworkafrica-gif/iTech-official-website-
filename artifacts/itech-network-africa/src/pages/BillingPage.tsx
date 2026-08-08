@@ -28,11 +28,11 @@ import { pricingCategories } from '@/lib/pricing-data';
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const BANK = {
-  bank:    'Central Development Bank (CDB)',
+  bank:    'UBA Liberia Limited',
   branch:  'SINKOR Branch',
   account: '5306050310591',
   name:    'MR WILMOT KERKULAH',
-  swift:   'CDB Liberia',
+  swift:   'UBA Liberia',
 };
 
 const MOBILE = {
@@ -52,7 +52,7 @@ const HOW_IT_WORKS = [
     step: '02',
     icon: <Building2 size={20} />,
     title: 'Make Your Deposit',
-    desc: 'Send payment via Bank Transfer to CDB or Mobile Money to +231761978796.',
+    desc: 'Send payment via Bank Transfer to UBA or Mobile Money to +231761978796.',
   },
   {
     step: '03',
@@ -78,7 +78,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 const CURRENCIES = ['USD', 'LRD'];
 const METHODS = [
-  { value: 'bank_transfer', label: 'Bank Transfer (CDB)' },
+  { value: 'bank_transfer', label: 'Bank Transfer (UBA)' },
   { value: 'mobile_money',  label: 'Mobile Money' },
 ];
 
@@ -421,7 +421,7 @@ export default function BillingPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold">Bank Transfer</h3>
-                  <p className="text-white/40 text-xs">Central Development Bank</p>
+                  <p className="text-white/40 text-xs">UBA Liberia Limited</p>
                 </div>
               </div>
               <div className="space-y-0">
@@ -433,7 +433,7 @@ export default function BillingPage() {
               <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex gap-3">
                 <AlertCircle size={15} className="text-amber-400 flex-shrink-0 mt-0.5" />
                 <p className="text-amber-200/80 text-[11px] leading-relaxed">
-                  After depositing, ask the teller for a Transaction Receipt. The <strong>Transaction ID</strong> (e.g. IR1666) is printed on it — you'll need it to verify your payment below.
+                  After depositing at UBA, ask the teller for a Transaction Receipt. The <strong>Transaction ID</strong> (e.g. IR1666) is printed on it — you'll need it to verify your payment below.
                 </p>
               </div>
             </div>
@@ -702,7 +702,7 @@ export default function BillingPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="p-3 rounded-xl bg-[#F7FAFC] border border-[#EEF2F6]">
-                    <p className="text-[11px] font-bold text-[#0A1929] mb-1">🏦 Bank Receipt (CDB)</p>
+                    <p className="text-[11px] font-bold text-[#0A1929] mb-1">🏦 Bank Receipt (UBA)</p>
                     <p className="text-[11px] text-[#5B6B7B]">Look for <strong>TRANSACTION ID:</strong> — e.g. <span className="font-mono text-[#3CB52A]">IR1666</span></p>
                   </div>
                   <div className="p-3 rounded-xl bg-[#F7FAFC] border border-[#EEF2F6]">

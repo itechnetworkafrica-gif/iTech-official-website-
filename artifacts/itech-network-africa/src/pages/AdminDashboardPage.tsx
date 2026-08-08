@@ -1653,8 +1653,12 @@ const ADMIN_NAV = [
 ];
 
 function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissions: string[] | null }) {
-  // permissions === null → full access; otherwise only listed sections
-  const allowed = (id: string) => permissions == null || permissions.includes(id);
+  // permissions === null → full access (admin); otherwise only listed sections.
+  // 'billing' is restricted to full-access admins only — team members never see it.
+  const allowed = (id: string) => {
+    if (id === 'billing') return permissions == null;
+    return permissions == null || permissions.includes(id);
+  };
   const nav = ADMIN_NAV.filter(item => allowed(item.id));
   const [section, setSection]     = useState(() => (nav[0]?.id ?? 'overview'));
   const [mobileNav, setMobileNav] = useState(false);
@@ -1666,7 +1670,8 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
   const prevUnread          = useRef(-1);   // -1 = first load, skip notification
   const prevPartnerCount    = useRef(-1);
   const prevTicketCount     = useRef(-1);
-  const prevBillingCount    = useRef(-1);
+  // Persist across page reloads via sessionStorage so notifications don't repeat.
+  const prevBillingCount    = useRef(parseInt(sessionStorage.getItem('admin_billing_seen') ?? '-1', 10));
   const notifyRef           = useRef(notifs.notify);
   useEffect(() => { notifyRef.current = notifs.notify; }, [notifs.notify]);
 
@@ -1758,6 +1763,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
           });
         }
         prevBillingCount.current = data.length;
+        sessionStorage.setItem('admin_billing_seen', String(data.length));
       } catch { /* ignore */ }
     }
     pollBilling(); const id = setInterval(pollBilling, 15000); return () => clearInterval(id);
