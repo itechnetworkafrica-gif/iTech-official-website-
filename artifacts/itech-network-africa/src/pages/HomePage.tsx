@@ -4,7 +4,8 @@ import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import {
   ArrowRight, Globe, Shield, Zap, Users, Award, TrendingUp,
   Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
-  Quote, ChevronLeft, FolderOpen, Headphones
+  Quote, ChevronLeft, FolderOpen, Headphones, Handshake,
+  Banknote, HeartPulse, GraduationCap, Landmark, ShoppingBag,
 } from 'lucide-react';
 
 /* ─── Animation helpers ─── */
@@ -1879,6 +1880,108 @@ export default function HomePage() {
                 {tag}
               </span>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          INDUSTRIES WE SERVE
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14"
+          >
+            <div className="max-w-xl">
+              <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+                Industries We Serve
+              </span>
+              <h2 className="text-3xl md:text-5xl font-bold text-[#0A1929] leading-tight">
+                Deep expertise across the sectors that move Africa forward
+              </h2>
+            </div>
+            <Link
+              href="/industries"
+              className="inline-flex items-center gap-2 text-[#0A1929] font-bold border border-[#E5E7EB] hover:border-[#3CB52A] hover:text-[#3CB52A] px-6 py-3 rounded-xl transition-colors self-start lg:self-auto"
+            >
+              All Industries <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { icon: Banknote,      label: 'Finance & Fintech',    desc: 'Payments, banking & mobile money' },
+              { icon: HeartPulse,    label: 'Healthcare',           desc: 'Health records & telemedicine' },
+              { icon: GraduationCap, label: 'Education',            desc: 'E-learning & school systems' },
+              { icon: Landmark,      label: 'Government',           desc: 'E-government & public services' },
+              { icon: ShoppingBag,   label: 'Retail & Commerce',    desc: 'E-commerce & inventory' },
+              { icon: Handshake,     label: 'NGOs & Non-Profits',   desc: 'Donation & impact platforms' },
+            ].map((it, i) => (
+              <motion.div
+                key={it.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+                className="group rounded-2xl border border-[#E5E7EB] bg-white p-5 hover:border-[#3CB52A]/50 hover:shadow-lg transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-[#3CB52A]/10 flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] transition-colors">
+                  <it.icon size={22} className="text-[#3CB52A] group-hover:text-white transition-colors" />
+                </div>
+                <div className="font-bold text-[#0A1929] text-sm mb-1">{it.label}</div>
+                <div className="text-[#6B7280] text-xs leading-relaxed">{it.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          PARTNER WITH US
+      ══════════════════════════════════════ */}
+      <section className="py-20 bg-[#F8F9FA]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="relative overflow-hidden rounded-3xl bg-[#060E18] px-8 py-14 lg:px-16 lg:py-16"
+          >
+            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
+            <div className="absolute -top-24 -right-24 w-[380px] h-[380px] rounded-full bg-[#3CB52A]/15 blur-[90px] pointer-events-none" />
+
+            <div className="relative z-10 grid lg:grid-cols-[1fr_auto] gap-10 items-center">
+              <div>
+                <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/25 px-4 py-1.5 rounded-full">
+                  <Handshake size={13} />
+                  Partner Programme
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
+                  Grow with us — refer, resell or build together
+                </h2>
+                <p className="text-white/50 text-lg leading-relaxed max-w-2xl">
+                  Agencies, IT firms, NGOs and institutions across 10+ countries partner with iTech Network Africa
+                  for referral commissions, reseller margins and joint programmes. Applications go straight to our
+                  partnerships team.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-4 shrink-0">
+                <Link
+                  href="/partners#apply"
+                  className="inline-flex items-center justify-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5 active:scale-95"
+                >
+                  Become a Partner <ArrowRight size={16} />
+                </Link>
+                <Link
+                  href="/partners#document"
+                  className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-[#3CB52A]/60 text-white font-bold px-8 py-4 rounded-xl transition-colors"
+                >
+                  Read the Partnership Document
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>

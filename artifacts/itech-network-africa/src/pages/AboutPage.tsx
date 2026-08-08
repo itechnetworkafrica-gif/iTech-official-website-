@@ -680,13 +680,46 @@ export default function AboutPage() {
             <div className="h-px bg-white/[0.06]" />
           </div>
 
+          {/* ── Partnership programme block ── */}
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-14">
+            <div className="grid md:grid-cols-3 gap-5 mb-12">
+              {[
+                {
+                  title: 'Refer & Earn',
+                  desc: 'Introduce clients to our software, cloud and security services and earn referral commission on every closed deal.',
+                },
+                {
+                  title: 'Resell & Grow',
+                  desc: 'Agencies and IT firms hold margin on our products, with co-branded marketing and priority technical support.',
+                },
+                {
+                  title: 'Build Together',
+                  desc: 'NGOs, educators and public institutions co-create programmes and platforms that expand digital opportunity.',
+                },
+              ].map((c, i) => (
+                <motion.div
+                  key={c.title}
+                  {...fadeUp}
+                  transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 hover:border-[#3CB52A]/50 hover:bg-white/[0.05] transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 flex items-center justify-center mb-4">
+                    <span className="text-[#3CB52A] font-black">{i + 1}</span>
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-2">{c.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{c.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
           {/* CTA */}
-          <motion.div {...fadeUp} className="text-center mt-12 px-6">
+          <motion.div {...fadeUp} className="text-center px-6">
             <p className="text-white/40 text-sm mb-5">
-              Want to grow together? We're open to strategic partnerships worldwide.
+              Read our partnership document, pick your model, and apply in minutes — straight to our partnerships team.
             </p>
             <Link
-              href="/contact#partner"
+              href="/partners"
               className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5 active:scale-95"
             >
               Become a Partner <ArrowRight size={16} />
