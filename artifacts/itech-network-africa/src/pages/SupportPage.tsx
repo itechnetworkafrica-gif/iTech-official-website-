@@ -162,6 +162,106 @@ const TOPIC_GROUPS = [
   },
 ];
 
+// Articles shown when a topic row is expanded
+const TOPIC_ARTICLES: Record<string, { title: string; desc: string; readTime: string }[]> = {
+  'Web & Mobile Apps': [
+    { title: 'How to request a new website or mobile app project', desc: 'Step-by-step guide to scoping, submitting a brief, and kicking off your build with our development team.', readTime: '4 min' },
+    { title: 'Connecting a custom domain to your hosted website', desc: 'Point your GoDaddy, Namecheap, or any registrar domain to your iTech-hosted site in under 15 minutes.', readTime: '5 min' },
+    { title: 'Publishing an update to your live website', desc: 'How to send content changes, new pages, or design tweaks to your project manager and track them through to deployment.', readTime: '3 min' },
+    { title: 'Mobile app store submission — what we handle vs. what you do', desc: 'Clarifies the Play Store / App Store submission checklist, developer account requirements, and our responsibilities.', readTime: '6 min' },
+  ],
+  'Software Development': [
+    { title: 'Submitting a feature request or change order', desc: 'How to describe what you need, what information speeds up the estimate, and expected turnaround times.', readTime: '3 min' },
+    { title: 'Understanding your software release cycle', desc: 'We follow two-week sprints. Learn how to read the sprint board in your Client Portal and give feedback before release.', readTime: '5 min' },
+    { title: 'Requesting API access tokens for your integration', desc: 'Generate and manage API keys from the Client Portal. Includes rate limits, scopes, and rotation best practices.', readTime: '6 min' },
+    { title: 'Bug report template and priority levels', desc: 'The fastest way to get a bug fixed is a clear report. Use this template: steps to reproduce, expected vs. actual, screenshot.', readTime: '2 min' },
+  ],
+  'Digital Marketing': [
+    { title: 'Getting started with your monthly marketing report', desc: 'What the report covers — traffic, leads, conversions — and how to read the key performance indicators.', readTime: '4 min' },
+    { title: 'How we run your social media campaigns', desc: 'Content calendar, approval workflow, posting schedule, and how to request edits before content goes live.', readTime: '5 min' },
+    { title: 'SEO audits — what we check and how often', desc: 'We run quarterly audits covering on-page SEO, backlinks, Core Web Vitals, and keyword rankings.', readTime: '6 min' },
+    { title: 'Running a paid ads campaign with iTech', desc: 'Google Ads and Meta Ads setup, budget recommendations, targeting strategy, and monthly performance reviews.', readTime: '7 min' },
+  ],
+  'Content & Media': [
+    { title: 'Submitting content for your website or blog', desc: 'How to share copy, images, and videos for our team to publish. File formats, naming conventions, and review timelines.', readTime: '3 min' },
+    { title: 'Video production packages — what is included', desc: 'Covers corporate videos, product demos, and social reels. Scriptwriting, filming, editing, and delivery formats.', readTime: '5 min' },
+    { title: 'Brand photography guidelines for your website', desc: 'Minimum resolution, preferred aspect ratios, background guidance, and how to submit photos for optimised web use.', readTime: '4 min' },
+    { title: 'Requesting graphics and design assets', desc: 'How to brief the design team, turnaround times, revision limits, and file formats we deliver.', readTime: '3 min' },
+  ],
+  'Cloud & Hosting': [
+    { title: 'Understanding your hosting plan and resources', desc: 'What storage, bandwidth, and CPU limits apply to your plan, and how to check current usage in the Client Portal.', readTime: '4 min' },
+    { title: 'Setting up a staging environment', desc: 'Clone your live site to a private staging URL for testing updates safely before they go public.', readTime: '5 min' },
+    { title: 'How to scale your hosting when traffic spikes', desc: 'iTech monitors load automatically, but this guide explains when and how to request a resource upgrade proactively.', readTime: '4 min' },
+    { title: 'Scheduled maintenance windows explained', desc: 'When maintenance happens, how you are notified in advance, and what to do if your site is unavailable.', readTime: '3 min' },
+  ],
+  'IT Infrastructure': [
+    { title: 'Network monitoring and alerting — how it works', desc: 'Your infrastructure is monitored 24/7. This explains alert thresholds, escalation paths, and how incidents are logged.', readTime: '5 min' },
+    { title: 'Requesting hardware procurement or server setup', desc: 'How to submit a hardware request, lead times for delivery, and the on-site or remote setup process.', readTime: '6 min' },
+    { title: 'Remote access and VPN configuration', desc: 'Secure remote access setup for your team — supported clients, authentication methods, and access control.', readTime: '5 min' },
+    { title: 'IT audit reports — how to read yours', desc: 'Quarterly IT audit covers network health, patch compliance, and risk flags. Guide to interpreting each section.', readTime: '7 min' },
+  ],
+  'Data & Databases': [
+    { title: 'Database backup schedule and retention policy', desc: 'Backups run every 6 hours. Retained for 30 days on standard plans, 90 days on Priority. How to request a restore.', readTime: '4 min' },
+    { title: 'Requesting a database export or migration', desc: 'How to request a full data export in CSV, SQL, or JSON. Includes estimated processing times and file delivery method.', readTime: '5 min' },
+    { title: 'Setting up a read replica for reporting', desc: 'Offload analytics queries to a read replica so they do not slow down your live application database.', readTime: '6 min' },
+    { title: 'Data compliance and GDPR guidelines', desc: 'How your data is stored, encrypted at rest and in transit, and steps for submitting a GDPR deletion request.', readTime: '5 min' },
+  ],
+  'Backups & Recovery': [
+    { title: 'How automatic backups work', desc: 'All hosted sites and databases are backed up every 6 hours. Snapshots are stored in geographically separate data centres.', readTime: '3 min' },
+    { title: 'Requesting a point-in-time restore', desc: 'If something breaks, you can roll back to any backup within your retention window. This guide walks through the request process.', readTime: '4 min' },
+    { title: 'Disaster recovery plan — what happens during an outage', desc: 'Our RTO is under 4 hours for managed infrastructure. This explains failover steps, communication, and RCA reports.', readTime: '6 min' },
+    { title: 'Testing your backup and restore process', desc: 'Best practices for verifying your backups actually work before you need them. We run restore drills on request.', readTime: '5 min' },
+  ],
+  'Cybersecurity': [
+    { title: 'How we protect your application from attacks', desc: 'WAF rules, DDoS mitigation, intrusion detection, and automated threat blocking that runs on all hosted infrastructure.', readTime: '5 min' },
+    { title: 'Security incident response — what to do', desc: 'If you suspect a breach, act fast. Step-by-step: isolate, report to iTech, preserve logs, and follow the containment checklist.', readTime: '4 min' },
+    { title: 'Penetration testing and vulnerability assessments', desc: 'We offer annual pen tests for enterprise clients. What the test covers, how results are reported, and remediation timelines.', readTime: '7 min' },
+    { title: 'Employee security awareness — our training resources', desc: 'Phishing simulations, security policy templates, and user training sessions available as part of managed security packages.', readTime: '5 min' },
+  ],
+  'Website Security & SSL': [
+    { title: 'Setting up two-factor authentication', desc: 'Enable 2FA on your Client Portal account using an authenticator app. Step-by-step setup and recovery code storage.', readTime: '2 min' },
+    { title: 'SSL certificate installation and renewal', desc: 'All iTech-hosted sites include auto-renewing SSL. How to verify your certificate, check expiry, and troubleshoot mixed-content warnings.', readTime: '4 min' },
+    { title: 'Enforcing HTTPS redirects on your site', desc: 'Ensure all HTTP traffic redirects to HTTPS automatically. Covers Nginx/Apache config and portal-level settings.', readTime: '3 min' },
+    { title: 'Content Security Policy (CSP) headers explained', desc: 'How CSP headers prevent XSS attacks and how to configure them without breaking third-party scripts on your site.', readTime: '6 min' },
+  ],
+  'AI & Automation': [
+    { title: 'What AI services does iTech offer?', desc: 'Overview of custom AI models, chatbot development, intelligent automation workflows, and AI-assisted analytics.', readTime: '4 min' },
+    { title: 'Automating repetitive business workflows', desc: 'How we map your manual processes, identify automation opportunities, and deploy integrations between your tools.', readTime: '6 min' },
+    { title: 'Integrating AI chatbots into your website or app', desc: 'Deployment options, training data requirements, handoff to human agents, and maintenance after launch.', readTime: '5 min' },
+    { title: 'AI model performance monitoring', desc: 'How we track accuracy, drift, and latency of deployed models, and what triggers a retraining cycle.', readTime: '5 min' },
+  ],
+  'iTech AI Tools': [
+    { title: 'Sarah AI — your support assistant', desc: 'Sarah is the AI chatbot built into this website. Learn what she can help with, her limitations, and how to escalate to a human.', readTime: '2 min' },
+    { title: 'AI-powered system health reports', desc: 'Your monthly infrastructure report is generated by AI analysis of logs, uptime data, and performance metrics.', readTime: '4 min' },
+    { title: 'Smart ticket routing — how it works', desc: 'AI automatically assigns support tickets to the right engineer based on category, urgency, and skill match.', readTime: '3 min' },
+    { title: 'Requesting a custom AI tool for your business', desc: 'From document processing to customer-facing chatbots — how to scope, build, and deploy a custom AI tool with iTech.', readTime: '6 min' },
+  ],
+  'Account Management': [
+    { title: 'Getting started with your Client Portal account', desc: 'Create your account, verify your email, set up 2FA, and explore the dashboard sections available to you.', readTime: '3 min' },
+    { title: 'How to reset your password', desc: 'Locked out? Use the "Forgot password" link on the login page. Reset link is valid for 30 minutes.', readTime: '1 min' },
+    { title: 'Adding or removing team members', desc: 'Invite colleagues to your portal account with role-based access. Owner, Admin, and View-only roles explained.', readTime: '4 min' },
+    { title: 'Updating your business contact details', desc: 'How to change your company name, registered address, and primary contact email — and what downstream effects to expect.', readTime: '3 min' },
+  ],
+  'Billing & Invoices': [
+    { title: 'How to download your invoices', desc: 'All invoices are in the Client Portal under Billing → Invoices. Export as PDF or request a bulk CSV for accounting.', readTime: '2 min' },
+    { title: 'Updating your payment method', desc: 'Add or change a card or bank transfer detail in the Portal. Changes take effect on the next billing cycle.', readTime: '3 min' },
+    { title: 'Understanding your monthly invoice line items', desc: 'What each charge means — hosting, support, project milestones, and one-time fees — with a plain-language breakdown.', readTime: '5 min' },
+    { title: 'Disputing a charge or requesting a refund', desc: 'How to raise a billing dispute via your account manager or email, and what our refund policy covers.', readTime: '4 min' },
+  ],
+  'Partner Programs': [
+    { title: 'iTech Partner Programme overview', desc: 'Three tiers — Referral, Resell, and Build. Which tier is right for you, and what benefits each one includes.', readTime: '4 min' },
+    { title: 'How to apply to become a partner', desc: 'Fill in the application form on the Partners page. Typical review takes 3–5 business days before you receive a decision.', readTime: '3 min' },
+    { title: 'Partner commission and payment schedule', desc: 'How referral commissions are calculated, when they are paid, and how to track earnings in the portal.', readTime: '5 min' },
+    { title: 'Co-marketing resources for partners', desc: 'Access branded slides, case studies, and proposal templates from the Partner Resources pack.', readTime: '3 min' },
+  ],
+  'Getting Started': [
+    { title: 'New client onboarding checklist', desc: 'Everything you need to do in your first week: portal setup, point-of-contact introduction, and project kick-off.', readTime: '5 min' },
+    { title: 'Understanding the iTech support model', desc: 'How our ticket system, SLA tiers, and escalation paths work — so you always know who to contact and when.', readTime: '4 min' },
+    { title: 'Your first project — what to expect', desc: 'Discovery call → scope document → sprint planning → delivery. A plain-language walkthrough of the full process.', readTime: '6 min' },
+    { title: 'Key contacts and escalation paths', desc: 'Your account manager, technical lead, and emergency line — with expected response times for each.', readTime: '3 min' },
+  ],
+};
+
 const POPULAR_ARTICLES = [
   { title: 'Getting started with your Client Portal account', category: 'Account', readTime: '3 min' },
   { title: 'Connecting a custom domain to your hosted website', category: 'Hosting', readTime: '5 min' },
@@ -338,6 +438,7 @@ export default function SupportPage() {
   const [search, setSearch] = useState('');
   const [heroSearch, setHeroSearch] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   function runHeroSearch() {
     setSearch(heroSearch.trim());
@@ -667,7 +768,7 @@ export default function SupportPage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-5 gap-10">
-            {/* Topic directory — grouped lists */}
+            {/* Topic directory — grouped lists with expandable articles */}
             <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 content-start">
               {TOPIC_GROUPS.map((group, gi) => (
                 <motion.div
@@ -679,17 +780,55 @@ export default function SupportPage() {
                 >
                   <h3 className="text-lg font-black text-[#0A1929] pb-3 border-b-2 border-[#0A1929]">{group.heading}</h3>
                   <div>
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.title}
-                        href="/resources"
-                        className="group flex items-center gap-4 py-4 border-b border-[#EEF2F6] hover:bg-[#F7FAFC] transition-colors px-1 -mx-1"
-                      >
-                        <span className="flex-shrink-0 text-[#0A1929] group-hover:text-[#3CB52A] transition-colors">{item.icon}</span>
-                        <span className="flex-grow font-medium text-[#1F2D3A] text-[15px] group-hover:text-[#0A1929]">{item.title}</span>
-                        <ChevronRight size={15} className="flex-shrink-0 text-[#C4CDD6] group-hover:text-[#3CB52A] transition-colors" />
-                      </Link>
-                    ))}
+                    {group.items.map((item) => {
+                      const isOpen = selectedTopic === item.title;
+                      const articles = TOPIC_ARTICLES[item.title] ?? [];
+                      return (
+                        <div key={item.title}>
+                          <button
+                            onClick={() => setSelectedTopic(isOpen ? null : item.title)}
+                            className={`group w-full flex items-center gap-4 py-4 border-b border-[#EEF2F6] transition-colors px-1 -mx-1 text-left ${isOpen ? 'bg-[#F0FBF0]' : 'hover:bg-[#F7FAFC]'}`}
+                            aria-expanded={isOpen}
+                          >
+                            <span className={`flex-shrink-0 transition-colors ${isOpen ? 'text-[#3CB52A]' : 'text-[#0A1929] group-hover:text-[#3CB52A]'}`}>{item.icon}</span>
+                            <span className={`flex-grow font-medium text-[15px] transition-colors ${isOpen ? 'text-[#3CB52A]' : 'text-[#1F2D3A] group-hover:text-[#0A1929]'}`}>{item.title}</span>
+                            <ChevronDown
+                              size={15}
+                              className={`flex-shrink-0 transition-all duration-300 ${isOpen ? 'rotate-180 text-[#3CB52A]' : 'text-[#C4CDD6] group-hover:text-[#3CB52A]'}`}
+                            />
+                          </button>
+                          <AnimatePresence initial={false}>
+                            {isOpen && (
+                              <motion.div
+                                key="articles"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="bg-[#F7FAFC] border-b border-[#EEF2F6] px-1 py-3 space-y-0">
+                                  {articles.map((art) => (
+                                    <Link
+                                      key={art.title}
+                                      href="/resources"
+                                      className="group/art flex items-start gap-3 px-2 py-3 rounded-lg hover:bg-white transition-colors"
+                                    >
+                                      <ArrowRight size={13} className="flex-shrink-0 text-[#3CB52A] mt-1" />
+                                      <div className="min-w-0">
+                                        <p className="text-[13px] font-semibold text-[#0A1929] group-hover/art:text-[#3CB52A] leading-snug transition-colors">{art.title}</p>
+                                        <p className="text-[11px] text-[#64748B] mt-0.5 leading-relaxed">{art.desc}</p>
+                                        <p className="text-[10px] text-[#94A3B8] mt-1">{art.readTime} read</p>
+                                      </div>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               ))}

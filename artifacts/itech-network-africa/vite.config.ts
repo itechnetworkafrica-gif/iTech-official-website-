@@ -65,6 +65,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           motion: ['framer-motion'],
           ui: ['@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-navigation-menu', '@radix-ui/react-tabs'],
+          charts: ['recharts'],
         },
       },
     },

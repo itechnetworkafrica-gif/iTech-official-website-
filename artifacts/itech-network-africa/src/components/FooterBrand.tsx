@@ -1,5 +1,5 @@
 import React from 'react';
-import logoWordmark from '@/assets/logo-wordmark.png';
+import logoWordmark from '@/assets/logo-wordmark.webp';
 
 export const FooterBrand: React.FC = () => {
   return (

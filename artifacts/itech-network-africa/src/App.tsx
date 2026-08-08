@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Header } from '@/components/Header';
@@ -12,36 +11,46 @@ import { RouteScrollReset } from '@/components/RouteScrollReset';
 import { CookieBanner } from '@/components/CookieBanner';
 import { SarahChatbot } from '@/components/SarahChatbot';
 
-// Page Imports
-import HomePage from '@/pages/HomePage';
-import AboutPage from '@/pages/AboutPage';
-import ServicesPage from '@/pages/ServicesPage';
-import ServiceDetailPage from '@/pages/ServiceDetailPage';
-import AIPage from '@/pages/AIPage';
-import SolutionsPage from '@/pages/SolutionsPage';
-import ProductsPage from '@/pages/ProductsPage';
-import PortfolioPage from '@/pages/PortfolioPage';
-import ProjectsPage from '@/pages/ProjectsPage';
-import IndustriesPage from '@/pages/IndustriesPage';
-import PartnersPage from '@/pages/PartnersPage';
-import ResourcesPage from '@/pages/ResourcesPage';
-import BlogPage from '@/pages/BlogPage';
-import NewsPage from '@/pages/NewsPage';
-import CareersPage from '@/pages/CareersPage';
-import SupportPage from '@/pages/SupportPage';
-import ContactPage from '@/pages/ContactPage';
-import PricingPage from '@/pages/PricingPage';
-import PrivacyPage from '@/pages/PrivacyPage';
-import TermsPage from '@/pages/TermsPage';
-import CookiesPage from '@/pages/CookiesPage';
-import ClientPortalPage from '@/pages/ClientPortalPage';
-import AdminDashboardPage from '@/pages/AdminDashboardPage';
-import TeamMemberPage from '@/pages/TeamMemberPage';
-import FounderCVPage from '@/pages/FounderCVPage';
-import RefundPolicyPage from '@/pages/RefundPolicyPage';
-import SitemapPage from '@/pages/SitemapPage';
-import ConsultationPage from '@/pages/ConsultationPage';
-import DownloadsPage from '@/pages/resources/DownloadsPage';
+// Lazy-loaded page imports — each page becomes its own JS chunk
+const HomePage         = lazy(() => import('@/pages/HomePage'));
+const AboutPage        = lazy(() => import('@/pages/AboutPage'));
+const ServicesPage     = lazy(() => import('@/pages/ServicesPage'));
+const ServiceDetailPage= lazy(() => import('@/pages/ServiceDetailPage'));
+const AIPage           = lazy(() => import('@/pages/AIPage'));
+const SolutionsPage    = lazy(() => import('@/pages/SolutionsPage'));
+const ProductsPage     = lazy(() => import('@/pages/ProductsPage'));
+const PortfolioPage    = lazy(() => import('@/pages/PortfolioPage'));
+const ProjectsPage     = lazy(() => import('@/pages/ProjectsPage'));
+const IndustriesPage   = lazy(() => import('@/pages/IndustriesPage'));
+const PartnersPage     = lazy(() => import('@/pages/PartnersPage'));
+const ResourcesPage    = lazy(() => import('@/pages/ResourcesPage'));
+const BlogPage         = lazy(() => import('@/pages/BlogPage'));
+const NewsPage         = lazy(() => import('@/pages/NewsPage'));
+const CareersPage      = lazy(() => import('@/pages/CareersPage'));
+const SupportPage      = lazy(() => import('@/pages/SupportPage'));
+const ContactPage      = lazy(() => import('@/pages/ContactPage'));
+const PricingPage      = lazy(() => import('@/pages/PricingPage'));
+const PrivacyPage      = lazy(() => import('@/pages/PrivacyPage'));
+const TermsPage        = lazy(() => import('@/pages/TermsPage'));
+const CookiesPage      = lazy(() => import('@/pages/CookiesPage'));
+const ClientPortalPage = lazy(() => import('@/pages/ClientPortalPage'));
+const AdminDashboardPage= lazy(() => import('@/pages/AdminDashboardPage'));
+const TeamMemberPage   = lazy(() => import('@/pages/TeamMemberPage'));
+const FounderCVPage    = lazy(() => import('@/pages/FounderCVPage'));
+const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'));
+const SitemapPage      = lazy(() => import('@/pages/SitemapPage'));
+const ConsultationPage = lazy(() => import('@/pages/ConsultationPage'));
+const DownloadsPage    = lazy(() => import('@/pages/resources/DownloadsPage'));
+const NotFound         = lazy(() => import('@/pages/not-found'));
+
+// Lightweight fallback shown while a page chunk is loading
+function PageFallback() {
+  return (
+    <div className="flex-grow flex items-center justify-center py-32">
+      <div className="w-8 h-8 rounded-full border-2 border-[#3CB52A] border-t-transparent animate-spin" />
+    </div>
+  );
+}
 
 const queryClient = new QueryClient();
 
@@ -65,10 +74,12 @@ function Router() {
     return (
       <>
         <RouteScrollReset />
-        <Switch>
-          <Route path="/portal" component={ClientPortalPage} />
-          <Route path="/admin" component={AdminDashboardPage} />
-        </Switch>
+        <Suspense fallback={<PageFallback />}>
+          <Switch>
+            <Route path="/portal" component={ClientPortalPage} />
+            <Route path="/admin" component={AdminDashboardPage} />
+          </Switch>
+        </Suspense>
       </>
     );
   }
@@ -87,36 +98,38 @@ function Router() {
             transition={PAGE_TRANSITION.transition}
             className="flex-grow flex flex-col"
           >
-            <Switch>
-              <Route path="/" component={HomePage} />
-              <Route path="/about" component={AboutPage} />
-              <Route path="/services" component={ServicesPage} />
-              <Route path="/services/:slug" component={ServiceDetailPage} />
-              <Route path="/ai-solutions" component={AIPage} />
-              <Route path="/solutions" component={SolutionsPage} />
-              <Route path="/products" component={ProductsPage} />
-              <Route path="/portfolio" component={PortfolioPage} />
-              <Route path="/projects" component={ProjectsPage} />
-              <Route path="/industries" component={IndustriesPage} />
-              <Route path="/partners" component={PartnersPage} />
-              <Route path="/resources" component={ResourcesPage} />
-              <Route path="/resources/downloads" component={DownloadsPage} />
-              <Route path="/blog" component={BlogPage} />
-              <Route path="/news" component={NewsPage} />
-              <Route path="/careers" component={CareersPage} />
-              <Route path="/support" component={SupportPage} />
-              <Route path="/contact" component={ContactPage} />
-              <Route path="/pricing" component={PricingPage} />
-              <Route path="/privacy-policy" component={PrivacyPage} />
-              <Route path="/terms" component={TermsPage} />
-              <Route path="/cookies" component={CookiesPage} />
-              <Route path="/team/wilmot-kerkulah/cv" component={FounderCVPage} />
-              <Route path="/team/:slug" component={TeamMemberPage} />
-              <Route path="/refund-policy" component={RefundPolicyPage} />
-              <Route path="/sitemap" component={SitemapPage} />
-              <Route path="/consultation" component={ConsultationPage} />
-              <Route component={NotFound} />
-            </Switch>
+            <Suspense fallback={<PageFallback />}>
+              <Switch>
+                <Route path="/" component={HomePage} />
+                <Route path="/about" component={AboutPage} />
+                <Route path="/services" component={ServicesPage} />
+                <Route path="/services/:slug" component={ServiceDetailPage} />
+                <Route path="/ai-solutions" component={AIPage} />
+                <Route path="/solutions" component={SolutionsPage} />
+                <Route path="/products" component={ProductsPage} />
+                <Route path="/portfolio" component={PortfolioPage} />
+                <Route path="/projects" component={ProjectsPage} />
+                <Route path="/industries" component={IndustriesPage} />
+                <Route path="/partners" component={PartnersPage} />
+                <Route path="/resources" component={ResourcesPage} />
+                <Route path="/resources/downloads" component={DownloadsPage} />
+                <Route path="/blog" component={BlogPage} />
+                <Route path="/news" component={NewsPage} />
+                <Route path="/careers" component={CareersPage} />
+                <Route path="/support" component={SupportPage} />
+                <Route path="/contact" component={ContactPage} />
+                <Route path="/pricing" component={PricingPage} />
+                <Route path="/privacy-policy" component={PrivacyPage} />
+                <Route path="/terms" component={TermsPage} />
+                <Route path="/cookies" component={CookiesPage} />
+                <Route path="/team/wilmot-kerkulah/cv" component={FounderCVPage} />
+                <Route path="/team/:slug" component={TeamMemberPage} />
+                <Route path="/refund-policy" component={RefundPolicyPage} />
+                <Route path="/sitemap" component={SitemapPage} />
+                <Route path="/consultation" component={ConsultationPage} />
+                <Route component={NotFound} />
+              </Switch>
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
