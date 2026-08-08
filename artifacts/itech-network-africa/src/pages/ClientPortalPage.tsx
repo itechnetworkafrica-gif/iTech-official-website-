@@ -14,6 +14,8 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import { type PortalClient } from '@/lib/portalClients';
 import { apiUrl } from '@/lib/apiBase';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
+import { usePortalNotifications } from '@/hooks/usePortalNotifications';
+import { NotificationBell } from '@/components/NotificationBell';
 import {
   getClientInvoices, getClientTickets, createTicket, addTicketMessage,
   markTicketMessagesRead, markInvoiceViewed, getClientUnread, updateTicketStatus,
@@ -1321,10 +1323,46 @@ function PortalShell({ client, onLogout }: { client: PortalClient; onLogout: () 
   const [mobileNav, setMobileNav] = useState(false);
   const [unread, setUnread]       = useState({ invoices: 0, support: 0, announcements: 0 });
 
+  // Notifications
+  const notifs    = usePortalNotifications();
+  const prevUnread = useRef({ invoices: -1, support: -1, announcements: -1 });
+  const notifyRef  = useRef(notifs.notify);
+  useEffect(() => { notifyRef.current = notifs.notify; }, [notifs.notify]);
+
+  // Request browser notification permission on first mount
+  useEffect(() => { notifs.requestPermission(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Poll client unread — fires notifications when counts increase
   useEffect(() => {
-    function refresh() { setUnread(getClientUnread(client.id)); }
+    function refresh() {
+      const current = getClientUnread(client.id);
+
+      // New ticket reply from the team
+      if (prevUnread.current.support >= 0 && current.support > prevUnread.current.support) {
+        notifyRef.current({
+          type: 'ticket',
+          title: '💬 New reply on your support ticket',
+          body: 'The iTech team replied to one of your tickets. Tap to read.',
+          section: 'support',
+        });
+      }
+
+      // New invoice or overdue notice
+      if (prevUnread.current.invoices >= 0 && current.invoices > prevUnread.current.invoices) {
+        notifyRef.current({
+          type: 'invoice',
+          title: '🧾 New invoice from iTech',
+          body: `You have ${current.invoices} unread invoice${current.invoices !== 1 ? 's' : ''}. Open Invoices to view.`,
+          sound: 'invoice',
+          section: 'invoices',
+        });
+      }
+
+      prevUnread.current = current;
+      setUnread(current);
+    }
     refresh(); const id = setInterval(refresh, 4000); return () => clearInterval(id);
-  }, []);
+  }, [client.id]);
 
   // Periodically sync client-side writes to the server (cross-device persistence)
   useEffect(() => {
@@ -1368,15 +1406,14 @@ function PortalShell({ client, onLogout }: { client: PortalClient; onLogout: () 
           <span className="text-white font-bold text-sm">Client Portal</span>
         </div>
         <div className="flex items-center gap-2">
-          {(unread.invoices + unread.support) > 0 && (
-            <span className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#3CB52A]/20 text-[#3CB52A] text-xs font-bold">{unread.invoices + unread.support} new</span>
-          )}
           <div className="hidden sm:block text-right mr-1">
             <div className="text-white text-xs font-semibold">{client.name}</div>
             <div className="text-white/30 text-[10px]">{client.tier} Client</div>
           </div>
           <div className="w-8 h-8 rounded-full bg-[#3CB52A] flex items-center justify-center text-white font-bold text-sm shrink-0">{client.name[0]}</div>
-          <button onClick={onLogout} className="ml-1 w-9 h-9 flex items-center justify-center rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-colors" title="Log out"><LogOut size={17} /></button>
+          {/* Notification bell */}
+          <NotificationBell hook={notifs} onNavigate={navTo} dark />
+          <button onClick={onLogout} className="w-9 h-9 flex items-center justify-center rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-colors" title="Log out"><LogOut size={17} /></button>
         </div>
       </header>
 

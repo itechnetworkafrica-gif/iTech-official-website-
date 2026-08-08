@@ -41,6 +41,8 @@ import {
 import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
 import { PartnershipsSection } from '@/components/admin/PartnershipsSection';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
+import { usePortalNotifications } from '@/hooks/usePortalNotifications';
+import { NotificationBell } from '@/components/NotificationBell';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -1657,26 +1659,101 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
   const [unread, setUnread]       = useState(0);
   const [liveWaiting, setLiveWaiting] = useState(0);
 
+  // Notifications
+  const notifs = usePortalNotifications();
+  const prevUnread          = useRef(-1);   // -1 = first load, skip notification
+  const prevPartnerCount    = useRef(-1);
+  const prevTicketCount     = useRef(-1);
+  const notifyRef           = useRef(notifs.notify);
+  useEffect(() => { notifyRef.current = notifs.notify; }, [notifs.notify]);
+
+  // Request browser notification permission on first mount
+  useEffect(() => { notifs.requestPermission(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Poll admin unread ticket messages — fires notification when count increases
   useEffect(() => {
-    function refresh() { setUnread(getAdminUnread()); }
+    function refresh() {
+      const current = getAdminUnread();
+      if (prevUnread.current >= 0 && current > prevUnread.current) {
+        notifyRef.current({
+          type: 'ticket',
+          title: '💬 New client message',
+          body: `You have ${current} unread message${current !== 1 ? 's' : ''} in Support. Tap to open.`,
+          section: 'support',
+        });
+      }
+      prevUnread.current = current;
+      setUnread(current);
+    }
     refresh(); const id = setInterval(refresh, 3000); return () => clearInterval(id);
   }, []);
 
   // Poll for visitors waiting on a live agent
   useEffect(() => {
-    let prev = 0;
+    let prev = -1;
     async function poll() {
       try {
         const res = await fetch(apiUrl('/api/admin/live-chats'), { credentials: 'include' });
         if (!res.ok) return;
-        const data = await res.json() as { status: string }[];
+        const data = await res.json() as { status: string; id?: string }[];
         const waiting = data.filter(s => s.status === 'waiting').length;
-        if (waiting > prev && prev >= 0) playNotificationSound('message');
+        if (prev >= 0 && waiting > prev) {
+          notifyRef.current({
+            type: 'chat',
+            title: '🟢 Visitor waiting — Live Chat',
+            body: `${waiting} visitor${waiting !== 1 ? 's' : ''} waiting for a live agent. Open Live Chat to respond.`,
+            sound: 'message',
+            section: 'livechat',
+          });
+        }
         prev = waiting;
         setLiveWaiting(waiting);
       } catch { /* ignore */ }
     }
     poll(); const id = setInterval(poll, 6000); return () => clearInterval(id);
+  }, []);
+
+  // Poll for new partnership applications
+  useEffect(() => {
+    async function pollPartnerships() {
+      try {
+        const res = await fetch(apiUrl('/api/admin/partnerships'), { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json() as { company_name?: string; name?: string; status: string }[];
+        const pending = data.filter(p => p.status === 'pending');
+        if (prevPartnerCount.current >= 0 && pending.length > prevPartnerCount.current) {
+          const newest = pending[0];
+          notifyRef.current({
+            type: 'partnership',
+            title: '🤝 New partnership application',
+            body: `${newest.company_name || newest.name || 'A business'} has applied for a partnership. Review now.`,
+            sound: 'upload',
+            section: 'partnerships',
+          });
+        }
+        prevPartnerCount.current = pending.length;
+      } catch { /* ignore */ }
+    }
+    pollPartnerships(); const id = setInterval(pollPartnerships, 15000); return () => clearInterval(id);
+  }, []);
+
+  // Poll for new support tickets submitted
+  useEffect(() => {
+    function pollTickets() {
+      const tickets = getTickets();
+      const count = tickets.length;
+      if (prevTicketCount.current >= 0 && count > prevTicketCount.current) {
+        const newest = tickets[0];
+        notifyRef.current({
+          type: 'ticket',
+          title: '🎫 New support ticket',
+          body: `"${newest?.subject || 'New ticket'}" submitted by ${newest?.clientName || 'a client'}.`,
+          section: 'support',
+        });
+      }
+      prevTicketCount.current = count;
+    }
+    pollTickets(); const id = setInterval(pollTickets, 10000); return () => clearInterval(id);
   }, []);
 
   // Periodically sync admin writes to the server (cross-device persistence)
@@ -1711,9 +1788,26 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
           <div className="w-8 h-8 rounded-lg bg-[#3CB52A] flex items-center justify-center shrink-0"><Shield size={16} className="text-white" /></div>
           <div><span className="text-white font-bold text-sm leading-none block">Admin Dashboard</span><span className="text-white/30 text-[10px]">iTech Network Africa</span></div>
         </div>
-        <div className="flex items-center gap-3">
-          {unread > 0 && <button onClick={() => navTo('support')} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 text-xs font-bold"><MessageSquare size={13} /> {unread} unread</button>}
-          <div className="hidden sm:flex items-center gap-1.5 mr-1"><div className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" /><span className="text-white/30 text-xs">Live</span></div>
+        <div className="flex items-center gap-2">
+          {/* Live chat waiting pill */}
+          {liveWaiting > 0 && (
+            <button onClick={() => navTo('livechat')} className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-green-500/20 text-green-400 text-xs font-bold animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400" />{liveWaiting} waiting
+            </button>
+          )}
+          {/* Unread support pill */}
+          {unread > 0 && (
+            <button onClick={() => navTo('support')} className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-red-500/20 text-red-400 text-xs font-bold">
+              <MessageSquare size={13} /> {unread}
+            </button>
+          )}
+          {/* Live indicator */}
+          <div className="hidden sm:flex items-center gap-1.5 mr-1">
+            <div className="w-2 h-2 rounded-full bg-[#3CB52A] animate-pulse" />
+            <span className="text-white/30 text-xs">Live</span>
+          </div>
+          {/* Notification bell */}
+          <NotificationBell hook={notifs} onNavigate={navTo} dark />
           <button onClick={onLogout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold"><LogOut size={14} /> Logout</button>
         </div>
       </header>
