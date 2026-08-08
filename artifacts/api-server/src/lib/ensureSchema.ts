@@ -51,6 +51,31 @@ export async function ensureLiveChatSchema(): Promise<void> {
     []
   );
 
+  // Partnership applications (public form → admin portal)
+  await query(
+    `CREATE TABLE IF NOT EXISTS partnership_applications (
+      id            TEXT PRIMARY KEY,
+      name          TEXT NOT NULL,
+      email         TEXT NOT NULL,
+      phone         TEXT NOT NULL DEFAULT '',
+      organisation  TEXT NOT NULL DEFAULT '',
+      website       TEXT NOT NULL DEFAULT '',
+      country       TEXT NOT NULL DEFAULT '',
+      partnership_type TEXT NOT NULL DEFAULT 'General',
+      message       TEXT NOT NULL,
+      status        TEXT NOT NULL DEFAULT 'New', -- New | In Review | Approved | Declined
+      admin_notes   TEXT NOT NULL DEFAULT '',
+      created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`,
+    []
+  );
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_partnership_applications_created
+     ON partnership_applications (created_at DESC)`,
+    []
+  );
+
   // Atomic ticket-number allocator. Seeded past the highest existing
   // TKT-NNNN so concurrent submissions never collide with old tickets.
   await query(`CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq`, []);

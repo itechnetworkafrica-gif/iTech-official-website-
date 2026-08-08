@@ -7,6 +7,7 @@ import portalRouter from "./portalRoutes.js";
 import adminRouter from "./adminRoutes.js";
 import syncRouter from "./syncRoutes.js";
 import liveChatRouter from "./liveChat.js";
+import partnershipsRouter from "./partnerships.js";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(portalRouter);
 router.use(adminRouter);
 router.use(syncRouter);
 router.use(liveChatRouter);
+router.use(partnershipsRouter);
 
 export default router;

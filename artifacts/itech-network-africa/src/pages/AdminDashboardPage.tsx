@@ -10,7 +10,7 @@ import {
   Megaphone, BarChart2, FolderOpen, FileUp, StickyNote,
   ChevronDown, ChevronLeft, Zap, Activity, Tag, UserCog, BookTemplate,
   Bell, Archive, Search, Upload, Percent, Flag, UserCheck,
-  MinusCircle, CheckSquare, Square,
+  MinusCircle, CheckSquare, Square, Handshake,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { PORTAL_CLIENTS } from '@/lib/portalClients';
@@ -39,6 +39,7 @@ import {
   type InvoiceDispute,
 } from '@/lib/portalData';
 import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
+import { PartnershipsSection } from '@/components/admin/PartnershipsSection';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
@@ -1639,6 +1640,7 @@ const ADMIN_NAV = [
   { id: 'support',        label: 'Support',         icon: Headphones      },
   { id: 'livechat',       label: 'Live Chat',       icon: MessageSquare   },
   { id: 'clients',        label: 'Clients',         icon: Users           },
+  { id: 'partnerships',   label: 'Partnerships',    icon: Handshake       },
   { id: 'team',           label: 'Team',            icon: UserCog         },
   { id: 'announcements',  label: 'Announcements',   icon: Megaphone       },
   { id: 'reports',        label: 'Reports',         icon: BarChart2       },
@@ -1692,6 +1694,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
     support:       <SupportSection />,
     livechat:      <LiveChatSection />,
     clients:       <ClientsSection />,
+    partnerships:  <PartnershipsSection />,
     team:          <TeamSection />,
     announcements: <AnnouncementsSection />,
     reports:       <ReportsSection />,

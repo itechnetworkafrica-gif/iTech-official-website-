@@ -18,7 +18,7 @@ export interface AuthUser {
 /** Known admin dashboard permission keys. */
 export const ADMIN_PERMISSIONS = [
   "overview", "invoices", "support", "livechat", "clients",
-  "team", "announcements", "reports", "files", "settings",
+  "team", "announcements", "reports", "files", "settings", "partnerships",
 ] as const;
 
 export function hasPermission(user: AuthUser, key: string): boolean {

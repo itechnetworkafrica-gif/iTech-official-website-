@@ -47,6 +47,7 @@ const PERMISSION_OPTIONS = [
   { id: 'support',       label: 'Support' },
   { id: 'livechat',      label: 'Live Chat' },
   { id: 'clients',       label: 'Clients' },
+  { id: 'partnerships',  label: 'Partnerships' },
   { id: 'team',          label: 'Team' },
   { id: 'announcements', label: 'Announcements' },
   { id: 'reports',       label: 'Reports' },
