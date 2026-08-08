@@ -620,11 +620,12 @@ export const SarahChatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-8 left-4 right-4 sm:left-auto sm:right-8 sm:w-96 z-[60] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100"
-            style={{ maxHeight: 'min(560px, calc(100vh - 40px))' }}
+            className="fixed bottom-6 left-4 right-4 sm:bottom-8 sm:left-auto sm:right-8 sm:w-96 z-[60] max-w-sm bg-white rounded-3xl shadow-[0_24px_80px_rgba(10,25,41,0.28)] flex flex-col overflow-hidden border border-gray-100"
+            style={{ maxHeight: 'min(580px, calc(100vh - 40px))' }}
           >
             {/* Header */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#0A1929] to-[#0f2d47] text-white flex-shrink-0">
+            <div className="relative flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-[#0A1929] to-[#0f2d47] text-white flex-shrink-0 overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 85% 0%, rgba(60,181,42,0.18) 0%, transparent 60%)' }} />
               <div className="relative">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
                   <Sparkles size={18} className="text-white" />
@@ -790,70 +791,72 @@ export const SarahChatbot: React.FC = () => {
           Appears every 15 s, auto-hides
           after 8 s if not interacted with
           ═══════════════════════════════ */}
-      <AnimatePresence>
-        {visible && !open && (
-          <motion.div
-            key="nudge"
-            initial={{ opacity: 0, y: 20, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.92 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-8 right-4 sm:right-8 z-[60] flex flex-col items-end gap-2"
-          >
-            {/* Banner card */}
-            <div
-              className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 px-4 pt-3 pb-3 max-w-[240px] cursor-pointer group"
-              onClick={handleOpen}
-            >
-              {/* Dismiss ✕ */}
-              <button
-                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center transition-colors z-10"
-                onClick={handleDismiss}
-                aria-label="Dismiss"
+      {!open && (
+        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-[60] flex flex-col items-end gap-3">
+          {/* Nudge banner — appears periodically above the static button */}
+          <AnimatePresence>
+            {visible && (
+              <motion.div
+                key="nudge"
+                initial={{ opacity: 0, y: 14, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.94 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="relative bg-white rounded-2xl shadow-[0_16px_48px_rgba(10,25,41,0.18)] border border-gray-100 px-4 pt-3 pb-3 max-w-[250px] cursor-pointer group"
+                onClick={handleOpen}
               >
-                <X size={10} />
-              </button>
-
-              {/* Sarah label */}
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
-                  <Sparkles size={10} className="text-white" />
+                <button
+                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 flex items-center justify-center transition-colors z-10"
+                  onClick={handleDismiss}
+                  aria-label="Dismiss"
+                >
+                  <X size={10} />
+                </button>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
+                    <Sparkles size={10} className="text-white" />
+                  </div>
+                  <span className="text-[11px] font-bold text-[#0A1929]">Sarah</span>
+                  <span className="text-[10px] text-green-500 flex items-center gap-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
+                    online
+                  </span>
                 </div>
-                <span className="text-[11px] font-bold text-[#0A1929]">Sarah</span>
-                <span className="text-[10px] text-green-500 flex items-center gap-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
-                  online
-                </span>
-              </div>
+                <p className="text-xs text-gray-700 leading-snug group-hover:text-[#0A1929] transition-colors">
+                  {prompt.banner}
+                </p>
+                <p className="text-[10px] text-[#3CB52A] font-semibold mt-1.5">
+                  Tap to chat →
+                </p>
+                <div className="absolute -bottom-1.5 right-7 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-              {/* Message */}
-              <p className="text-xs text-gray-700 leading-snug group-hover:text-[#0A1929] transition-colors">
-                {prompt.banner}
-              </p>
-
-              {/* CTA */}
-              <p className="text-[10px] text-[#3CB52A] font-semibold mt-1.5">
-                Tap to chat →
-              </p>
-
-              {/* Tail */}
-              <div className="absolute -bottom-1.5 right-7 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
-            </div>
-
-            {/* Chat button */}
+          {/* Static launcher — always visible */}
+          <div className="group relative flex items-center">
+            {/* Hover label */}
+            <span className="hidden sm:block absolute right-full mr-3 px-3 py-1.5 rounded-xl bg-[#0A1929] text-white text-xs font-semibold whitespace-nowrap opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 pointer-events-none shadow-lg">
+              Chat with Sarah
+            </span>
             <motion.button
-              whileHover={{ scale: 1.08 }}
+              whileHover={{ scale: 1.07 }}
               whileTap={{ scale: 0.94 }}
               onClick={handleOpen}
               aria-label="Chat with Sarah"
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white shadow-[0_8px_32px_rgba(60,181,42,0.45)] flex items-center justify-center"
+              className="relative w-14 h-14 sm:w-[60px] sm:h-[60px] rounded-full bg-gradient-to-br from-[#3CB52A] via-[#34a824] to-[#25911a] text-white shadow-[0_10px_36px_rgba(60,181,42,0.45)] ring-4 ring-[#3CB52A]/15 flex items-center justify-center"
             >
-              <MessageCircle size={24} />
-              <span className="absolute w-14 h-14 rounded-full animate-ping bg-[#3CB52A] opacity-20 pointer-events-none" />
+              <MessageCircle size={26} strokeWidth={2.2} />
+              {/* AI sparkle badge */}
+              <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#0A1929] border-2 border-white flex items-center justify-center">
+                <Sparkles size={10} className="text-[#3CB52A]" />
+              </span>
+              {/* Online dot */}
+              <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
             </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
 
       {/* ═══════════════════════════════
           MINIMISE BUTTON (chat is open)

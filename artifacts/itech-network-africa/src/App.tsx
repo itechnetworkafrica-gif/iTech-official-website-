@@ -8,7 +8,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ScrollToTop } from '@/components/ScrollToTop';
-import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { RouteScrollReset } from '@/components/RouteScrollReset';
 import { CookieBanner } from '@/components/CookieBanner';
 import { SarahChatbot } from '@/components/SarahChatbot';
@@ -133,7 +132,6 @@ function Router() {
       </main>
       <Footer />
       <ScrollToTop />
-      <WhatsAppWidget />
       <SarahChatbot />
       <CookieBanner />
     </div>
