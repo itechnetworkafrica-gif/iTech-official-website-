@@ -123,16 +123,43 @@ const QUICK_FIXES = [
   },
 ];
 
-const HELP_CATEGORIES = [
-  { icon: <Globe size={20} />, title: 'Web & Mobile Apps', count: 34, color: 'bg-blue-50 text-blue-600' },
-  { icon: <Cloud size={20} />, title: 'Cloud & Hosting', count: 28, color: 'bg-sky-50 text-sky-600' },
-  { icon: <Shield size={20} />, title: 'Cybersecurity', count: 19, color: 'bg-red-50 text-red-500' },
-  { icon: <Code2 size={20} />, title: 'Software Development', count: 41, color: 'bg-violet-50 text-violet-600' },
-  { icon: <Cpu size={20} />, title: 'AI & Automation', count: 16, color: 'bg-emerald-50 text-emerald-600' },
-  { icon: <Server size={20} />, title: 'IT Infrastructure', count: 23, color: 'bg-amber-50 text-amber-600' },
-  { icon: <Users size={20} />, title: 'Digital Marketing', count: 15, color: 'bg-pink-50 text-pink-500' },
-  { icon: <Database size={20} />, title: 'Data & Databases', count: 12, color: 'bg-teal-50 text-teal-600' },
-  { icon: <Lock size={20} />, title: 'Account & Billing', count: 9, color: 'bg-orange-50 text-orange-500' },
+const TOPIC_GROUPS = [
+  {
+    heading: 'Websites & Apps',
+    items: [
+      { icon: <Globe size={20} />, title: 'Web & Mobile Apps' },
+      { icon: <Code2 size={20} />, title: 'Software Development' },
+      { icon: <Users size={20} />, title: 'Digital Marketing' },
+      { icon: <Video size={20} />, title: 'Content & Media' },
+    ],
+  },
+  {
+    heading: 'Hosting & Infrastructure',
+    items: [
+      { icon: <Cloud size={20} />, title: 'Cloud & Hosting' },
+      { icon: <Server size={20} />, title: 'IT Infrastructure' },
+      { icon: <Database size={20} />, title: 'Data & Databases' },
+      { icon: <RefreshCw size={20} />, title: 'Backups & Recovery' },
+    ],
+  },
+  {
+    heading: 'Security & AI',
+    items: [
+      { icon: <Shield size={20} />, title: 'Cybersecurity' },
+      { icon: <Lock size={20} />, title: 'Website Security & SSL' },
+      { icon: <Cpu size={20} />, title: 'AI & Automation' },
+      { icon: <Sparkles size={20} />, title: 'iTech AI Tools' },
+    ],
+  },
+  {
+    heading: 'Account & Programs',
+    items: [
+      { icon: <KeyRound size={20} />, title: 'Account Management' },
+      { icon: <CreditCard size={20} />, title: 'Billing & Invoices' },
+      { icon: <Users size={20} />, title: 'Partner Programs' },
+      { icon: <Rocket size={20} />, title: 'Getting Started' },
+    ],
+  },
 ];
 
 const POPULAR_ARTICLES = [
@@ -358,24 +385,13 @@ export default function SupportPage() {
     <div className="flex flex-col w-full bg-[#F7FAFC] min-h-screen overflow-x-clip">
 
       {/* ══════════════════════════════════════════════════════
-          HERO — Light help center
+          HERO — Dark help center
       ══════════════════════════════════════════════════════ */}
-      <section className="relative bg-white pt-28 pb-20 overflow-hidden">
-
-        {/* Subtle grid */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(10,25,41,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(10,25,41,0.035) 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
-          }}
-        />
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 70% at 50% 0%, transparent 30%, #ffffff 100%)' }}
-        />
+      <section className="relative bg-[#060E18] pt-28 pb-20 overflow-hidden">
 
         {/* Soft green glow */}
         <motion.div className="absolute left-1/2 top-0 -translate-x-1/2 w-[700px] h-[380px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, rgba(60,181,42,0.10) 0%, transparent 70%)', filter: 'blur(40px)' }}
+          style={{ background: 'radial-gradient(ellipse, rgba(60,181,42,0.14) 0%, transparent 70%)', filter: 'blur(40px)' }}
           animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -391,7 +407,7 @@ export default function SupportPage() {
           >
             <a
               href="#status"
-              className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#3CB52A]/8 border border-[#3CB52A]/25 text-[#1E7A12] text-[10px] sm:text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/14 transition-colors text-center max-w-full"
+              className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/25 text-[#3CB52A] text-[10px] sm:text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/15 transition-colors text-center max-w-full"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3CB52A] opacity-60" />
@@ -408,10 +424,10 @@ export default function SupportPage() {
             transition={{ duration: 0.6, delay: 0.08 }}
             className="text-center mb-6"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#0A1929] leading-[1.08] tracking-tight mb-5 break-words">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight mb-5 break-words">
               How Can We <span className="text-[#3CB52A]">Help You</span> Today?
             </h1>
-            <p className="text-[#5B6B7B] text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-white/55 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               From Monrovia to the world — our engineering team is available around the clock to keep your technology running at peak performance.
             </p>
           </motion.div>
@@ -425,7 +441,7 @@ export default function SupportPage() {
           >
             <div className="relative group">
               <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#3CB52A]/30 via-[#3CB52A]/10 to-[#3CB52A]/30 blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-              <div className="relative flex items-center bg-white border border-[#E0E6ED] rounded-2xl overflow-hidden shadow-[0_10px_35px_rgba(10,25,41,0.07)] group-focus-within:border-[#3CB52A]/50 transition-colors">
+              <div className="relative flex items-center bg-white border border-white/10 rounded-2xl overflow-hidden shadow-[0_18px_50px_rgba(0,0,0,0.35)] group-focus-within:border-[#3CB52A]/50 transition-colors">
                 <Search size={18} className="absolute left-5 text-[#64748B] pointer-events-none" />
                 <input
                   value={heroSearch}
@@ -444,7 +460,7 @@ export default function SupportPage() {
                 <button
                   key={tag}
                   onClick={() => setHeroSearch(tag)}
-                  className="text-xs text-[#5B6B7B] hover:text-[#3CB52A] border border-[#E0E6ED] hover:border-[#3CB52A]/40 bg-white px-3 py-1 rounded-full transition-colors"
+                  className="text-xs text-white/45 hover:text-[#3CB52A] border border-white/10 hover:border-[#3CB52A]/40 px-3 py-1 rounded-full transition-colors"
                 >
                   {tag}
                 </button>
@@ -457,17 +473,22 @@ export default function SupportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.36 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-[#E7ECF2] rounded-2xl overflow-hidden border border-[#E7ECF2] shadow-sm"
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/8 rounded-2xl overflow-hidden border border-white/8"
           >
             {STATS.map((s) => (
-              <div key={s.label} className="flex flex-col items-center gap-1.5 py-6 px-4 bg-white">
+              <div key={s.label} className="flex flex-col items-center gap-1.5 py-6 px-4 bg-[#060E18]">
                 <span className="text-[#3CB52A]">{s.icon}</span>
-                <span className="text-2xl font-black text-[#0A1929]">{s.value}</span>
-                <span className="text-xs text-[#5B6B7B] font-medium">{s.label}</span>
+                <span className="text-2xl font-black text-white">{s.value}</span>
+                <span className="text-xs text-white/40 font-medium">{s.label}</span>
               </div>
             ))}
           </motion.div>
         </div>
+
+        {/* Bottom fade into light page */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, rgba(247,250,252,0.08))' }}
+        />
       </section>
 
       {/* ══════════════════════════════════════════════════════
@@ -646,27 +667,31 @@ export default function SupportPage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-5 gap-10">
-            {/* Categories */}
-            <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
-              {HELP_CATEGORIES.map((cat, i) => (
-                <motion.a
-                  key={cat.title}
-                  href="/resources"
+            {/* Topic directory — grouped lists */}
+            <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 content-start">
+              {TOPIC_GROUPS.map((group, gi) => (
+                <motion.div
+                  key={group.heading}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.32, delay: i * 0.05 }}
-                  className="group flex items-center gap-4 p-4 bg-[#F7FAFC] rounded-xl border border-[#EEF2F6] hover:border-[#3CB52A]/40 hover:bg-white hover:shadow-sm transition-all"
+                  transition={{ duration: 0.32, delay: gi * 0.06 }}
                 >
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${cat.color} flex items-center justify-center`}>
-                    {cat.icon}
+                  <h3 className="text-lg font-black text-[#0A1929] pb-3 border-b-2 border-[#0A1929]">{group.heading}</h3>
+                  <div>
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.title}
+                        href="/resources"
+                        className="group flex items-center gap-4 py-4 border-b border-[#EEF2F6] hover:bg-[#F7FAFC] transition-colors px-1 -mx-1"
+                      >
+                        <span className="flex-shrink-0 text-[#0A1929] group-hover:text-[#3CB52A] transition-colors">{item.icon}</span>
+                        <span className="flex-grow font-medium text-[#1F2D3A] text-[15px] group-hover:text-[#0A1929]">{item.title}</span>
+                        <ChevronRight size={15} className="flex-shrink-0 text-[#C4CDD6] group-hover:text-[#3CB52A] transition-colors" />
+                      </Link>
+                    ))}
                   </div>
-                  <div className="flex-grow min-w-0">
-                    <p className="font-semibold text-[#0A1929] text-sm">{cat.title}</p>
-                    <p className="text-xs text-[#64748B] mt-0.5">{cat.count} articles</p>
-                  </div>
-                  <ChevronRight size={15} className="flex-shrink-0 text-[#C4CDD6] group-hover:text-[#3CB52A] transition-colors" />
-                </motion.a>
+                </motion.div>
               ))}
             </div>
 
