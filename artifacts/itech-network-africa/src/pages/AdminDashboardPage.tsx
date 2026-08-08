@@ -256,7 +256,7 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
   }, []);
 
   const client = dbClients.find(c => c.id === clientId);
-  const subtotal    = items.reduce((s, i) => s + (i.qty || 0) * (i.rate || 0), 0);
+  const subtotal    = items.reduce((s, i) => s + (i.amount || 0), 0);
   const discAmt     = subtotal * (discountPct || 0) / 100;
   const taxAmt      = (subtotal - discAmt) * (taxRate || 0) / 100;
   const total       = subtotal - discAmt + taxAmt;
@@ -269,7 +269,13 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
   function addRow() { setItems(p => [...p, { id: Date.now().toString(), description: '', qty: 1, rate: 0, amount: 0 }]); }
   function removeRow(id: string) { setItems(p => p.filter(r => r.id !== id)); }
   function updateRow(id: string, field: string, val: string | number) {
-    setItems(p => p.map(r => r.id === id ? { ...r, [field]: val, amount: field === 'qty' ? Number(val) * r.rate : r.qty * Number(val) } : r));
+    setItems(p => p.map(r => {
+      if (r.id !== id) return r;
+      if (field === 'amount') return { ...r, amount: Number(val) };           // manual override
+      if (field === 'qty')    return { ...r, qty: Number(val), amount: Number(val) * r.rate };
+      if (field === 'rate')   return { ...r, rate: Number(val), amount: r.qty * Number(val) };
+      return { ...r, [field]: val };
+    }));
   }
   function handleSave(status: 'Draft' | 'Sent') {
     setErr('');
@@ -281,7 +287,7 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
         ...(editing || {}),
         clientId, clientName: client!.name, clientEmail: client!.email, clientOrg: client!.organisation,
         issuedDate: issued, dueDate: due, status,
-        items: items.map(i => ({ ...i, amount: i.qty * i.rate })),
+        items: items.map(i => ({ ...i })),
         taxRate, discountPercent: discountPct, discountAmount: discAmt,
         subtotal, taxAmount: taxAmt, total, notes, paymentTerms: terms,
         ...(status === 'Sent' ? { emailSentAt: new Date().toISOString() } : {}),
@@ -357,7 +363,7 @@ function InvoiceForm({ editing, onClose, onSaved }: { editing: Invoice | null; o
                 <div className="col-span-5"><input type="text" value={row.description} onChange={e => updateRow(row.id, 'description', e.target.value)} placeholder={`Item ${i + 1}`} className="w-full text-sm bg-transparent focus:outline-none text-slate-800 placeholder:text-slate-300" /></div>
                 <div className="col-span-2 flex justify-center"><input type="number" min={1} value={row.qty} onChange={e => updateRow(row.id, 'qty', Number(e.target.value))} className="w-14 text-center text-sm bg-slate-50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#3CB52A]" /></div>
                 <div className="col-span-2 flex justify-end"><input type="number" min={0} step={0.01} value={row.rate} onChange={e => updateRow(row.id, 'rate', Number(e.target.value))} className="w-20 text-right text-sm bg-slate-50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#3CB52A]" /></div>
-                <div className="col-span-2 text-right text-sm font-semibold text-slate-700">{fmt$(row.qty * row.rate)}</div>
+                <div className="col-span-2 flex justify-end"><input type="number" min={0} step={0.01} value={row.amount} onChange={e => updateRow(row.id, 'amount', Number(e.target.value))} className="w-20 text-right text-sm font-semibold text-slate-700 bg-slate-50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#3CB52A]" /></div>
                 <div className="col-span-1 flex justify-end">{items.length > 1 && <button onClick={() => removeRow(row.id)} className="text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>}</div>
               </div>
             ))}

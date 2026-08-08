@@ -266,7 +266,18 @@ RESPONSE GUIDELINES
 - For careers: direct to /careers
 - For services: describe the service from the data above, then offer a free consultation
 - Response time: 1 business day for email; technical support is 24/7
-- When a user is ready to start: guide them to /consultation or /contact`;
+- When a user is ready to start: guide them to /consultation or /contact
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HUMAN AGENT HANDOFF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You can route conversations to our human support agents. Trigger a handoff when:
+- The user explicitly asks for a human, agent, real person, or to "talk to someone"
+- The user is frustrated, has a complaint, or a billing/account-specific issue you cannot resolve
+- The question requires account access, custom quotes beyond listed prices, or a signed agreement
+- You have gone back and forth twice without resolving their problem
+
+When (and ONLY when) a handoff is warranted, end your reply with the exact token [[HANDOFF]] on its own line. Before the token, write one short warm sentence telling them you're connecting them with the team (e.g. "Let me connect you with one of our human agents right away."). Do NOT list contact details yourself when handing off — the handoff card shows them. Do NOT use the token for ordinary questions you can answer.`;
 
 /* ─────────────────────────────────────────────
    BUILT-IN KNOWLEDGE BASE FALLBACK
@@ -361,6 +372,13 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
 ];
 
+/* Detect explicit requests for a human agent (used in fallback mode). */
+function wantsHuman(userMessage: string): boolean {
+  return /human|real person|(talk|speak|chat) (to|with) (a |an |some)?(agent|person|someone|somebody|staff|representative|rep\b)|live agent|customer (service|care) agent/i.test(
+    userMessage,
+  );
+}
+
 function fallbackResponse(userMessage: string): string {
   const msg = userMessage.toLowerCase().trim();
   for (const entry of KNOWLEDGE_BASE) {
@@ -382,35 +400,39 @@ router.post("/chat", async (req, res) => {
     return;
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
 
   /* ─── Fallback: built-in knowledge base ─── */
-  if (!apiKey) {
+  if (!baseURL || !apiKey) {
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
-    res.json({ message: fallbackResponse(lastUser?.content ?? "") });
+    const text = fallbackResponse(lastUser?.content ?? "");
+    res.json({ message: text, handoff: wantsHuman(lastUser?.content ?? "") });
     return;
   }
 
-  /* ─── OpenAI mode ─── */
-  const openai = new OpenAI({ apiKey });
+  /* ─── AI mode (Replit AI Integrations proxy) ─── */
+  const openai = new OpenAI({ baseURL, apiKey });
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      max_tokens: 600,
-      temperature: 0.4,
+      model: "gpt-5.6-luna",
+      max_completion_tokens: 8192,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
       ],
     });
 
-    const text = completion.choices[0]?.message?.content?.trim() ?? "";
-    res.json({ message: text || fallbackResponse("") });
+    let text = completion.choices[0]?.message?.content?.trim() ?? "";
+    const handoff = /\[\[HANDOFF\]\]/.test(text);
+    text = text.replace(/\[\[HANDOFF\]\]/g, "").trim();
+    res.json({ message: text || fallbackResponse(""), handoff });
   } catch (err: unknown) {
     console.error("Chat error:", err);
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
-    res.json({ message: fallbackResponse(lastUser?.content ?? "") });
+    const text = fallbackResponse(lastUser?.content ?? "");
+    res.json({ message: text, handoff: wantsHuman(lastUser?.content ?? "") });
   }
 });
 

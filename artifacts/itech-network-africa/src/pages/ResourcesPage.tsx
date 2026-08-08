@@ -165,7 +165,7 @@ export default function ResourcesPage() {
           style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.07) 0%, transparent 65%)' }}
         />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
           {/* Breadcrumb */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -272,7 +272,7 @@ export default function ResourcesPage() {
             exit={{ opacity: 0 }}
             className="py-12 bg-[#F8F9FA] border-b border-[#E5E7EB]"
           >
-            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-[#6B7280]">
                   <strong className="text-[#0A0A0A]">{filtered.length}</strong> result{filtered.length !== 1 ? 's' : ''} for "<strong className="text-[#0A0A0A]">{query}</strong>"
@@ -317,7 +317,7 @@ export default function ResourcesPage() {
       ═══════════════════════════ */}
       {!query && (
         <section id="tutorials" className="py-20 lg:py-28 bg-[#F8F9FA]">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
             <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
               <div>
                 <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">Start Here</span>
@@ -372,7 +372,7 @@ export default function ResourcesPage() {
       ═══════════════════════════ */}
       {!query && (
         <section id="docs" className="py-20 lg:py-28 bg-white">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
             <motion.div {...fadeUp()} className="mb-12">
               <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">All Resources</span>
               <h2 className="text-4xl md:text-5xl font-black text-[#0A0A0A] leading-tight">Resource Library</h2>

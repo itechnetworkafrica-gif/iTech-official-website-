@@ -341,7 +341,7 @@ export default function SupportPage() {
           transition={{ duration: 8, repeat: Infinity, ease: 'linear', repeatDelay: 3 }}
         />
 
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
 
           {/* Live status badge */}
           <motion.div
@@ -440,7 +440,7 @@ export default function SupportPage() {
           SUPPORT CHANNELS
       ══════════════════════════════════════════════════════ */}
       <section id="help" className="py-24 bg-[#060E18]">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -504,7 +504,7 @@ export default function SupportPage() {
           SYSTEM STATUS — Dashboard strip
       ══════════════════════════════════════════════════════ */}
       <section id="status" className="py-16 bg-[#0A1929] border-y border-white/6">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-2">
@@ -555,7 +555,7 @@ export default function SupportPage() {
           GLOBAL COVERAGE — Time zones
       ══════════════════════════════════════════════════════ */}
       <section className="py-16 bg-[#060E18] border-b border-white/6 overflow-hidden">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex flex-col md:flex-row md:items-center gap-8">
             <div className="md:w-72 flex-shrink-0">
               <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-3">
@@ -589,7 +589,7 @@ export default function SupportPage() {
           KNOWLEDGE BASE
       ══════════════════════════════════════════════════════ */}
       <section id="knowledge-base" className="py-24 bg-[#060E18]">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -634,7 +634,7 @@ export default function SupportPage() {
           SUBMIT TICKET
       ══════════════════════════════════════════════════════ */}
       <section id="ticket" className="py-24 bg-[#0A1929] border-t border-white/6">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="grid lg:grid-cols-5 gap-14 items-start">
 
             {/* Form */}
@@ -913,7 +913,7 @@ export default function SupportPage() {
           style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(60,181,42,0.06) 0%, transparent 70%)' }}
         />
 
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1020,7 +1020,7 @@ export default function SupportPage() {
           style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 100%, rgba(60,181,42,0.08) 0%, transparent 70%)' }}
         />
 
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
           {/* Trust badges */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}

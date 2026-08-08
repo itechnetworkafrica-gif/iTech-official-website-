@@ -205,7 +205,7 @@ export default function DownloadsPage() {
         <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
         <div aria-hidden className="absolute right-0 bottom-0 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.06) 0%, transparent 65%)' }} />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="flex items-center gap-2 text-white/40 text-sm mb-10">
             <Link href="/"><span className="hover:text-white transition-colors cursor-pointer">Home</span></Link>
             <ChevronRight size={14} />
@@ -253,7 +253,7 @@ export default function DownloadsPage() {
 
       {/* CATEGORY TABS */}
       <div className="sticky top-0 z-20 bg-white border-b border-[#E5E7EB] shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex gap-1 overflow-x-auto py-3 no-scrollbar">
             {CATEGORIES.map(cat => {
               const Icon = CATEGORY_ICONS[cat];
@@ -272,7 +272,7 @@ export default function DownloadsPage() {
 
       {/* DOWNLOADS */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 space-y-16">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 space-y-16">
           {Object.entries(grouped).map(([cat, items], gi) => {
             const Icon = CATEGORY_ICONS[cat] ?? Package;
             return (

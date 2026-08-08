@@ -204,7 +204,7 @@ export default function DocsPage() {
         <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
         <div aria-hidden className="absolute left-0 top-0 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(60,181,42,0.07) 0%, transparent 65%)' }} />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16 relative z-10">
           {/* Breadcrumb */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="flex items-center gap-2 text-white/40 text-sm mb-10">
             <Link href="/"><span className="hover:text-white transition-colors cursor-pointer">Home</span></Link>
@@ -264,7 +264,7 @@ export default function DocsPage() {
       {/* FEATURED */}
       {!query && active === 'all' && (
         <section className="py-16 bg-[#F8F9FA] border-b border-[#E5E7EB]">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
             <motion.div {...fadeUp()} className="mb-10">
               <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-2">Most Popular</span>
               <h2 className="text-3xl font-black text-[#0A0A0A]">Featured Guides</h2>
@@ -293,7 +293,7 @@ export default function DocsPage() {
 
       {/* CATEGORY + DOCS */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="flex flex-col lg:flex-row gap-10">
 
             {/* Sidebar */}

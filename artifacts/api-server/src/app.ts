@@ -18,6 +18,20 @@ const configuredCorsOrigins = (process.env.CORS_ORIGINS || "")
 const allowAnyOrigin = configuredCorsOrigins.length === 0;
 const allowCrossSiteCookies = process.env.COOKIE_CROSS_SITE === "true";
 
+// Origins this app is itself served from (Replit production + dev preview).
+// These are always trusted for the CSRF origin check, so first-party requests
+// keep working even when CORS_ORIGINS is not configured. Third-party frontends
+// (e.g. a Vercel-hosted copy) must be added to CORS_ORIGINS explicitly.
+const selfOrigins = [
+  ...(process.env.REPLIT_DOMAINS || "")
+    .split(",")
+    .map((d) => d.trim())
+    .filter(Boolean)
+    .map((d) => `https://${d}`),
+  ...(process.env.REPLIT_DEV_DOMAIN ? [`https://${process.env.REPLIT_DEV_DOMAIN}`] : []),
+];
+const trustedOrigins = [...new Set([...configuredCorsOrigins, ...selfOrigins])];
+
 app.use(
   pinoHttp({
     logger,
@@ -41,7 +55,7 @@ app.set("trust proxy", 1);
 // bypass preflight checks. Registered before CORS so blocked requests get
 // a clean 403 instead of a CORS error.
 if (!allowAnyOrigin || allowCrossSiteCookies) {
-  app.use(buildOriginValidator(configuredCorsOrigins, allowCrossSiteCookies));
+  app.use(buildOriginValidator(trustedOrigins, allowCrossSiteCookies));
 }
 
 app.use(

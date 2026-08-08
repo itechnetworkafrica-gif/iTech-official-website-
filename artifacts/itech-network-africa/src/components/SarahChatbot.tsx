@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, MessageCircle, Minimize2, Sparkles } from 'lucide-react';
+import { X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { apiUrl } from '@/lib/apiBase';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  handoff?: boolean; // show human-agent routing card under this message
 }
 
 /* ─────────────────────────────────────────────
@@ -214,6 +215,56 @@ function MessageText({ text, isUser }: { text: string; isUser?: boolean }) {
   return <div className="space-y-1 text-[13px]">{nodes}</div>;
 }
 
+/* ─── Human agent handoff card ─── */
+function HandoffCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className="ml-9 mt-1 max-w-[82%] rounded-2xl border border-[#3CB52A]/30 bg-white shadow-sm overflow-hidden"
+    >
+      <div className="flex items-center gap-2 px-3.5 py-2.5 bg-gradient-to-r from-[#0A1929] to-[#0f2d47]">
+        <Headset size={14} className="text-[#3CB52A]" />
+        <p className="text-[11px] font-bold text-white">Connect with a human agent</p>
+      </div>
+      <div className="p-2 space-y-1">
+        <a
+          href="https://wa.me/231776836689?text=Hi%2C%20I%20was%20chatting%20with%20Sarah%20and%20would%20like%20to%20speak%20with%20an%20agent."
+          target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-green-50 transition-colors group"
+        >
+          <span className="w-7 h-7 rounded-full bg-[#25D366]/10 flex items-center justify-center flex-shrink-0"><Phone size={13} className="text-[#25D366]" /></span>
+          <span className="min-w-0">
+            <span className="block text-xs font-semibold text-[#0A1929] group-hover:text-[#3CB52A]">WhatsApp — chat now</span>
+            <span className="block text-[10px] text-gray-400">Typically replies within minutes</span>
+          </span>
+        </a>
+        <a
+          href="/support"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-green-50 transition-colors group"
+        >
+          <span className="w-7 h-7 rounded-full bg-[#3CB52A]/10 flex items-center justify-center flex-shrink-0"><Ticket size={13} className="text-[#3CB52A]" /></span>
+          <span className="min-w-0">
+            <span className="block text-xs font-semibold text-[#0A1929] group-hover:text-[#3CB52A]">Open a support ticket</span>
+            <span className="block text-[10px] text-gray-400">Tracked by our 24/7 support team</span>
+          </span>
+        </a>
+        <a
+          href="mailto:itechnetworkafrica@gmail.com"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-green-50 transition-colors group"
+        >
+          <span className="w-7 h-7 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0"><Mail size={13} className="text-blue-500" /></span>
+          <span className="min-w-0">
+            <span className="block text-xs font-semibold text-[#0A1929] group-hover:text-[#3CB52A]">Email the team</span>
+            <span className="block text-[10px] text-gray-400">Reply within 1 business day</span>
+          </span>
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ═══════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════ */
@@ -352,7 +403,7 @@ export const SarahChatbot: React.FC = () => {
         return;
       }
 
-      const data = await res.json() as { message?: string; error?: string };
+      const data = await res.json() as { message?: string; error?: string; handoff?: boolean };
       const fullText = data.message?.trim() || errorMsg;
 
       // ── Simulate typing: reveal the response word-by-word ──
@@ -363,6 +414,15 @@ export const SarahChatbot: React.FC = () => {
         setLast(built);
         // tiny yield so React can flush each frame
         await new Promise<void>(r => setTimeout(r, 22));
+      }
+
+      // ── Attach handoff card once the full message is revealed ──
+      if (data.handoff) {
+        setMessages(prev => {
+          const copy = [...prev];
+          copy[copy.length - 1] = { ...copy[copy.length - 1], handoff: true };
+          return copy;
+        });
       }
     } catch {
       setLast(errorMsg);
@@ -423,6 +483,14 @@ export const SarahChatbot: React.FC = () => {
                 </p>
               </div>
               <button
+                onClick={() => sendChip('I would like to talk to a human agent, please.')}
+                className="text-white/60 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10"
+                aria-label="Talk to a human agent"
+                title="Talk to a human agent"
+              >
+                <Headset size={16} />
+              </button>
+              <button
                 onClick={handleClose}
                 className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
                 aria-label="Close chat"
@@ -463,6 +531,9 @@ export const SarahChatbot: React.FC = () => {
                   )}
                 </motion.div>
               ))}
+
+              {/* Human handoff card */}
+              {messages.length > 0 && messages[messages.length - 1].handoff && !loading && <HandoffCard />}
 
               {/* Quick-reply chips — only after the first greeting */}
               <AnimatePresence>
