@@ -301,7 +301,7 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="flex flex-col w-full bg-[#060E18] min-h-screen">
+    <div className="flex flex-col w-full bg-[#060E18] min-h-screen overflow-x-clip">
 
       {/* ══════════════════════════════════════════════════════
           HERO — Mission control
@@ -352,7 +352,7 @@ export default function SupportPage() {
           >
             <a
               href="#status"
-              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/25 text-[#3CB52A] text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/15 transition-colors"
+              className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#3CB52A]/10 border border-[#3CB52A]/25 text-[#3CB52A] text-[10px] sm:text-xs font-bold tracking-widest uppercase hover:bg-[#3CB52A]/15 transition-colors text-center max-w-full"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3CB52A] opacity-60" />
@@ -369,7 +369,7 @@ export default function SupportPage() {
             transition={{ duration: 0.6, delay: 0.08 }}
             className="text-center mb-6"
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight mb-5">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight mb-5 break-words">
               World-Class Support,<br />
               <span className="text-[#3CB52A]">Everywhere You Are.</span>
             </h1>
@@ -393,9 +393,9 @@ export default function SupportPage() {
                   value={heroSearch}
                   onChange={(e) => setHeroSearch(e.target.value)}
                   placeholder="Search the knowledge base, FAQs, and guides…"
-                  className="w-full pl-12 pr-36 py-4 bg-transparent text-white text-sm placeholder-white/30 focus:outline-none"
+                  className="w-full pl-12 pr-24 sm:pr-36 py-4 bg-transparent text-white text-sm placeholder-white/30 focus:outline-none"
                 />
-                <button className="absolute right-2 px-5 py-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white text-sm font-bold rounded-xl transition-colors whitespace-nowrap">
+                <button className="absolute right-2 px-3 sm:px-5 py-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white text-sm font-bold rounded-xl transition-colors whitespace-nowrap">
                   Search
                 </button>
               </div>

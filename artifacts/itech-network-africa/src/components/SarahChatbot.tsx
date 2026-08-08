@@ -5,9 +5,17 @@ import { useLocation } from 'wouter';
 import { apiUrl } from '@/lib/apiBase';
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'agent' | 'system';
   content: string;
-  handoff?: boolean; // show human-agent routing card under this message
+  handoff?: boolean;    // show human-agent routing card under this message
+  senderName?: string;  // display name for live-agent messages
+}
+
+interface LiveSession {
+  sessionId: string;
+  token: string;
+  status: 'waiting' | 'active' | 'closed';
+  agentName: string | null;
 }
 
 /* ─────────────────────────────────────────────
@@ -216,7 +224,10 @@ function MessageText({ text, isUser }: { text: string; isUser?: boolean }) {
 }
 
 /* ─── Human agent handoff card ─── */
-function HandoffCard() {
+function HandoffCard({ onStartLive, starting }: { onStartLive: (name: string, email: string) => void; starting: boolean }) {
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -229,6 +240,42 @@ function HandoffCard() {
         <p className="text-[11px] font-bold text-white">Connect with a human agent</p>
       </div>
       <div className="p-2 space-y-1">
+        {/* Live chat with the team — right here in the widget */}
+        {!showForm ? (
+          <button
+            onClick={() => setShowForm(true)}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-[#3CB52A]/10 hover:bg-[#3CB52A]/20 transition-colors group text-left"
+          >
+            <span className="w-7 h-7 rounded-full bg-[#3CB52A] flex items-center justify-center flex-shrink-0"><Headset size={13} className="text-white" /></span>
+            <span className="min-w-0">
+              <span className="block text-xs font-bold text-[#0A1929]">Chat with our team now</span>
+              <span className="block text-[10px] text-gray-500">An agent will join this conversation</span>
+            </span>
+          </button>
+        ) : (
+          <form
+            onSubmit={(e) => { e.preventDefault(); if (name.trim()) onStartLive(name.trim(), email.trim()); }}
+            className="p-2 rounded-xl bg-[#3CB52A]/5 border border-[#3CB52A]/20 space-y-1.5"
+          >
+            <p className="text-[11px] font-bold text-[#0A1929]">Before we connect you:</p>
+            <input
+              value={name} onChange={e => setName(e.target.value)}
+              placeholder="Your name *" required
+              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#3CB52A]"
+            />
+            <input
+              value={email} onChange={e => setEmail(e.target.value)} type="email"
+              placeholder="Email (optional)"
+              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#3CB52A]"
+            />
+            <button
+              type="submit" disabled={!name.trim() || starting}
+              className="w-full text-xs font-bold py-1.5 rounded-lg bg-[#3CB52A] hover:bg-[#2da822] text-white disabled:opacity-50 transition-colors"
+            >
+              {starting ? 'Connecting…' : 'Start live chat'}
+            </button>
+          </form>
+        )}
         <a
           href="https://wa.me/231776836689?text=Hi%2C%20I%20was%20chatting%20with%20Sarah%20and%20would%20like%20to%20speak%20with%20an%20agent."
           target="_blank" rel="noopener noreferrer"
@@ -276,6 +323,11 @@ export const SarahChatbot: React.FC = () => {
   const [input, setInput]         = useState('');
   const [loading, setLoading]     = useState(false);
   const [visible, setVisible]     = useState(false); // button + banner shown
+  const [live, setLive]           = useState<LiveSession | null>(null);
+  const [starting, setStarting]   = useState(false);
+  const lastMsgIdRef              = useRef(0);
+  const liveRef                   = useRef<LiveSession | null>(null);
+  liveRef.current = live;
 
   const messagesEndRef  = useRef<HTMLDivElement>(null);
   const inputRef        = useRef<HTMLInputElement>(null);
@@ -431,13 +483,117 @@ export const SarahChatbot: React.FC = () => {
     }
   }, [loading]);
 
+  /* ─────────────────────────────────────────────
+     LIVE AGENT MODE
+     ───────────────────────────────────────────── */
+  const startLive = useCallback(async (name: string, email: string) => {
+    if (starting || liveRef.current) return;
+    setStarting(true);
+    try {
+      const transcript = messagesRef.current
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .map(m => ({ role: m.role, content: m.content }));
+      const res = await fetch(apiUrl('/api/live-chat/start'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visitorName: name, visitorEmail: email, topic: location, transcript }),
+      });
+      if (!res.ok) throw new Error('failed');
+      const data = await res.json() as { sessionId: string; token: string };
+      lastMsgIdRef.current = 0;
+      setLive({ sessionId: data.sessionId, token: data.token, status: 'waiting', agentName: null });
+      setMessages(prev => [
+        ...prev.map(m => ({ ...m, handoff: false })),
+        { role: 'system' as const, content: "You're in the queue — a team member will join shortly. You can keep typing here." },
+      ]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'system', content: "Sorry — we couldn't start a live chat right now. Please try WhatsApp or open a support ticket below." }]);
+    } finally {
+      setStarting(false);
+    }
+  }, [starting, location]);
+
+  /* Poll the live session for agent replies / status changes */
+  useEffect(() => {
+    if (!live || live.status === 'closed') return;
+    let stopped = false;
+    const tick = async () => {
+      try {
+        const res = await fetch(apiUrl(`/api/live-chat/${live.sessionId}?after=${lastMsgIdRef.current}`), {
+          headers: { 'X-Visitor-Token': live.token },
+        });
+        if (!res.ok || stopped) return;
+        const data = await res.json() as {
+          status: 'waiting' | 'active' | 'closed';
+          agentName: string | null;
+          messages: { id: number; sender: string; senderName: string; text: string }[];
+        };
+        const incoming = data.messages.filter(m => m.id > lastMsgIdRef.current);
+        if (incoming.length > 0) {
+          lastMsgIdRef.current = incoming[incoming.length - 1].id;
+          const mapped = incoming
+            .filter(m => m.sender !== 'visitor') // our own messages are already shown
+            .map<Message>(m => m.sender === 'agent'
+              ? { role: 'agent', content: m.text, senderName: m.senderName }
+              : { role: 'system', content: m.text });
+          if (mapped.length > 0) setMessages(prev => [...prev, ...mapped]);
+        }
+        if (data.status !== live.status || data.agentName !== live.agentName) {
+          setLive(prev => prev ? { ...prev, status: data.status, agentName: data.agentName } : prev);
+        }
+      } catch { /* transient network issue — keep polling */ }
+    };
+    tick();
+    const id = setInterval(tick, 3000);
+    return () => { stopped = true; clearInterval(id); };
+  }, [live?.sessionId, live?.status, live?.agentName]);
+
+  const sendLiveMessage = useCallback(async (text: string) => {
+    const session = liveRef.current;
+    if (!session) return;
+    try {
+      const res = await fetch(apiUrl(`/api/live-chat/${session.sessionId}/message`), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Visitor-Token': session.token },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error('send failed');
+      const data = await res.json() as { message?: { id: number } };
+      // Only show the message once the server has stored it
+      setMessages(prev => [...prev, { role: 'user', content: text }]);
+      if (data.message?.id && data.message.id > lastMsgIdRef.current) lastMsgIdRef.current = data.message.id;
+    } catch {
+      setInput(text); // put the text back so the visitor can retry
+      setMessages(prev => [...prev, { role: 'system', content: "Your message didn't go through — please try sending it again." }]);
+    }
+  }, []);
+
+  const endLive = useCallback(async () => {
+    const session = liveRef.current;
+    if (!session) return;
+    setLive(null);
+    lastMsgIdRef.current = 0;
+    setMessages(prev => [...prev, { role: 'system', content: 'Live chat ended. Sarah (AI) is back if you need anything else!' }]);
+    try {
+      await fetch(apiUrl(`/api/live-chat/${session.sessionId}/close`), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Visitor-Token': session.token },
+        body: JSON.stringify({}),
+      });
+    } catch { /* best effort */ }
+  }, []);
+
   /* ─── Send typed message ─── */
   const sendMessage = useCallback(() => {
     if (!input.trim() || loading) return;
     const text = input.trim();
     setInput('');
-    doSend(text, messagesRef.current);
-  }, [input, loading, doSend]);
+    if (liveRef.current && liveRef.current.status !== 'closed') {
+      sendLiveMessage(text);
+    } else {
+      doSend(text, messagesRef.current);
+    }
+  }, [input, loading, doSend, sendLiveMessage]);
 
   /* ─── Send chip (quick reply) ─── */
   const sendChip = useCallback((text: string) => {
@@ -476,20 +632,35 @@ export const SarahChatbot: React.FC = () => {
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0A1929]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm leading-tight">Sarah</p>
+                <p className="font-bold text-sm leading-tight">
+                  {live ? (live.agentName || 'iTech Support') : 'Sarah'}
+                </p>
                 <p className="text-[11px] text-green-400 leading-tight flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                  Always online · AI Assistant
+                  <span className={`inline-block w-1.5 h-1.5 rounded-full ${live?.status === 'waiting' ? 'bg-amber-400' : 'bg-green-400'} animate-pulse`} />
+                  {live
+                    ? (live.status === 'waiting' ? 'Waiting for an agent…' : live.status === 'active' ? 'Live agent connected' : 'Chat ended')
+                    : 'Always online · AI Assistant'}
                 </p>
               </div>
-              <button
-                onClick={() => sendChip('I would like to talk to a human agent, please.')}
-                className="text-white/60 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10"
-                aria-label="Talk to a human agent"
-                title="Talk to a human agent"
-              >
-                <Headset size={16} />
-              </button>
+              {live ? (
+                <button
+                  onClick={endLive}
+                  className="text-white/60 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/10 text-[10px] font-bold uppercase tracking-wider"
+                  aria-label="End live chat"
+                  title="End live chat"
+                >
+                  End
+                </button>
+              ) : (
+                <button
+                  onClick={() => sendChip('I would like to talk to a human agent, please.')}
+                  className="text-white/60 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10"
+                  aria-label="Talk to a human agent"
+                  title="Talk to a human agent"
+                >
+                  <Headset size={16} />
+                </button>
+              )}
               <button
                 onClick={handleClose}
                 className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
@@ -509,6 +680,24 @@ export const SarahChatbot: React.FC = () => {
                   transition={{ duration: 0.2 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
+                  {msg.role === 'system' ? (
+                    <div className="w-full text-center px-4">
+                      <span className="inline-block text-[11px] text-gray-400 bg-gray-100 rounded-full px-3 py-1 leading-relaxed whitespace-pre-wrap">{msg.content}</span>
+                    </div>
+                  ) : msg.role === 'agent' ? (
+                    <>
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0A1929] to-[#0f2d47] flex items-center justify-center flex-shrink-0 mr-2 mt-1 shadow-sm">
+                        <Headset size={13} className="text-[#3CB52A]" />
+                      </div>
+                      <div className="max-w-[82%] min-w-0">
+                        {msg.senderName && <p className="text-[10px] font-bold text-[#0A1929]/60 mb-0.5">{msg.senderName} · Support Team</p>}
+                        <div className="px-3.5 py-2.5 rounded-2xl rounded-bl-sm bg-white border border-gray-200 text-[#0A1929] shadow-sm">
+                          <MessageText text={msg.content} />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                  <>
                   {msg.role === 'assistant' && (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0 mr-2 mt-1 shadow-sm">
                       <Sparkles size={13} className="text-white" />
@@ -529,11 +718,15 @@ export const SarahChatbot: React.FC = () => {
                       }
                     </div>
                   )}
+                  </>
+                  )}
                 </motion.div>
               ))}
 
               {/* Human handoff card */}
-              {messages.length > 0 && messages[messages.length - 1].handoff && !loading && <HandoffCard />}
+              {!live && messages.length > 0 && messages[messages.length - 1].handoff && !loading && (
+                <HandoffCard onStartLive={startLive} starting={starting} />
+              )}
 
               {/* Quick-reply chips — only after the first greeting */}
               <AnimatePresence>

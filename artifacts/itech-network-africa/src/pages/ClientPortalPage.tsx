@@ -5,7 +5,7 @@ import {
   LogOut, User, Lock, Mail, Phone, Shield, ArrowRight, Menu, X,
   Clock, CheckCircle2, AlertCircle, ExternalLink, Building2, Star,
   FolderX, HardDrive, TrendingUp, MessageSquarePlus,
-  ChevronRight, Plus, Send, RefreshCw, Printer, Eye, DollarSign,
+  ChevronRight, ChevronLeft, Plus, Send, RefreshCw, Printer, Eye, DollarSign,
   Megaphone, Briefcase, Share2, Bell, Activity, Calendar,
   CheckSquare, Square, CreditCard, Banknote, Smartphone, Bitcoin,
   Upload, Flag, FileUp, Trash2,
@@ -482,8 +482,8 @@ function ClientSupport({ client }: { client: PortalClient }) {
         ))}
       </div>
 
-      <div className="flex gap-4 h-[580px]">
-        <div className="w-64 shrink-0 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <div className="flex flex-col lg:flex-row gap-4 lg:h-[580px]">
+        <div className={`${(selected || showNew) ? 'hidden lg:flex' : 'flex'} w-full lg:w-64 shrink-0 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-col h-[460px] lg:h-auto`}>
           <div className="p-3 border-b border-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">{filtered.length} ticket{filtered.length !== 1 ? 's' : ''}</div>
           <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
             {filtered.length === 0 && <div className="py-12 text-center text-slate-400 text-sm px-4">{tickets.length === 0 ? 'No tickets yet. Click "New Ticket" to get started.' : `No ${filter} tickets.`}</div>}
@@ -511,7 +511,7 @@ function ClientSupport({ client }: { client: PortalClient }) {
           </div>
         </div>
 
-        <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col overflow-hidden">
+        <div className={`${(selected || showNew) ? 'flex' : 'hidden lg:flex'} flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex-col overflow-hidden h-[70vh] lg:h-auto`}>
           {showNew ? (
             <div className="flex-1 overflow-y-auto">
               <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
@@ -538,15 +538,18 @@ function ClientSupport({ client }: { client: PortalClient }) {
             </div>
           ) : (
             <>
-              <div className="px-5 py-4 border-b border-slate-100">
+              <div className="px-4 lg:px-5 py-3 lg:py-4 border-b border-slate-100">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="font-black text-slate-900">{ticket.subject}</div>
+                  <div className="flex items-start gap-1 min-w-0">
+                    <button onClick={() => setSelected(null)} className="lg:hidden w-8 h-8 -ml-1 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-500 shrink-0"><ChevronLeft size={18} /></button>
+                    <div className="min-w-0">
+                    <div className="font-black text-slate-900 truncate">{ticket.subject}</div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-xs font-mono text-slate-400">{ticket.ticketNumber}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TKT_STATUS[ticket.status].bg} ${TKT_STATUS[ticket.status].text}`}>{ticket.status}</span>
                       <span className={`text-[10px] font-bold ${PRIORITY_COLOR[ticket.priority]}`}>{ticket.priority} Priority</span>
                       {ticket.assignedTo && <span className="text-[10px] text-slate-400">· Assigned to {ticket.assignedTo}</span>}
+                    </div>
                     </div>
                   </div>
                   {/* Rating button for resolved tickets */}

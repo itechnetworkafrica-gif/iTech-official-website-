@@ -8,7 +8,7 @@ import {
   Send, RefreshCw, Printer, Download, Edit3,
   DollarSign, AlertTriangle, MessageSquare, Filter,
   Megaphone, BarChart2, FolderOpen, FileUp, StickyNote,
-  ChevronDown, Zap, Activity, Tag, UserCog, BookTemplate,
+  ChevronDown, ChevronLeft, Zap, Activity, Tag, UserCog, BookTemplate,
   Bell, Archive, Search, Upload, Percent, Flag, UserCheck,
   MinusCircle, CheckSquare, Square,
 } from 'lucide-react';
@@ -38,6 +38,7 @@ import {
   type ClientNote, type InvoiceTemplate, type ClientUploadedFile,
   type InvoiceDispute,
 } from '@/lib/portalData';
+import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -701,8 +702,8 @@ function SupportSection() {
         ))}
       </div>
 
-      <div className="flex gap-4 h-[600px]">
-        <div className="w-72 shrink-0 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <div className="flex flex-col lg:flex-row gap-4 lg:h-[600px]">
+        <div className={`${selected ? 'hidden lg:flex' : 'flex'} w-full lg:w-72 shrink-0 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-col h-[480px] lg:h-auto`}>
           <div className="p-3 border-b border-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">Tickets ({filtered.length})</div>
           <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
             {filtered.length === 0 && <div className="py-12 text-center text-slate-400 text-sm">No tickets.</div>}
@@ -728,17 +729,20 @@ function SupportSection() {
           </div>
         </div>
 
-        <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col overflow-hidden">
+        <div className={`${selected ? 'flex' : 'hidden lg:flex'} flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex-col overflow-hidden h-[70vh] lg:h-auto`}>
           {!ticket ? (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-300">
               <MessageSquare size={40} className="mb-3" /><p className="text-sm font-semibold">Select a ticket to view the conversation</p>
             </div>
           ) : (
             <>
-              <div className="px-5 py-4 border-b border-slate-100 flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="font-black text-slate-900">{ticket.subject}</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{ticket.ticketNumber} · {ticket.clientName} · {ticket.category}</div>
+              <div className="px-4 lg:px-5 py-3 lg:py-4 border-b border-slate-100 flex flex-wrap items-start justify-between gap-3">
+                <div className="flex items-start gap-1 min-w-0">
+                  <button onClick={() => setSelected(null)} className="lg:hidden w-8 h-8 -ml-1 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-500 shrink-0"><ChevronLeft size={18} /></button>
+                  <div className="min-w-0">
+                    <div className="font-black text-slate-900 truncate">{ticket.subject}</div>
+                    <div className="text-xs text-slate-400 mt-0.5 truncate">{ticket.ticketNumber} · {ticket.clientName} · {ticket.category}</div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   {/* Priority selector */}
@@ -1632,7 +1636,9 @@ const ADMIN_NAV = [
   { id: 'overview',       label: 'Overview',       icon: LayoutDashboard },
   { id: 'invoices',       label: 'Invoices',        icon: FileText        },
   { id: 'support',        label: 'Support',         icon: Headphones      },
+  { id: 'livechat',       label: 'Live Chat',       icon: MessageSquare   },
   { id: 'clients',        label: 'Clients',         icon: Users           },
+  { id: 'team',           label: 'Team',            icon: UserCog         },
   { id: 'announcements',  label: 'Announcements',   icon: Megaphone       },
   { id: 'reports',        label: 'Reports',         icon: BarChart2       },
   { id: 'files',          label: 'Files',           icon: FileUp          },
@@ -1643,10 +1649,28 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
   const [section, setSection]     = useState('overview');
   const [mobileNav, setMobileNav] = useState(false);
   const [unread, setUnread]       = useState(0);
+  const [liveWaiting, setLiveWaiting] = useState(0);
 
   useEffect(() => {
     function refresh() { setUnread(getAdminUnread()); }
     refresh(); const id = setInterval(refresh, 3000); return () => clearInterval(id);
+  }, []);
+
+  // Poll for visitors waiting on a live agent
+  useEffect(() => {
+    let prev = 0;
+    async function poll() {
+      try {
+        const res = await fetch(apiUrl('/api/admin/live-chats'), { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json() as { status: string }[];
+        const waiting = data.filter(s => s.status === 'waiting').length;
+        if (waiting > prev && prev >= 0) playNotificationSound('message');
+        prev = waiting;
+        setLiveWaiting(waiting);
+      } catch { /* ignore */ }
+    }
+    poll(); const id = setInterval(poll, 6000); return () => clearInterval(id);
   }, []);
 
   // Periodically sync admin writes to the server (cross-device persistence)
@@ -1662,7 +1686,9 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
     overview:      <Overview onNav={navTo} />,
     invoices:      <InvoicesSection />,
     support:       <SupportSection />,
+    livechat:      <LiveChatSection />,
     clients:       <ClientsSection />,
+    team:          <TeamSection />,
     announcements: <AnnouncementsSection />,
     reports:       <ReportsSection />,
     files:         <FilesSection />,
@@ -1694,6 +1720,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
                 <item.icon size={16} className={section === item.id ? 'text-[#3CB52A]' : 'text-slate-400'} />
                 {item.label}
                 {item.id === 'support' && <Badge n={unread} />}
+                {item.id === 'livechat' && <Badge n={liveWaiting} />}
               </button>
             ))}
           </nav>
@@ -1710,7 +1737,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
                   {ADMIN_NAV.map(item => (
                     <button key={item.id} onClick={() => navTo(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all ${section === item.id ? 'bg-[#f0fdf4] text-[#3CB52A]' : 'text-slate-500 hover:bg-slate-50'}`}>
-                      <item.icon size={16} />{item.label}{item.id === 'support' && <Badge n={unread} />}
+                      <item.icon size={16} />{item.label}{item.id === 'support' && <Badge n={unread} />}{item.id === 'livechat' && <Badge n={liveWaiting} />}
                     </button>
                   ))}
                 </nav>
