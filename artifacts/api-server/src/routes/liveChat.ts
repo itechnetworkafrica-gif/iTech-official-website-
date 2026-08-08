@@ -23,11 +23,13 @@
 import { Router, type Request, type Response } from "express";
 import crypto from "node:crypto";
 import { query } from "../lib/db.js";
-import { requireAuth } from "../middleware/requireAuth.js";
+import { requireAuth, requirePermission, validatePermissionGrant } from "../middleware/requireAuth.js";
 import { hashPassword } from "../lib/auth.js";
 
 const router = Router();
 const auth = requireAuth("admin");
+const permLiveChat = requirePermission("livechat");
+const permTeam = requirePermission("team");
 
 function genId(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -164,11 +166,28 @@ router.get("/live-chat/:id", async (req: Request, res: Response) => {
   });
 });
 
+// ─── Respectful-language guard (server-side, cannot be bypassed) ──────────────
+const OFFENSIVE_PATTERNS: RegExp[] = [
+  /\b(f+u+c*k+\w*|s+h+i+t+\w*|b+i+t+c+h+\w*|a+s+s+h+o+l+e+\w*|bastard\w*|d+i+c+k+h+e+a+d+|c+u+n+t+\w*|motherf\w*|dumbass|jackass|wanker|slut\w*|whore\w*|n+i+g+g+(a|e+r)\w*|fag+ot*\w*|retard\w*)\b/i,
+  /\b(stupid|idiot|useless|dumb)\s+(bot|ai|assistant|chatbot|thing|website|company|people|team|agent)\b/i,
+  /\b(kill|hurt|attack)\s+(you|yourself|myself)\b/i,
+];
+function isOffensive(text: string): boolean {
+  return OFFENSIVE_PATTERNS.some((re) => re.test(text));
+}
+
 // ─── Visitor: send message ────────────────────────────────────────────────────
 router.post("/live-chat/:id/message", async (req: Request, res: Response) => {
   const { text } = req.body as { text?: string };
   const clean = (text || "").trim().slice(0, 4000);
   if (!clean) { res.status(400).json({ error: "Message required" }); return; }
+  if (isOffensive(clean)) {
+    res.status(422).json({
+      error: "offensive_language",
+      message: "Please keep the conversation respectful so our team can help you.",
+    });
+    return;
+  }
 
   const session = await getSessionForVisitor(String(req.params.id), visitorToken(req));
   if (!session) { res.status(404).json({ error: "Session not found" }); return; }
@@ -201,7 +220,7 @@ router.post("/live-chat/:id/close", async (req: Request, res: Response) => {
 });
 
 // ─── Admin: list sessions ─────────────────────────────────────────────────────
-router.get("/admin/live-chats", auth, async (_req: Request, res: Response) => {
+router.get("/admin/live-chats", permLiveChat, async (_req: Request, res: Response) => {
   const result = await query(
     `SELECT s.*,
             (SELECT text FROM live_chat_messages m
@@ -224,7 +243,7 @@ router.get("/admin/live-chats", auth, async (_req: Request, res: Response) => {
 });
 
 // ─── Admin: session detail + messages ─────────────────────────────────────────
-router.get("/admin/live-chats/:id", auth, async (req: Request, res: Response) => {
+router.get("/admin/live-chats/:id", permLiveChat, async (req: Request, res: Response) => {
   const after = Number(req.query.after || 0);
   const s = await query("SELECT * FROM live_chat_sessions WHERE id = $1", [req.params.id]);
   if (!s.rows[0]) { res.status(404).json({ error: "Not found" }); return; }
@@ -237,7 +256,7 @@ router.get("/admin/live-chats/:id", auth, async (req: Request, res: Response) =>
 });
 
 // ─── Admin: assign agent ──────────────────────────────────────────────────────
-router.post("/admin/live-chats/:id/assign", auth, async (req: Request, res: Response) => {
+router.post("/admin/live-chats/:id/assign", permLiveChat, async (req: Request, res: Response) => {
   const { agentId } = req.body as { agentId?: string };
   const targetId = agentId || req.user!.id;
 
@@ -268,7 +287,7 @@ router.post("/admin/live-chats/:id/assign", auth, async (req: Request, res: Resp
 });
 
 // ─── Admin: agent message ─────────────────────────────────────────────────────
-router.post("/admin/live-chats/:id/message", auth, async (req: Request, res: Response) => {
+router.post("/admin/live-chats/:id/message", permLiveChat, async (req: Request, res: Response) => {
   const { text } = req.body as { text?: string };
   const clean = (text || "").trim().slice(0, 4000);
   if (!clean) { res.status(400).json({ error: "Message required" }); return; }
@@ -317,7 +336,7 @@ router.post("/admin/live-chats/:id/message", auth, async (req: Request, res: Res
 });
 
 // ─── Admin: close chat ────────────────────────────────────────────────────────
-router.post("/admin/live-chats/:id/close", auth, async (req: Request, res: Response) => {
+router.post("/admin/live-chats/:id/close", permLiveChat, async (req: Request, res: Response) => {
   await query(
     "UPDATE live_chat_sessions SET status = 'closed', closed_at = NOW(), updated_at = NOW() WHERE id = $1",
     [req.params.id]
@@ -331,9 +350,9 @@ router.post("/admin/live-chats/:id/close", auth, async (req: Request, res: Respo
 });
 
 // ─── Team agents CRUD ─────────────────────────────────────────────────────────
-router.get("/admin/agents", auth, async (_req: Request, res: Response) => {
+router.get("/admin/agents", permTeam, async (_req: Request, res: Response) => {
   const result = await query(
-    `SELECT id, name, email, role, phone, is_active, created_at
+    `SELECT id, name, email, role, phone, is_active, created_at, permissions
      FROM portal_users WHERE user_type = 'admin' ORDER BY created_at ASC`,
     []
   );
@@ -345,13 +364,20 @@ router.get("/admin/agents", auth, async (_req: Request, res: Response) => {
     phone: r.phone,
     isActive: r.is_active,
     createdAt: r.created_at,
+    permissions: Array.isArray(r.permissions) ? r.permissions : null,
   })));
 });
 
-router.post("/admin/agents", auth, async (req: Request, res: Response) => {
-  const { name, email, password, role, phone } = req.body as {
+router.post("/admin/agents", permTeam, async (req: Request, res: Response) => {
+  const { name, email, password, role, phone, permissions } = req.body as {
     name?: string; email?: string; password?: string; role?: string; phone?: string;
+    permissions?: string[] | null;
   };
+  // Delegation ceiling: an admin can only grant access they hold themselves,
+  // and only full-access admins may create full-access accounts. Omitting
+  // permissions means full access, so validate it the same way.
+  const grantError = validatePermissionGrant(req.user!, permissions === undefined ? null : permissions);
+  if (grantError) { res.status(403).json({ error: grantError }); return; }
   if (!name || !email || !password) {
     res.status(400).json({ error: "Name, email, and password required" });
     return;
@@ -367,22 +393,44 @@ router.post("/admin/agents", auth, async (req: Request, res: Response) => {
   const id = `agent-${genId()}`;
   const memberSince = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
   await query(
-    `INSERT INTO portal_users (id, name, email, password_hash, organisation, role, phone, member_since, tier, user_type)
-     VALUES ($1, $2, $3, $4, 'iTech Network Africa', $5, $6, $7, 'Standard', 'admin')`,
-    [id, name, email.toLowerCase(), hashPassword(password), role || "Support Agent", phone || "", memberSince]
+    `INSERT INTO portal_users (id, name, email, password_hash, organisation, role, phone, member_since, tier, user_type, permissions)
+     VALUES ($1, $2, $3, $4, 'iTech Network Africa', $5, $6, $7, 'Standard', 'admin', $8)`,
+    [id, name, email.toLowerCase(), hashPassword(password), role || "Support Agent", phone || "", memberSince,
+     permissions == null ? null : JSON.stringify(permissions)]
   );
   res.json({ ok: true, id });
 });
 
-router.put("/admin/agents/:id", auth, async (req: Request, res: Response) => {
-  const { name, role, phone, isActive, newPassword } = req.body as {
+router.put("/admin/agents/:id", permTeam, async (req: Request, res: Response) => {
+  const { name, role, phone, isActive, newPassword, permissions } = req.body as {
     name?: string; role?: string; phone?: string; isActive?: boolean; newPassword?: string;
+    permissions?: string[] | null;
   };
 
   // Don't let an admin deactivate their own account
   if (isActive === false && req.params.id === req.user!.id) {
     res.status(400).json({ error: "You cannot deactivate your own account" });
     return;
+  }
+  // Don't let an admin restrict their own access
+  if (permissions !== undefined && req.params.id === req.user!.id) {
+    res.status(400).json({ error: "You cannot change your own access level" });
+    return;
+  }
+  if (permissions !== undefined) {
+    const grantError = validatePermissionGrant(req.user!, permissions);
+    if (grantError) { res.status(403).json({ error: grantError }); return; }
+  }
+  // A limited admin cannot modify a full-access admin's account at all
+  if (req.user!.permissions != null) {
+    const target = await query(
+      "SELECT permissions FROM portal_users WHERE id = $1 AND user_type = 'admin'",
+      [req.params.id]
+    );
+    if (target.rows[0] && !Array.isArray(target.rows[0].permissions)) {
+      res.status(403).json({ error: "Only a full-access admin can modify this account" });
+      return;
+    }
   }
   if (newPassword && newPassword.length < 8) {
     res.status(400).json({ error: "Password must be at least 8 characters" });
@@ -405,13 +453,30 @@ router.put("/admin/agents/:id", auth, async (req: Request, res: Response) => {
       [name, role, phone, isActive, req.params.id]
     );
   }
+  if (permissions !== undefined) {
+    await query(
+      `UPDATE portal_users SET permissions = $1, updated_at = NOW() WHERE id = $2 AND user_type = 'admin'`,
+      [permissions == null ? null : JSON.stringify(permissions), req.params.id]
+    );
+  }
   res.json({ ok: true });
 });
 
-router.delete("/admin/agents/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/agents/:id", permTeam, async (req: Request, res: Response) => {
   if (req.params.id === req.user!.id) {
     res.status(400).json({ error: "You cannot remove your own account" });
     return;
+  }
+  // A limited admin cannot remove a full-access admin
+  if (req.user!.permissions != null) {
+    const target = await query(
+      "SELECT permissions FROM portal_users WHERE id = $1 AND user_type = 'admin'",
+      [req.params.id]
+    );
+    if (target.rows[0] && !Array.isArray(target.rows[0].permissions)) {
+      res.status(403).json({ error: "Only a full-access admin can remove this account" });
+      return;
+    }
   }
   await query(
     "UPDATE portal_users SET is_active = false WHERE id = $1 AND user_type = 'admin'",

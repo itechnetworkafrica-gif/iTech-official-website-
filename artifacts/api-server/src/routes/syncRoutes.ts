@@ -4,7 +4,7 @@
  */
 import { Router, type Request, type Response } from "express";
 import { query } from "../lib/db.js";
-import { requireAuth } from "../middleware/requireAuth.js";
+import { requireAuth, hasPermission } from "../middleware/requireAuth.js";
 
 const router = Router();
 
@@ -70,7 +70,7 @@ router.post("/portal/bulk-sync", requireAuth("client"), async (req: Request, res
 // ─── Admin bulk sync ──────────────────────────────────────────────────────────
 
 // GET /api/admin/data — fetch all admin data at once
-router.get("/admin/data", requireAuth("admin"), async (_req: Request, res: Response) => {
+router.get("/admin/data", requireAuth("admin"), async (req: Request, res: Response) => {
   const [invoices, tickets, projects, announcements, files, uploads, disputes, payments, clients, qrs, templates] = await Promise.all([
     query("SELECT * FROM invoices ORDER BY created_at DESC", []),
     query(`SELECT t.*, json_agg(m ORDER BY m.created_at ASC) FILTER (WHERE m.id IS NOT NULL) as messages
@@ -87,31 +87,41 @@ router.get("/admin/data", requireAuth("admin"), async (_req: Request, res: Respo
     query("SELECT * FROM invoice_templates ORDER BY created_at ASC", []),
   ]);
 
+  // Only return the sections this admin is allowed to see
+  const can = (key: string) => hasPermission(req.user!, key);
   res.json({
-    invoices: invoices.rows.map(mapInvoice),
-    tickets: tickets.rows.map(mapTicket),
-    projects: projects.rows.map(mapProject),
-    announcements: announcements.rows.map(mapAnnouncement),
-    files: files.rows,
-    uploads: uploads.rows,
-    disputes: disputes.rows,
-    payments: payments.rows,
-    clients: clients.rows.map(r => ({
+    invoices: can("invoices") || can("overview") || can("reports") ? invoices.rows.map(mapInvoice) : [],
+    tickets: can("support") || can("overview") ? tickets.rows.map(mapTicket) : [],
+    projects: can("clients") ? projects.rows.map(mapProject) : [],
+    announcements: can("announcements") ? announcements.rows.map(mapAnnouncement) : [],
+    files: can("files") ? files.rows : [],
+    uploads: can("files") ? uploads.rows : [],
+    disputes: can("invoices") ? disputes.rows : [],
+    payments: can("invoices") ? payments.rows : [],
+    clients: can("clients") || can("overview") ? clients.rows.map(r => ({
       id: r.id, name: r.name, email: r.email, organisation: r.organisation,
       role: r.role, phone: r.phone, memberSince: r.member_since,
       tier: r.tier, isActive: r.is_active, createdAt: r.created_at,
-    })),
-    quickReplies: qrs.rows,
-    invoiceTemplates: templates.rows.map(r => ({ id: r.id, name: r.name, items: r.items, notes: r.notes, paymentTerms: r.payment_terms, taxRate: parseFloat(r.tax_rate) })),
+    })) : [],
+    quickReplies: can("support") || can("livechat") ? qrs.rows : [],
+    invoiceTemplates: can("invoices") ? templates.rows.map(r => ({ id: r.id, name: r.name, items: r.items, notes: r.notes, paymentTerms: r.payment_terms, taxRate: parseFloat(r.tax_rate) })) : [],
   });
 });
 
 // POST /api/admin/bulk-sync — admin pushes all data to the server
 router.post("/admin/bulk-sync", requireAuth("admin"), async (req: Request, res: Response) => {
-  const { invoices, tickets, projects, announcements, files, quickReplies, invoiceTemplates } = req.body as {
+  const body = req.body as {
     invoices?: any[]; tickets?: any[]; projects?: any[]; announcements?: any[];
     files?: any[]; quickReplies?: any[]; invoiceTemplates?: any[];
   };
+  // Drop any sections this admin has no permission to write
+  const can = (key: string) => hasPermission(req.user!, key);
+  const invoices = can("invoices") ? body.invoices : undefined;
+  const tickets = can("support") ? body.tickets : undefined;
+  const projects = can("clients") ? body.projects : undefined;
+  const announcements = can("announcements") ? body.announcements : undefined;
+  const quickReplies = can("support") ? body.quickReplies : undefined;
+  const invoiceTemplates = can("invoices") ? body.invoiceTemplates : undefined;
 
   const ops: Promise<any>[] = [];
 

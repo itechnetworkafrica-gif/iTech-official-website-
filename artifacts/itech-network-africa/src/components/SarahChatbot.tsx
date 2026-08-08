@@ -577,6 +577,11 @@ export const SarahChatbot: React.FC = () => {
         headers: { 'Content-Type': 'application/json', 'X-Visitor-Token': session.token },
         body: JSON.stringify({ text }),
       });
+      if (res.status === 422) {
+        // Server-side respectful-language guard
+        setMessages(prev => [...prev, { role: 'system', content: "Let's keep our conversation friendly and respectful 😊 Our team is here to help — could you rephrase that?", warning: true }]);
+        return;
+      }
       if (!res.ok) throw new Error('send failed');
       const data = await res.json() as { message?: { id: number } };
       // Only show the message once the server has stored it

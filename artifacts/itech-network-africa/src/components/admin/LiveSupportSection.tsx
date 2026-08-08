@@ -35,7 +35,22 @@ interface Agent {
   phone: string;
   isActive: boolean;
   createdAt: string;
+  permissions: string[] | null; // null = full access
 }
+
+/* Dashboard sections a team member can be granted access to */
+const PERMISSION_OPTIONS = [
+  { id: 'overview',      label: 'Overview' },
+  { id: 'invoices',      label: 'Invoices' },
+  { id: 'support',       label: 'Support' },
+  { id: 'livechat',      label: 'Live Chat' },
+  { id: 'clients',       label: 'Clients' },
+  { id: 'team',          label: 'Team' },
+  { id: 'announcements', label: 'Announcements' },
+  { id: 'reports',       label: 'Reports' },
+  { id: 'files',         label: 'Files' },
+  { id: 'settings',      label: 'Settings' },
+];
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -306,6 +321,14 @@ export function TeamSection() {
   const [err, setErr]         = useState('');
   const [form, setForm]       = useState({ name: '', email: '', password: '', role: 'Support Agent', phone: '' });
   const [showPw, setShowPw]   = useState(false);
+  const [fullAccess, setFullAccess] = useState(false);
+  const [perms, setPerms]     = useState<string[]>(['livechat', 'support']);
+  const [editAgent, setEditAgent] = useState<Agent | null>(null);
+  const [editFull, setEditFull]   = useState(false);
+  const [editPerms, setEditPerms] = useState<string[]>([]);
+
+  const togglePerm = (list: string[], set: (v: string[]) => void, id: string) =>
+    set(list.includes(id) ? list.filter(p => p !== id) : [...list, id]);
 
   const load = useCallback(() => {
     api('/api/admin/agents').then(r => r.ok ? r.json() : []).then(setAgents).catch(() => {});
@@ -316,17 +339,19 @@ export function TeamSection() {
     e.preventDefault(); setErr('');
     if (!form.name.trim() || !form.email.trim() || !form.password) { setErr('Name, email, and password are required.'); return; }
     if (form.password.length < 8) { setErr('Password must be at least 8 characters.'); return; }
+    if (!fullAccess && perms.length === 0) { setErr('Select at least one section, or grant full access.'); return; }
     setBusy(true);
     try {
       const res = await api('/api/admin/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, permissions: fullAccess ? null : perms }),
       });
       const data = await res.json();
       if (!res.ok) { setErr(data.error || 'Could not add agent.'); return; }
       setShowAdd(false);
       setForm({ name: '', email: '', password: '', role: 'Support Agent', phone: '' });
+      setFullAccess(false); setPerms(['livechat', 'support']);
       load();
     } catch { setErr('Connection error. Please try again.'); }
     finally { setBusy(false); }
@@ -343,6 +368,32 @@ export function TeamSection() {
       alert(data.error || 'Could not update agent.');
     }
     load();
+  }
+
+  function openEditAccess(agent: Agent) {
+    setEditAgent(agent);
+    setEditFull(agent.permissions == null);
+    setEditPerms(agent.permissions ?? []);
+    setErr('');
+  }
+
+  async function saveAccess(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editAgent) return;
+    if (!editFull && editPerms.length === 0) { setErr('Select at least one section, or grant full access.'); return; }
+    setBusy(true);
+    try {
+      const res = await api(`/api/admin/agents/${editAgent.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ permissions: editFull ? null : editPerms }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setErr(data.error || 'Could not update access.'); return; }
+      setEditAgent(null);
+      load();
+    } catch { setErr('Connection error. Please try again.'); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -384,10 +435,27 @@ export function TeamSection() {
               <div className="flex items-center gap-2 truncate"><Mail size={12} className="text-slate-300 shrink-0" /> {a.email}</div>
               {a.phone && <div className="flex items-center gap-2"><Phone size={12} className="text-slate-300 shrink-0" /> {a.phone}</div>}
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-50">
+            <div className="mt-3 flex flex-wrap gap-1">
+              {a.permissions == null ? (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0A1929] text-white">Full access</span>
+              ) : a.permissions.length === 0 ? (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">No access</span>
+              ) : (
+                a.permissions.map(p => (
+                  <span key={p} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                    {PERMISSION_OPTIONS.find(o => o.id === p)?.label ?? p}
+                  </span>
+                ))
+              )}
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-50 flex flex-wrap gap-2">
               <button onClick={() => toggleActive(a)}
                 className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors ${a.isActive ? 'bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-red-600' : 'bg-[#f0fdf4] text-[#3CB52A] hover:bg-[#3CB52A] hover:text-white'}`}>
                 {a.isActive ? <><UserX size={13} /> Disable access</> : <><UserCheck size={13} /> Re-enable</>}
+              </button>
+              <button onClick={() => openEditAccess(a)}
+                className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-50 text-slate-500 hover:bg-[#f0fdf4] hover:text-[#3CB52A] transition-colors">
+                <Lock size={12} /> Edit access
               </button>
             </div>
           </div>
@@ -424,10 +492,65 @@ export function TeamSection() {
                   <div><label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Phone</label>
                     <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+231…" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#3CB52A]" /></div>
                 </div>
+                {/* Access permissions */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Dashboard access</label>
+                  <label className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 cursor-pointer mb-2">
+                    <input type="checkbox" checked={fullAccess} onChange={e => setFullAccess(e.target.checked)} className="accent-[#3CB52A]" />
+                    <span className="text-sm font-semibold text-slate-700">Full access (entire admin dashboard)</span>
+                  </label>
+                  {!fullAccess && (
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {PERMISSION_OPTIONS.map(o => (
+                        <label key={o.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold cursor-pointer transition-colors ${perms.includes(o.id) ? 'border-[#3CB52A] bg-[#f0fdf4] text-[#3CB52A]' : 'border-slate-200 text-slate-500'}`}>
+                          <input type="checkbox" checked={perms.includes(o.id)} onChange={() => togglePerm(perms, setPerms, o.id)} className="accent-[#3CB52A]" />
+                          {o.label}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-[11px] text-slate-400 mt-1.5">They will only see the sections you select here.</p>
+                </div>
                 <button type="submit" disabled={busy} className="w-full py-3 rounded-xl bg-[#3CB52A] hover:bg-[#2e911f] text-white text-sm font-bold disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                   {busy ? 'Adding…' : <><Plus size={15} /> Add Agent</>}
                 </button>
                 <p className="text-[11px] text-slate-400 text-center flex items-center justify-center gap-1"><Clock size={11} /> The agent can sign in right away at /admin with these credentials.</p>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit access modal */}
+      <AnimatePresence>
+        {editAgent && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
+            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
+              className="w-full max-w-md bg-white rounded-2xl shadow-2xl my-6">
+              <div className="flex items-center justify-between px-6 pt-5">
+                <h3 className="font-black text-slate-900">Access for {editAgent.name}</h3>
+                <button onClick={() => setEditAgent(null)} className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400"><X size={16} /></button>
+              </div>
+              <form onSubmit={saveAccess} className="p-6 pt-4 space-y-4">
+                {err && <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"><AlertCircle size={14} className="shrink-0" /> {err}</div>}
+                <label className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 cursor-pointer">
+                  <input type="checkbox" checked={editFull} onChange={e => setEditFull(e.target.checked)} className="accent-[#3CB52A]" />
+                  <span className="text-sm font-semibold text-slate-700">Full access (entire admin dashboard)</span>
+                </label>
+                {!editFull && (
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {PERMISSION_OPTIONS.map(o => (
+                      <label key={o.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold cursor-pointer transition-colors ${editPerms.includes(o.id) ? 'border-[#3CB52A] bg-[#f0fdf4] text-[#3CB52A]' : 'border-slate-200 text-slate-500'}`}>
+                        <input type="checkbox" checked={editPerms.includes(o.id)} onChange={() => togglePerm(editPerms, setEditPerms, o.id)} className="accent-[#3CB52A]" />
+                        {o.label}
+                      </label>
+                    ))}
+                  </div>
+                )}
+                <button type="submit" disabled={busy} className="w-full py-3 rounded-xl bg-[#3CB52A] hover:bg-[#2e911f] text-white text-sm font-bold disabled:opacity-50 transition-colors">
+                  {busy ? 'Saving…' : 'Save Access'}
+                </button>
+                <p className="text-[11px] text-slate-400 text-center">Changes apply the next time they load the dashboard.</p>
               </form>
             </motion.div>
           </div>

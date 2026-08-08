@@ -81,6 +81,7 @@ router.post("/auth/login", async (req: Request, res: Response) => {
       memberSince: user.member_since,
       tier: user.tier,
       userType: user.user_type,
+      permissions: Array.isArray(user.permissions) ? user.permissions : null,
     },
   });
 });
@@ -105,7 +106,7 @@ router.get("/auth/me", async (req: Request, res: Response) => {
 
   const result = await query(
     `SELECT s.user_id, s.user_type, u.name, u.email, u.organisation,
-            u.role, u.phone, u.member_since, u.tier
+            u.role, u.phone, u.member_since, u.tier, u.permissions
      FROM portal_sessions s
      JOIN portal_users u ON u.id = s.user_id
      WHERE s.id = $1 AND s.expires_at > NOW() AND u.is_active = true`,
@@ -130,6 +131,7 @@ router.get("/auth/me", async (req: Request, res: Response) => {
       memberSince: row.member_since,
       tier: row.tier,
       userType: row.user_type,
+      permissions: Array.isArray(row.permissions) ? row.permissions : null,
     },
   });
 });

@@ -3,7 +3,7 @@
  */
 import { Router, type Request, type Response } from "express";
 import { query } from "../lib/db.js";
-import { requireAuth } from "../middleware/requireAuth.js";
+import { requireAuth, requirePermission } from "../middleware/requireAuth.js";
 import { hashPassword } from "../lib/auth.js";
 import {
   mapInvoice, mapTicket, mapProject, mapAnnouncement,
@@ -12,13 +12,20 @@ import {
 
 const router = Router();
 const auth = requireAuth("admin");
+// Section-scoped admin access (any listed permission grants access)
+const permOverview      = requirePermission("overview", "reports");
+const permClients       = requirePermission("clients");
+const permInvoices      = requirePermission("invoices");
+const permSupport       = requirePermission("support");
+const permAnnouncements = requirePermission("announcements");
+const permFiles         = requirePermission("files");
 
 function genId(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
 // ─── Overview / Dashboard ─────────────────────────────────────────────────────
-router.get("/admin/overview", auth, async (_req: Request, res: Response) => {
+router.get("/admin/overview", permOverview, async (_req: Request, res: Response) => {
   const [clients, invoices, tickets, disputes, payments] = await Promise.all([
     query("SELECT COUNT(*) FROM portal_users WHERE user_type = 'client' AND is_active = true", []),
     query("SELECT status, SUM(total) as total_amount FROM invoices GROUP BY status", []),
@@ -44,7 +51,7 @@ router.get("/admin/overview", auth, async (_req: Request, res: Response) => {
 });
 
 // ─── Revenue analytics ────────────────────────────────────────────────────────
-router.get("/admin/revenue", auth, async (_req: Request, res: Response) => {
+router.get("/admin/revenue", permOverview, async (_req: Request, res: Response) => {
   const result = await query(
     `SELECT to_char(DATE_TRUNC('month', updated_at), 'Mon ''YY') as month,
             SUM(total) as revenue, COUNT(*) as invoices
@@ -62,7 +69,7 @@ router.get("/admin/revenue", auth, async (_req: Request, res: Response) => {
 });
 
 // ─── Clients CRUD ─────────────────────────────────────────────────────────────
-router.get("/admin/clients", auth, async (_req: Request, res: Response) => {
+router.get("/admin/clients", permClients, async (_req: Request, res: Response) => {
   const result = await query(
     "SELECT id, name, email, organisation, role, phone, member_since, tier, is_active, created_at FROM portal_users WHERE user_type = 'client' ORDER BY created_at DESC",
     []
@@ -81,7 +88,7 @@ router.get("/admin/clients", auth, async (_req: Request, res: Response) => {
   })));
 });
 
-router.post("/admin/clients", auth, async (req: Request, res: Response) => {
+router.post("/admin/clients", permClients, async (req: Request, res: Response) => {
   const { name, email, password, organisation, role, phone, tier } = req.body as {
     name: string; email: string; password: string;
     organisation?: string; role?: string; phone?: string; tier?: string;
@@ -112,7 +119,7 @@ router.post("/admin/clients", auth, async (req: Request, res: Response) => {
   res.json({ ok: true, id });
 });
 
-router.put("/admin/clients/:id", auth, async (req: Request, res: Response) => {
+router.put("/admin/clients/:id", permClients, async (req: Request, res: Response) => {
   const { name, email, organisation, role, phone, tier, isActive, newPassword } = req.body as {
     name?: string; email?: string; organisation?: string; role?: string;
     phone?: string; tier?: string; isActive?: boolean; newPassword?: string;
@@ -155,19 +162,19 @@ router.put("/admin/clients/:id", auth, async (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.delete("/admin/clients/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/clients/:id", permClients, async (req: Request, res: Response) => {
   await query("UPDATE portal_users SET is_active = false WHERE id = $1", [req.params.id]);
   await logActivity("Deactivated client", String(req.params.id), "Client");
   res.json({ ok: true });
 });
 
 // ─── Invoices CRUD ────────────────────────────────────────────────────────────
-router.get("/admin/invoices", auth, async (_req: Request, res: Response) => {
+router.get("/admin/invoices", permInvoices, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM invoices ORDER BY created_at DESC", []);
   res.json(result.rows.map(mapInvoice));
 });
 
-router.post("/admin/invoices", auth, async (req: Request, res: Response) => {
+router.post("/admin/invoices", permInvoices, async (req: Request, res: Response) => {
   const data = req.body as any;
   const countResult = await query("SELECT COUNT(*) FROM invoices", []);
   const count = parseInt(countResult.rows[0].count) + 1;
@@ -193,7 +200,7 @@ router.post("/admin/invoices", auth, async (req: Request, res: Response) => {
   res.json({ ok: true, id, invoiceNumber });
 });
 
-router.put("/admin/invoices/:id", auth, async (req: Request, res: Response) => {
+router.put("/admin/invoices/:id", permInvoices, async (req: Request, res: Response) => {
   const data = req.body as any;
   await query(
     `UPDATE invoices SET client_id=$1, client_name=$2, client_email=$3, client_org=$4,
@@ -215,14 +222,14 @@ router.put("/admin/invoices/:id", auth, async (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.patch("/admin/invoices/:id/status", auth, async (req: Request, res: Response) => {
+router.patch("/admin/invoices/:id/status", permInvoices, async (req: Request, res: Response) => {
   const { status } = req.body as { status: string };
   await query("UPDATE invoices SET status = $1, updated_at = NOW() WHERE id = $2", [status, req.params.id]);
   await logActivity("Updated invoice status", `→ ${status}`, "Invoice");
   res.json({ ok: true });
 });
 
-router.delete("/admin/invoices/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/invoices/:id", permInvoices, async (req: Request, res: Response) => {
   const inv = await query("SELECT invoice_number FROM invoices WHERE id = $1", [req.params.id]);
   await query("DELETE FROM invoices WHERE id = $1", [req.params.id]);
   await logActivity("Deleted invoice", inv.rows[0]?.invoice_number || req.params.id, "Invoice");
@@ -230,7 +237,7 @@ router.delete("/admin/invoices/:id", auth, async (req: Request, res: Response) =
 });
 
 // ─── Support Tickets ──────────────────────────────────────────────────────────
-router.get("/admin/tickets", auth, async (_req: Request, res: Response) => {
+router.get("/admin/tickets", permSupport, async (_req: Request, res: Response) => {
   const result = await query(
     `SELECT t.*, json_agg(m ORDER BY m.created_at ASC) FILTER (WHERE m.id IS NOT NULL) as messages
      FROM support_tickets t
@@ -241,7 +248,7 @@ router.get("/admin/tickets", auth, async (_req: Request, res: Response) => {
   res.json(result.rows.map(mapTicket));
 });
 
-router.post("/admin/tickets/:id/messages", auth, async (req: Request, res: Response) => {
+router.post("/admin/tickets/:id/messages", permSupport, async (req: Request, res: Response) => {
   const { text } = req.body as { text: string };
   const ticket = await query("SELECT status FROM support_tickets WHERE id = $1", [req.params.id]);
   if (!ticket.rows[0]) { res.status(404).json({ error: "Not found" }); return; }
@@ -262,26 +269,26 @@ router.post("/admin/tickets/:id/messages", auth, async (req: Request, res: Respo
   res.json({ ok: true });
 });
 
-router.patch("/admin/tickets/:id/status", auth, async (req: Request, res: Response) => {
+router.patch("/admin/tickets/:id/status", permSupport, async (req: Request, res: Response) => {
   const { status } = req.body as { status: string };
   await query("UPDATE support_tickets SET status = $1, updated_at = NOW() WHERE id = $2", [status, req.params.id]);
   await logActivity("Updated ticket status", `→ ${status}`, "Ticket");
   res.json({ ok: true });
 });
 
-router.patch("/admin/tickets/:id/priority", auth, async (req: Request, res: Response) => {
+router.patch("/admin/tickets/:id/priority", permSupport, async (req: Request, res: Response) => {
   const { priority } = req.body as { priority: string };
   await query("UPDATE support_tickets SET priority = $1, updated_at = NOW() WHERE id = $2", [priority, req.params.id]);
   res.json({ ok: true });
 });
 
-router.patch("/admin/tickets/:id/assign", auth, async (req: Request, res: Response) => {
+router.patch("/admin/tickets/:id/assign", permSupport, async (req: Request, res: Response) => {
   const { assignedTo } = req.body as { assignedTo: string };
   await query("UPDATE support_tickets SET assigned_to = $1, updated_at = NOW() WHERE id = $2", [assignedTo, req.params.id]);
   res.json({ ok: true });
 });
 
-router.post("/admin/tickets/:id/read", auth, async (req: Request, res: Response) => {
+router.post("/admin/tickets/:id/read", permSupport, async (req: Request, res: Response) => {
   await query(
     "UPDATE ticket_messages SET read = true WHERE ticket_id = $1 AND sender = 'client' AND read = false",
     [req.params.id]
@@ -290,12 +297,12 @@ router.post("/admin/tickets/:id/read", auth, async (req: Request, res: Response)
 });
 
 // ─── Projects CRUD ────────────────────────────────────────────────────────────
-router.get("/admin/projects", auth, async (_req: Request, res: Response) => {
+router.get("/admin/projects", permClients, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM projects ORDER BY created_at DESC", []);
   res.json(result.rows.map(mapProject));
 });
 
-router.post("/admin/projects", auth, async (req: Request, res: Response) => {
+router.post("/admin/projects", permClients, async (req: Request, res: Response) => {
   const data = req.body as any;
   const id = genId();
   await query(
@@ -309,7 +316,7 @@ router.post("/admin/projects", auth, async (req: Request, res: Response) => {
   res.json({ ok: true, id });
 });
 
-router.put("/admin/projects/:id", auth, async (req: Request, res: Response) => {
+router.put("/admin/projects/:id", permClients, async (req: Request, res: Response) => {
   const data = req.body as any;
   await query(
     `UPDATE projects SET client_id=$1, name=$2, type=$3, status=$4, description=$5,
@@ -323,13 +330,13 @@ router.put("/admin/projects/:id", auth, async (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.delete("/admin/projects/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/projects/:id", permClients, async (req: Request, res: Response) => {
   await query("DELETE FROM projects WHERE id = $1", [req.params.id]);
   await logActivity("Deleted project", String(req.params.id), "Project");
   res.json({ ok: true });
 });
 
-router.post("/admin/projects/:id/milestone", auth, async (req: Request, res: Response) => {
+router.post("/admin/projects/:id/milestone", permClients, async (req: Request, res: Response) => {
   const { milestoneId } = req.body as { milestoneId: string };
   const proj = await query("SELECT milestones FROM projects WHERE id = $1", [req.params.id]);
   if (!proj.rows[0]) { res.status(404).json({ error: "Not found" }); return; }
@@ -347,12 +354,12 @@ router.post("/admin/projects/:id/milestone", auth, async (req: Request, res: Res
 });
 
 // ─── Announcements CRUD ───────────────────────────────────────────────────────
-router.get("/admin/announcements", auth, async (_req: Request, res: Response) => {
+router.get("/admin/announcements", permAnnouncements, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM announcements ORDER BY pinned DESC, created_at DESC", []);
   res.json(result.rows.map(mapAnnouncement));
 });
 
-router.post("/admin/announcements", auth, async (req: Request, res: Response) => {
+router.post("/admin/announcements", permAnnouncements, async (req: Request, res: Response) => {
   const { title, body, type, targetClients, pinned } = req.body as any;
   const id = genId();
   await query(
@@ -365,7 +372,7 @@ router.post("/admin/announcements", auth, async (req: Request, res: Response) =>
   res.json({ ok: true, id });
 });
 
-router.put("/admin/announcements/:id", auth, async (req: Request, res: Response) => {
+router.put("/admin/announcements/:id", permAnnouncements, async (req: Request, res: Response) => {
   const { title, body, type, targetClients, pinned } = req.body as any;
   await query(
     "UPDATE announcements SET title=$1, body=$2, type=$3, target_clients=$4, pinned=$5 WHERE id=$6",
@@ -375,18 +382,18 @@ router.put("/admin/announcements/:id", auth, async (req: Request, res: Response)
   res.json({ ok: true });
 });
 
-router.delete("/admin/announcements/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/announcements/:id", permAnnouncements, async (req: Request, res: Response) => {
   await query("DELETE FROM announcements WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Files ────────────────────────────────────────────────────────────────────
-router.get("/admin/files", auth, async (_req: Request, res: Response) => {
+router.get("/admin/files", permFiles, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM portal_files ORDER BY uploaded_at DESC", []);
   res.json(result.rows.map(mapPortalFile));
 });
 
-router.post("/admin/files", auth, async (req: Request, res: Response) => {
+router.post("/admin/files", permFiles, async (req: Request, res: Response) => {
   const { clientId, name, sizeLabel, fileType, category, downloadUrl, dataUrl } = req.body as any;
   const id = genId();
   await query(
@@ -398,18 +405,18 @@ router.post("/admin/files", auth, async (req: Request, res: Response) => {
   res.json({ ok: true, id });
 });
 
-router.delete("/admin/files/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/files/:id", permFiles, async (req: Request, res: Response) => {
   await query("DELETE FROM portal_files WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Client Uploads ───────────────────────────────────────────────────────────
-router.get("/admin/uploads", auth, async (_req: Request, res: Response) => {
+router.get("/admin/uploads", permFiles, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM client_uploads ORDER BY uploaded_at DESC", []);
   res.json(result.rows.map(mapClientUpload));
 });
 
-router.patch("/admin/uploads/:id", auth, async (req: Request, res: Response) => {
+router.patch("/admin/uploads/:id", permFiles, async (req: Request, res: Response) => {
   const { status, adminNote } = req.body as { status: string; adminNote?: string };
   await query(
     "UPDATE client_uploads SET status = $1, admin_note = COALESCE($2, admin_note) WHERE id = $3",
@@ -419,18 +426,18 @@ router.patch("/admin/uploads/:id", auth, async (req: Request, res: Response) => 
   res.json({ ok: true });
 });
 
-router.delete("/admin/uploads/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/uploads/:id", permFiles, async (req: Request, res: Response) => {
   await query("DELETE FROM client_uploads WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Payment Confirmations ────────────────────────────────────────────────────
-router.get("/admin/payments", auth, async (_req: Request, res: Response) => {
+router.get("/admin/payments", permInvoices, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM payment_confirmations ORDER BY submitted_at DESC", []);
   res.json(result.rows.map(mapPayment));
 });
 
-router.patch("/admin/payments/:id", auth, async (req: Request, res: Response) => {
+router.patch("/admin/payments/:id", permInvoices, async (req: Request, res: Response) => {
   const { status } = req.body as { status: string };
   await query("UPDATE payment_confirmations SET status = $1 WHERE id = $2", [status, req.params.id]);
   if (status === "Verified") {
@@ -444,12 +451,12 @@ router.patch("/admin/payments/:id", auth, async (req: Request, res: Response) =>
 });
 
 // ─── Disputes ────────────────────────────────────────────────────────────────
-router.get("/admin/disputes", auth, async (_req: Request, res: Response) => {
+router.get("/admin/disputes", permInvoices, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM invoice_disputes ORDER BY submitted_at DESC", []);
   res.json(result.rows.map(mapDispute));
 });
 
-router.patch("/admin/disputes/:id", auth, async (req: Request, res: Response) => {
+router.patch("/admin/disputes/:id", permInvoices, async (req: Request, res: Response) => {
   const { status, adminNote } = req.body as { status: string; adminNote?: string };
   await query(
     `UPDATE invoice_disputes SET status = $1, admin_note = COALESCE($2, admin_note),
@@ -462,7 +469,7 @@ router.patch("/admin/disputes/:id", auth, async (req: Request, res: Response) =>
 });
 
 // ─── Quick Replies ────────────────────────────────────────────────────────────
-router.get("/admin/quick-replies", auth, async (_req: Request, res: Response) => {
+router.get("/admin/quick-replies", permSupport, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM quick_replies ORDER BY created_at ASC", []);
   if (result.rows.length === 0) {
     // Seed defaults
@@ -483,20 +490,20 @@ router.get("/admin/quick-replies", auth, async (_req: Request, res: Response) =>
   res.json(result.rows.map(r => ({ id: r.id, title: r.title, body: r.body, category: r.category })));
 });
 
-router.post("/admin/quick-replies", auth, async (req: Request, res: Response) => {
+router.post("/admin/quick-replies", permSupport, async (req: Request, res: Response) => {
   const { title, body, category } = req.body as { title: string; body: string; category: string };
   const id = genId();
   await query("INSERT INTO quick_replies (id, title, body, category) VALUES ($1, $2, $3, $4)", [id, title, body, category || "General"]);
   res.json({ ok: true, id });
 });
 
-router.delete("/admin/quick-replies/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/quick-replies/:id", permSupport, async (req: Request, res: Response) => {
   await query("DELETE FROM quick_replies WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Client Notes ─────────────────────────────────────────────────────────────
-router.get("/admin/notes/:clientId", auth, async (req: Request, res: Response) => {
+router.get("/admin/notes/:clientId", permClients, async (req: Request, res: Response) => {
   const result = await query(
     "SELECT * FROM client_notes WHERE client_id = $1 ORDER BY pinned DESC, created_at DESC",
     [req.params.clientId]
@@ -506,7 +513,7 @@ router.get("/admin/notes/:clientId", auth, async (req: Request, res: Response) =
   })));
 });
 
-router.post("/admin/notes", auth, async (req: Request, res: Response) => {
+router.post("/admin/notes", permClients, async (req: Request, res: Response) => {
   const { clientId, text, authorName, pinned } = req.body as { clientId: string; text: string; authorName?: string; pinned?: boolean };
   const id = genId();
   await query(
@@ -516,13 +523,13 @@ router.post("/admin/notes", auth, async (req: Request, res: Response) => {
   res.json({ ok: true, id });
 });
 
-router.delete("/admin/notes/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/notes/:id", permClients, async (req: Request, res: Response) => {
   await query("DELETE FROM client_notes WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Invoice Templates ────────────────────────────────────────────────────────
-router.get("/admin/invoice-templates", auth, async (_req: Request, res: Response) => {
+router.get("/admin/invoice-templates", permInvoices, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM invoice_templates ORDER BY created_at ASC", []);
   if (result.rows.length === 0) {
     const defaults = [
@@ -540,7 +547,7 @@ router.get("/admin/invoice-templates", auth, async (_req: Request, res: Response
   res.json(result.rows.map(r => ({ id: r.id, name: r.name, items: r.items, notes: r.notes, paymentTerms: r.payment_terms, taxRate: parseFloat(r.tax_rate) })));
 });
 
-router.post("/admin/invoice-templates", auth, async (req: Request, res: Response) => {
+router.post("/admin/invoice-templates", permInvoices, async (req: Request, res: Response) => {
   const { name, items, notes, paymentTerms, taxRate } = req.body as any;
   const id = genId();
   await query("INSERT INTO invoice_templates (id, name, items, notes, payment_terms, tax_rate) VALUES ($1,$2,$3,$4,$5,$6)",
@@ -548,13 +555,13 @@ router.post("/admin/invoice-templates", auth, async (req: Request, res: Response
   res.json({ ok: true, id });
 });
 
-router.delete("/admin/invoice-templates/:id", auth, async (req: Request, res: Response) => {
+router.delete("/admin/invoice-templates/:id", permInvoices, async (req: Request, res: Response) => {
   await query("DELETE FROM invoice_templates WHERE id = $1", [req.params.id]);
   res.json({ ok: true });
 });
 
 // ─── Activity Log ─────────────────────────────────────────────────────────────
-router.get("/admin/activity", auth, async (_req: Request, res: Response) => {
+router.get("/admin/activity", permOverview, async (_req: Request, res: Response) => {
   const result = await query("SELECT * FROM activity_log ORDER BY created_at DESC LIMIT 100", []);
   res.json(result.rows.map(r => ({
     id: r.id, action: r.action, detail: r.detail, entity: r.entity,
@@ -563,7 +570,7 @@ router.get("/admin/activity", auth, async (_req: Request, res: Response) => {
 });
 
 // ─── Unread count ─────────────────────────────────────────────────────────────
-router.get("/admin/unread", auth, async (_req: Request, res: Response) => {
+router.get("/admin/unread", permOverview, async (_req: Request, res: Response) => {
   const result = await query(
     `SELECT COUNT(*) FROM ticket_messages m
      JOIN support_tickets t ON t.id = m.ticket_id

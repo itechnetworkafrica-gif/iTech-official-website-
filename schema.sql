@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS portal_users (
   member_since  TEXT NOT NULL DEFAULT '',
   tier          TEXT NOT NULL DEFAULT 'Standard',
   user_type     TEXT NOT NULL CHECK (user_type IN ('client', 'admin')),
+  -- Admin-only: JSON array of dashboard sections this admin may access
+  -- (e.g. '["livechat","support"]'). NULL = full access (owner/administrator).
+  permissions   JSONB,
   is_active     BOOLEAN NOT NULL DEFAULT true,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()

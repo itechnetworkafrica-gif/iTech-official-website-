@@ -1646,8 +1646,11 @@ const ADMIN_NAV = [
   { id: 'settings',       label: 'Settings',        icon: Settings        },
 ];
 
-function AdminShell({ onLogout }: { onLogout: () => void }) {
-  const [section, setSection]     = useState('overview');
+function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissions: string[] | null }) {
+  // permissions === null → full access; otherwise only listed sections
+  const allowed = (id: string) => permissions == null || permissions.includes(id);
+  const nav = ADMIN_NAV.filter(item => allowed(item.id));
+  const [section, setSection]     = useState(() => (nav[0]?.id ?? 'overview'));
   const [mobileNav, setMobileNav] = useState(false);
   const [unread, setUnread]       = useState(0);
   const [liveWaiting, setLiveWaiting] = useState(0);
@@ -1681,7 +1684,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
     return () => clearInterval(id);
   }, []);
 
-  function navTo(s: string) { setSection(s); setMobileNav(false); }
+  function navTo(s: string) { if (!allowed(s)) return; setSection(s); setMobileNav(false); }
 
   const sectionMap: Record<string, React.ReactNode> = {
     overview:      <Overview onNav={navTo} />,
@@ -1715,7 +1718,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
       <div className="flex flex-1 relative">
         <aside className="hidden lg:flex flex-col w-52 bg-white border-r border-slate-100 sticky top-16 h-[calc(100vh-4rem)] pt-4 pb-6">
           <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-            {ADMIN_NAV.map(item => (
+            {nav.map(item => (
               <button key={item.id} onClick={() => navTo(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${section === item.id ? 'bg-[#f0fdf4] text-[#3CB52A]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}>
                 <item.icon size={16} className={section === item.id ? 'text-[#3CB52A]' : 'text-slate-400'} />
@@ -1735,7 +1738,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
               <motion.aside initial={{ x: -220 }} animate={{ x: 0 }} exit={{ x: -220 }} transition={{ type: 'spring', stiffness: 320, damping: 32 }}
                 className="lg:hidden fixed left-0 top-16 bottom-0 w-52 bg-white border-r border-slate-100 z-30 flex flex-col pt-4 pb-6">
                 <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-                  {ADMIN_NAV.map(item => (
+                  {nav.map(item => (
                     <button key={item.id} onClick={() => navTo(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all ${section === item.id ? 'bg-[#f0fdf4] text-[#3CB52A]' : 'text-slate-500 hover:bg-slate-50'}`}>
                       <item.icon size={16} />{item.label}{item.id === 'support' && <Badge n={unread} />}{item.id === 'livechat' && <Badge n={liveWaiting} />}
@@ -1750,7 +1753,9 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
         <main className="flex-1 p-4 lg:p-8 min-w-0">
           <AnimatePresence mode="wait">
             <motion.div key={section} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-              {sectionMap[section]}
+              {allowed(section) ? sectionMap[section] : (
+                <div className="py-16 text-center text-slate-400 text-sm">You don't have access to this section.</div>
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -1760,7 +1765,7 @@ function AdminShell({ onLogout }: { onLogout: () => void }) {
 }
 
 // ─── ADMIN LOGIN ──────────────────────────────────────────────────────────────
-function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
+function AdminLoginScreen({ onLogin }: { onLogin: (permissions: string[] | null) => void }) {
   const [email, setEmail]     = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw]   = useState(false);
@@ -1781,7 +1786,7 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
       if (!res.ok) { setError(data.error || 'Invalid admin credentials.'); setLoading(false); return; }
       saveAuthToken(data.token);
       await hydrateAdminFromAPI();
-      onLogin();
+      onLogin(Array.isArray(data.user?.permissions) ? data.user.permissions : null);
     } catch {
       setError('Connection error. Please try again.');
     }
@@ -1821,6 +1826,7 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
   const [authed, setAuthed]     = useState(false);
+  const [perms, setPerms]       = useState<string[] | null>(null);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -1829,6 +1835,7 @@ export default function AdminDashboardPage() {
       .then(r => r.ok ? r.json() : null)
       .then(async data => {
         if (data?.user?.userType === 'admin') {
+          setPerms(Array.isArray(data.user.permissions) ? data.user.permissions : null);
           await hydrateAdminFromAPI();
           setAuthed(true);
         }
@@ -1852,5 +1859,7 @@ export default function AdminDashboardPage() {
     </div>
   );
 
-  return authed ? <AdminShell onLogout={handleLogout} /> : <AdminLoginScreen onLogin={() => setAuthed(true)} />;
+  return authed
+    ? <AdminShell onLogout={handleLogout} permissions={perms} />
+    : <AdminLoginScreen onLogin={p => { setPerms(p); setAuthed(true); }} />;
 }

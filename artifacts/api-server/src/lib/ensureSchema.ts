@@ -39,4 +39,15 @@ export async function ensureLiveChatSchema(): Promise<void> {
     []
   );
   logger.info("Live chat schema ready");
+
+  // Admin permissions column (NULL = full access). Guarded so it is a no-op
+  // when portal_users doesn't exist yet (schema.sql not applied).
+  await query(
+    `DO $$ BEGIN
+       IF to_regclass('portal_users') IS NOT NULL THEN
+         ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS permissions JSONB;
+       END IF;
+     END $$`,
+    []
+  );
 }

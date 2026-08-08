@@ -1211,6 +1211,27 @@ function TestimonialsSlider() {
     return () => clearInterval(id);
   }, [next, paused]);
 
+  /* Touch swipe support (mobile) */
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    setPaused(true);
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    setPaused(false);
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    // Only treat as a swipe when horizontal movement dominates
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) next(); else prev();
+    }
+  };
+
   return (
     <section className="py-24 lg:py-32 bg-[#F8FFFE] relative overflow-hidden">
       {/* Background decoration */}
@@ -1238,7 +1259,12 @@ function TestimonialsSlider() {
           onMouseLeave={() => setPaused(false)}
         >
           {/* Sliding track — 1 card mobile, 2 tablet, 3 desktop */}
-          <div className="overflow-hidden -mx-3 px-1 py-2">
+          <div
+            className="overflow-hidden -mx-3 py-2"
+            style={{ touchAction: 'pan-y' }}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             <div
               className="flex transition-transform duration-[650ms]"
               style={{
