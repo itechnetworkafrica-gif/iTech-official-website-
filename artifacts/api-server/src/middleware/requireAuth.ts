@@ -22,8 +22,21 @@ declare global {
   }
 }
 
+/**
+ * Session id comes from the httpOnly cookie (same-site) or, as a fallback for
+ * browsers that block cross-site cookies (frontend hosted on another domain),
+ * from an Authorization: Bearer header.
+ */
+export function getSessionId(req: Request): string | null {
+  const cookie = req.cookies?.portal_session;
+  if (cookie) return cookie;
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith("Bearer ")) return auth.slice(7).trim() || null;
+  return null;
+}
+
 async function resolveSession(req: Request): Promise<AuthUser | null> {
-  const sessionId = req.cookies?.portal_session;
+  const sessionId = getSessionId(req);
   if (!sessionId) return null;
 
   const result = await query(
@@ -66,7 +79,7 @@ export function requireAuth(userType?: "client" | "admin") {
       return;
     }
     req.user = user;
-    req.sessionId = req.cookies?.portal_session;
+    req.sessionId = getSessionId(req) || undefined;
     next();
   };
 }

@@ -13,6 +13,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { type PortalClient } from '@/lib/portalClients';
 import { apiUrl } from '@/lib/apiBase';
+import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 import {
   getClientInvoices, getClientTickets, createTicket, addTicketMessage,
   markTicketMessagesRead, markInvoiceViewed, getClientUnread, updateTicketStatus,
@@ -1461,6 +1462,7 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Invalid email or password. Contact us if you need access.'); setLoading(false); return; }
+      saveAuthToken(data.token);
       await hydrateClientFromAPI();
       onLogin({
         id: data.user.id, name: data.user.name, email: data.user.email,
@@ -1566,6 +1568,7 @@ export default function ClientPortalPage() {
 
   async function handleLogout() {
     await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' }).catch(() => {});
+    clearAuthToken();
     setClient(null);
   }
 

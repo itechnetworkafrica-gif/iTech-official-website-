@@ -39,6 +39,7 @@ import {
   type InvoiceDispute,
 } from '@/lib/portalData';
 import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
+import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -1778,6 +1779,7 @@ function AdminLoginScreen({ onLogin }: { onLogin: () => void }) {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Invalid admin credentials.'); setLoading(false); return; }
+      saveAuthToken(data.token);
       await hydrateAdminFromAPI();
       onLogin();
     } catch {
@@ -1837,6 +1839,7 @@ export default function AdminDashboardPage() {
 
   async function handleLogout() {
     await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' }).catch(() => {});
+    clearAuthToken();
     setAuthed(false);
   }
 

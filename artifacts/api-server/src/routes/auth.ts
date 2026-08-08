@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword, verifyLegacyPassword, generateSessionId } from "../lib/auth.js";
+import { getSessionId } from "../middleware/requireAuth.js";
 
 const router = Router();
 
@@ -67,6 +68,9 @@ router.post("/auth/login", async (req: Request, res: Response) => {
   res.cookie("portal_session", sessionId, COOKIE_OPTS);
 
   res.json({
+    // Also returned as a bearer token: some browsers block cross-site cookies
+    // when the frontend is hosted on a different domain than the API.
+    token: sessionId,
     user: {
       id: user.id,
       name: user.name,
@@ -83,7 +87,7 @@ router.post("/auth/login", async (req: Request, res: Response) => {
 
 // POST /api/auth/logout
 router.post("/auth/logout", async (req: Request, res: Response) => {
-  const sessionId = req.cookies?.portal_session;
+  const sessionId = getSessionId(req);
   if (sessionId) {
     await query("DELETE FROM portal_sessions WHERE id = $1", [sessionId]);
   }
@@ -93,7 +97,7 @@ router.post("/auth/logout", async (req: Request, res: Response) => {
 
 // GET /api/auth/me
 router.get("/auth/me", async (req: Request, res: Response) => {
-  const sessionId = req.cookies?.portal_session;
+  const sessionId = getSessionId(req);
   if (!sessionId) {
     res.json({ user: null });
     return;
@@ -132,7 +136,7 @@ router.get("/auth/me", async (req: Request, res: Response) => {
 
 // POST /api/auth/change-password
 router.post("/auth/change-password", async (req: Request, res: Response) => {
-  const sessionId = req.cookies?.portal_session;
+  const sessionId = getSessionId(req);
   if (!sessionId) { res.status(401).json({ error: "Not authenticated" }); return; }
 
   const { currentPassword, newPassword } = req.body as { currentPassword: string; newPassword: string };

@@ -1,2 +1,3 @@
 - [Portal deployment boundary](portal-deployment-boundary.md) — PostgreSQL stays server-side; separately hosted frontends use a configurable API origin and cross-site session settings.
 - [Replit publish run-command resolution](replit-publish-run-command.md) — keep `.replit-artifact/` unignored; api-server serves the frontend in production as the legacy-mode fallback.
+- [Portal auth across domains](portal-auth-cross-site.md) — browsers block the cross-site session cookie on the Vercel copy; auth needs the bearer-token fallback (cookie OR `Authorization: Bearer`).
