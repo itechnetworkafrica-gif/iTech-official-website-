@@ -37,6 +37,7 @@ import CookiesPage from '@/pages/CookiesPage';
 import ClientPortalPage from '@/pages/ClientPortalPage';
 import AdminDashboardPage from '@/pages/AdminDashboardPage';
 import TeamMemberPage from '@/pages/TeamMemberPage';
+import FounderCVPage from '@/pages/FounderCVPage';
 import RefundPolicyPage from '@/pages/RefundPolicyPage';
 import SitemapPage from '@/pages/SitemapPage';
 import ConsultationPage from '@/pages/ConsultationPage';
@@ -121,6 +122,7 @@ function Router() {
               <Route path="/privacy-policy" component={PrivacyPage} />
               <Route path="/terms" component={TermsPage} />
               <Route path="/cookies" component={CookiesPage} />
+              <Route path="/team/wilmot-kerkulah/cv" component={FounderCVPage} />
               <Route path="/team/:slug" component={TeamMemberPage} />
               <Route path="/refund-policy" component={RefundPolicyPage} />
               <Route path="/sitemap" component={SitemapPage} />

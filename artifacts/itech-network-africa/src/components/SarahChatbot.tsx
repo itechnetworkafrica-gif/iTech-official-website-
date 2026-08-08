@@ -9,7 +9,27 @@ interface Message {
   content: string;
   handoff?: boolean;    // show human-agent routing card under this message
   senderName?: string;  // display name for live-agent messages
+  warning?: boolean;    // amber-styled system message (e.g. respectful-language reminder)
 }
+
+/* ─── Respectful-language guard ───
+   Light-weight client-side check that catches clearly offensive
+   language before it is sent, and responds with a friendly reminder. */
+const OFFENSIVE_PATTERNS: RegExp[] = [
+  /\b(f+u+c*k+\w*|s+h+i+t+\w*|b+i+t+c+h+\w*|a+s+s+h+o+l+e+\w*|bastard\w*|d+i+c+k+h+e+a+d+|c+u+n+t+\w*|motherf\w*|dumbass|jackass|dickhead|wanker|slut\w*|whore\w*|n+i+g+g+(a|e+r)\w*|fag+ot*\w*|retard\w*)\b/i,
+  /\b(stupid|idiot|useless|dumb)\s+(bot|ai|assistant|chatbot|thing|website|company|people|team)\b/i,
+  /\b(kill|hurt|attack)\s+(you|yourself|myself)\b/i,
+];
+
+function isOffensive(text: string): boolean {
+  return OFFENSIVE_PATTERNS.some(re => re.test(text));
+}
+
+const WARNING_MESSAGES = [
+  "Let's keep our conversation friendly and respectful 😊 I'm here to help — could you rephrase that for me?",
+  "I understand things can be frustrating! I really do want to help — let's keep the language respectful so I can do my best for you. 💚",
+  "I'm unable to respond to messages with offensive language. If something's gone wrong, I'd love to make it right — just tell me what happened in your own words, or ask to speak with our team.",
+];
 
 interface LiveSession {
   sessionId: string;
@@ -584,9 +604,20 @@ export const SarahChatbot: React.FC = () => {
   }, []);
 
   /* ─── Send typed message ─── */
+  const warnCountRef = useRef(0);
   const sendMessage = useCallback(() => {
     if (!input.trim() || loading) return;
     const text = input.trim();
+
+    // Respectful-language guard — flag offensive messages instead of sending
+    if (isOffensive(text)) {
+      const idx = Math.min(warnCountRef.current, WARNING_MESSAGES.length - 1);
+      warnCountRef.current += 1;
+      setInput('');
+      setMessages(prev => [...prev, { role: 'system', content: WARNING_MESSAGES[idx], warning: true }]);
+      return;
+    }
+
     setInput('');
     if (liveRef.current && liveRef.current.status !== 'closed') {
       sendLiveMessage(text);
@@ -683,7 +714,11 @@ export const SarahChatbot: React.FC = () => {
                 >
                   {msg.role === 'system' ? (
                     <div className="w-full text-center px-4">
-                      <span className="inline-block text-[11px] text-gray-400 bg-gray-100 rounded-full px-3 py-1 leading-relaxed whitespace-pre-wrap">{msg.content}</span>
+                      <span className={`inline-block text-[11px] rounded-2xl px-3.5 py-2 leading-relaxed whitespace-pre-wrap ${
+                        msg.warning
+                          ? 'text-amber-700 bg-amber-50 border border-amber-200 font-medium'
+                          : 'text-gray-400 bg-gray-100'
+                      }`}>{msg.content}</span>
                     </div>
                   ) : msg.role === 'agent' ? (
                     <>
@@ -762,10 +797,14 @@ export const SarahChatbot: React.FC = () => {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask Sarah anything…"
+                placeholder={live ? 'Message our team…' : 'Ask Sarah anything…'}
+                maxLength={500}
                 className="flex-1 text-sm px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] placeholder-gray-400 text-[#0A1929] transition-all"
                 disabled={loading}
               />
+              {input.length > 400 && (
+                <span className={`text-[10px] font-semibold flex-shrink-0 ${input.length >= 500 ? 'text-red-500' : 'text-gray-400'}`}>{500 - input.length}</span>
+              )}
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
