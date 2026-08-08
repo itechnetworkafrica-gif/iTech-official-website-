@@ -2,7 +2,7 @@
  * Client portal routes — all require client auth
  */
 import { Router, type Request, type Response } from "express";
-import { query } from "../lib/db.js";
+import { query, pool } from "../lib/db.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 
 const router = Router();
@@ -10,6 +10,59 @@ const auth = requireAuth("client");
 
 function genId(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+/**
+ * Create a ticket + first message atomically. Ticket numbers come from a
+ * database sequence so concurrent submissions can't collide.
+ */
+async function createTicket(args: {
+  clientId: string; clientName: string; clientEmail: string;
+  subject: string; category: string; priority: string; message: string;
+}): Promise<{ ticketId: string; ticketNumber: string }> {
+  const ticketId = genId();
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const seq = await client.query("SELECT nextval('support_ticket_number_seq') AS n");
+    const ticketNumber = `TKT-${String(seq.rows[0].n).padStart(4, "0")}`;
+    await client.query(
+      `INSERT INTO support_tickets (id, ticket_number, client_id, client_name, client_email, subject, category, priority, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Open')`,
+      [ticketId, ticketNumber, args.clientId, args.clientName, args.clientEmail,
+       args.subject, args.category, args.priority]
+    );
+    await client.query(
+      "INSERT INTO ticket_messages (id, ticket_id, sender, sender_name, text) VALUES ($1, $2, 'client', $3, $4)",
+      [genId(), ticketId, args.clientName, args.message]
+    );
+    await client.query("COMMIT");
+    return { ticketId, ticketNumber };
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+/* Simple in-memory rate limiter for the public ticket endpoint (per IP). */
+const ticketAttempts = new Map<string, { count: number; resetAt: number }>();
+const TICKET_LIMIT = 5;
+const TICKET_WINDOW_MS = 10 * 60 * 1000;
+
+function rateLimitTicket(ip: string): boolean {
+  const now = Date.now();
+  const entry = ticketAttempts.get(ip);
+  if (!entry || entry.resetAt < now) {
+    ticketAttempts.set(ip, { count: 1, resetAt: now + TICKET_WINDOW_MS });
+    return true;
+  }
+  entry.count += 1;
+  if (ticketAttempts.size > 10_000) {
+    for (const [k, v] of ticketAttempts) if (v.resetAt < now) ticketAttempts.delete(k);
+  }
+  return entry.count <= TICKET_LIMIT;
 }
 
 // ─── Bulk data sync ──────────────────────────────────────────────────────────
@@ -88,22 +141,53 @@ router.post("/portal/tickets", auth, async (req: Request, res: Response) => {
     subject: string; category: string; priority: string; message: string;
   };
 
-  const result = await query("SELECT COUNT(*) FROM support_tickets", []);
-  const count = parseInt(result.rows[0].count) + 1;
-  const ticketId = genId();
-  const msgId = genId();
-
-  await query(
-    `INSERT INTO support_tickets (id, ticket_number, client_id, client_name, client_email, subject, category, priority, status)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Open')`,
-    [ticketId, `TKT-${String(count).padStart(4, "0")}`, client.id, client.name, client.email, subject, category, priority]
-  );
-  await query(
-    "INSERT INTO ticket_messages (id, ticket_id, sender, sender_name, text) VALUES ($1, $2, 'client', $3, $4)",
-    [msgId, ticketId, client.name, message]
-  );
+  const { ticketId } = await createTicket({
+    clientId: client.id, clientName: client.name, clientEmail: client.email,
+    subject, category, priority, message,
+  });
 
   res.json({ ok: true, ticketId });
+});
+
+// ─── Public: website visitors submit support tickets (no login) ─────────────
+router.post("/support/tickets", async (req: Request, res: Response) => {
+  if (!rateLimitTicket(req.ip || "unknown")) {
+    res.status(429).json({ error: "Too many tickets submitted. Please try again later." });
+    return;
+  }
+  const { name, email, phone, company, subject, category, priority, message } = req.body as {
+    name?: string; email?: string; phone?: string; company?: string;
+    subject?: string; category?: string; priority?: string; message?: string;
+  };
+
+  const cleanName = (name || "").trim().slice(0, 120);
+  const cleanEmail = (email || "").trim().toLowerCase().slice(0, 200);
+  const cleanSubject = (subject || "").trim().slice(0, 200);
+  const cleanMessage = (message || "").trim().slice(0, 5000);
+  if (!cleanName || !cleanEmail || !cleanSubject || !cleanMessage) {
+    res.status(400).json({ error: "Name, email, subject, and message are required" });
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    res.status(400).json({ error: "Valid email required" });
+    return;
+  }
+
+  const detailLines = [
+    phone ? `Phone: ${String(phone).slice(0, 40)}` : "",
+    company ? `Company: ${String(company).slice(0, 120)}` : "",
+  ].filter(Boolean);
+  const firstMessage = detailLines.length
+    ? `${detailLines.join("\n")}\n\n${cleanMessage}`
+    : cleanMessage;
+
+  const { ticketNumber } = await createTicket({
+    clientId: "visitor", clientName: cleanName, clientEmail: cleanEmail,
+    subject: cleanSubject, category: (category || "General").slice(0, 60),
+    priority: (priority || "Medium").slice(0, 30), message: firstMessage,
+  });
+
+  res.json({ ok: true, ticketNumber });
 });
 
 router.post("/portal/tickets/:id/messages", auth, async (req: Request, res: Response) => {

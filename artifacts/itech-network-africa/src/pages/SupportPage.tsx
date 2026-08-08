@@ -24,7 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const RECIPIENT = 'itechnetworkafrica@gmail.com';
+import { apiUrl } from '@/lib/apiBase';
 
 /* ─── data ─────────────────────────────────────────────────────────────── */
 
@@ -276,28 +276,24 @@ export default function SupportPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const subject = `[Support – ${values.priority}] ${values.subject} — ${values.name}`;
-    const body = [
-      `Name: ${values.name}`,
-      `Email: ${values.email}`,
-      `Phone: ${values.phone || 'N/A'}`,
-      `Company: ${values.company || 'N/A'}`,
-      `Category: ${values.category}`,
-      `Priority: ${values.priority}`,
-      `Subject: ${values.subject}`,
-      '',
-      'Issue Description:',
-      values.message,
-    ].join('\n');
-
-    window.open(
-      `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
-      '_blank',
-    );
-    setSubmitted(true);
-    form.reset();
-    toast({ title: 'Ticket Ready', description: 'Your email client has opened. Hit Send to submit.' });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const res = await fetch(apiUrl('/api/support/tickets'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json().catch(() => ({} as { error?: string; ticketNumber?: string }));
+      if (!res.ok) {
+        toast({ title: 'Could not submit ticket', description: data.error || 'Please try again.', variant: 'destructive' });
+        return;
+      }
+      setSubmitted(true);
+      form.reset();
+      toast({ title: 'Ticket Submitted', description: `Your ticket ${data.ticketNumber || ''} has been sent to our support team.`.trim() });
+    } catch {
+      toast({ title: 'Connection error', description: 'Please check your internet connection and try again.', variant: 'destructive' });
+    }
   }
 
   return (

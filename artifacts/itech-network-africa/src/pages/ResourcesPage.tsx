@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText, Code2, PlayCircle, BookOpen, Download, Clock,
-  Wrench, Users, ArrowRight, Search, ExternalLink, Zap,
-  Shield, Cloud, Brain, Calendar, Building2, X,
+  FileText, BookOpen, Download, Users,
+  ArrowRight, Search, ExternalLink, Zap, X,
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -19,32 +18,18 @@ const fadeUp = (delay = 0) => ({
 /* ─── Resource Library ─── */
 const RESOURCES = [
   {
-    icon: FileText,
-    title: 'Documentation',
-    desc: 'Detailed product manuals, implementation guides, and administrative instructions for all iTech platforms.',
-    link: '/resources/docs',
-    badge: 'Essential',
-  },
-  {
-    icon: Code2,
-    title: 'API Reference',
-    desc: 'Comprehensive API endpoints, request/response schemas, authentication flows, and webhook specifications.',
-    link: '/resources/api',
-    badge: 'Developer',
-  },
-  {
-    icon: PlayCircle,
-    title: 'Video Tutorials',
-    desc: 'Step-by-step video walkthroughs on setting up, configuring, and maximising every iTech platform.',
-    link: '/resources/tutorials',
-    badge: 'Getting Started',
-  },
-  {
     icon: BookOpen,
-    title: 'Blog & Insights',
+    title: 'Blog',
     desc: 'In-depth articles on digital transformation in Africa, AI strategy, cloud migration, and technology leadership.',
     link: '/blog',
     badge: 'Weekly',
+  },
+  {
+    icon: FileText,
+    title: 'News',
+    desc: 'The latest announcements, company updates, partnerships, and milestones from iTech Network Africa.',
+    link: '/news',
+    badge: 'Latest',
   },
   {
     icon: Download,
@@ -54,83 +39,24 @@ const RESOURCES = [
     badge: 'Free',
   },
   {
-    icon: Clock,
-    title: 'Changelog',
-    desc: 'Release notes, feature announcements, and platform improvement logs across all iTech product lines.',
-    link: '/resources/changelog',
-    badge: 'v2.x',
-  },
-  {
-    icon: Wrench,
-    title: 'Developer Tools',
-    desc: 'SDKs, CLI utilities, Postman collections, and sandbox environments to accelerate your integrations.',
-    link: '/resources/tools',
-    badge: 'Developer',
-  },
-  {
     icon: Users,
-    title: 'Community Forum',
-    desc: 'Connect with iTech users and partners across Africa — share solutions, best practices, and insights.',
-    link: '/support',
-    badge: 'Community',
+    title: 'FAQs',
+    desc: 'Answers to the most common questions about our products, services, support, billing, and onboarding.',
+    link: '/support#knowledge-base',
+    badge: 'Help',
   },
-];
-
-/* ─── Featured Guides ─── */
-const FEATURED = [
   {
     icon: Zap,
-    title: 'iTech Platform Quick Start Guide',
-    desc: 'Get your first iTech integration live in under 30 minutes. Covers environment setup, authentication, and your first API call.',
-    time: '30 min read',
-    date: 'June 2025',
-    href: '/resources/guides/quick-start',
-  },
-  {
-    icon: Code2,
-    title: 'REST API Integration Quickstart',
-    desc: 'Authenticate and make your first API call with code samples in JavaScript, Python, and PHP — ready to copy and run.',
-    time: '15 min read',
-    date: 'May 2025',
-    href: '/resources/guides/rest-api-quickstart',
-  },
-  {
-    icon: Shield,
-    title: 'Enterprise Security Best Practices',
-    desc: 'Essential security guidelines: MFA setup, API key management, role-based access, and data encryption for your deployment.',
-    time: '20 min read',
-    date: 'July 2025',
-    href: '/resources/guides/security-best-practices',
-  },
-  {
-    icon: Cloud,
-    title: 'Cloud Deployment Checklist for Africa',
-    desc: 'A pre-launch checklist for deploying iTech solutions on AWS, Azure, or Google Cloud with African data-residency requirements.',
-    time: '25 min read',
-    date: 'April 2025',
-    href: '/resources/guides/cloud-deployment',
-  },
-  {
-    icon: Brain,
-    title: 'Configuring AI & Automation Modules',
-    desc: 'Configure and fine-tune iTech AI modules for your specific business context, data pipeline, and automation workflows.',
-    time: '40 min read',
-    date: 'June 2025',
-    href: '/resources/guides/ai-automation',
-  },
-  {
-    icon: Building2,
-    title: 'Enterprise User Management Guide',
-    desc: 'Manage roles, permissions, SSO configuration, multi-tenancy, and full audit trails for your organisation at scale.',
-    time: '20 min read',
-    date: 'March 2025',
-    href: '/resources/guides/user-management',
+    title: 'Success Stories',
+    desc: 'Real client projects and case studies showing how African businesses grow with iTech solutions.',
+    link: '/portfolio',
+    badge: 'Case Studies',
   },
 ];
 
 const STATS = [
-  { value: '50+',  label: 'Guides & Docs'   },
-  { value: '8',    label: 'Resource Types'  },
+  { value: '5',    label: 'Resource Types'  },
+  { value: '100+', label: 'Articles & Posts' },
   { value: '24/7', label: 'Support Access'  },
   { value: 'Free', label: 'For All Clients' },
 ];
@@ -311,61 +237,6 @@ export default function ResourcesPage() {
           </motion.section>
         )}
       </AnimatePresence>
-
-      {/* ═══════════════════════════
-          FEATURED GUIDES
-      ═══════════════════════════ */}
-      {!query && (
-        <section id="tutorials" className="py-20 lg:py-28 bg-[#F8F9FA]">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
-            <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-              <div>
-                <span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase block mb-3">Start Here</span>
-                <h2 className="text-4xl md:text-5xl font-black text-[#0A0A0A] leading-tight">Featured Guides</h2>
-              </div>
-              <p className="text-[#9CA3AF] text-sm max-w-xs">
-                Curated by the iTech Network Africa team to get you productive fast.
-              </p>
-            </motion.div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {FEATURED.map((guide, i) => {
-                const Icon = guide.icon;
-                return (
-                  <Link key={i} href={guide.href}>
-                    <motion.a
-                      {...fadeUp(i * 0.06)}
-                      className="group bg-white border border-[#E5E7EB] rounded-2xl p-7 hover:border-[#3CB52A]/40 hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
-                    >
-                      {/* Icon */}
-                      <div className="w-12 h-12 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] flex items-center justify-center mb-6 group-hover:bg-[#3CB52A] group-hover:border-[#3CB52A] transition-all duration-300 shrink-0">
-                        <Icon size={20} className="text-[#3CB52A] group-hover:text-white transition-colors duration-300" />
-                      </div>
-
-                      <h3 className="font-black text-[#0A0A0A] text-lg mb-3 group-hover:text-[#3CB52A] transition-colors leading-snug">{guide.title}</h3>
-                      <p className="text-[#6B7280] text-sm leading-relaxed mb-5 flex-grow">{guide.desc}</p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-[#F3F4F6] mt-auto">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-[#9CA3AF] text-xs font-medium flex items-center gap-1.5">
-                            <Clock size={11} /> {guide.time}
-                          </span>
-                          <span className="text-[#C4C4C4] text-[11px] flex items-center gap-1">
-                            <Calendar size={10} /> {guide.date}
-                          </span>
-                        </div>
-                        <span className="text-[#3CB52A] text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                          Read <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                        </span>
-                      </div>
-                    </motion.a>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ═══════════════════════════
           RESOURCE LIBRARY

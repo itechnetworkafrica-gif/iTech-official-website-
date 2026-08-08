@@ -257,6 +257,11 @@ router.get("/admin/live-chats/:id", permLiveChat, async (req: Request, res: Resp
 
 // ─── Admin: assign agent ──────────────────────────────────────────────────────
 router.post("/admin/live-chats/:id/assign", permLiveChat, async (req: Request, res: Response) => {
+  // Only full-access admins can assign (or reassign) chats to team members.
+  if (req.user!.permissions != null) {
+    res.status(403).json({ error: "Only an admin can assign chats to team members" });
+    return;
+  }
   const { agentId } = req.body as { agentId?: string };
   const targetId = agentId || req.user!.id;
 
@@ -296,9 +301,15 @@ router.post("/admin/live-chats/:id/message", permLiveChat, async (req: Request, 
   if (!s.rows[0]) { res.status(404).json({ error: "Session not found" }); return; }
   if (s.rows[0].status === "closed") { res.status(409).json({ error: "Chat is closed" }); return; }
 
+  const isFullAdmin = req.user!.permissions == null;
   if (!s.rows[0].agent_id) {
-    // First reply auto-claims an unassigned chat — atomically, so two agents
-    // replying at once can't both claim it.
+    // Team members must be assigned by an admin before they can respond.
+    if (!isFullAdmin) {
+      res.status(403).json({ error: "An admin must assign this chat to you before you can respond." });
+      return;
+    }
+    // A full-access admin's first reply auto-claims the chat — atomically,
+    // so two admins replying at once can't both claim it.
     const claimed = await query(
       `UPDATE live_chat_sessions
        SET agent_id = $1, agent_name = $2, status = 'active', updated_at = NOW()
@@ -315,10 +326,10 @@ router.post("/admin/live-chats/:id/message", permLiveChat, async (req: Request, 
        VALUES ($1, 'system', 'System', $2)`,
       [req.params.id, `${req.user!.name} joined the chat.`]
     );
-  } else if (s.rows[0].agent_id !== req.user!.id) {
-    // Only the assigned agent replies; anyone else must reassign first.
-    res.status(409).json({
-      error: `This chat is assigned to ${s.rows[0].agent_name || "another agent"}. Reassign it to yourself to reply.`,
+  } else if (s.rows[0].agent_id !== req.user!.id && !isFullAdmin) {
+    // Only the assigned member (or a full-access admin) can reply.
+    res.status(403).json({
+      error: `This chat is assigned to ${s.rows[0].agent_name || "another team member"}. Ask an admin to reassign it to you.`,
     });
     return;
   }
@@ -351,9 +362,16 @@ router.post("/admin/live-chats/:id/close", permLiveChat, async (req: Request, re
 
 // ─── Team agents CRUD ─────────────────────────────────────────────────────────
 router.get("/admin/agents", permTeam, async (_req: Request, res: Response) => {
+  // Presence: a member is "online" when one of their sessions was seen in the
+  // last 2 minutes (last_seen is touched on every authenticated request).
   const result = await query(
-    `SELECT id, name, email, role, phone, is_active, created_at, permissions
-     FROM portal_users WHERE user_type = 'admin' ORDER BY created_at ASC`,
+    `SELECT u.id, u.name, u.email, u.role, u.phone, u.is_active, u.created_at, u.permissions,
+            MAX(s.last_seen) AS last_seen
+     FROM portal_users u
+     LEFT JOIN portal_sessions s
+       ON s.user_id = u.id AND s.user_type = 'admin' AND s.expires_at > NOW()
+     WHERE u.user_type = 'admin'
+     GROUP BY u.id ORDER BY u.created_at ASC`,
     []
   );
   res.json(result.rows.map((r) => ({
@@ -365,6 +383,8 @@ router.get("/admin/agents", permTeam, async (_req: Request, res: Response) => {
     isActive: r.is_active,
     createdAt: r.created_at,
     permissions: Array.isArray(r.permissions) ? r.permissions : null,
+    lastSeenAt: r.last_seen,
+    online: r.last_seen != null && Date.now() - new Date(r.last_seen).getTime() < 2 * 60 * 1000,
   })));
 });
 

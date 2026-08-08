@@ -50,4 +50,22 @@ export async function ensureLiveChatSchema(): Promise<void> {
      END $$`,
     []
   );
+
+  // Atomic ticket-number allocator. Seeded past the highest existing
+  // TKT-NNNN so concurrent submissions never collide with old tickets.
+  await query(`CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq`, []);
+  await query(
+    `DO $$
+     DECLARE max_n BIGINT;
+     BEGIN
+       IF to_regclass('support_tickets') IS NOT NULL THEN
+         SELECT COALESCE(MAX((substring(ticket_number from 'TKT-(\\d+)'))::bigint), 0)
+           INTO max_n FROM support_tickets WHERE ticket_number ~ '^TKT-\\d+$';
+         IF max_n > 0 AND max_n >= (SELECT COALESCE(last_value, 0) FROM support_ticket_number_seq) THEN
+           PERFORM setval('support_ticket_number_seq', max_n, true);
+         END IF;
+       END IF;
+     END $$`,
+    []
+  );
 }

@@ -1211,6 +1211,20 @@ function TestimonialsSlider() {
     return () => clearInterval(id);
   }, [next, paused]);
 
+  /* Step = actual rendered card width, so one step always moves exactly one
+     card regardless of breakpoint (88% mobile, 70% sm, 1/2 md, 1/3 lg). */
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const first = trackRef.current?.children[0] as HTMLElement | undefined;
+      if (first) setStep(first.getBoundingClientRect().width);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
   /* Touch swipe support (mobile) */
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -1266,18 +1280,19 @@ function TestimonialsSlider() {
             onTouchEnd={onTouchEnd}
           >
             <div
+              ref={trackRef}
               className="flex transition-transform duration-[650ms]"
               style={{
-                transform: `translateX(-${(active * 100) / (total + 2)}%)`,
+                transform: `translateX(-${active * step}px)`,
                 transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
               }}
             >
               {[...TESTIMONIALS, ...TESTIMONIALS.slice(0, 2)].map((t, i) => {
                 const isMain = i % total === active;
                 return (
-                  <div key={i} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3">
+                  <div key={i} className="w-[88%] sm:w-[70%] md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 sm:px-3">
                     <div
-                      className={`relative h-full rounded-3xl p-8 border flex flex-col transition-all duration-500 ${
+                      className={`relative h-full rounded-3xl p-6 sm:p-8 border flex flex-col transition-all duration-500 ${
                         isMain
                           ? 'bg-gradient-to-b from-white to-[#f6fef4] border-[#3CB52A]/30 shadow-[0_20px_60px_rgba(60,181,42,0.14)] lg:scale-[1.02]'
                           : 'bg-white border-[#E5E7EB] shadow-sm lg:opacity-75'
