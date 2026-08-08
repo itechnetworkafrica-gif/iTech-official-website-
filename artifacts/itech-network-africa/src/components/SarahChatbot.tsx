@@ -620,7 +620,7 @@ export const SarahChatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 left-4 right-4 sm:bottom-8 sm:left-auto sm:right-8 sm:w-96 z-[60] max-w-sm bg-white rounded-3xl shadow-[0_24px_80px_rgba(10,25,41,0.28)] flex flex-col overflow-hidden border border-gray-100"
+            className="fixed bottom-6 left-4 right-4 sm:bottom-8 sm:right-auto sm:left-8 sm:w-96 z-[60] max-w-sm bg-white rounded-3xl shadow-[0_24px_80px_rgba(10,25,41,0.28)] flex flex-col overflow-hidden border border-gray-100"
             style={{ maxHeight: 'min(580px, calc(100vh - 40px))' }}
           >
             {/* Header */}
@@ -792,7 +792,7 @@ export const SarahChatbot: React.FC = () => {
           after 8 s if not interacted with
           ═══════════════════════════════ */}
       {!open && (
-        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-[60] flex flex-col items-end gap-3">
+        <div className="fixed bottom-6 left-4 sm:bottom-8 sm:left-8 z-[60] flex flex-col items-start gap-3">
           {/* Nudge banner — appears periodically above the static button */}
           <AnimatePresence>
             {visible && (
@@ -828,7 +828,7 @@ export const SarahChatbot: React.FC = () => {
                 <p className="text-[10px] text-[#3CB52A] font-semibold mt-1.5">
                   Tap to chat →
                 </p>
-                <div className="absolute -bottom-1.5 right-7 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
+                <div className="absolute -bottom-1.5 left-7 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -836,7 +836,7 @@ export const SarahChatbot: React.FC = () => {
           {/* Static launcher — always visible */}
           <div className="group relative flex items-center">
             {/* Hover label */}
-            <span className="hidden sm:block absolute right-full mr-3 px-3 py-1.5 rounded-xl bg-[#0A1929] text-white text-xs font-semibold whitespace-nowrap opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 pointer-events-none shadow-lg">
+            <span className="hidden sm:block absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#0A1929] text-white text-xs font-semibold whitespace-nowrap opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 pointer-events-none shadow-lg">
               Chat with Sarah
             </span>
             <motion.button
@@ -870,7 +870,7 @@ export const SarahChatbot: React.FC = () => {
             transition={{ duration: 0.2 }}
             onClick={handleClose}
             aria-label="Close chat"
-            className="fixed bottom-8 right-4 sm:right-8 z-[70] w-10 h-10 rounded-full bg-[#0A1929] hover:bg-[#0f2d47] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            className="fixed bottom-8 left-4 sm:left-8 z-[70] w-10 h-10 rounded-full bg-[#0A1929] hover:bg-[#0f2d47] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
             style={{ bottom: 'calc(min(560px, calc(100vh - 40px)) + 2.5rem)' }}
           >
             <X size={18} />
