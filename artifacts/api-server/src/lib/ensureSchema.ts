@@ -76,6 +76,36 @@ export async function ensureLiveChatSchema(): Promise<void> {
     []
   );
 
+  // Billing payment submissions (public deposit verification)
+  await query(
+    `CREATE TABLE IF NOT EXISTS billing_submissions (
+      id              TEXT PRIMARY KEY,
+      ref             TEXT NOT NULL,
+      name            TEXT NOT NULL,
+      email           TEXT NOT NULL,
+      phone           TEXT NOT NULL DEFAULT '',
+      plan            TEXT NOT NULL,
+      category        TEXT NOT NULL DEFAULT '',
+      amount          TEXT NOT NULL,
+      currency        TEXT NOT NULL DEFAULT 'USD',
+      method          TEXT NOT NULL DEFAULT 'bank_transfer',
+      transaction_id  TEXT NOT NULL,
+      payment_date    TEXT NOT NULL DEFAULT '',
+      notes           TEXT NOT NULL DEFAULT '',
+      status          TEXT NOT NULL DEFAULT 'Pending',
+      admin_notes     TEXT NOT NULL DEFAULT '',
+      created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`,
+    []
+  );
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_billing_submissions_created
+     ON billing_submissions (created_at DESC)`,
+    []
+  );
+  await query(`CREATE SEQUENCE IF NOT EXISTS billing_ref_seq`, []);
+
   // Atomic ticket-number allocator. Seeded past the highest existing
   // TKT-NNNN so concurrent submissions never collide with old tickets.
   await query(`CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq`, []);

@@ -8,6 +8,7 @@ import adminRouter from "./adminRoutes.js";
 import syncRouter from "./syncRoutes.js";
 import liveChatRouter from "./liveChat.js";
 import partnershipsRouter from "./partnerships.js";
+import billingRouter from "./billing.js";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(adminRouter);
 router.use(syncRouter);
 router.use(liveChatRouter);
 router.use(partnershipsRouter);
+router.use(billingRouter);
 
 export default router;

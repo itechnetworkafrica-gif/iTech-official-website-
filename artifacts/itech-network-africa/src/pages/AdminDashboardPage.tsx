@@ -40,6 +40,7 @@ import {
 } from '@/lib/portalData';
 import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
 import { PartnershipsSection } from '@/components/admin/PartnershipsSection';
+import { BillingSection } from '@/components/admin/BillingSection';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 import { usePortalNotifications } from '@/hooks/usePortalNotifications';
 import { NotificationBell } from '@/components/NotificationBell';
@@ -1639,6 +1640,7 @@ function AdminSettings() {
 const ADMIN_NAV = [
   { id: 'overview',       label: 'Overview',       icon: LayoutDashboard },
   { id: 'invoices',       label: 'Invoices',        icon: FileText        },
+  { id: 'billing',        label: 'Billing',         icon: Bell            },
   { id: 'support',        label: 'Support',         icon: Headphones      },
   { id: 'livechat',       label: 'Live Chat',       icon: MessageSquare   },
   { id: 'clients',        label: 'Clients',         icon: Users           },
@@ -1768,6 +1770,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
   const sectionMap: Record<string, React.ReactNode> = {
     overview:      <Overview onNav={navTo} />,
     invoices:      <InvoicesSection />,
+    billing:       <BillingSection />,
     support:       <SupportSection />,
     livechat:      <LiveChatSection />,
     clients:       <ClientsSection />,

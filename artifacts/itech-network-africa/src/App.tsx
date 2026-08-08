@@ -41,6 +41,7 @@ const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'));
 const SitemapPage      = lazy(() => import('@/pages/SitemapPage'));
 const ConsultationPage = lazy(() => import('@/pages/ConsultationPage'));
 const DownloadsPage    = lazy(() => import('@/pages/resources/DownloadsPage'));
+const BillingPage      = lazy(() => import('@/pages/BillingPage'));
 const NotFound         = lazy(() => import('@/pages/not-found'));
 
 // Lightweight fallback shown while a page chunk is loading
@@ -127,6 +128,7 @@ function Router() {
                 <Route path="/refund-policy" component={RefundPolicyPage} />
                 <Route path="/sitemap" component={SitemapPage} />
                 <Route path="/consultation" component={ConsultationPage} />
+                <Route path="/billing" component={BillingPage} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>

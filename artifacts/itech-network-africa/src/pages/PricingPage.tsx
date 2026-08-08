@@ -98,7 +98,7 @@ function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
 
         {/* CTA Button */}
         <Link
-          href="/contact"
+          href={pkg.cta === 'Contact Sales' ? '/contact' : `/billing?plan=${encodeURIComponent(pkg.name)}`}
           className={`
             block text-center w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200
             ${isPopular
@@ -107,7 +107,7 @@ function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
             }
           `}
         >
-          {pkg.cta}
+          {pkg.cta === 'Contact Sales' ? 'Contact Sales' : 'Pay Now'}
         </Link>
       </div>
     </motion.div>
