@@ -11,6 +11,7 @@
 import { Router, type Request, type Response } from "express";
 import { query } from "../lib/db.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import { runAIPaymentReview } from "../lib/aiPaymentReview.js";
 
 const router = Router();
 const auth = requireAuth("admin");
@@ -64,23 +65,28 @@ router.post("/billing/submit", async (req: Request, res: Response) => {
   const ref = `BIL-${String(n).padStart(4, "0")}`;
   const id = genId();
 
+  const cleanPhone    = (phone        || "").trim().slice(0, 40);
+  const cleanCat      = (category     || "").trim().slice(0, 100);
+  const cleanCurrency = (currency     || "USD").trim().slice(0, 10);
+  const cleanDate     = (payment_date || "").trim().slice(0, 30);
+  const cleanNotes    = (notes        || "").trim().slice(0, 1000);
+
   await query(
     `INSERT INTO billing_submissions
        (id, ref, name, email, phone, plan, category, amount, currency, method, transaction_id, payment_date, notes)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-    [
-      id, ref, cleanName, cleanEmail,
-      (phone || "").trim().slice(0, 40),
-      cleanPlan,
-      (category || "").trim().slice(0, 100),
-      cleanAmount,
-      (currency || "USD").trim().slice(0, 10),
-      cleanMethod,
-      cleanTxId,
-      (payment_date || "").trim().slice(0, 30),
-      (notes || "").trim().slice(0, 1000),
-    ]
+    [id, ref, cleanName, cleanEmail, cleanPhone, cleanPlan, cleanCat, cleanAmount, cleanCurrency, cleanMethod, cleanTxId, cleanDate, cleanNotes]
   );
+
+  // Fire AI review asynchronously — don't block the client response
+  setImmediate(() => {
+    runAIPaymentReview({
+      id, name: cleanName, email: cleanEmail, phone: cleanPhone,
+      plan: cleanPlan, amount: cleanAmount, currency: cleanCurrency,
+      method: cleanMethod, transaction_id: cleanTxId,
+      payment_date: cleanDate, notes: cleanNotes,
+    }).catch(() => { /* logged inside runAIPaymentReview */ });
+  });
 
   res.json({ ok: true, ref });
 });
@@ -108,7 +114,41 @@ router.get("/admin/billing", auth, async (_req: Request, res: Response) => {
     status: r.status,
     adminNotes: r.admin_notes,
     createdAt: r.created_at,
+    // AI fraud detection fields
+    aiRiskLevel:     r.ai_risk_level     ?? "pending",
+    aiRiskScore:     r.ai_risk_score     ?? null,
+    aiFlags:         r.ai_flags          ?? [],
+    aiSummary:       r.ai_summary        ?? "",
+    aiRecommendation:r.ai_recommendation ?? "",
+    aiReviewedAt:    r.ai_reviewed_at    ?? null,
   })));
+});
+
+// ─── Admin: manually re-trigger AI review ────────────────────────────────────
+router.post("/admin/billing/:id/ai-review", auth, async (req: Request, res: Response) => {
+  const row = await query(
+    "SELECT * FROM billing_submissions WHERE id = $1",
+    [req.params.id]
+  );
+  if (!row.rows.length) { res.status(404).json({ error: "Not found" }); return; }
+  const r = row.rows[0];
+
+  // Reset to pending so UI shows spinner
+  await query(
+    `UPDATE billing_submissions SET ai_risk_level = 'pending', ai_reviewed_at = NULL WHERE id = $1`,
+    [r.id]
+  );
+
+  setImmediate(() => {
+    runAIPaymentReview({
+      id: r.id, name: r.name, email: r.email, phone: r.phone,
+      plan: r.plan, amount: r.amount, currency: r.currency,
+      method: r.method, transaction_id: r.transaction_id,
+      payment_date: r.payment_date, notes: r.notes,
+    }).catch(() => {});
+  });
+
+  res.json({ ok: true, message: "AI review started — refresh in a moment." });
 });
 
 // ─── Admin: update submission status ─────────────────────────────────────────

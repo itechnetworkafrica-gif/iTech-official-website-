@@ -106,6 +106,18 @@ export async function ensureLiveChatSchema(): Promise<void> {
   );
   await query(`CREATE SEQUENCE IF NOT EXISTS billing_ref_seq`, []);
 
+  // AI fraud-detection columns (added after initial release — safe to re-run)
+  for (const ddl of [
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_risk_level     TEXT NOT NULL DEFAULT 'pending'`,
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_risk_score      INTEGER`,
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_flags           JSONB NOT NULL DEFAULT '[]'`,
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_summary         TEXT NOT NULL DEFAULT ''`,
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_recommendation  TEXT NOT NULL DEFAULT ''`,
+    `ALTER TABLE billing_submissions ADD COLUMN IF NOT EXISTS ai_reviewed_at     TIMESTAMPTZ`,
+  ]) {
+    await query(ddl, []);
+  }
+
   // Atomic ticket-number allocator. Seeded past the highest existing
   // TKT-NNNN so concurrent submissions never collide with old tickets.
   await query(`CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq`, []);
