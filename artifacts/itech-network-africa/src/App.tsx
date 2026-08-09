@@ -42,6 +42,7 @@ const SitemapPage      = lazy(() => import('@/pages/SitemapPage'));
 const ConsultationPage = lazy(() => import('@/pages/ConsultationPage'));
 const DownloadsPage    = lazy(() => import('@/pages/resources/DownloadsPage'));
 const BillingPage      = lazy(() => import('@/pages/BillingPage'));
+const QuotePage        = lazy(() => import('@/pages/QuotePage'));
 const NotFound         = lazy(() => import('@/pages/not-found'));
 
 // Lightweight fallback shown while a page chunk is loading
@@ -64,7 +65,7 @@ const PAGE_TRANSITION = {
 };
 
 // Routes that manage their own full-screen layout (no shared header/footer)
-const FULLSCREEN_ROUTES = ['/portal', '/admin'];
+const FULLSCREEN_ROUTES = ['/portal', '/admin', '/quote'];
 
 function Router() {
   const [location] = useLocation();
@@ -79,6 +80,7 @@ function Router() {
           <Switch>
             <Route path="/portal" component={ClientPortalPage} />
             <Route path="/admin" component={AdminDashboardPage} />
+            <Route path="/quote/:token" component={QuotePage} />
           </Switch>
         </Suspense>
       </>

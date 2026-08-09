@@ -118,6 +118,37 @@ export async function ensureLiveChatSchema(): Promise<void> {
     await query(ddl, []);
   }
 
+  // ── Quotes ───────────────────────────────────────────────────────────────
+  await query(`CREATE SEQUENCE IF NOT EXISTS quote_ref_seq`, []);
+  await query(`
+    CREATE TABLE IF NOT EXISTS quotes (
+      id              SERIAL PRIMARY KEY,
+      ref             TEXT UNIQUE NOT NULL DEFAULT ('QUO-' || LPAD(nextval('quote_ref_seq')::TEXT, 4, '0')),
+      token           UUID NOT NULL DEFAULT gen_random_uuid(),
+      status          TEXT NOT NULL DEFAULT 'draft'
+                      CHECK (status IN ('draft','sent','viewed','accepted','declined','expired')),
+      client_name     TEXT NOT NULL,
+      client_email    TEXT NOT NULL DEFAULT '',
+      client_phone    TEXT NOT NULL DEFAULT '',
+      client_company  TEXT NOT NULL DEFAULT '',
+      client_address  TEXT NOT NULL DEFAULT '',
+      title           TEXT NOT NULL,
+      items           JSONB NOT NULL DEFAULT '[]',
+      notes           TEXT NOT NULL DEFAULT '',
+      terms           TEXT NOT NULL DEFAULT '',
+      valid_until     DATE,
+      currency        TEXT NOT NULL DEFAULT 'USD',
+      subtotal        NUMERIC(12,2) NOT NULL DEFAULT 0,
+      discount_type   TEXT NOT NULL DEFAULT 'percent',
+      discount_value  NUMERIC(10,2) NOT NULL DEFAULT 0,
+      tax_rate        NUMERIC(5,2) NOT NULL DEFAULT 0,
+      total           NUMERIC(12,2) NOT NULL DEFAULT 0,
+      created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      sent_at         TIMESTAMPTZ
+    )
+  `, []);
+
   // Atomic ticket-number allocator. Seeded past the highest existing
   // TKT-NNNN so concurrent submissions never collide with old tickets.
   await query(`CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq`, []);

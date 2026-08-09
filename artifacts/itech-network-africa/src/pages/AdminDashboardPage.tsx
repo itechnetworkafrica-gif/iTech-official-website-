@@ -10,7 +10,7 @@ import {
   Megaphone, BarChart2, FolderOpen, FileUp, StickyNote,
   ChevronDown, ChevronLeft, Zap, Activity, Tag, UserCog, BookTemplate,
   Bell, Archive, Search, Upload, Percent, Flag, UserCheck,
-  MinusCircle, CheckSquare, Square, Handshake,
+  MinusCircle, CheckSquare, Square, Handshake, Receipt,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { PORTAL_CLIENTS } from '@/lib/portalClients';
@@ -41,6 +41,7 @@ import {
 import { LiveChatSection, TeamSection } from '@/components/admin/LiveSupportSection';
 import { PartnershipsSection } from '@/components/admin/PartnershipsSection';
 import { BillingSection } from '@/components/admin/BillingSection';
+import { QuotesSection } from '@/components/admin/QuotesSection';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 import { usePortalNotifications } from '@/hooks/usePortalNotifications';
 import { NotificationBell } from '@/components/NotificationBell';
@@ -1642,6 +1643,7 @@ const ADMIN_NAV = [
   { id: 'overview',       label: 'Overview',       icon: LayoutDashboard },
   { id: 'invoices',       label: 'Invoices',        icon: FileText        },
   { id: 'billing',        label: 'Billing',         icon: Bell            },
+  { id: 'quotes',         label: 'Quotes',          icon: Receipt         },
   { id: 'support',        label: 'Support',         icon: Headphones      },
   { id: 'livechat',       label: 'Live Chat',       icon: MessageSquare   },
   { id: 'clients',        label: 'Clients',         icon: Users           },
@@ -1658,6 +1660,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
   // 'billing' is restricted to full-access admins only — team members never see it.
   const allowed = (id: string) => {
     if (id === 'billing') return permissions == null;
+    if (id === 'quotes')  return permissions == null;
     return permissions == null || permissions.includes(id);
   };
   const nav = ADMIN_NAV.filter(item => allowed(item.id));
@@ -1802,6 +1805,7 @@ function AdminShell({ onLogout, permissions }: { onLogout: () => void; permissio
     overview:      <Overview onNav={navTo} />,
     invoices:      <InvoicesSection />,
     billing:       <BillingSection />,
+    quotes:        <QuotesSection />,
     support:       <SupportSection />,
     livechat:      <LiveChatSection />,
     clients:       <ClientsSection />,

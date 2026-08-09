@@ -9,6 +9,7 @@ import syncRouter from "./syncRoutes.js";
 import liveChatRouter from "./liveChat.js";
 import partnershipsRouter from "./partnerships.js";
 import billingRouter from "./billing.js";
+import quotesRouter from "./quotes.js";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(syncRouter);
 router.use(liveChatRouter);
 router.use(partnershipsRouter);
 router.use(billingRouter);
+router.use(quotesRouter);
 
 export default router;
