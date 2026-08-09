@@ -29,6 +29,7 @@ import {
   type Invoice, type SupportTicket, type Announcement, type PortalFile,
   type ClientUploadedFile, type InvoiceDispute,
 } from '@/lib/portalData';
+import { useSEO } from '@/hooks/useSEO';
 
 // ─── Colours ──────────────────────────────────────────────────────────────────
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -1579,6 +1580,12 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function ClientPortalPage() {
+  useSEO({
+    title: 'Client Portal',
+    description: 'Secure client portal for iTech Network Africa customers.',
+    canonical: '/portal',
+    noindex: true,
+  });
   const [client, setClient] = useState<PortalClient | null>(null);
   const [checking, setChecking] = useState(true);
 

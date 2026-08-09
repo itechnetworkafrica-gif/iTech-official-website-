@@ -8,6 +8,7 @@ import {
   ArrowRight, CheckCircle2, ChevronDown, ChevronUp,
   Globe, Users, Star, Clock, Zap,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const fadeUp = {
@@ -315,6 +316,11 @@ function ServiceCard({ cat, index }: { cat: ServiceCategory; index: number }) {
 }
 
 export default function ServicesPage() {
+  useSEO({
+    title: 'Our Services — Website Design, Hosting, Marketing & IT',
+    description: 'Professional website design, web hosting, digital marketing, IT consultancy and graphic design services for businesses in Liberia and Africa.',
+    canonical: '/services',
+  });
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const filtered = activeFilter === 'all'

@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { PageHero } from '@/components/PageHero';
+import { useSEO } from '@/hooks/useSEO';
 
 const RECIPIENT = 'itechnetworkafrica@gmail.com';
 
@@ -93,6 +94,11 @@ const BENEFITS = [
 ];
 
 export default function ConsultationPage() {
+  useSEO({
+    title: 'Free Consultation — Book a Tech Consultation',
+    description: 'Book a free technology consultation with iTech Network Africa. Get expert advice on website design, hosting, digital marketing and IT for your business.',
+    canonical: '/consultation',
+  });
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
 

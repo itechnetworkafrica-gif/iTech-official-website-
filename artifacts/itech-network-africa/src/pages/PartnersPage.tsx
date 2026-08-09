@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { apiUrl } from '@/lib/apiBase';
+import { useSEO } from '@/hooks/useSEO';
 
 const PARTNERSHIP_TYPES = [
   'Technology Partner',
@@ -118,6 +119,11 @@ const DOCUMENT = [
 ];
 
 export default function PartnersPage() {
+  useSEO({
+    title: 'Partner Programme — Resell & Collaborate with Us',
+    description: 'Join the iTech Network Africa Partner Programme. Resellers and agencies across Africa earn commissions promoting our technology services. Apply today.',
+    canonical: '/partners',
+  });
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);

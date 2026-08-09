@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
 import { LegalTOC } from '@/components/LegalTOC';
+import { useSEO } from '@/hooks/useSEO';
 
 const TOC_ITEMS = [
   { id: 'what-are-cookies', title: 'What Are Cookies?' },
@@ -13,6 +14,11 @@ const TOC_ITEMS = [
 ];
 
 export default function CookiesPage() {
+  useSEO({
+    title: 'Cookie Policy — How We Use Cookies',
+    description: 'Read how iTech Network Africa uses cookies to improve your browsing experience and measure site performance.',
+    canonical: '/cookies',
+  });
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Cookies Policy" subtitle="Last Updated: July 2026" />

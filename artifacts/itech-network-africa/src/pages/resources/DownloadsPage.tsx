@@ -5,6 +5,7 @@ import {
   Layers, ArrowRight, CheckCircle2, Shield, Package,
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const fadeUp = (delay = 0) => ({
@@ -187,6 +188,7 @@ const DOWNLOADS = [
 const CATEGORIES = ['All', ...Object.keys(CATEGORY_ICONS)];
 
 export default function DownloadsPage() {
+  useSEO({ title: 'Downloads — Free Technology Resources & Templates', description: 'Download free website templates, marketing guides and IT resources from iTech Network Africa for businesses in Liberia and Africa.', canonical: '/resources/downloads' });
   const [active, setActive] = useState('All');
 
   const filtered = active === 'All' ? DOWNLOADS : DOWNLOADS.filter(d => d.category === active);

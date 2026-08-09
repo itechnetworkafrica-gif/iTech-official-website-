@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useSEO } from '@/hooks/useSEO';
 
 const RECIPIENT = 'itechnetworkafrica@gmail.com';
 
@@ -33,6 +34,11 @@ const jobs = [
 ];
 
 export default function CareersPage() {
+  useSEO({
+    title: 'Careers — Jobs in Tech at iTech Network Africa',
+    description: 'Explore career opportunities at iTech Network Africa in Liberia. Join our team in website design, digital marketing and IT consultancy.',
+    canonical: '/careers',
+  });
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({

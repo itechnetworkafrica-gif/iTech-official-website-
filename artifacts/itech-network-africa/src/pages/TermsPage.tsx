@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
 import { LegalTOC } from '@/components/LegalTOC';
+import { useSEO } from '@/hooks/useSEO';
 
 const TOC_ITEMS = [
   { id: 'agreement-to-terms', title: 'Agreement to Terms' },
@@ -20,6 +21,11 @@ const TOC_ITEMS = [
 ];
 
 export default function TermsPage() {
+  useSEO({
+    title: 'Terms & Conditions — Service Agreement',
+    description: 'Read iTech Network Africa terms and conditions governing use of our website and technology services.',
+    canonical: '/terms',
+  });
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Terms & Conditions" subtitle="Last Updated: July 2026" />

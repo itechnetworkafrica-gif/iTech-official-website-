@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { PageHero } from '@/components/PageHero';
 import { Clock, ArrowRight } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 const categories = ["All", "Technology", "AI", "Business", "Africa Tech"];
 
@@ -100,6 +101,11 @@ const blogPosts = [
 ];
 
 export default function BlogPage() {
+  useSEO({
+    title: 'Blog — Technology News, Tips & Insights',
+    description: 'Read technology news, business tips and digital insights from iTech Network Africa — your technology partner in Liberia and West Africa.',
+    canonical: '/blog',
+  });
   const [activeCategory, setActiveCategory] = useState("All");
   
   const filteredPosts = activeCategory === "All" 

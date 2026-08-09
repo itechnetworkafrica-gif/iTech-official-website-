@@ -44,6 +44,7 @@ import { BillingSection } from '@/components/admin/BillingSection';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 import { usePortalNotifications } from '@/hooks/usePortalNotifications';
 import { NotificationBell } from '@/components/NotificationBell';
+import { useSEO } from '@/hooks/useSEO';
 
 // ─── Colour Maps ──────────────────────────────────────────────────────────────
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -1955,6 +1956,12 @@ function AdminLoginScreen({ onLogin }: { onLogin: (permissions: string[] | null)
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
+  useSEO({
+    title: 'Admin Dashboard',
+    description: 'Staff administration portal.',
+    canonical: '/admin',
+    noindex: true,
+  });
   const [authed, setAuthed]     = useState(false);
   const [perms, setPerms]       = useState<string[] | null>(null);
   const [checking, setChecking] = useState(true);

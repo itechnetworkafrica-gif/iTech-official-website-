@@ -22,6 +22,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { apiUrl } from '@/lib/apiBase';
 import { pricingCategories } from '@/lib/pricing-data';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── constants ─────────────────────────────────────────────────────────── */
 
@@ -133,6 +134,11 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 /* ─── main page ──────────────────────────────────────────────────────────── */
 
 export default function BillingPage() {
+  useSEO({
+    title: 'Make a Payment — Secure Billing Portal',
+    description: 'Securely pay for iTech Network Africa services via Bank Transfer (UBA Liberia) or Mobile Money. Submit your transaction ID for fast verification.',
+    canonical: '/billing',
+  });
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; category: string } | null>(null);
   const [activeCategory, setActiveCategory] = useState(pricingCategories[0].id);

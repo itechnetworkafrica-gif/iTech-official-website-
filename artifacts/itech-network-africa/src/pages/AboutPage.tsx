@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
 import { TEAM, type TeamMember } from '@/data/team';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── Shared animation helpers ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -278,6 +279,11 @@ const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, ind
 };
 
 export default function AboutPage() {
+  useSEO({
+    title: 'About Us — Our Story, Team & Mission',
+    description: 'Learn about iTech Network Africa — a technology company founded in Liberia delivering website design, digital marketing and IT solutions across West Africa.',
+    canonical: '/about',
+  });
   return (
     <div className="flex flex-col w-full">
 

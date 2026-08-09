@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useSEO } from '@/hooks/useSEO';
 
 const RECIPIENT = 'itechnetworkafrica@gmail.com';
 
@@ -50,6 +51,11 @@ const CONTACT_INFO = [
 ];
 
 export default function ContactPage() {
+  useSEO({
+    title: 'Contact Us — Get in Touch',
+    description: 'Contact iTech Network Africa in Liberia. Call +231761978796 or email us for website design, hosting, digital marketing and IT consultancy enquiries.',
+    canonical: '/contact',
+  });
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

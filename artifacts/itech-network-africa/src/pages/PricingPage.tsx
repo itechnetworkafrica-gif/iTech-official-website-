@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { PageHero } from '@/components/PageHero';
 import { pricingCategories, paymentTerms, faqs, type PricingPackage } from '@/lib/pricing-data';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── helpers ─────────────────────────────────────────────────────────── */
 
@@ -177,6 +178,11 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 /* ─── Main Page ────────────────────────────────────────────────────────── */
 
 export default function PricingPage() {
+  useSEO({
+    title: 'Pricing — Affordable Website & IT Service Plans',
+    description: 'Transparent pricing for website design, web hosting, digital marketing and IT consultancy. Plans from $350 for businesses in Liberia and Africa.',
+    canonical: '/pricing',
+  });
   const [activeTab, setActiveTab] = useState(pricingCategories[0].id);
 
   const activeCategory = pricingCategories.find((c) => c.id === activeTab)!;

@@ -5,6 +5,7 @@ import {
   ArrowRight, Search, ExternalLink, Zap, X,
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -62,6 +63,11 @@ const STATS = [
 ];
 
 export default function ResourcesPage() {
+  useSEO({
+    title: 'Resources — Free Guides, Tools & Templates',
+    description: 'Free technology resources for businesses in Liberia and Africa — guides, marketing templates, IT checklists and downloads from iTech Network Africa.',
+    canonical: '/resources',
+  });
   const [query, setQuery] = useState('');
 
   const filtered = RESOURCES.filter(r =>

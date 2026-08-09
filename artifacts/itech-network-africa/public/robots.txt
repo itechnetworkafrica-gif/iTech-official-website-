@@ -1,2 +1,16 @@
 User-agent: *
 Allow: /
+
+# Private — must not be indexed
+Disallow: /admin
+Disallow: /admin/
+Disallow: /portal
+Disallow: /portal/
+Disallow: /api/
+Disallow: /team/wilmot-kerkulah/cv
+
+# Crawl politely
+Crawl-delay: 1
+
+# XML Sitemap
+Sitemap: https://itechnetworkafrica.replit.app/sitemap.xml

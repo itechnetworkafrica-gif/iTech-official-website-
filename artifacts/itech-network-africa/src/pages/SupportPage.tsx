@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { apiUrl } from '@/lib/apiBase';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -434,6 +435,11 @@ function SectionBadge({ icon, label }: { icon: React.ReactNode; label: string })
 /* ─── main page ──────────────────────────────────────────────────────────── */
 
 export default function SupportPage() {
+  useSEO({
+    title: 'Support Centre — Help, FAQs & Knowledge Base',
+    description: 'Get help with iTech Network Africa services. Browse our knowledge base, submit a support ticket or chat live with our team.',
+    canonical: '/support',
+  });
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [heroSearch, setHeroSearch] = useState('');

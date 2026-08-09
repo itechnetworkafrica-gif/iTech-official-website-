@@ -7,6 +7,7 @@ import {
   Quote, ChevronLeft, FolderOpen, Headphones, Handshake,
   Banknote, HeartPulse, GraduationCap, Landmark, ShoppingBag,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── Animation helpers ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -1373,6 +1374,11 @@ function TestimonialsSlider() {
 
 /* ─── Main Component ─── */
 export default function HomePage() {
+  useSEO({
+    title: 'Website Design, Hosting & IT Services in Liberia',
+    description: 'Professional website design, web hosting, digital marketing, IT consultancy and graphic design for businesses in Liberia and West Africa. Get a free quote today.',
+    canonical: '/',
+  });
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
 

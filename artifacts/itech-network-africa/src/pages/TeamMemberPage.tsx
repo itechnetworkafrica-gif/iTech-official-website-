@@ -8,6 +8,7 @@ import {
 import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
 import { TEAM, getMemberBySlug } from '@/data/team';
 import NotFound from '@/pages/not-found';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -36,6 +37,14 @@ const DEPT_COLOR: Record<string, { bg: string; text: string; border: string }> =
 export default function TeamMemberPage() {
   const params = useParams<{ slug: string }>();
   const member = getMemberBySlug(params.slug ?? '');
+  useSEO({
+    title: member ? `${member.name} — ${member.role}` : 'Team Member Not Found',
+    description: member
+      ? `Meet ${member.name}, ${member.role} at iTech Network Africa. Expert technology professionals serving Liberia and West Africa.`
+      : 'Meet the team at iTech Network Africa.',
+    canonical: `/team/${params.slug ?? ''}`,
+    noindex: !member,
+  });
 
   if (!member) return <NotFound />;
 

@@ -2,8 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { navigationData } from '@/components/NavigationData';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function SitemapPage() {
+  useSEO({ title: 'Sitemap — All Pages', description: 'Full sitemap of all pages on the iTech Network Africa website.', canonical: '/sitemap', noindex: true });
   return (
     <div className="flex flex-col w-full">
       <section className="relative bg-[#060E18] pt-20 pb-20 overflow-hidden">

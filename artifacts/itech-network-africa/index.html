@@ -8,11 +8,11 @@
     <meta name="keywords" content="iTech Network Africa, global technology company, enterprise software, AI solutions, cybersecurity, cloud infrastructure, digital transformation, web development, mobile apps, IT consultancy, worldwide tech partner, international software company" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="iTech Network Africa" />
-    <link rel="canonical" href="https://itechnetworkafrica.com/" />
+    <link rel="canonical" href="https://itechnetworkafrica.replit.app/" />
 
     <!-- Open Graph / Facebook / Link Preview -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://itechnetworkafrica.com/" />
+    <meta property="og:url" content="https://itechnetworkafrica.replit.app/" />
     <meta property="og:title" content="iTech Network Africa | Global Technology Company — Software, AI &amp; Cloud" />
     <meta property="og:description" content="Enterprise software, AI solutions, cloud infrastructure and cybersecurity — built by a global technology company proudly founded in Africa, serving clients across 10+ countries with 99% client satisfaction." />
     <meta property="og:image" content="%VITE_SITE_URL%/og-image.png" />
@@ -25,7 +25,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@itechnetafrica" />
-    <meta name="twitter:url" content="https://itechnetworkafrica.com/" />
+    <meta name="twitter:url" content="https://itechnetworkafrica.replit.app/" />
     <meta name="twitter:title" content="iTech Network Africa | Global Technology Company — Software, AI &amp; Cloud" />
     <meta name="twitter:description" content="Enterprise software, AI, cloud and cybersecurity solutions delivered to clients across 10+ countries. A global technology company, proudly founded in Africa." />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.png" />
@@ -40,6 +40,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="shortcut icon" href="/favicon-32.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <meta name="theme-color" content="#0A1929" />
 
     <!-- Company typeface preload -->
@@ -47,22 +48,31 @@
     <link rel="preload" href="/fonts/itn-700.otf" as="font" type="font/otf" crossorigin />
     <link rel="preload" href="/fonts/itn-600.otf" as="font" type="font/otf" crossorigin />
 
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data — Organization -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "iTech Network Africa",
-      "url": "https://itechnetworkafrica.com",
-      "logo": "https://itechnetworkafrica.com/logo-new.png",
-      "image": "https://itechnetworkafrica.com/og-image.png",
-      "description": "iTech Network Africa is a global technology company delivering enterprise software, AI solutions, cloud infrastructure, cybersecurity, and web & mobile development services worldwide.",
+      "url": "https://itechnetworkafrica.replit.app",
+      "logo": "https://itechnetworkafrica.replit.app/logo-new.png",
+      "image": "https://itechnetworkafrica.replit.app/og-image.png",
+      "description": "iTech Network Africa is a technology company founded in Liberia delivering website design, web hosting, digital marketing, IT consultancy and AI solutions to businesses across West Africa.",
       "foundingDate": "2023",
-      "areaServed": "Worldwide",
+      "areaServed": ["Liberia", "West Africa", "Africa"],
+      "telephone": "+231761978796",
+      "email": "itechnetworkafrica@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sinkor",
+        "addressLocality": "Monrovia",
+        "addressCountry": "LR"
+      },
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer support",
-        "url": "https://itechnetworkafrica.com/contact"
+        "telephone": "+231761978796",
+        "url": "https://itechnetworkafrica.replit.app/contact"
       },
       "sameAs": [
         "https://twitter.com/itechnetafrica"
@@ -71,14 +81,70 @@
         "@type": "OfferCatalog",
         "name": "Technology Services",
         "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Enterprise Software Development" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI & Automation Solutions" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cloud Infrastructure" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cybersecurity" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web & Mobile App Development" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Network Solutions" } }
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website Design & Development" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web Hosting" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Digital Marketing" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "IT Consultancy" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Solutions" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Graphic Design" } }
         ]
       }
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data — WebSite with SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "iTech Network Africa",
+      "url": "https://itechnetworkafrica.replit.app",
+      "description": "Professional website design, web hosting, digital marketing and IT consultancy for businesses in Liberia and West Africa.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://itechnetworkafrica.replit.app/support?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data — LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "iTech Network Africa",
+      "description": "Professional website design, web hosting, digital marketing and IT consultancy in Liberia.",
+      "url": "https://itechnetworkafrica.replit.app",
+      "telephone": "+231761978796",
+      "email": "itechnetworkafrica@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sinkor",
+        "addressLocality": "Monrovia",
+        "addressCountry": "LR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "6.3005",
+        "longitude": "-10.7969"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      "priceRange": "$$",
+      "image": "https://itechnetworkafrica.replit.app/og-image.png",
+      "areaServed": [
+        { "@type": "Country", "name": "Liberia" },
+        { "@type": "AdministrativeArea", "name": "West Africa" }
+      ],
+      "knowsAbout": ["Website Design", "Web Hosting", "Digital Marketing", "IT Consultancy", "Graphic Design", "AI Solutions", "Mobile App Development"]
     }
     </script>
   </head>
