@@ -6,19 +6,19 @@
 
   <!-- ── Core pages ────────────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/</loc>
+    <loc>https://www.itechnetworkafrica.com/</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/about</loc>
+    <loc>https://www.itechnetworkafrica.com/about</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/contact</loc>
+    <loc>https://www.itechnetworkafrica.com/contact</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -26,49 +26,49 @@
 
   <!-- ── Services ──────────────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services</loc>
+    <loc>https://www.itechnetworkafrica.com/services</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/website-design</loc>
+    <loc>https://www.itechnetworkafrica.com/services/website-design</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/web-hosting</loc>
+    <loc>https://www.itechnetworkafrica.com/services/web-hosting</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/digital-marketing</loc>
+    <loc>https://www.itechnetworkafrica.com/services/digital-marketing</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/it-consultancy</loc>
+    <loc>https://www.itechnetworkafrica.com/services/it-consultancy</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/graphic-design</loc>
+    <loc>https://www.itechnetworkafrica.com/services/graphic-design</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/cloud-infrastructure</loc>
+    <loc>https://www.itechnetworkafrica.com/services/cloud-infrastructure</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/services/mobile-app-development</loc>
+    <loc>https://www.itechnetworkafrica.com/services/mobile-app-development</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
@@ -76,25 +76,25 @@
 
   <!-- ── Solutions & Products ──────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/ai-solutions</loc>
+    <loc>https://www.itechnetworkafrica.com/ai-solutions</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/solutions</loc>
+    <loc>https://www.itechnetworkafrica.com/solutions</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/products</loc>
+    <loc>https://www.itechnetworkafrica.com/products</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/industries</loc>
+    <loc>https://www.itechnetworkafrica.com/industries</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
@@ -102,13 +102,13 @@
 
   <!-- ── Pricing & Billing ─────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/pricing</loc>
+    <loc>https://www.itechnetworkafrica.com/pricing</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/billing</loc>
+    <loc>https://www.itechnetworkafrica.com/billing</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
@@ -116,13 +116,13 @@
 
   <!-- ── Portfolio & Work ───────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/portfolio</loc>
+    <loc>https://www.itechnetworkafrica.com/portfolio</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/projects</loc>
+    <loc>https://www.itechnetworkafrica.com/projects</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
@@ -130,7 +130,7 @@
 
   <!-- ── Partners & Programmes ─────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/partners</loc>
+    <loc>https://www.itechnetworkafrica.com/partners</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
@@ -138,25 +138,25 @@
 
   <!-- ── Content & Resources ───────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/blog</loc>
+    <loc>https://www.itechnetworkafrica.com/blog</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/news</loc>
+    <loc>https://www.itechnetworkafrica.com/news</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/resources</loc>
+    <loc>https://www.itechnetworkafrica.com/resources</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/resources/downloads</loc>
+    <loc>https://www.itechnetworkafrica.com/resources/downloads</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.55</priority>
@@ -164,25 +164,25 @@
 
   <!-- ── Company ───────────────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/careers</loc>
+    <loc>https://www.itechnetworkafrica.com/careers</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/support</loc>
+    <loc>https://www.itechnetworkafrica.com/support</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/consultation</loc>
+    <loc>https://www.itechnetworkafrica.com/consultation</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/sitemap</loc>
+    <loc>https://www.itechnetworkafrica.com/sitemap</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.30</priority>
@@ -190,25 +190,25 @@
 
   <!-- ── Legal ─────────────────────────────────────────────────────────── -->
   <url>
-    <loc>https://itechnetworkafrica.replit.app/privacy-policy</loc>
+    <loc>https://www.itechnetworkafrica.com/privacy-policy</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/terms</loc>
+    <loc>https://www.itechnetworkafrica.com/terms</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/cookies</loc>
+    <loc>https://www.itechnetworkafrica.com/cookies</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>
   <url>
-    <loc>https://itechnetworkafrica.replit.app/refund-policy</loc>
+    <loc>https://www.itechnetworkafrica.com/refund-policy</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>

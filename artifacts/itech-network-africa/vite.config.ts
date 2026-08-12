@@ -17,7 +17,7 @@ const siteUrl =
   process.env.VITE_SITE_URL ||
   (process.env.REPLIT_DEV_DOMAIN
     ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-    : 'https://itechnetworkafrica.com');
+    : 'https://www.itechnetworkafrica.com');
 
 export default defineConfig({
   base: basePath,

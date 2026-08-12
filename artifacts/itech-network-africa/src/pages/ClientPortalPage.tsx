@@ -1021,7 +1021,7 @@ function Profile({ client }: { client: PortalClient }) {
   const [pwMsg, setPwMsg]           = useState('');
   const [showReferral, setShowReferral] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
-  const referralLink = `https://itechnetworkafrica.com/?ref=${client.id}`;
+  const referralLink = `https://www.itechnetworkafrica.com/?ref=${client.id}`;
 
   async function changePassword(e: React.FormEvent) {
     e.preventDefault(); setPwStatus('idle'); setPwMsg('');

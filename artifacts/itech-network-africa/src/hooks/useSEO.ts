@@ -10,8 +10,8 @@
  */
 import { useEffect } from 'react';
 
-// The actual deployed production URL. Update here if a custom domain is added.
-export const SITE_URL = 'https://itechnetworkafrica.replit.app';
+// The only preferred production URL. Development may still use the Vite preview host.
+export const SITE_URL = 'https://www.itechnetworkafrica.com';
 const SITE_NAME      = 'iTech Network Africa';
 const DEFAULT_IMAGE  = `${SITE_URL}/og-image.png`;
 

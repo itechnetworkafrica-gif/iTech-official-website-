@@ -13,4 +13,4 @@ Disallow: /team/wilmot-kerkulah/cv
 Crawl-delay: 1
 
 # XML Sitemap
-Sitemap: https://itechnetworkafrica.replit.app/sitemap.xml
+Sitemap: https://www.itechnetworkafrica.com/sitemap.xml
