@@ -16,6 +16,7 @@ import { apiUrl } from '@/lib/apiBase';
 import { saveAuthToken, clearAuthToken } from '@/lib/authToken';
 import { usePortalNotifications } from '@/hooks/usePortalNotifications';
 import { NotificationBell } from '@/components/NotificationBell';
+import { Logo } from '@/components/Logo';
 import {
   getClientInvoices, getClientTickets, createTicket, addTicketMessage,
   markTicketMessagesRead, markInvoiceViewed, getClientUnread, updateTicketStatus,
@@ -1518,7 +1519,9 @@ function LoginScreen({ onLogin }: { onLogin: (client: PortalClient) => void }) {
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#060E18]" style={{ backgroundImage: 'radial-gradient(ellipse at 65% 30%, rgba(60,181,42,0.07) 0%, transparent 60%)' }}>
       <div className="pt-16 pb-10 text-center px-6">
-        <img src="/logo-icon.png" alt="iTech" className="h-14 w-14 object-contain mx-auto mb-8 rounded-2xl" onError={e => (e.currentTarget.style.display = 'none')} />
+        <div className="flex justify-center mb-8">
+          <Logo variant="icon" white size="lg" />
+        </div>
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#3CB52A]/15 border border-[#3CB52A]/30 mb-5">
           <Lock size={12} className="text-[#3CB52A]" /><span className="text-[#3CB52A] text-xs font-bold tracking-widest uppercase">Secure Client Area</span>
         </div>
@@ -1584,7 +1587,7 @@ export default function ClientPortalPage() {
     title: 'Client Portal',
     description: 'Secure client portal for iTech Network Africa customers.',
     canonical: '/portal',
-    noindex: true,
+    noindex: false,
   });
   const [client, setClient] = useState<PortalClient | null>(null);
   const [checking, setChecking] = useState(true);
