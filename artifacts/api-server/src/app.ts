@@ -10,6 +10,7 @@ import { logger } from "./lib/logger.js";
 import { buildOriginValidator } from "./middleware/validateOrigin.js";
 
 const app: Express = express();
+const PUBLIC_SITE_ORIGIN = "https://www.itechnetworkafrica.com";
 
 const configuredCorsOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
@@ -48,6 +49,21 @@ app.use(
 
 // Trust proxy for cookies in production
 app.set("trust proxy", 1);
+
+// Keep alternate Replit-hosted pages out of search results and send visitors
+// to the public domain. API requests remain on the API host so integrations
+// do not receive an HTML redirect response.
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    if (req.path.startsWith("/api") || !req.hostname.toLowerCase().includes("replit")) {
+      next();
+      return;
+    }
+
+    const destination = new URL(req.originalUrl, `${PUBLIC_SITE_ORIGIN}/`);
+    res.redirect(308, destination.toString());
+  });
+}
 
 // CSRF defence: reject unsafe cross-origin requests whose Origin is not
 // in the allowlist. Required when COOKIE_CROSS_SITE=true because

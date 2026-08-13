@@ -4,7 +4,7 @@ modules = ["nodejs-20", "web", "bash", "python-base-3.13", "postgresql-16"]
 router = "application"
 deploymentTarget = "autoscale"
 build = ["bash", "-c", "BASE_PATH=/ pnpm --filter @workspace/itech-network-africa run build && NODE_ENV=production pnpm --filter @workspace/api-server run build"]
-run = ["bash", "-c", "NODE_ENV=production COOKIE_CROSS_SITE=true CORS_ORIGINS='https://www.itechnetworkafrica.com,https://itechnetworkafrica.com,https://itechnetworkafrica.replit.app' node --enable-source-maps artifacts/api-server/dist/index.mjs"]
+run = ["bash", "-c", "NODE_ENV=production COOKIE_CROSS_SITE=true CORS_ORIGINS='https://www.itechnetworkafrica.com,https://itechnetworkafrica.com' node --enable-source-maps artifacts/api-server/dist/index.mjs"]
 
 [deployment.postBuild]
 args = ["pnpm", "store", "prune"]

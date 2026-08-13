@@ -19,12 +19,7 @@ const DEFAULT_IMAGE  = `${SITE_URL}/og-image.png`;
 function isNonCanonicalHost(): boolean {
   if (typeof window === 'undefined') return false;
   const hostname = window.location.hostname.toLowerCase();
-  return (
-    hostname === 'replit.app' ||
-    hostname.endsWith('.replit.app') ||
-    hostname === 'replit.dev' ||
-    hostname.endsWith('.replit.dev')
-  );
+  return hostname.includes('replit');
 }
 
 export interface SEOConfig {

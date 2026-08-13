@@ -16,12 +16,8 @@
     <script>
       (function () {
         var hostname = window.location.hostname.toLowerCase();
-        var isReplitHost =
-          hostname === 'replit.app' ||
-          hostname.endsWith('.replit.app') ||
-          hostname === 'replit.dev' ||
-          hostname.endsWith('.replit.dev');
-        if (!isReplitHost) return;
+        var isAlternateHostingHost = hostname.includes('replit');
+        if (!isAlternateHostingHost) return;
         var robots = document.querySelector('meta[name="robots"]');
         var googlebot = document.querySelector('meta[name="googlebot"]');
         if (robots) robots.setAttribute('content', 'noindex, nofollow');
