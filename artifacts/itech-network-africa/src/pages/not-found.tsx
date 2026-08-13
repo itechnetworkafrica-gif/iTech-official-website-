@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, ArrowLeft, MessageSquare, Search, Wifi, WifiOff } from 'lucide-react';
+import { SITE_URL } from '@/hooks/useSEO';
 
 /* ─── Animation presets ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -51,7 +52,7 @@ export default function NotFound() {
     const ogTitle = setMeta('meta[property="og:title"]',       'property', 'og:title',       '404 – Page Not Found | iTech Network Africa');
     const ogDesc  = setMeta('meta[property="og:description"]', 'property', 'og:description', 'Page not found. Visit iTech Network Africa for enterprise software, AI solutions and digital transformation services across Africa.');
     const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       '/og-image.png');
-    const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         window.location.href);
+     const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         `${SITE_URL}/`);
 
     // Twitter Card
     const twCard  = setMeta('meta[name="twitter:card"]',        'name', 'twitter:card',        'summary_large_image');
@@ -67,7 +68,7 @@ export default function NotFound() {
       document.head.appendChild(canon);
     }
     const prevCanon = canon.href;
-    canon.href = window.location.origin + '/';
+     canon.href = `${SITE_URL}/`;
 
     return () => {
       document.title = prevTitle;

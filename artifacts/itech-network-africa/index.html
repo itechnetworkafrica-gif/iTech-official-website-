@@ -7,8 +7,27 @@
     <meta name="description" content="iTech Network Africa is a global technology company delivering enterprise software, AI solutions, cloud infrastructure, cybersecurity and digital transformation. Proudly founded in Africa, serving clients across 10+ countries with 20+ projects delivered and 99% client satisfaction." />
     <meta name="keywords" content="iTech Network Africa, global technology company, enterprise software, AI solutions, cybersecurity, cloud infrastructure, digital transformation, web development, mobile apps, IT consultancy, worldwide tech partner, international software company" />
     <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
     <meta name="author" content="iTech Network Africa" />
     <link rel="canonical" href="%VITE_SITE_URL%/" />
+
+    <!-- Replit is an alternate hosting URL, not the public website. Keep it
+         out of search results while leaving the custom domain indexable. -->
+    <script>
+      (function () {
+        var hostname = window.location.hostname.toLowerCase();
+        var isReplitHost =
+          hostname === 'replit.app' ||
+          hostname.endsWith('.replit.app') ||
+          hostname === 'replit.dev' ||
+          hostname.endsWith('.replit.dev');
+        if (!isReplitHost) return;
+        var robots = document.querySelector('meta[name="robots"]');
+        var googlebot = document.querySelector('meta[name="googlebot"]');
+        if (robots) robots.setAttribute('content', 'noindex, nofollow');
+        if (googlebot) googlebot.setAttribute('content', 'noindex, nofollow');
+      })();
+    </script>
 
     <!-- Open Graph / Facebook / Link Preview -->
     <meta property="og:type" content="website" />

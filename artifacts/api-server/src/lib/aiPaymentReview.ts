@@ -7,10 +7,13 @@ import OpenAI from "openai";
 import { query } from "./db.js";
 import { logger } from "./logger.js";
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "",
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-});
+const aiApiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+const openai = aiApiKey
+  ? new OpenAI({
+      apiKey: aiApiKey,
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    })
+  : null;
 
 export interface AIReviewResult {
   riskLevel: "low" | "medium" | "high";
@@ -96,6 +99,10 @@ export async function runAIPaymentReview(sub: Submission): Promise<void> {
     ].join("\n");
 
     // ── 3. Call OpenAI ─────────────────────────────────────────────────────
+    if (!openai) {
+      throw new Error("AI payment review unavailable: OpenAI integration credentials are not configured.");
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-5.6-luna",           // cost-effective for high-volume analysis
       max_completion_tokens: 512,

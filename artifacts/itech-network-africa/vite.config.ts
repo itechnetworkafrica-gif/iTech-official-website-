@@ -11,13 +11,10 @@ const port = rawPort ? Number(rawPort) : 5173;
 
 const basePath = process.env.BASE_PATH ?? '/';
 
-// Site URL for OG / social meta tags — resolves to the Replit dev domain in dev,
-// or VITE_SITE_URL if set (point this to your production domain in your build env).
-const siteUrl =
-  process.env.VITE_SITE_URL ||
-  (process.env.REPLIT_DEV_DOMAIN
-    ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-    : 'https://www.itechnetworkafrica.com');
+// The public website URL is intentionally never inferred from a Replit host.
+// Replit preview/deployment domains are alternate hosts and must not become
+// canonical URLs in search results.
+const siteUrl = 'https://www.itechnetworkafrica.com';
 
 export default defineConfig({
   base: basePath,

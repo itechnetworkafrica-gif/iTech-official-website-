@@ -10,10 +10,22 @@
  */
 import { useEffect } from 'react';
 
-// The only preferred production URL. Development may still use the Vite preview host.
+// The only preferred production URL. Replit preview/deployment hosts are never
+// allowed to become canonical URLs.
 export const SITE_URL = 'https://www.itechnetworkafrica.com';
 const SITE_NAME      = 'iTech Network Africa';
 const DEFAULT_IMAGE  = `${SITE_URL}/og-image.png`;
+
+function isNonCanonicalHost(): boolean {
+  if (typeof window === 'undefined') return false;
+  const hostname = window.location.hostname.toLowerCase();
+  return (
+    hostname === 'replit.app' ||
+    hostname.endsWith('.replit.app') ||
+    hostname === 'replit.dev' ||
+    hostname.endsWith('.replit.dev')
+  );
+}
 
 export interface SEOConfig {
   /** Page title without site-name suffix — max ~55 chars */
@@ -57,7 +69,7 @@ export function useSEO({
     const fullTitle    = `${title} | ${SITE_NAME}`;
     const canonicalUrl = `${SITE_URL}${canonical ?? window.location.pathname}`;
     const image        = ogImage ?? DEFAULT_IMAGE;
-    const robots       = noindex ? 'noindex, nofollow' : 'index, follow';
+    const robots       = noindex || isNonCanonicalHost() ? 'noindex, nofollow' : 'index, follow';
 
     // Snapshot previous values for cleanup
     const prevTitle    = document.title;
