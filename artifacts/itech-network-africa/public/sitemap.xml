@@ -100,30 +100,12 @@
     <priority>0.70</priority>
   </url>
 
-  <!-- ── Pricing & Billing ─────────────────────────────────────────────── -->
+  <!-- ── Pricing ───────────────────────────────────────────────────────── -->
   <url>
     <loc>https://www.itechnetworkafrica.com/pricing</loc>
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.itechnetworkafrica.com/billing</loc>
-    <lastmod>2026-08-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://www.itechnetworkafrica.com/portal</loc>
-    <lastmod>2026-08-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
-  </url>
-  <url>
-    <loc>https://www.itechnetworkafrica.com/admin</loc>
-    <lastmod>2026-08-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.30</priority>
   </url>
 
   <!-- ── Portfolio & Work ───────────────────────────────────────────────── -->
@@ -192,12 +174,6 @@
     <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.itechnetworkafrica.com/sitemap</loc>
-    <lastmod>2026-08-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.30</priority>
   </url>
 
   <!-- ── Legal ─────────────────────────────────────────────────────────── -->
