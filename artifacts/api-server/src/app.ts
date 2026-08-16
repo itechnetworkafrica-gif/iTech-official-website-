@@ -61,6 +61,7 @@ if (process.env.NODE_ENV === "production") {
     }
 
     const destination = new URL(req.originalUrl, `${PUBLIC_SITE_ORIGIN}/`);
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
     res.redirect(308, destination.toString());
   });
 }

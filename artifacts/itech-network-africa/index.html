@@ -11,17 +11,29 @@
     <meta name="author" content="iTech Network Africa" />
     <link rel="canonical" href="%VITE_SITE_URL%/" />
 
-    <!-- Replit is an alternate hosting URL, not the public website. Keep it
-         out of search results while leaving the custom domain indexable. -->
+    <!-- Replit is an alternate hosting URL, not the public website. Keep
+         alternate hosts out of search results and redirect published Replit
+         pages to the canonical custom domain. -->
     <script>
       (function () {
         var hostname = window.location.hostname.toLowerCase();
-        var isAlternateHostingHost = hostname.includes('replit');
-        if (!isAlternateHostingHost) return;
+        var isReplitHost = hostname.includes('replit');
+        if (!isReplitHost) return;
         var robots = document.querySelector('meta[name="robots"]');
         var googlebot = document.querySelector('meta[name="googlebot"]');
         if (robots) robots.setAttribute('content', 'noindex, nofollow');
         if (googlebot) googlebot.setAttribute('content', 'noindex, nofollow');
+
+        // Keep Replit development previews usable, but never leave the
+        // published *.replit.app host serving a duplicate public website.
+        if (hostname.endsWith('.replit.app')) {
+          var destination =
+            'https://www.itechnetworkafrica.com' +
+            window.location.pathname +
+            window.location.search +
+            window.location.hash;
+          window.location.replace(destination);
+        }
       })();
     </script>
 
