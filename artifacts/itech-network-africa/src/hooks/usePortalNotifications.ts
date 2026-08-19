@@ -87,8 +87,8 @@ export function usePortalNotifications(): UsePortalNotificationsReturn {
       try {
         const osNotif = new Notification(opts.title, {
           body: opts.body,
-          icon: '/itech-network-africa-logo.png',
-          badge: '/itech-network-africa-logo.png',
+          icon: '/logo-icon.png',
+          badge: '/logo-icon.png',
           tag: `itech-${opts.type}`,   // replaces same-type notif instead of stacking
           requireInteraction: opts.type === 'chat', // live chat stays until dismissed
         });

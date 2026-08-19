@@ -1,4 +1,6 @@
 import React from 'react';
+import iconLogo from '@/assets/logo-icon-color.webp';
+import iconLogoWhite from '@/assets/logo-icon-white.webp';
 import wordmarkLogo from '@/assets/logo-wordmark.webp';
 
 interface LogoProps {
@@ -18,10 +20,7 @@ export const Logo: React.FC<LogoProps> = ({
 }) => {
   const iconSize = size === 'sm' ? 'h-8 w-8' : size === 'lg' ? 'h-14 w-14' : 'h-10 w-10';
   const wordmarkHeight = size === 'sm' ? 'h-5' : size === 'lg' ? 'h-10' : 'h-7';
-  // Keep the header, favicon, structured data, and link previews on one
-  // canonical brand asset. The black field intentionally blends into the
-  // current dark header.
-  const icon = '/itech-network-africa-logo.png';
+  const icon = white ? iconLogoWhite : iconLogo;
 
   return (
     <div className={`flex items-center gap-3 shrink-0 ${className}`}>

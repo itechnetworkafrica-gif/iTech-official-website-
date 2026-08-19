@@ -1404,7 +1404,7 @@ function PortalShell({ client, onLogout }: { client: PortalClient; onLogout: () 
           <button className="lg:hidden w-9 h-9 rounded-xl text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors" onClick={() => setMobileNav(v => !v)}>
             {mobileNav ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <img src="/itech-network-africa-logo.png" alt="iTech" className="w-7 h-7 rounded object-contain" onError={e => (e.currentTarget.style.display = 'none')} />
+          <img src="/logo-icon.png" alt="iTech" className="w-7 h-7 rounded object-contain" onError={e => (e.currentTarget.style.display = 'none')} />
           <span className="text-white font-bold text-sm">Client Portal</span>
         </div>
         <div className="flex items-center gap-2">

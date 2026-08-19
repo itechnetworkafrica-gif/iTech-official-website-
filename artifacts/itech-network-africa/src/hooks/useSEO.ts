@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 // allowed to become canonical URLs.
 export const SITE_URL = 'https://www.itechnetworkafrica.com';
 const SITE_NAME      = 'iTech Network Africa';
-const DEFAULT_IMAGE  = `${SITE_URL}/itech-network-africa-logo.png`;
+const DEFAULT_IMAGE  = `${SITE_URL}/og-image.png`;
 
 function isNonCanonicalHost(): boolean {
   if (typeof window === 'undefined') return false;
@@ -29,7 +29,7 @@ export interface SEOConfig {
   description: string;
   /** Absolute path, e.g. "/about". Defaults to current pathname. */
   canonical?: string;
-  /** Full image URL for OG/Twitter cards. Defaults to the canonical brand logo. */
+  /** Full image URL for OG/Twitter cards. Defaults to global og-image.png. */
   ogImage?: string;
   /** Set true for pages that must not appear in search results (admin, portal). */
   noindex?: boolean;
