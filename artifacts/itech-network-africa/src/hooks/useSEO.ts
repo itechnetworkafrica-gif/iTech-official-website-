@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 // allowed to become canonical URLs.
 export const SITE_URL = 'https://www.itechnetworkafrica.com';
 const SITE_NAME      = 'iTech Network Africa';
-const DEFAULT_IMAGE  = `${SITE_URL}/og-image.png`;
+const DEFAULT_IMAGE  = `${SITE_URL}/itech-network-africa-logo.png`;
 
 function isNonCanonicalHost(): boolean {
   if (typeof window === 'undefined') return false;

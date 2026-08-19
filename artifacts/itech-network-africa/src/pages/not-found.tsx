@@ -51,14 +51,14 @@ export default function NotFound() {
     const ogType  = setMeta('meta[property="og:type"]',        'property', 'og:type',        'website');
     const ogTitle = setMeta('meta[property="og:title"]',       'property', 'og:title',       '404 – Page Not Found | iTech Network Africa');
     const ogDesc  = setMeta('meta[property="og:description"]', 'property', 'og:description', 'Page not found. Visit iTech Network Africa for enterprise software, AI solutions and digital transformation services across Africa.');
-    const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       '/og-image.png');
+     const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       `${SITE_URL}/itech-network-africa-logo.png`);
     const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         `${SITE_URL}/`);
 
     // Twitter Card
     const twCard  = setMeta('meta[name="twitter:card"]',        'name', 'twitter:card',        'summary_large_image');
     const twTitle = setMeta('meta[name="twitter:title"]',       'name', 'twitter:title',       '404 – Page Not Found | iTech Network Africa');
     const twDesc  = setMeta('meta[name="twitter:description"]', 'name', 'twitter:description', 'Page not found. Explore iTech Network Africa\'s enterprise technology solutions for Africa.');
-    const twImg   = setMeta('meta[name="twitter:image"]',       'name', 'twitter:image',       '/og-image.png');
+     const twImg   = setMeta('meta[name="twitter:image"]',       'name', 'twitter:image',       `${SITE_URL}/itech-network-africa-logo.png`);
 
     // Canonical link — point to home since this URL doesn't exist
     let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
