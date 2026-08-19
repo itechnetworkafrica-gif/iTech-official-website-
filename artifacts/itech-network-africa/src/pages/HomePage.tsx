@@ -1450,6 +1450,148 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
+          GOOD / PRO / GOTECX — Product paths
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-[#F8F9FA] relative overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#3CB52A]/8 blur-[100px] pointer-events-none" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="max-w-3xl mb-12"
+          >
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/15 px-4 py-1.5 rounded-full">
+              Choose your next move
+            </motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] leading-tight mb-4">
+              Start good. Scale pro.<br className="hidden sm:block" /> Build with Gotecx.
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg leading-relaxed">
+              Whether you are establishing your digital presence or building the next big platform, iTech has a path designed for where you are going.
+            </motion.p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Good block */}
+            <motion.article
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease: EASE }}
+              whileHover={{ y: -6 }}
+              className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#55D39B] shadow-xl"
+            >
+              <img
+                src="/home-good-hero.jpg"
+                alt="Happy customer ready to grow with iTech"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#073A32]/90 via-[#073A32]/60 to-transparent" />
+              <div className="relative z-10 flex h-full min-h-[430px] max-w-md flex-col justify-between p-8 lg:p-10">
+                <div>
+                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                    Good
+                  </span>
+                  <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-white">
+                    A good digital start changes everything.
+                  </h3>
+                  <p className="mt-4 text-sm leading-relaxed text-white/75">
+                    Get the essentials right with a polished website, reliable hosting, digital support and a brand people remember.
+                  </p>
+                </div>
+                <Link href="/contact" className="inline-flex self-start items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#073A32] transition-colors hover:bg-[#3CB52A] hover:text-white">
+                  Start with Good <ArrowRight size={15} />
+                </Link>
+              </div>
+            </motion.article>
+
+            {/* Pro block */}
+            <motion.article
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
+              whileHover={{ y: -6 }}
+              className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] shadow-xl"
+            >
+              <div className="absolute inset-0 grid grid-cols-2 gap-2 opacity-80">
+                <img src="/home-pro-platform.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="grid grid-rows-2 gap-2">
+                  <img src="/home-pro-laptop.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src="/home-pro-success.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/65 to-[#060E18]/15" />
+              <div className="relative z-10 flex h-full min-h-[430px] flex-col justify-end p-8 lg:p-10">
+                <span className="inline-flex self-start items-center rounded-full bg-[#3CB52A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                  Pro
+                </span>
+                <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-white">
+                  Pro systems for ambitious growth.
+                </h3>
+                <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/70">
+                  Move faster with custom software, automation, commerce and secure infrastructure built around your business.
+                </p>
+                <Link href="/services" className="mt-7 inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#060E18]">
+                  Go Pro <ArrowRight size={15} />
+                </Link>
+              </div>
+            </motion.article>
+          </div>
+
+          {/* Gotecx flagship block */}
+          <motion.article
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: EASE }}
+            className="relative overflow-hidden rounded-3xl bg-[#071017] shadow-2xl"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.22),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(245,158,11,0.12),transparent_32%)]" />
+            <div className="relative grid lg:grid-cols-[1fr_0.95fr]">
+              <div className="flex flex-col justify-center p-8 lg:p-14">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="h-px w-10 bg-[#F59E0B]" />
+                  <span className="text-[#F59E0B] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-black leading-tight text-white mb-5">
+                  Meet <span className="text-[#F59E0B]">Gotecx</span>.
+                </h3>
+                <p className="text-white/75 text-lg leading-relaxed max-w-xl mb-6">
+                  Our brand product and technology engine — powering the digital presence, tools and growth systems that help modern businesses move forward.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-3 mb-8">
+                  {[
+                    ['Digital presence', 'Websites, domains & hosting'],
+                    ['Business growth', 'Commerce & customer tools'],
+                    ['Tech engine', 'Secure platforms that scale'],
+                  ].map(([title, desc]) => (
+                    <div key={title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <div className="text-white text-sm font-bold mb-1">{title}</div>
+                      <div className="text-white/45 text-xs leading-relaxed">{desc}</div>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#F59E0B] px-6 py-3.5 text-sm font-bold text-[#071017] transition-colors hover:bg-white">
+                  Explore Gotecx <ArrowRight size={15} />
+                </Link>
+              </div>
+              <div className="relative min-h-[420px] overflow-hidden lg:min-h-[520px]">
+                <img src="/gotecx-promo.jpg" alt="Gotecx technology engine helping businesses build their digital presence" className="absolute inset-0 h-full w-full object-cover object-center" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#071017] via-[#071017]/20 to-transparent lg:bg-gradient-to-r lg:from-[#071017] lg:via-transparent lg:to-transparent" />
+                <div className="absolute bottom-6 right-6 rounded-2xl border border-white/15 bg-[#071017]/75 px-4 py-3 backdrop-blur-md">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-[#F59E0B]">Powered by iTech</div>
+                  <div className="text-white font-black text-xl">Gotecx</div>
+                </div>
+              </div>
+            </div>
+          </motion.article>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           WHY CHOOSE US
       ══════════════════════════════════════ */}
       <section id="why-choose-us" className="py-24 lg:py-32 bg-[#060E18]">
