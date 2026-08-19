@@ -1964,7 +1964,7 @@ export default function AdminDashboardPage() {
     title: 'Admin Dashboard',
     description: 'Staff administration portal.',
     canonical: '/admin',
-    noindex: false,
+    noindex: true,
   });
   const [authed, setAuthed]     = useState(false);
   const [perms, setPerms]       = useState<string[] | null>(null);

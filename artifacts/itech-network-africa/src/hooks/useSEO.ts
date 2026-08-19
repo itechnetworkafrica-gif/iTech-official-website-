@@ -29,7 +29,7 @@ export interface SEOConfig {
   description: string;
   /** Absolute path, e.g. "/about". Defaults to current pathname. */
   canonical?: string;
-  /** Full image URL for OG/Twitter cards. Defaults to global og-image.png. */
+  /** Full image URL for OG/Twitter cards. Defaults to the canonical brand logo. */
   ogImage?: string;
   /** Set true for pages that must not appear in search results (admin, portal). */
   noindex?: boolean;
