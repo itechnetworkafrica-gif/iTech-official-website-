@@ -4,7 +4,7 @@ import { Link } from 'wouter';
 import {
   X, Send, MessageCircle, Sparkles, Headset, Mail, Ticket, Phone, ArrowRight,
   Home, MessagesSquare, HelpCircle, Newspaper, Search, BookOpen, ChevronDown,
-  ArrowLeft, ExternalLink, Clock, PhoneCall,
+  ArrowLeft, ExternalLink, Clock, PhoneCall, Headphones,
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { apiUrl } from '@/lib/apiBase';
@@ -31,8 +31,8 @@ function isOffensive(text: string): boolean {
 }
 
 const WARNING_MESSAGES = [
-  "Let's keep our conversation friendly and respectful 😊 I'm here to help — could you rephrase that for me?",
-  "I understand things can be frustrating! I really do want to help — let's keep the language respectful so I can do my best for you. 💚",
+  "Let's keep our conversation friendly and respectful. I'm here to help — could you rephrase that for me?",
+  "I understand things can be frustrating! I really do want to help — let's keep the language respectful so I can do my best for you.",
   "I'm unable to respond to messages with offensive language. If something's gone wrong, I'd love to make it right — just tell me what happened in your own words, or ask to speak with our team.",
 ];
 
@@ -54,100 +54,100 @@ interface PagePrompt {
 
 const PAGE_PROMPTS: Record<string, PagePrompt> = {
   '/': {
-    banner: "👋 Hi! I'm Gotecx AI — can I help you find something today?",
-    greeting: "Hi there! 👋 I'm **Gotecx AI**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or answer any question. What would you like to know?",
+    banner: "Hi! I'm Gotecx AI — can I help you find something today?",
+    greeting: "Hi there! I'm **Gotecx AI**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or answer any question. What would you like to know?",
     chips: ['What services do you offer?', 'How can I get a quote?', 'Tell me about iTech'],
   },
   '/services': {
-    banner: "🛠️ Exploring our services? I can walk you through each one!",
-    greeting: "Great timing! 😊 You're browsing our services. We offer everything from **Web Development** and **Mobile Apps** to **Cybersecurity**, **Cloud Services**, and **AI Solutions**. Which area interests you most?",
+    banner: "Exploring our services? I can walk you through each one.",
+    greeting: "Great timing! You're browsing our services. We offer everything from **Web Development** and **Mobile Apps** to **Cybersecurity**, **Cloud Services**, and **AI Solutions**. Which area interests you most?",
     chips: ['Web & Mobile development', 'Cloud & Cybersecurity', 'AI Solutions'],
   },
   '/about': {
-    banner: "🏢 Want to know more about our story or team?",
-    greeting: "Happy to tell you more about **iTech Network Africa**! 🌍 We're a full-service technology company serving businesses across Africa. What would you like to know?",
+    banner: "Want to know more about our story or team?",
+    greeting: "Happy to tell you more about **iTech Network Africa**! We're a full-service technology company serving businesses across Africa. What would you like to know?",
     chips: ["What's your company story?", 'Where are you based?', 'Meet the team'],
   },
   '/ai-solutions': {
-    banner: "🤖 Curious about our AI solutions? Let me show you!",
-    greeting: "You're in the right place! 🤖 Our **AI Solutions** team builds intelligent systems — chatbots, automation, data analytics, and custom AI tools. What problem are you trying to solve?",
+    banner: "Curious about our AI solutions? Let me show you.",
+    greeting: "You're in the right place! Our **AI Solutions** team builds intelligent systems — chatbots, automation, data analytics, and custom AI tools. What problem are you trying to solve?",
     chips: ['AI chatbots for my business', 'Business process automation', 'Data analytics & insights'],
   },
   '/solutions': {
-    banner: "💡 Looking for the right solution? I can help you find it!",
-    greeting: "Let's find the perfect solution for you! 💡 We design end-to-end technology solutions for businesses of all sizes. What challenge are you looking to solve?",
+    banner: "Looking for the right solution? I can help you find it.",
+    greeting: "Let's find the perfect solution for you! We design end-to-end technology solutions for businesses of all sizes. What challenge are you looking to solve?",
     chips: ['Digital transformation', 'Custom software', 'IT infrastructure'],
   },
   '/products': {
-    banner: "📦 Browsing our products? Need help finding the right fit?",
-    greeting: "Welcome to our products page! 📦 I can help you understand each product or connect you with our sales team for a demo. What are you looking for?",
+    banner: "Browsing our products? Need help finding the right fit?",
+    greeting: "Welcome to our products page! I can help you understand each product or connect you with our sales team for a demo. What are you looking for?",
     chips: ['Tell me about your products', 'Get a product demo', 'Pricing information'],
   },
   '/portfolio': {
-    banner: "🎨 Impressed by our work? Ask me about similar projects!",
-    greeting: "Glad you're checking out our portfolio! 🎨 We've delivered incredible projects across many industries. Want to see work in a specific area?",
+    banner: "Impressed by our work? Ask me about similar projects.",
+    greeting: "Glad you're checking out our portfolio! We've delivered incredible projects across many industries. Want to see work in a specific area?",
     chips: ['Web development projects', 'Mobile app projects', 'Start a similar project'],
   },
   '/projects': {
-    banner: "🚀 See something you like? I can connect you with our team!",
-    greeting: "Our project showcase highlights the real impact we've made! 🚀 If any project inspires you, I can help you start something similar. What interests you?",
+    banner: "See something you like? I can connect you with our team.",
+    greeting: "Our project showcase highlights the real impact we've made! If any project inspires you, I can help you start something similar. What interests you?",
     chips: ['Start a project like this', 'Get a project quote', 'Talk to the team'],
   },
   '/pricing': {
-    banner: "💰 Have pricing questions? I can help clarify everything!",
-    greeting: "Great — let's talk pricing! 💰 Our packages are designed for every budget. I can walk you through our plans or get you a custom quote. What's your project type?",
+    banner: "Have pricing questions? I can help clarify everything.",
+    greeting: "Great — let's talk pricing! Our packages are designed for every budget. I can walk you through our plans or get you a custom quote. What's your project type?",
     chips: ['Website pricing', 'App development cost', 'Get a custom quote'],
   },
   '/consultation': {
-    banner: "📅 Ready to book your free consultation? It only takes a minute!",
-    greeting: "You're one step away from a **free consultation**! 📅 Our experts will listen to your needs and recommend the best solution — no commitment, no pressure. Any questions before you book?",
+    banner: "Ready to book your free consultation? It only takes a minute.",
+    greeting: "You're one step away from a **free consultation**! Our experts will listen to your needs and recommend the best solution — no commitment, no pressure. Any questions before you book?",
     chips: ['What happens in a consultation?', 'How long does it take?', 'Book now'],
   },
   '/contact': {
-    banner: "📩 Need to reach us? I can get you to the right person fast!",
-    greeting: "I'll help you get in touch with the right team! 📩 Whether it's sales, support, or a partnership — just let me know and I'll point you in the right direction.",
+    banner: "Need to reach us? I can get you to the right person fast.",
+    greeting: "I'll help you get in touch with the right team! Whether it's sales, support, or a partnership — just let me know and I'll point you in the right direction.",
     chips: ['Sales enquiry', 'Technical support', 'Partnership opportunity'],
   },
   '/support': {
-    banner: "🔧 Having an issue? I'm here to help troubleshoot or escalate!",
-    greeting: "Sorry to hear you're having an issue! 🔧 Our support team is available 24/7. Can you briefly describe what's happening so I can point you to the right resource?",
+    banner: "Having an issue? I'm here to help troubleshoot or escalate.",
+    greeting: "Sorry to hear you're having an issue! Our support team is available 24/7. Can you briefly describe what's happening so I can point you to the right resource?",
     chips: ['Submit a support ticket', 'Check service status', 'Contact support team'],
   },
   '/careers': {
-    banner: "🚀 Interested in joining the iTech team? Let's talk!",
-    greeting: "Exciting! 🚀 We're always looking for talented people to join the **iTech Network Africa** family. I can tell you about our culture, current openings, and what it's like to work here!",
+    banner: "Interested in joining the iTech team? Let's talk.",
+    greeting: "We're always looking for talented people to join the **iTech Network Africa** family. I can tell you about our culture, current openings, and what it's like to work here!",
     chips: ['Current job openings', 'Company culture', 'How to apply'],
   },
   '/blog': {
-    banner: "📰 Enjoying our content? Ask me anything to explore further!",
-    greeting: "Glad you're reading our blog! 📰 Our team writes about tech trends, business insights, and behind-the-scenes stories. Is there a topic you'd love to dive deeper into?",
+    banner: "Enjoying our content? Ask me anything to explore further.",
+    greeting: "Glad you're reading our blog! Our team writes about tech trends, business insights, and behind-the-scenes stories. Is there a topic you'd love to dive deeper into?",
     chips: ['Tech tips for my business', 'Latest news & trends', 'Subscribe to updates'],
   },
   '/news': {
-    banner: "📰 Any questions about what we've been up to recently?",
-    greeting: "Welcome to our newsroom! 📰 Stay up to date with iTech Network Africa's latest milestones, partnerships, and industry news. Anything specific you'd like to know?",
+    banner: "Any questions about what we've been up to recently?",
+    greeting: "Welcome to our newsroom! Stay up to date with iTech Network Africa's latest milestones, partnerships, and industry news. Anything specific you'd like to know?",
     chips: ['Latest company news', 'New service launches', 'Partnership updates'],
   },
   '/industries': {
-    banner: "🏭 Curious how we serve your industry? Let me show you!",
-    greeting: "We work across many industries — from **healthcare** and **finance** to **retail**, **education**, and **government**. 🏭 What industry are you in?",
+    banner: "Curious how we serve your industry? Let me show you.",
+    greeting: "We work across many industries — from **healthcare** and **finance** to **retail**, **education**, and **government**. What industry are you in?",
     chips: ['Healthcare solutions', 'Finance & fintech', 'Education technology', 'Retail & e-commerce'],
   },
   '/partners': {
-    banner: "🤝 Interested in partnering with us? Let's explore what's possible!",
-    greeting: "We love building win-win partnerships! 🤝 Whether you're a technology vendor, reseller, or complementary service provider, there could be a great opportunity here!",
+    banner: "Interested in partnering with us? Let's explore what's possible.",
+    greeting: "We love building win-win partnerships! Whether you're a technology vendor, reseller, or complementary service provider, there could be a great opportunity here!",
     chips: ['Technology partnership', 'Reseller programme', 'Referral partnership'],
   },
   '/resources': {
-    banner: "📚 Looking for guides or tools? I can help you find what you need!",
-    greeting: "Our resource hub has docs, tutorials, tools, and more! 📚 What are you trying to learn or accomplish? I'll point you to the right resource.",
+    banner: "Looking for guides or tools? I can help you find what you need.",
+    greeting: "Our resource hub has docs, tutorials, tools, and more! What are you trying to learn or accomplish? I'll point you to the right resource.",
     chips: ['Developer documentation', 'Video tutorials', 'Download tools'],
   },
 };
 
 const DEFAULT_PROMPT: PagePrompt = {
-  banner: "💬 Have a question? I'm Gotecx AI — ask me anything!",
-  greeting: "Hi there! 👋 I'm **Gotecx AI**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
+  banner: "Have a question? I'm Gotecx AI — ask me anything.",
+  greeting: "Hi there! I'm **Gotecx AI**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
   chips: ['What services do you offer?', 'Get a quote', 'Contact the team'],
 };
 
@@ -211,10 +211,10 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { avatar: '🤖', label: 'Gotecx AI', color: '#3CB52A' },
-  { avatar: '👩🏾‍💻', label: 'iTech support team', color: '#0A7EBF' },
-  { avatar: '👨🏿‍💻', label: 'Client success team', color: '#7C3AED' },
-  { avatar: '👩🏽‍💼', label: 'Technical assistance', color: '#E85D04' },
+  { icon: Sparkles, label: 'Gotecx AI', color: '#3CB52A' },
+  { icon: Headset, label: 'iTech support team', color: '#0A7EBF' },
+  { icon: MessagesSquare, label: 'Client success team', color: '#7C3AED' },
+  { icon: Headphones, label: 'Technical assistance', color: '#E85D04' },
 ];
 
 function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
@@ -228,7 +228,7 @@ function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
           aria-label={avatar.label}
           title={avatar.label}
         >
-          <span className="text-lg leading-none" role="img" aria-hidden="true">{avatar.avatar}</span>
+          <avatar.icon size={17} strokeWidth={2.4} aria-hidden="true" />
         </div>
       ))}
     </div>
@@ -242,7 +242,7 @@ function GotecxAvatar({ dark = false }: { dark?: boolean }) {
       aria-label="Gotecx AI avatar"
       title="Gotecx AI"
     >
-      <span className="text-lg leading-none" role="img" aria-hidden="true">🤖</span>
+      <Sparkles size={17} strokeWidth={2.4} aria-hidden="true" />
     </div>
   );
 }
@@ -403,7 +403,7 @@ function SupportCenter({
         </div>
         {tab === 'home' && (
           <div className="relative mt-8">
-            <p className="text-2xl font-medium text-white/75">Hi there <span aria-hidden="true">👋</span></p>
+            <p className="text-2xl font-medium text-white/75">Hi there</p>
             <h1 className="mt-1 text-3xl sm:text-4xl font-black tracking-tight">How can we help?</h1>
           </div>
         )}
@@ -949,7 +949,7 @@ export const SarahChatbot: React.FC = () => {
       });
       if (res.status === 422) {
         // Server-side respectful-language guard
-        setMessages(prev => [...prev, { role: 'system', content: "Let's keep our conversation friendly and respectful 😊 Our team is here to help — could you rephrase that?", warning: true }]);
+        setMessages(prev => [...prev, { role: 'system', content: "Let's keep our conversation friendly and respectful. Our team is here to help — could you rephrase that?", warning: true }]);
         return;
       }
       if (!res.ok) throw new Error('send failed');
