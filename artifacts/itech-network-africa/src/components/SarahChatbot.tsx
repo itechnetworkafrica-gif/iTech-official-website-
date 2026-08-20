@@ -211,10 +211,10 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { icon: Sparkles, label: 'Gotecx AI', color: '#3CB52A' },
-  { icon: Headset, label: 'iTech support team', color: '#0A7EBF' },
-  { icon: MessagesSquare, label: 'Client success team', color: '#7C3AED' },
-  { icon: Headphones, label: 'Technical assistance', color: '#E85D04' },
+  { src: '/logo-icon-color.png', label: 'Gotecx AI', color: '#3CB52A' },
+  { src: '/team-alvina.png', label: 'iTech support team', color: '#0A7EBF' },
+  { src: '/team-dorcas.jpg', label: 'Client success team', color: '#7C3AED' },
+  { src: '/team-foday.jpg', label: 'Technical assistance', color: '#E85D04' },
 ];
 
 function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
@@ -228,7 +228,7 @@ function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
           aria-label={avatar.label}
           title={avatar.label}
         >
-          <avatar.icon size={17} strokeWidth={2.4} aria-hidden="true" />
+          <img src={avatar.src} alt="" className="h-full w-full object-cover" aria-hidden="true" />
         </div>
       ))}
     </div>
@@ -242,7 +242,7 @@ function GotecxAvatar({ dark = false }: { dark?: boolean }) {
       aria-label="Gotecx AI avatar"
       title="Gotecx AI"
     >
-      <Sparkles size={17} strokeWidth={2.4} aria-hidden="true" />
+      <img src="/logo-icon-color.png" alt="" className="h-full w-full object-cover p-1.5" aria-hidden="true" />
     </div>
   );
 }
@@ -815,7 +815,7 @@ export const SarahChatbot: React.FC = () => {
     setMessages([...withUser, { role: 'assistant', content: '' }]);
     setLoading(true);
 
-    const errorMsg = "I'm sorry, I had a little hiccup there! 😅 Please try again, or reach us directly at **itechnetworkafrica@gmail.com**.";
+    const errorMsg = "I'm sorry, I had a little hiccup there. Please try again, or reach us directly at **itechnetworkafrica@gmail.com**.";
 
     const setLast = (content: string) =>
       setMessages(prev => {

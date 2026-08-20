@@ -1473,7 +1473,7 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+           <div className="grid lg:grid-cols-2 gap-6 mb-8">
             {/* Good block */}
             <motion.article
               initial={{ opacity: 0, y: 28 }}
@@ -1481,14 +1481,14 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65, ease: EASE }}
               whileHover={{ y: -6 }}
-              className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#55D39B] shadow-xl"
+               className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] border border-[#3CB52A]/20 shadow-[0_18px_50px_rgba(10,25,41,0.12)]"
             >
               <img
                 src="/home-good-hero.jpg"
                 alt="Happy customer ready to grow with iTech"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#073A32]/90 via-[#073A32]/60 to-transparent" />
+               <div className="absolute inset-0 bg-gradient-to-r from-[#0A1929]/95 via-[#0A1929]/65 to-[#0A1929]/10" />
               <div className="relative z-10 flex h-full min-h-[430px] max-w-md flex-col justify-between p-8 lg:p-10">
                 <div>
                   <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
@@ -1514,16 +1514,10 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
               whileHover={{ y: -6 }}
-              className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] shadow-xl"
+               className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] border border-[#3CB52A]/20 shadow-[0_18px_50px_rgba(10,25,41,0.12)]"
             >
-              <div className="absolute inset-0 grid grid-cols-2 gap-2 opacity-80">
-                <img src="/home-pro-platform.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="grid grid-rows-2 gap-2">
-                  <img src="/home-pro-laptop.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <img src="/home-pro-success.jpg" alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/65 to-[#060E18]/15" />
+               <img src="/home-pro-platform.jpg" alt="Custom digital platform built by iTech Network Africa" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
+               <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/60 to-[#060E18]/10" />
               <div className="relative z-10 flex h-full min-h-[430px] flex-col justify-end p-8 lg:p-10">
                 <span className="inline-flex self-start items-center rounded-full bg-[#3CB52A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
                   Pro
@@ -1547,17 +1541,17 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="relative overflow-hidden rounded-3xl bg-[#071017] shadow-2xl"
+             className="relative overflow-hidden rounded-3xl bg-[#071017] border border-[#3CB52A]/20 shadow-[0_22px_70px_rgba(10,25,41,0.18)]"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.22),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(245,158,11,0.12),transparent_32%)]" />
+             <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.2),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(60,181,42,0.08),transparent_32%)]" />
             <div className="relative grid lg:grid-cols-[1fr_0.95fr]">
               <div className="flex flex-col justify-center p-8 lg:p-14">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="h-px w-10 bg-[#F59E0B]" />
-                  <span className="text-[#F59E0B] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
+                   <span className="h-px w-10 bg-[#3CB52A]" />
+                   <span className="text-[#3CB52A] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
                 </div>
                 <h3 className="text-4xl md:text-5xl font-black leading-tight text-white mb-5">
-                  Meet <span className="text-[#F59E0B]">Gotecx</span>.
+                   Meet <span className="text-[#3CB52A]">Gotecx</span>.
                 </h3>
                 <p className="text-white/75 text-lg leading-relaxed max-w-xl mb-6">
                   Our brand product and technology engine — powering the digital presence, tools and growth systems that help modern businesses move forward.
@@ -1574,7 +1568,7 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#F59E0B] px-6 py-3.5 text-sm font-bold text-[#071017] transition-colors hover:bg-white">
+                 <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#071017]">
                   Explore Gotecx <ArrowRight size={15} />
                 </Link>
               </div>
@@ -1582,7 +1576,7 @@ export default function HomePage() {
                 <img src="/gotecx-promo.jpg" alt="Gotecx technology engine helping businesses build their digital presence" className="absolute inset-0 h-full w-full object-cover object-center" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#071017] via-[#071017]/20 to-transparent lg:bg-gradient-to-r lg:from-[#071017] lg:via-transparent lg:to-transparent" />
                 <div className="absolute bottom-6 right-6 rounded-2xl border border-white/15 bg-[#071017]/75 px-4 py-3 backdrop-blur-md">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-[#F59E0B]">Powered by iTech</div>
+                   <div className="text-[10px] uppercase tracking-[0.18em] text-[#3CB52A]">Powered by iTech</div>
                   <div className="text-white font-black text-xl">Gotecx</div>
                 </div>
               </div>
