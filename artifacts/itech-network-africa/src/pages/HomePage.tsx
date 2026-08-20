@@ -1481,27 +1481,27 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65, ease: EASE }}
               whileHover={{ y: -6 }}
-               className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] border border-[#3CB52A]/20 shadow-[0_18px_50px_rgba(10,25,41,0.12)]"
+                className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-white border border-[#DCE5DD] shadow-[0_18px_50px_rgba(10,25,41,0.08)]"
             >
               <img
                 src="/home-good-hero.jpg"
                 alt="Happy customer ready to grow with iTech"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
-               <div className="absolute inset-0 bg-gradient-to-r from-[#0A1929]/95 via-[#0A1929]/65 to-[#0A1929]/10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/78 to-white/10" />
               <div className="relative z-10 flex h-full min-h-[430px] max-w-md flex-col justify-between p-8 lg:p-10">
                 <div>
-                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                  <span className="inline-flex items-center rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#23851D]">
                     Good
                   </span>
-                  <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-white">
+                    <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-[#060E18]">
                     A good digital start changes everything.
                   </h3>
-                  <p className="mt-4 text-sm leading-relaxed text-white/75">
+                  <p className="mt-4 text-sm leading-relaxed text-[#6B7280]">
                     Get the essentials right with a polished website, reliable hosting, digital support and a brand people remember.
                   </p>
                 </div>
-                <Link href="/contact" className="inline-flex self-start items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#073A32] transition-colors hover:bg-[#3CB52A] hover:text-white">
+                <Link href="/contact" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
                   Start with Good <ArrowRight size={15} />
                 </Link>
               </div>
@@ -1514,21 +1514,21 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
               whileHover={{ y: -6 }}
-               className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-[#0A1929] border border-[#3CB52A]/20 shadow-[0_18px_50px_rgba(10,25,41,0.12)]"
+                className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-white border border-[#DCE5DD] shadow-[0_18px_50px_rgba(10,25,41,0.08)]"
             >
                <img src="/home-pro-platform.jpg" alt="Custom digital platform built by iTech Network Africa" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
-               <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/60 to-[#060E18]/10" />
+               <div className="absolute inset-0 bg-gradient-to-t from-white/98 via-white/72 to-white/5" />
               <div className="relative z-10 flex h-full min-h-[430px] flex-col justify-end p-8 lg:p-10">
-                <span className="inline-flex self-start items-center rounded-full bg-[#3CB52A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                 <span className="inline-flex self-start items-center rounded-full bg-[#3CB52A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
                   Pro
                 </span>
-                <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-white">
+                 <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-[#060E18]">
                   Pro systems for ambitious growth.
                 </h3>
-                <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/70">
+                 <p className="mt-4 max-w-lg text-sm leading-relaxed text-[#6B7280]">
                   Move faster with custom software, automation, commerce and secure infrastructure built around your business.
                 </p>
-                <Link href="/services" className="mt-7 inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#060E18]">
+                 <Link href="/services" className="mt-7 inline-flex self-start items-center gap-2 rounded-xl bg-[#060E18] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#3CB52A]">
                   Go Pro <ArrowRight size={15} />
                 </Link>
               </div>
@@ -1541,19 +1541,19 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.7, ease: EASE }}
-             className="relative overflow-hidden rounded-3xl bg-[#071017] border border-[#3CB52A]/20 shadow-[0_22px_70px_rgba(10,25,41,0.18)]"
+             className="relative overflow-hidden rounded-3xl bg-white border border-[#DCE5DD] shadow-[0_22px_70px_rgba(10,25,41,0.10)]"
           >
-             <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.2),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(60,181,42,0.08),transparent_32%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.11),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(60,181,42,0.06),transparent_32%)]" />
             <div className="relative grid lg:grid-cols-[1fr_0.95fr]">
               <div className="flex flex-col justify-center p-8 lg:p-14">
                 <div className="flex items-center gap-3 mb-6">
                    <span className="h-px w-10 bg-[#3CB52A]" />
                    <span className="text-[#3CB52A] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
                 </div>
-                <h3 className="text-4xl md:text-5xl font-black leading-tight text-white mb-5">
+                <h3 className="text-4xl md:text-5xl font-black leading-tight text-[#060E18] mb-5">
                    Meet <span className="text-[#3CB52A]">Gotecx</span>.
                 </h3>
-                <p className="text-white/75 text-lg leading-relaxed max-w-xl mb-6">
+                <p className="text-[#6B7280] text-lg leading-relaxed max-w-xl mb-6">
                   Our brand product and technology engine — powering the digital presence, tools and growth systems that help modern businesses move forward.
                 </p>
                 <div className="grid sm:grid-cols-3 gap-3 mb-8">
@@ -1562,22 +1562,22 @@ export default function HomePage() {
                     ['Business growth', 'Commerce & customer tools'],
                     ['Tech engine', 'Secure platforms that scale'],
                   ].map(([title, desc]) => (
-                    <div key={title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="text-white text-sm font-bold mb-1">{title}</div>
-                      <div className="text-white/45 text-xs leading-relaxed">{desc}</div>
+                    <div key={title} className="rounded-2xl border border-[#DCE5DD] bg-[#F8F9FA] p-4">
+                      <div className="text-[#060E18] text-sm font-bold mb-1">{title}</div>
+                      <div className="text-[#6B7280] text-xs leading-relaxed">{desc}</div>
                     </div>
                   ))}
                 </div>
-                 <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#071017]">
+                  <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
                   Explore Gotecx <ArrowRight size={15} />
                 </Link>
               </div>
               <div className="relative min-h-[420px] overflow-hidden lg:min-h-[520px]">
                 <img src="/gotecx-promo.jpg" alt="Gotecx technology engine helping businesses build their digital presence" className="absolute inset-0 h-full w-full object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#071017] via-[#071017]/20 to-transparent lg:bg-gradient-to-r lg:from-[#071017] lg:via-transparent lg:to-transparent" />
-                <div className="absolute bottom-6 right-6 rounded-2xl border border-white/15 bg-[#071017]/75 px-4 py-3 backdrop-blur-md">
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/10 to-transparent lg:bg-gradient-to-r lg:from-white lg:via-transparent lg:to-transparent" />
+                <div className="absolute bottom-6 right-6 rounded-2xl border border-white/30 bg-white/85 px-4 py-3 backdrop-blur-md">
                    <div className="text-[10px] uppercase tracking-[0.18em] text-[#3CB52A]">Powered by iTech</div>
-                  <div className="text-white font-black text-xl">Gotecx</div>
+                  <div className="text-[#060E18] font-black text-xl">Gotecx</div>
                 </div>
               </div>
             </div>
@@ -1588,12 +1588,12 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           WHY CHOOSE US
       ══════════════════════════════════════ */}
-      <section id="why-choose-us" className="py-24 lg:py-32 bg-[#060E18]">
+      <section id="why-choose-us" className="py-24 lg:py-32 bg-[#F8F9FA] border-y border-[#E5E7EB]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={stagger}>
               <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Why iTech Network Africa</motion.span>
-              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-6 leading-tight">
                 Your Global<br />
                 <TypewriterText
                   text="Technology Partner"
@@ -1602,7 +1602,7 @@ export default function HomePage() {
                   className="text-[#3CB52A]"
                 />
               </motion.h2>
-              <motion.p variants={fadeUp} custom={2} className="text-white/55 text-lg leading-relaxed mb-10">
+              <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg leading-relaxed mb-10">
                 A global technology company headquartered in Africa — combining world-class engineering standards with deep local market knowledge to deliver solutions that actually work, everywhere.
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
@@ -1611,7 +1611,7 @@ export default function HomePage() {
                     <div className="text-3xl font-black text-[#3CB52A]">
                       <CountUp target={s.num} suffix={s.suffix} />
                     </div>
-                    <div className="text-white/45 text-xs mt-1 leading-snug">{s.label}</div>
+                    <div className="text-[#6B7280] text-xs mt-1 leading-snug">{s.label}</div>
                   </div>
                 ))}
               </motion.div>
@@ -1624,12 +1624,12 @@ export default function HomePage() {
 
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={stagger} className="grid sm:grid-cols-2 gap-4">
               {WHY.map((w, i) => (
-                <motion.div key={w.title} custom={i} variants={fadeUp} whileHover={{ scale: 1.04, transition: { duration: 0.22 } }} className="p-6 rounded-2xl bg-white/4 border border-white/8 hover:border-[#3CB52A]/30 hover:bg-[#3CB52A]/5 transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
+                <motion.div key={w.title} custom={i} variants={fadeUp} whileHover={{ y: -4, transition: { duration: 0.22 } }} className="p-6 rounded-2xl bg-white border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-lg hover:shadow-[#3CB52A]/10 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
                     {w.icon}
                   </div>
-                  <h4 className="text-white font-bold text-sm mb-1.5">{w.title}</h4>
-                  <p className="text-white/45 text-xs leading-relaxed">{w.desc}</p>
+                  <h4 className="text-[#060E18] font-bold text-sm mb-1.5">{w.title}</h4>
+                  <p className="text-[#6B7280] text-xs leading-relaxed">{w.desc}</p>
                 </motion.div>
               ))}
             </motion.div>

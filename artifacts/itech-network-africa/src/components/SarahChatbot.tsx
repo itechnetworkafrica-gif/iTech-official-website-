@@ -211,26 +211,32 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { kind: 'ai', label: 'Gotecx AI', color: '#3CB52A' },
+  { kind: 'sarah', label: 'Gotecx AI', color: '#3CB52A' },
   { kind: 'support', label: 'iTech support team', color: '#0A7EBF' },
   { kind: 'success', label: 'Client success team', color: '#7C3AED' },
   { kind: 'technical', label: 'Technical assistance', color: '#E85D04' },
 ];
 
-function CustomAvatar({ kind, size = 'small' }: { kind: string; size?: 'small' | 'medium' }) {
-  const Icon = kind === 'ai' ? Sparkles : kind === 'support' ? Headset : kind === 'success' ? MessagesSquare : Headphones;
-  const colors = kind === 'ai'
-    ? 'from-[#3CB52A] to-[#16803A]'
+function HumanAvatar({ kind }: { kind: string }) {
+  const palette = kind === 'sarah'
+    ? { skin: '#D99B78', hair: '#241A20', shirt: '#3CB52A', accent: '#DDF5D8' }
     : kind === 'support'
-      ? 'from-[#0A7EBF] to-[#075985]'
+      ? { skin: '#8B563D', hair: '#171717', shirt: '#0A7EBF', accent: '#D9F0FA' }
       : kind === 'success'
-        ? 'from-[#7C3AED] to-[#4C1D95]'
-        : 'from-[#E85D04] to-[#9A3412]';
+        ? { skin: '#A96E4F', hair: '#321C22', shirt: '#7C3AED', accent: '#EDE5FF' }
+        : { skin: '#B97856', hair: '#151515', shirt: '#E85D04', accent: '#FFF0E5' };
+
   return (
-    <span className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br ${colors} text-white shadow-inner ${size === 'medium' ? 'h-8 w-8' : 'h-full w-full'}`}>
-      <span className="absolute -right-1 -top-1 h-1/2 w-1/2 rounded-full bg-white/20" />
-      <span className="absolute bottom-0 left-1/2 h-1/2 w-3/4 -translate-x-1/2 rounded-t-full bg-black/10" />
-      <Icon size={size === 'medium' ? 15 : 17} strokeWidth={2.5} aria-hidden="true" className="relative" />
+    <span className="relative block h-full w-full overflow-hidden" style={{ background: palette.accent }}>
+      <span className="absolute bottom-[-10%] left-1/2 h-[55%] w-[74%] -translate-x-1/2 rounded-t-[45%]" style={{ background: palette.shirt }} />
+      <span className="absolute left-1/2 top-[21%] h-[48%] w-[44%] -translate-x-1/2 rounded-[46%] shadow-sm" style={{ background: palette.skin }}>
+        <span className="absolute left-[22%] top-[43%] h-[6%] w-[10%] rounded-full bg-[#241A20]" />
+        <span className="absolute right-[22%] top-[43%] h-[6%] w-[10%] rounded-full bg-[#241A20]" />
+        <span className="absolute left-1/2 top-[57%] h-[11%] w-[22%] -translate-x-1/2 rounded-b-full border-b-2 border-[#7B4438]" />
+      </span>
+      <span className="absolute left-1/2 top-[9%] h-[29%] w-[52%] -translate-x-1/2 rounded-[55%_55%_38%_38%]" style={{ background: palette.hair }} />
+      <span className="absolute left-[27%] top-[28%] h-[12%] w-[18%] rounded-full" style={{ background: palette.hair }} />
+      <span className="absolute right-[27%] top-[28%] h-[12%] w-[18%] rounded-full" style={{ background: palette.hair }} />
     </span>
   );
 }
@@ -246,7 +252,7 @@ function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
           aria-label={avatar.label}
           title={avatar.label}
         >
-          <CustomAvatar kind={avatar.kind} />
+          <HumanAvatar kind={avatar.kind} />
         </div>
       ))}
     </div>
@@ -260,7 +266,7 @@ function GotecxAvatar({ dark = false }: { dark?: boolean }) {
       aria-label="Gotecx AI avatar"
       title="Gotecx AI"
     >
-      <CustomAvatar kind="ai" size="medium" />
+      <HumanAvatar kind="sarah" />
     </div>
   );
 }
