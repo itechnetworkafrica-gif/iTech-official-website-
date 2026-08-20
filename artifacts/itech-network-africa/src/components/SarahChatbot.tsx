@@ -932,19 +932,18 @@ export const SarahChatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 left-4 right-4 sm:bottom-8 sm:right-auto sm:left-8 sm:w-96 z-[60] max-w-sm bg-white rounded-3xl shadow-[0_24px_80px_rgba(10,25,41,0.28)] flex flex-col overflow-hidden border border-gray-100"
-            style={{ maxHeight: 'min(580px, calc(100vh - 40px))' }}
+            className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-[min(720px,calc(100vw-48px))] sm:h-[min(760px,calc(100vh-48px))] z-[60] bg-white sm:rounded-3xl shadow-[0_24px_90px_rgba(10,25,41,0.3)] flex flex-col overflow-hidden border border-gray-100"
           >
             {/* Header */}
-            <div className="relative flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-[#0A1929] to-[#0f2d47] text-white flex-shrink-0 overflow-hidden">
+            <div className="relative flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-[#0A1929] via-[#0f2d47] to-[#247d3b] text-white flex-shrink-0 overflow-hidden">
               <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 85% 0%, rgba(60,181,42,0.18) 0%, transparent 60%)' }} />
-              <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
-                  <Sparkles size={18} className="text-white" />
-                </div>
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0A1929]" />
+              <button onClick={() => setSupportTab('messages')} className="relative z-10 mr-1 rounded-xl p-2 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Back to Support Center messages">
+                <ArrowLeft size={19} />
+              </button>
+              <div className="relative z-10">
+                <SupportAvatarStack dark />
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="relative z-10 flex-1 min-w-0">
                 <p className="font-bold text-sm leading-tight">
                   {live ? (live.agentName || 'iTech Support') : 'Sarah'}
                 </p>
@@ -976,15 +975,15 @@ export const SarahChatbot: React.FC = () => {
               )}
               <button
                 onClick={handleClose}
-                className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+                className="relative z-10 text-white/70 hover:text-white transition-colors p-2 rounded-xl hover:bg-white/10"
                 aria-label="Close chat"
               >
-                <Minimize2 size={16} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 bg-gray-50">
+            <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-7 space-y-4 bg-[#F8F9FA]">
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
@@ -1015,9 +1014,9 @@ export const SarahChatbot: React.FC = () => {
                     </>
                   ) : (
                   <>
-                  {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0 mr-2 mt-1 shadow-sm">
-                      <Sparkles size={13} className="text-white" />
+                   {msg.role === 'assistant' && (
+                     <div className="w-8 h-8 rounded-full bg-[#dff5dc] overflow-hidden flex-shrink-0 mr-2 mt-1 shadow-sm border-2 border-white">
+                       <img src="/support-agent.png" alt="Sarah" className="h-full w-full object-cover" />
                     </div>
                   )}
 
@@ -1072,13 +1071,13 @@ export const SarahChatbot: React.FC = () => {
             </div>
 
             {/* Input */}
-            <div className="flex items-center gap-2 px-3 py-3 bg-white border-t border-gray-100 flex-shrink-0">
+            <div className="flex items-center gap-2 px-4 py-4 sm:px-6 bg-white border-t border-gray-100 flex-shrink-0">
               <input
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={live ? 'Message our team…' : 'Ask Sarah anything…'}
+                 placeholder={live ? 'Message our team…' : 'Ask Sarah anything…'}
                 maxLength={500}
                 className="flex-1 text-sm px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] placeholder-gray-400 text-[#0A1929] transition-all"
                 disabled={loading}
@@ -1097,7 +1096,7 @@ export const SarahChatbot: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="px-3 pb-2 text-center flex-shrink-0">
+            <div className="px-3 pb-3 text-center flex-shrink-0 bg-white">
               <p className="text-[10px] text-gray-400">
                 Powered by <span className="font-semibold text-[#3CB52A]">iTech Network Africa</span> · 24/7 AI Assistant
               </p>
@@ -1182,7 +1181,7 @@ export const SarahChatbot: React.FC = () => {
           MINIMISE BUTTON (chat is open)
           ═══════════════════════════════ */}
       <AnimatePresence>
-        {open && (
+        {open && supportTab === 'chat' && (
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
