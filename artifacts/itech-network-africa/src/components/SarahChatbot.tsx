@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'wouter';
 import {
-  X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone, ArrowRight,
+  X, Send, MessageCircle, Sparkles, Headset, Mail, Ticket, Phone, ArrowRight,
   Home, MessagesSquare, HelpCircle, Newspaper, Search, BookOpen, ChevronDown,
   ArrowLeft, ExternalLink, Clock, PhoneCall,
 } from 'lucide-react';
@@ -211,10 +211,10 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { initials: 'GA', label: 'Gotecx AI', color: '#3CB52A' },
-  { initials: 'IT', label: 'iTech support team', color: '#0A7EBF' },
-  { initials: 'CS', label: 'Client success team', color: '#7C3AED' },
-  { initials: 'TA', label: 'Technical assistance', color: '#E85D04' },
+  { avatar: '🤖', label: 'Gotecx AI', color: '#3CB52A' },
+  { avatar: '👩🏾‍💻', label: 'iTech support team', color: '#0A7EBF' },
+  { avatar: '👨🏿‍💻', label: 'Client success team', color: '#7C3AED' },
+  { avatar: '👩🏽‍💼', label: 'Technical assistance', color: '#E85D04' },
 ];
 
 function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
@@ -228,9 +228,21 @@ function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
           aria-label={avatar.label}
           title={avatar.label}
         >
-          {avatar.initials}
+          <span className="text-lg leading-none" role="img" aria-hidden="true">{avatar.avatar}</span>
         </div>
       ))}
+    </div>
+  );
+}
+
+function GotecxAvatar({ dark = false }: { dark?: boolean }) {
+  return (
+    <div
+      className={`flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${dark ? 'border-[#0A1929]' : 'border-white'} bg-[#dff5dc] shadow-sm`}
+      aria-label="Gotecx AI avatar"
+      title="Gotecx AI"
+    >
+      <span className="text-lg leading-none" role="img" aria-hidden="true">🤖</span>
     </div>
   );
 }
@@ -1107,11 +1119,7 @@ export const SarahChatbot: React.FC = () => {
                     </>
                   ) : (
                   <>
-                   {msg.role === 'assistant' && (
-                     <div className="w-8 h-8 rounded-full bg-[#dff5dc] overflow-hidden flex-shrink-0 mr-2 mt-1 shadow-sm border-2 border-white">
-                       <span className="text-[10px] font-black text-white">GA</span>
-                    </div>
-                  )}
+                   {msg.role === 'assistant' && <GotecxAvatar />}
 
                   {msg.role === 'user' ? (
                     /* ── User bubble ── */
@@ -1270,25 +1278,6 @@ export const SarahChatbot: React.FC = () => {
         </div>
       )}
 
-      {/* ═══════════════════════════════
-          MINIMISE BUTTON (chat is open)
-          ═══════════════════════════════ */}
-      <AnimatePresence>
-        {open && supportTab === 'chat' && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            onClick={handleClose}
-            aria-label="Close chat"
-            className="fixed bottom-8 left-4 sm:left-8 z-[70] w-10 h-10 rounded-full bg-[#0A1929] hover:bg-[#0f2d47] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-            style={{ bottom: 'calc(min(560px, calc(100vh - 40px)) + 2.5rem)' }}
-          >
-            <X size={18} />
-          </motion.button>
-        )}
-      </AnimatePresence>
     </>
   );
 };
