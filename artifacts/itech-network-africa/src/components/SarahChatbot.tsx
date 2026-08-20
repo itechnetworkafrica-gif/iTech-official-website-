@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'wouter';
 import {
-  X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone,
+  X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone, ArrowRight,
   Home, MessagesSquare, HelpCircle, Newspaper, Search, BookOpen, ChevronDown,
   ArrowLeft, ExternalLink, Clock, PhoneCall,
 } from 'lucide-react';
@@ -306,6 +307,171 @@ function MessageText({ text, isUser }: { text: string; isUser?: boolean }) {
   return <div className="space-y-1 text-[13px]">{nodes}</div>;
 }
 
+function SupportCenter({
+  tab,
+  setTab,
+  onClose,
+  onOpenChat,
+  onAsk,
+  messageCount,
+}: {
+  tab: Exclude<SupportTab, 'chat'>;
+  setTab: (tab: Exclude<SupportTab, 'chat'>) => void;
+  onClose: () => void;
+  onOpenChat: () => void;
+  onAsk: (question: string) => void;
+  messageCount: number;
+}) {
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('All');
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const categories = ['All', ...Array.from(new Set(FAQS.map(faq => faq[2])))];
+  const filteredFaqs = FAQS.filter(([question, answer, faqCategory]) => {
+    const haystack = `${question} ${answer} ${faqCategory}`.toLowerCase();
+    return (category === 'All' || faqCategory === category) && haystack.includes(query.toLowerCase());
+  });
+  const tabs = [
+    { id: 'home' as const, label: 'Home', icon: Home },
+    { id: 'messages' as const, label: 'Messages', icon: MessagesSquare },
+    { id: 'help' as const, label: 'Help', icon: HelpCircle },
+    { id: 'news' as const, label: 'News', icon: Newspaper },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 24, scale: 0.97 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-[min(720px,calc(100vw-48px))] sm:h-[min(760px,calc(100vh-48px))] z-[60] bg-[#F8F9FA] sm:rounded-3xl shadow-[0_24px_90px_rgba(10,25,41,0.3)] overflow-hidden border border-white/70 flex flex-col"
+      role="dialog"
+      aria-modal="true"
+      aria-label="iTech Network Africa Support Center"
+    >
+      <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-[#0A1929] via-[#0f3043] to-[#247d3b] px-6 pt-5 pb-8 text-white">
+        <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#3CB52A]/20 blur-3xl" />
+        <div className="relative flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/12 border border-white/15">
+              <Sparkles size={19} className="text-[#8ee47b]" />
+            </div>
+            <div>
+              <div className="font-black tracking-tight">iTech Support Center</div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#b9f2ae]"><span className="h-1.5 w-1.5 rounded-full bg-[#8ee47b] animate-pulse" /> Sarah and the team are here to help</div>
+            </div>
+          </div>
+          <button onClick={onClose} aria-label="Close Support Center" className="rounded-xl p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+            <X size={19} />
+          </button>
+        </div>
+        {tab === 'home' && (
+          <div className="relative mt-8">
+            <p className="text-2xl font-medium text-white/75">Hi there <span aria-hidden="true">👋</span></p>
+            <h1 className="mt-1 text-3xl sm:text-4xl font-black tracking-tight">How can we help?</h1>
+          </div>
+        )}
+        {tab !== 'home' && (
+          <div className="relative mt-6 flex items-center gap-3">
+            <button onClick={() => setTab('home')} className="rounded-xl p-2 -ml-2 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Back to Support Center home"><ArrowLeft size={18} /></button>
+            <h1 className="text-2xl font-black">{tabs.find(item => item.id === tab)?.label}</h1>
+          </div>
+        )}
+      </div>
+
+      <div className="flex-1 overflow-y-auto pb-20 sm:pb-4">
+        {tab === 'home' && (
+          <div className="space-y-4 p-5 sm:p-6">
+            <button onClick={onOpenChat} className="group flex w-full items-center justify-between rounded-2xl bg-white p-5 text-left shadow-sm border border-black/5 hover:-translate-y-0.5 hover:shadow-md transition-all">
+              <span>
+                <span className="block text-base font-black text-[#0A1929]">Ask Sarah a question</span>
+                <span className="mt-1 block text-sm text-[#6B7280]">Our AI assistant can help you find the right answer</span>
+              </span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#3CB52A] text-white shadow-lg shadow-[#3CB52A]/20 group-hover:scale-105 transition-transform"><MessageCircle size={22} /></span>
+            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/consultation" onClick={onClose} className="rounded-2xl bg-white p-4 border border-black/5 shadow-sm hover:border-[#3CB52A]/40 transition-colors">
+                <Clock size={19} className="mb-3 text-[#3CB52A]" /><span className="block text-sm font-bold text-[#0A1929]">Book a consultation</span><span className="mt-1 block text-xs text-[#6B7280]">Talk through your goals</span>
+              </Link>
+              <Link href="/contact" onClick={onClose} className="rounded-2xl bg-white p-4 border border-black/5 shadow-sm hover:border-[#3CB52A]/40 transition-colors">
+                <PhoneCall size={19} className="mb-3 text-[#3CB52A]" /><span className="block text-sm font-bold text-[#0A1929]">Contact the team</span><span className="mt-1 block text-xs text-[#6B7280]">Sales, support or partners</span>
+              </Link>
+            </div>
+            <div className="rounded-2xl bg-white border border-black/5 overflow-hidden shadow-sm">
+              <div className="flex items-center gap-2 px-5 py-4 border-b border-black/5"><BookOpen size={17} className="text-[#3CB52A]" /><h2 className="text-sm font-black text-[#0A1929]">Popular questions</h2></div>
+              {FAQS.slice(0, 5).map(([question], index) => (
+                <button key={question} onClick={() => { setTab('help'); setQuery(question); }} className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left text-sm text-[#374151] hover:bg-[#f0fdf4] transition-colors border-b last:border-0 border-black/5">
+                  <span>{question}</span><ChevronDown size={15} className="-rotate-90 shrink-0 text-[#3CB52A]" />
+                </button>
+              ))}
+            </div>
+            <div className="rounded-2xl bg-[#0A1929] p-5 text-white">
+              <div className="text-xs font-bold uppercase tracking-widest text-[#8ee47b]">Need a human?</div>
+              <p className="mt-2 text-sm text-white/70">Sarah can connect you to our support team for the next step.</p>
+              <button onClick={onOpenChat} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#3CB52A] px-4 py-2.5 text-xs font-bold text-white hover:bg-white hover:text-[#0A1929] transition-colors">Talk to the team <ArrowRight size={14} /></button>
+            </div>
+          </div>
+        )}
+
+        {tab === 'messages' && (
+          <div className="p-5 sm:p-6">
+            {messageCount > 0 ? (
+              <button onClick={onOpenChat} className="flex w-full items-center gap-3 rounded-2xl bg-white p-4 text-left border border-black/5 shadow-sm hover:border-[#3CB52A]/40">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#3CB52A]/10 text-[#3CB52A]"><Sparkles size={18} /></span>
+                <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0A1929]">Your conversation with Sarah</span><span className="mt-1 block truncate text-xs text-[#6B7280]">{messageCount} messages in this conversation</span></span>
+                <ChevronDown size={17} className="-rotate-90 text-[#3CB52A]" />
+              </button>
+            ) : (
+              <div className="rounded-3xl bg-white p-8 text-center border border-black/5">
+                <MessagesSquare size={34} className="mx-auto text-[#3CB52A]/70" />
+                <h2 className="mt-4 text-base font-black text-[#0A1929]">Your conversations will appear here</h2>
+                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">Ask Sarah a question and your current conversation will be easy to reopen from this tab.</p>
+                <button onClick={onOpenChat} className="mt-5 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white">Start a conversation</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === 'help' && (
+          <div className="p-5 sm:p-6">
+            <div className="relative">
+              <Search size={17} className="absolute left-4 top-3.5 text-[#6B7280]" />
+              <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search for help..." className="w-full rounded-2xl border border-black/10 bg-white py-3.5 pl-11 pr-4 text-sm text-[#0A1929] outline-none focus:border-[#3CB52A] focus:ring-2 focus:ring-[#3CB52A]/15" />
+            </div>
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {categories.map(item => <button key={item} onClick={() => setCategory(item)} className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${category === item ? 'bg-[#3CB52A] text-white' : 'bg-white text-[#6B7280] border border-black/10 hover:border-[#3CB52A]'}`}>{item}</button>)}
+            </div>
+            <div className="mt-5 space-y-2">
+              {filteredFaqs.map(([question, answer, faqCategory], index) => {
+                const faqIndex = FAQS.indexOf(FAQS.find(faq => faq[0] === question)!);
+                const isOpen = expanded === faqIndex;
+                return <div key={question} className="rounded-2xl bg-white border border-black/5 overflow-hidden">
+                  <button onClick={() => setExpanded(isOpen ? null : faqIndex)} className="flex w-full items-center justify-between gap-4 p-4 text-left">
+                    <span><span className="block text-sm font-bold text-[#0A1929]">{question}</span><span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-[#3CB52A]">{faqCategory}</span></span>
+                    <ChevronDown size={17} className={`shrink-0 text-[#3CB52A] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence initial={false}>{isOpen && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><p className="border-t border-black/5 px-4 pb-4 pt-3 text-sm leading-relaxed text-[#6B7280]">{answer}</p><button onClick={() => onAsk(question)} className="mx-4 mb-4 text-xs font-bold text-[#3CB52A] hover:underline">Ask Sarah about this →</button></motion.div>}</AnimatePresence>
+                </div>;
+              })}
+              {filteredFaqs.length === 0 && <div className="rounded-2xl bg-white p-8 text-center border border-black/5"><Search size={28} className="mx-auto text-[#9CA3AF]" /><p className="mt-3 text-sm font-bold text-[#0A1929]">We couldn't find an answer for that.</p><p className="mt-1 text-xs text-[#6B7280]">Try another search or ask Sarah.</p><button onClick={onOpenChat} className="mt-4 rounded-xl bg-[#3CB52A] px-4 py-2 text-xs font-bold text-white">Ask Sarah</button></div>}
+            </div>
+          </div>
+        )}
+
+        {tab === 'news' && (
+          <div className="space-y-3 p-5 sm:p-6">
+            <p className="mb-5 text-sm text-[#6B7280]">Updates, ideas and useful resources from iTech Network Africa.</p>
+            {SUPPORT_NEWS.map(article => <Link key={article.title} href={article.href} onClick={onClose} className="group flex gap-4 rounded-2xl bg-white p-4 border border-black/5 shadow-sm hover:border-[#3CB52A]/40 transition-colors"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#0A1929] text-[#3CB52A]"><Newspaper size={20} /></div><div className="min-w-0 flex-1"><span className="text-[10px] font-bold uppercase tracking-widest text-[#3CB52A]">{article.category}</span><h2 className="mt-1 text-sm font-black text-[#0A1929] group-hover:text-[#3CB52A]">{article.title}</h2><p className="mt-1 text-xs leading-relaxed text-[#6B7280]">{article.description}</p></div><ExternalLink size={15} className="mt-1 shrink-0 text-[#9CA3AF]" /></Link>)}
+          </div>
+        )}
+      </div>
+
+      <nav className="absolute bottom-0 left-0 right-0 grid grid-cols-4 border-t border-black/10 bg-white/95 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md sm:static sm:shrink-0 sm:border-t sm:pb-2">
+        {tabs.map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => setTab(item.id)} className={`flex flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-bold transition-colors ${tab === item.id ? 'text-[#3CB52A]' : 'text-[#6B7280] hover:text-[#0A1929]'}`}><Icon size={19} strokeWidth={tab === item.id ? 2.5 : 1.8} /><span>{item.label}{item.id === 'messages' && messageCount > 0 ? ` (${messageCount})` : ''}</span></button>; })}
+      </nav>
+    </motion.div>
+  );
+}
+
 /* ─── Human agent handoff card ─── */
 function HandoffCard({ onStartLive, starting }: { onStartLive: (name: string, email: string) => void; starting: boolean }) {
   const [showForm, setShowForm] = useState(false);
@@ -402,6 +568,7 @@ export const SarahChatbot: React.FC = () => {
   const [location] = useLocation();
 
   const [open, setOpen]           = useState(false);
+  const [supportTab, setSupportTab] = useState<SupportTab>('home');
   const [messages, setMessages]   = useState<Message[]>([]);
   const [input, setInput]         = useState('');
   const [loading, setLoading]     = useState(false);
@@ -480,6 +647,7 @@ export const SarahChatbot: React.FC = () => {
     setVisible(false);
     if (showTimerRef.current) clearTimeout(showTimerRef.current);
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    setSupportTab('home');
     setOpen(true);
     // Set greeting if this is the first open
     setMessages(prev => prev.length === 0
@@ -494,6 +662,15 @@ export const SarahChatbot: React.FC = () => {
     openRef.current = false;
     scheduleAppear();
   }, [scheduleAppear]);
+
+  const openChatView = useCallback(() => {
+    const prompt = getPrompt(location);
+    setSupportTab('chat');
+    setMessages(prev => prev.length === 0
+      ? [{ role: 'assistant', content: prompt.greeting }]
+      : prev
+    );
+  }, [location, getPrompt]);
 
   /* ─── Dismiss banner (but keep cycle going) ─── */
   const handleDismiss = useCallback((e: React.MouseEvent) => {
@@ -565,6 +742,15 @@ export const SarahChatbot: React.FC = () => {
       setLoading(false);
     }
   }, [loading]);
+
+  const askFromHelp = useCallback((question: string) => {
+    setSupportTab('chat');
+    setMessages(prev => prev.length === 0
+      ? [{ role: 'assistant', content: getPrompt(location).greeting }]
+      : prev
+    );
+    setTimeout(() => doSend(question, messagesRef.current), 80);
+  }, [doSend, getPrompt, location]);
 
   /* ─────────────────────────────────────────────
      LIVE AGENT MODE
@@ -713,7 +899,17 @@ export const SarahChatbot: React.FC = () => {
           CHAT WINDOW
           ═══════════════════════════════ */}
       <AnimatePresence>
-        {open && (
+        {open && supportTab !== 'chat' && (
+          <SupportCenter
+            tab={supportTab}
+            setTab={setSupportTab}
+            onClose={handleClose}
+            onOpenChat={openChatView}
+            onAsk={askFromHelp}
+            messageCount={messages.length}
+          />
+        )}
+        {open && supportTab === 'chat' && (
           <motion.div
             initial={{ opacity: 0, y: 24, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
