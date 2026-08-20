@@ -211,11 +211,29 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { src: '/logo-icon-color.png', label: 'Gotecx AI', color: '#3CB52A' },
-  { src: '/team-alvina.png', label: 'iTech support team', color: '#0A7EBF' },
-  { src: '/team-dorcas.jpg', label: 'Client success team', color: '#7C3AED' },
-  { src: '/team-foday.jpg', label: 'Technical assistance', color: '#E85D04' },
+  { kind: 'ai', label: 'Gotecx AI', color: '#3CB52A' },
+  { kind: 'support', label: 'iTech support team', color: '#0A7EBF' },
+  { kind: 'success', label: 'Client success team', color: '#7C3AED' },
+  { kind: 'technical', label: 'Technical assistance', color: '#E85D04' },
 ];
+
+function CustomAvatar({ kind, size = 'small' }: { kind: string; size?: 'small' | 'medium' }) {
+  const Icon = kind === 'ai' ? Sparkles : kind === 'support' ? Headset : kind === 'success' ? MessagesSquare : Headphones;
+  const colors = kind === 'ai'
+    ? 'from-[#3CB52A] to-[#16803A]'
+    : kind === 'support'
+      ? 'from-[#0A7EBF] to-[#075985]'
+      : kind === 'success'
+        ? 'from-[#7C3AED] to-[#4C1D95]'
+        : 'from-[#E85D04] to-[#9A3412]';
+  return (
+    <span className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br ${colors} text-white shadow-inner ${size === 'medium' ? 'h-8 w-8' : 'h-full w-full'}`}>
+      <span className="absolute -right-1 -top-1 h-1/2 w-1/2 rounded-full bg-white/20" />
+      <span className="absolute bottom-0 left-1/2 h-1/2 w-3/4 -translate-x-1/2 rounded-t-full bg-black/10" />
+      <Icon size={size === 'medium' ? 15 : 17} strokeWidth={2.5} aria-hidden="true" className="relative" />
+    </span>
+  );
+}
 
 function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
   return (
@@ -228,7 +246,7 @@ function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
           aria-label={avatar.label}
           title={avatar.label}
         >
-          <img src={avatar.src} alt="" className="h-full w-full object-cover" aria-hidden="true" />
+          <CustomAvatar kind={avatar.kind} />
         </div>
       ))}
     </div>
@@ -242,7 +260,7 @@ function GotecxAvatar({ dark = false }: { dark?: boolean }) {
       aria-label="Gotecx AI avatar"
       title="Gotecx AI"
     >
-      <img src="/logo-icon-color.png" alt="" className="h-full w-full object-cover p-1.5" aria-hidden="true" />
+      <CustomAvatar kind="ai" size="medium" />
     </div>
   );
 }

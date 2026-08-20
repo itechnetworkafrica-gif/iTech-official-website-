@@ -1660,25 +1660,39 @@ export default function HomePage() {
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
-            className="flex flex-col lg:flex-row rounded-3xl overflow-hidden shadow-2xl border border-[#E5E7EB]"
+            className="flex flex-col lg:flex-row rounded-[2rem] overflow-hidden shadow-[0_28px_80px_rgba(6,14,24,0.16)] border border-[#DCE5DD]"
           >
             {/* Left — photo */}
-            <motion.div variants={fadeUp} className="lg:w-[48%] min-h-[340px] lg:min-h-[520px] shrink-0">
+            <motion.div variants={fadeUp} className="relative lg:w-[48%] min-h-[340px] lg:min-h-[520px] shrink-0 overflow-hidden bg-[#0A1929]">
               <img
                 src="/hero-man-laptop-chair.jpg"
                 alt="iTech Network Africa professional"
                 className="w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060E18]/80 via-transparent to-[#060E18]/10" />
+              <div className="absolute bottom-7 left-7 right-7 flex items-end justify-between gap-4 text-white">
+                <div>
+                  <div className="text-2xl font-black leading-none">Africa-led.</div>
+                  <div className="mt-1 text-sm text-white/70">Built for the world.</div>
+                </div>
+                <div className="rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] backdrop-blur-sm">
+                  Global standard
+                </div>
+              </div>
             </motion.div>
 
             {/* Right — card */}
             <motion.div
               variants={fadeUp}
               custom={1}
-              className="flex-1 bg-[#F8F9FA] p-8 lg:p-12 flex flex-col justify-between gap-8"
+              className="flex-1 bg-[#0A1929] p-8 lg:p-12 flex flex-col justify-between gap-8"
             >
+              <div className="flex items-center gap-3 text-[#3CB52A] text-xs font-bold uppercase tracking-[0.18em]">
+                <span className="h-px w-8 bg-[#3CB52A]" />
+                One partner. Every digital layer.
+              </div>
               {/* Quote */}
-              <blockquote className="text-[#060E18] text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
+              <blockquote className="text-white text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
                 "A global technology company with African roots — we handle the technology so you can focus on what you do best. From AI solutions to cloud infrastructure, iTech Network Africa delivers world-class results on time, on budget, every time."
               </blockquote>
 
@@ -1694,7 +1708,7 @@ export default function HomePage() {
                     { icon: <Shield size={16} />, label: 'Cybersecurity' },
                     { icon: <Headphones size={16} />, label: 'IT Support & Managed Services' },
                   ].map(({ icon, label }) => (
-                    <li key={label} className="flex items-center gap-3 text-[#374151] text-sm font-medium">
+                    <li key={label} className="flex items-center gap-3 text-white/70 text-sm font-medium">
                       <span className="text-[#3CB52A] shrink-0">{icon}</span>
                       {label}
                     </li>
@@ -1702,11 +1716,11 @@ export default function HomePage() {
                 </ul>
 
                 {/* Small preview image */}
-                <div className="sm:w-[180px] shrink-0 rounded-xl overflow-hidden border border-[#E5E7EB] shadow-md">
+                 <div className="sm:w-[180px] shrink-0 rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-md">
                   <img
                     src="/promo-online-training.jpg"
                     alt="iTech platform preview"
-                    className="w-full h-full object-cover"
+                   className="w-full h-full object-cover opacity-90"
                   />
                 </div>
               </div>
