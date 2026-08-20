@@ -210,6 +210,25 @@ const SUPPORT_NEWS = [
   { category: 'Company', title: 'Global expertise, delivered from Africa', description: 'Learn more about iTech Network Africa, our story and the partners and clients we serve.', href: '/about' },
 ];
 
+const SUPPORT_AVATARS = [
+  { src: '/support-agent.png', alt: 'Sarah, iTech AI assistant' },
+  { src: '/team-wilmot.png', alt: 'iTech support team' },
+  { src: '/team-foday.jpg', alt: 'iTech engineering team' },
+  { src: '/team-dorcas.jpg', alt: 'iTech support team' },
+];
+
+function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
+  return (
+    <div className="flex items-center -space-x-2" aria-label="Sarah and the iTech support team">
+      {SUPPORT_AVATARS.map((avatar, index) => (
+        <div key={avatar.src} className={`h-9 w-9 overflow-hidden rounded-full border-2 ${dark ? 'border-[#0A1929]' : 'border-white'} bg-[#dff5dc] shadow-sm`} style={{ zIndex: SUPPORT_AVATARS.length - index }}>
+          <img src={avatar.src} alt={avatar.alt} className="h-full w-full object-cover" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* Timings */
 const SHOW_AFTER_MS = 15_000;   // appear 15s after last hide / page change
 const HIDE_AFTER_MS = 8_000;    // auto-hide banner + button after 8s if untouched
@@ -352,9 +371,7 @@ function SupportCenter({
         <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#3CB52A]/20 blur-3xl" />
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/12 border border-white/15">
-              <Sparkles size={19} className="text-[#8ee47b]" />
-            </div>
+            <SupportAvatarStack dark />
             <div>
               <div className="font-black tracking-tight">iTech Support Center</div>
               <div className="flex items-center gap-1.5 text-[11px] text-[#b9f2ae]"><span className="h-1.5 w-1.5 rounded-full bg-[#8ee47b] animate-pulse" /> Sarah and the team are here to help</div>
