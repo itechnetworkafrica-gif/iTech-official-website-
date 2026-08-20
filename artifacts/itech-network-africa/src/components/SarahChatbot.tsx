@@ -54,8 +54,8 @@ interface PagePrompt {
 
 const PAGE_PROMPTS: Record<string, PagePrompt> = {
   '/': {
-    banner: "👋 Hi! I'm Sarah — can I help you find something today?",
-    greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or answer any question. What would you like to know?",
+    banner: "👋 Hi! I'm Gotecx AI — can I help you find something today?",
+    greeting: "Hi there! 👋 I'm **Gotecx AI**, your 24/7 assistant at **iTech Network Africa**. I can help you explore our services, get pricing info, book a consultation, or answer any question. What would you like to know?",
     chips: ['What services do you offer?', 'How can I get a quote?', 'Tell me about iTech'],
   },
   '/services': {
@@ -146,8 +146,8 @@ const PAGE_PROMPTS: Record<string, PagePrompt> = {
 };
 
 const DEFAULT_PROMPT: PagePrompt = {
-  banner: "💬 Have a question? I'm Sarah — ask me anything!",
-  greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
+  banner: "💬 Have a question? I'm Gotecx AI — ask me anything!",
+  greeting: "Hi there! 👋 I'm **Gotecx AI**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
   chips: ['What services do you offer?', 'Get a quote', 'Contact the team'],
 };
 
@@ -177,8 +177,8 @@ const FAQS = [
   ['Can you set up network infrastructure?', 'Yes. Our IT and network services cover connectivity, monitoring, remote access, hardware setup and managed infrastructure.', 'IT Infrastructure'],
   ['Do you offer 24/7 support?', 'Managed support and technical assistance are available for supported engagements. Your service scope and response targets are confirmed during onboarding.', 'Support'],
   ['How do I contact the support team?', 'Use the Contact Support action in this center, open the Support page, email the team or start a live chat when an agent is available.', 'Support'],
-  ['Can I speak with a human agent?', 'Yes. Ask Sarah to connect you with a human, use the headset action, or choose live chat from the support handoff card.', 'Support'],
-  ['How do I open a support ticket?', 'Open the Support page from this website or use the Open a support ticket action when Sarah offers human support.', 'Support'],
+  ['Can I speak with a human agent?', 'Yes. Ask Gotecx AI to connect you with a human, use the headset action, or choose live chat from the support handoff card.', 'Support'],
+  ['How do I open a support ticket?', 'Open the Support page from this website or use the Open a support ticket action when Gotecx AI offers human support.', 'Support'],
   ['How do I check a project update?', 'Clients can use the Client Portal where access has been configured. You can also contact your account team for a project update.', 'Client Portal'],
   ['What is the Client Portal?', 'The Client Portal is the secure area for client projects, invoices, support tickets, notifications and service information.', 'Client Portal'],
   ['How do I sign in to the Client Portal?', 'Use the Client Portal link in the website navigation and sign in with the account details provided to you.', 'Client Portal'],
@@ -195,9 +195,9 @@ const FAQS = [
   ['How do partnerships work?', 'Agencies, IT firms, NGOs and institutions can explore referral, reseller and joint-programme opportunities through the Partners page.', 'Partners'],
   ['What is Gotecx?', 'Gotecx is iTech Network Africa’s flagship brand product and technology engine, helping businesses build their digital presence and growth systems.', 'Products'],
   ['How can I learn about Gotecx?', 'Visit the Products page or ask the iTech team for a Gotecx walkthrough and the best fit for your business.', 'Products'],
-  ['What is Sarah able to help with?', 'Sarah can explain our services, point you to relevant pages, help with common questions, discuss the next step and connect you with the team.', 'AI Assistant'],
-  ['Can Sarah connect me to a person?', 'Yes. Say “talk to a person” or choose the human-support option. Sarah will collect only the details needed to start the handoff.', 'AI Assistant'],
-  ['Does Sarah know private client information?', 'No. Sarah should not be used to share passwords, private account details or sensitive credentials. Use the secure portal or contact the team.', 'AI Assistant'],
+  ['What is Gotecx AI able to help with?', 'Gotecx AI can explain our services, point you to relevant pages, help with common questions, discuss the next step and connect you with the team.', 'AI Assistant'],
+  ['Can Gotecx AI connect me to a person?', 'Yes. Say “talk to a person” or choose the human-support option. Gotecx AI will collect only the details needed to start the handoff.', 'AI Assistant'],
+  ['Does Gotecx AI know private client information?', 'No. Gotecx AI should not be used to share passwords, private account details or sensitive credentials. Use the secure portal or contact the team.', 'AI Assistant'],
   ['How do I request a refund?', 'Refund questions should be sent through the Contact or Support channels so the team can review the relevant engagement and policy.', 'Billing'],
   ['How is my privacy handled?', 'Privacy and terms information are available through the legal links in the website footer. Contact the team if you have a specific privacy request.', 'Privacy'],
   ['Where can I read iTech news and updates?', 'Visit the News page for company updates, product news, announcements and technology insights.', 'News'],
@@ -211,18 +211,24 @@ const SUPPORT_NEWS = [
 ];
 
 const SUPPORT_AVATARS = [
-  { src: '/support-agent.png', alt: 'Sarah, iTech AI assistant' },
-  { src: '/team-wilmot.png', alt: 'iTech support team' },
-  { src: '/team-foday.jpg', alt: 'iTech engineering team' },
-  { src: '/team-dorcas.jpg', alt: 'iTech support team' },
+  { initials: 'GA', label: 'Gotecx AI', color: '#3CB52A' },
+  { initials: 'IT', label: 'iTech support team', color: '#0A7EBF' },
+  { initials: 'CS', label: 'Client success team', color: '#7C3AED' },
+  { initials: 'TA', label: 'Technical assistance', color: '#E85D04' },
 ];
 
 function SupportAvatarStack({ dark = false }: { dark?: boolean }) {
   return (
-    <div className="flex items-center -space-x-2" aria-label="Sarah and the iTech support team">
+    <div className="flex items-center -space-x-2" aria-label="Gotecx AI and the iTech support team">
       {SUPPORT_AVATARS.map((avatar, index) => (
-        <div key={avatar.src} className={`h-9 w-9 overflow-hidden rounded-full border-2 ${dark ? 'border-[#0A1929]' : 'border-white'} bg-[#dff5dc] shadow-sm`} style={{ zIndex: SUPPORT_AVATARS.length - index }}>
-          <img src={avatar.src} alt={avatar.alt} className="h-full w-full object-cover" />
+        <div
+          key={avatar.label}
+          className={`h-9 w-9 overflow-hidden rounded-full border-2 ${dark ? 'border-[#0A1929]' : 'border-white'} flex items-center justify-center text-[10px] font-black text-white shadow-sm`}
+          style={{ zIndex: SUPPORT_AVATARS.length - index, backgroundColor: avatar.color }}
+          aria-label={avatar.label}
+          title={avatar.label}
+        >
+          {avatar.initials}
         </div>
       ))}
     </div>
@@ -374,7 +380,7 @@ function SupportCenter({
             <SupportAvatarStack dark />
             <div>
               <div className="font-black tracking-tight">iTech Support Center</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#b9f2ae]"><span className="h-1.5 w-1.5 rounded-full bg-[#8ee47b] animate-pulse" /> Sarah and the team are here to help</div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#b9f2ae]"><span className="h-1.5 w-1.5 rounded-full bg-[#8ee47b] animate-pulse" /> Gotecx AI and the team are here to help</div>
             </div>
           </div>
           <button onClick={onClose} aria-label="Close Support Center" className="rounded-xl p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
@@ -400,7 +406,7 @@ function SupportCenter({
           <div className="space-y-4 p-5 sm:p-6">
             <button onClick={onOpenChat} className="group flex w-full items-center justify-between rounded-2xl bg-white p-5 text-left shadow-sm border border-black/5 hover:-translate-y-0.5 hover:shadow-md transition-all">
               <span>
-                <span className="block text-base font-black text-[#0A1929]">Ask Sarah a question</span>
+                <span className="block text-base font-black text-[#0A1929]">Ask Gotecx AI a question</span>
                 <span className="mt-1 block text-sm text-[#6B7280]">Our AI assistant can help you find the right answer</span>
               </span>
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#3CB52A] text-white shadow-lg shadow-[#3CB52A]/20 group-hover:scale-105 transition-transform"><MessageCircle size={22} /></span>
@@ -423,7 +429,7 @@ function SupportCenter({
             </div>
             <div className="rounded-2xl bg-[#0A1929] p-5 text-white">
               <div className="text-xs font-bold uppercase tracking-widest text-[#8ee47b]">Need a human?</div>
-              <p className="mt-2 text-sm text-white/70">Sarah can connect you to our support team for the next step.</p>
+              <p className="mt-2 text-sm text-white/70">Gotecx AI can connect you to our support team for the next step.</p>
               <button onClick={onOpenChat} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#3CB52A] px-4 py-2.5 text-xs font-bold text-white hover:bg-white hover:text-[#0A1929] transition-colors">Talk to the team <ArrowRight size={14} /></button>
             </div>
           </div>
@@ -434,14 +440,14 @@ function SupportCenter({
             {messageCount > 0 ? (
               <button onClick={onOpenChat} className="flex w-full items-center gap-3 rounded-2xl bg-white p-4 text-left border border-black/5 shadow-sm hover:border-[#3CB52A]/40">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#3CB52A]/10 text-[#3CB52A]"><Sparkles size={18} /></span>
-                <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0A1929]">Your conversation with Sarah</span><span className="mt-1 block truncate text-xs text-[#6B7280]">{messageCount} messages in this conversation</span></span>
+                <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0A1929]">Your conversation with Gotecx AI</span><span className="mt-1 block truncate text-xs text-[#6B7280]">{messageCount} messages in this conversation</span></span>
                 <ChevronDown size={17} className="-rotate-90 text-[#3CB52A]" />
               </button>
             ) : (
               <div className="rounded-3xl bg-white p-8 text-center border border-black/5">
                 <MessagesSquare size={34} className="mx-auto text-[#3CB52A]/70" />
                 <h2 className="mt-4 text-base font-black text-[#0A1929]">Your conversations will appear here</h2>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">Ask Sarah a question and your current conversation will be easy to reopen from this tab.</p>
+                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">Ask Gotecx AI a question and your current conversation will be easy to reopen from this tab.</p>
                 <button onClick={onOpenChat} className="mt-5 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white">Start a conversation</button>
               </div>
             )}
@@ -466,10 +472,10 @@ function SupportCenter({
                     <span><span className="block text-sm font-bold text-[#0A1929]">{question}</span><span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-[#3CB52A]">{faqCategory}</span></span>
                     <ChevronDown size={17} className={`shrink-0 text-[#3CB52A] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
-                  <AnimatePresence initial={false}>{isOpen && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><p className="border-t border-black/5 px-4 pb-4 pt-3 text-sm leading-relaxed text-[#6B7280]">{answer}</p><button onClick={() => onAsk(question)} className="mx-4 mb-4 text-xs font-bold text-[#3CB52A] hover:underline">Ask Sarah about this →</button></motion.div>}</AnimatePresence>
+                  <AnimatePresence initial={false}>{isOpen && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><p className="border-t border-black/5 px-4 pb-4 pt-3 text-sm leading-relaxed text-[#6B7280]">{answer}</p><button onClick={() => onAsk(question)} className="mx-4 mb-4 text-xs font-bold text-[#3CB52A] hover:underline">Ask Gotecx AI about this →</button></motion.div>}</AnimatePresence>
                 </div>;
               })}
-              {filteredFaqs.length === 0 && <div className="rounded-2xl bg-white p-8 text-center border border-black/5"><Search size={28} className="mx-auto text-[#9CA3AF]" /><p className="mt-3 text-sm font-bold text-[#0A1929]">We couldn't find an answer for that.</p><p className="mt-1 text-xs text-[#6B7280]">Try another search or ask Sarah.</p><button onClick={onOpenChat} className="mt-4 rounded-xl bg-[#3CB52A] px-4 py-2 text-xs font-bold text-white">Ask Sarah</button></div>}
+              {filteredFaqs.length === 0 && <div className="rounded-2xl bg-white p-8 text-center border border-black/5"><Search size={28} className="mx-auto text-[#9CA3AF]" /><p className="mt-3 text-sm font-bold text-[#0A1929]">We couldn't find an answer for that.</p><p className="mt-1 text-xs text-[#6B7280]">Try another search or ask Gotecx AI.</p><button onClick={onOpenChat} className="mt-4 rounded-xl bg-[#3CB52A] px-4 py-2 text-xs font-bold text-white">Ask Gotecx AI</button></div>}
             </div>
           </div>
         )}
@@ -543,7 +549,7 @@ function HandoffCard({ onStartLive, starting }: { onStartLive: (name: string, em
           </form>
         )}
         <a
-          href="https://wa.me/231776836689?text=Hi%2C%20I%20was%20chatting%20with%20Sarah%20and%20would%20like%20to%20speak%20with%20an%20agent."
+          href="https://wa.me/231776836689?text=Hi%2C%20I%20was%20chatting%20with%20Gotecx%20AI%20and%20would%20like%20to%20speak%20with%20an%20agent."
           target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-green-50 transition-colors group"
         >
@@ -864,7 +870,7 @@ export const SarahChatbot: React.FC = () => {
     if (!session) return;
     setLive(null);
     lastMsgIdRef.current = 0;
-    setMessages(prev => [...prev, { role: 'system', content: 'Live chat ended. Sarah (AI) is back if you need anything else!' }]);
+    setMessages(prev => [...prev, { role: 'system', content: 'Live chat ended. Gotecx AI is back if you need anything else!' }]);
     try {
       await fetch(apiUrl(`/api/live-chat/${session.sessionId}/close`), {
         method: 'POST',
@@ -945,7 +951,7 @@ export const SarahChatbot: React.FC = () => {
               </div>
               <div className="relative z-10 flex-1 min-w-0">
                 <p className="font-bold text-sm leading-tight">
-                  {live ? (live.agentName || 'iTech Support') : 'Sarah'}
+                  {live ? (live.agentName || 'iTech Support') : 'Gotecx AI'}
                 </p>
                 <p className="text-[11px] text-green-400 leading-tight flex items-center gap-1">
                   <span className={`inline-block w-1.5 h-1.5 rounded-full ${live?.status === 'waiting' ? 'bg-amber-400' : 'bg-green-400'} animate-pulse`} />
@@ -1016,7 +1022,7 @@ export const SarahChatbot: React.FC = () => {
                   <>
                    {msg.role === 'assistant' && (
                      <div className="w-8 h-8 rounded-full bg-[#dff5dc] overflow-hidden flex-shrink-0 mr-2 mt-1 shadow-sm border-2 border-white">
-                       <img src="/support-agent.png" alt="Sarah" className="h-full w-full object-cover" />
+                       <span className="text-[10px] font-black text-white">GA</span>
                     </div>
                   )}
 
@@ -1077,7 +1083,7 @@ export const SarahChatbot: React.FC = () => {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                 placeholder={live ? 'Message our team…' : 'Ask Sarah anything…'}
+                 placeholder={live ? 'Message our team…' : 'Ask Gotecx AI anything…'}
                 maxLength={500}
                 className="flex-1 text-sm px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3CB52A]/30 focus:border-[#3CB52A] placeholder-gray-400 text-[#0A1929] transition-all"
                 disabled={loading}
@@ -1135,7 +1141,7 @@ export const SarahChatbot: React.FC = () => {
                   <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#3CB52A] to-[#2da822] flex items-center justify-center flex-shrink-0">
                     <Sparkles size={10} className="text-white" />
                   </div>
-                  <span className="text-[11px] font-bold text-[#0A1929]">Sarah</span>
+                  <span className="text-[11px] font-bold text-[#0A1929]">Gotecx AI</span>
                   <span className="text-[10px] text-green-500 flex items-center gap-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
                     online
@@ -1156,13 +1162,13 @@ export const SarahChatbot: React.FC = () => {
           <div className="group relative flex items-center">
             {/* Hover label */}
             <span className="hidden sm:block absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#0A1929] text-white text-xs font-semibold whitespace-nowrap opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 pointer-events-none shadow-lg">
-              Chat with Sarah
+               Chat with Gotecx AI
             </span>
             <motion.button
               whileHover={{ scale: 1.07 }}
               whileTap={{ scale: 0.94 }}
               onClick={handleOpen}
-              aria-label="Chat with Sarah"
+               aria-label="Chat with Gotecx AI"
               className="relative w-14 h-14 sm:w-[60px] sm:h-[60px] rounded-full bg-gradient-to-br from-[#3CB52A] via-[#34a824] to-[#25911a] text-white shadow-[0_10px_36px_rgba(60,181,42,0.45)] ring-4 ring-[#3CB52A]/15 flex items-center justify-center"
             >
               <MessageCircle size={26} strokeWidth={2.2} />
