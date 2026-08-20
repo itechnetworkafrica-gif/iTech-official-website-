@@ -337,6 +337,7 @@ function SupportCenter({
   setTab,
   onClose,
   onOpenChat,
+  onRequestHuman,
   onAsk,
   messageCount,
 }: {
@@ -344,6 +345,7 @@ function SupportCenter({
   setTab: (tab: Exclude<SupportTab, 'chat'>) => void;
   onClose: () => void;
   onOpenChat: () => void;
+  onRequestHuman: () => void;
   onAsk: (question: string) => void;
   messageCount: number;
 }) {
@@ -436,20 +438,83 @@ function SupportCenter({
         )}
 
         {tab === 'messages' && (
-          <div className="p-5 sm:p-6">
+          <div className="space-y-4 p-5 sm:p-6">
             {messageCount > 0 ? (
-              <button onClick={onOpenChat} className="flex w-full items-center gap-3 rounded-2xl bg-white p-4 text-left border border-black/5 shadow-sm hover:border-[#3CB52A]/40">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#3CB52A]/10 text-[#3CB52A]"><Sparkles size={18} /></span>
-                <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-[#0A1929]">Your conversation with Gotecx AI</span><span className="mt-1 block truncate text-xs text-[#6B7280]">{messageCount} messages in this conversation</span></span>
-                <ChevronDown size={17} className="-rotate-90 text-[#3CB52A]" />
-              </button>
+              <>
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A1929] via-[#12314a] to-[#247d3b] p-5 text-white shadow-lg">
+                  <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-[#3CB52A]/20 blur-2xl" />
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#b9f2ae]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#8ee47b] animate-pulse" /> Active conversation
+                      </span>
+                      <h2 className="mt-4 text-xl font-black tracking-tight">Your conversation with Gotecx AI</h2>
+                      <p className="mt-1.5 text-sm leading-relaxed text-white/65">Pick up where you left off or connect with our team for personal help.</p>
+                    </div>
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-[#b9f2ae] ring-1 ring-white/10">
+                      <MessagesSquare size={22} />
+                    </div>
+                  </div>
+                  <div className="relative mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                    <span className="text-xs font-semibold text-white/55">{messageCount} messages saved in this session</span>
+                    <button onClick={onOpenChat} className="inline-flex items-center gap-1.5 rounded-xl bg-[#3CB52A] px-3.5 py-2 text-xs font-bold text-white hover:bg-white hover:text-[#0A1929] transition-colors">
+                      Open chat <ArrowRight size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#3CB52A]/20 bg-[#f0fdf4] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#3CB52A] text-white"><Headset size={17} /></span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-black text-[#0A1929]">Need a person instead?</h3>
+                      <p className="mt-1 text-xs leading-relaxed text-[#52705a]">A support team member can join this conversation and help with your specific request.</p>
+                      <button onClick={onRequestHuman} className="mt-3 inline-flex items-center gap-1.5 text-xs font-black text-[#218516] hover:underline">
+                        Connect to a human agent <ArrowRight size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button onClick={() => setTab('help')} className="group rounded-2xl border border-black/5 bg-white p-4 text-left shadow-sm hover:-translate-y-0.5 hover:border-[#3CB52A]/30 hover:shadow-md transition-all">
+                    <HelpCircle size={18} className="text-[#3CB52A]" />
+                    <span className="mt-3 block text-xs font-black text-[#0A1929]">Browse FAQs</span>
+                    <span className="mt-1 block text-[11px] leading-relaxed text-[#6B7280]">Find a quick answer</span>
+                  </button>
+                  <Link href="/support" onClick={onClose} className="group rounded-2xl border border-black/5 bg-white p-4 text-left shadow-sm hover:-translate-y-0.5 hover:border-[#3CB52A]/30 hover:shadow-md transition-all">
+                    <Ticket size={18} className="text-[#3CB52A]" />
+                    <span className="mt-3 block text-xs font-black text-[#0A1929]">Open a ticket</span>
+                    <span className="mt-1 block text-[11px] leading-relaxed text-[#6B7280]">Track a support request</span>
+                  </Link>
+                </div>
+              </>
             ) : (
-              <div className="rounded-3xl bg-white p-8 text-center border border-black/5">
-                <MessagesSquare size={34} className="mx-auto text-[#3CB52A]/70" />
-                <h2 className="mt-4 text-base font-black text-[#0A1929]">Your conversations will appear here</h2>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">Ask Gotecx AI a question and your current conversation will be easy to reopen from this tab.</p>
-                <button onClick={onOpenChat} className="mt-5 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white">Start a conversation</button>
-              </div>
+              <>
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A1929] via-[#12314a] to-[#247d3b] p-7 text-center text-white shadow-lg">
+                  <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-[#3CB52A]/20 blur-2xl" />
+                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-[#b9f2ae] ring-1 ring-white/15">
+                    <MessagesSquare size={28} />
+                  </div>
+                  <h2 className="relative mt-5 text-xl font-black">Start a helpful conversation</h2>
+                  <p className="relative mt-2 text-sm leading-relaxed text-white/65">Gotecx AI can answer questions instantly, or route you to a human agent when you need one.</p>
+                  <button onClick={onOpenChat} className="relative mt-5 inline-flex items-center gap-2 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white hover:bg-white hover:text-[#0A1929] transition-colors">
+                    Start with Gotecx AI <ArrowRight size={15} />
+                  </button>
+                </div>
+                <div className="rounded-2xl border border-black/5 bg-white p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3CB52A]/10 text-[#3CB52A]"><Headset size={17} /></span>
+                    <div>
+                      <h3 className="text-sm font-black text-[#0A1929]">Already know you need support?</h3>
+                      <p className="mt-1 text-xs text-[#6B7280]">Connect directly with a human agent.</p>
+                    </div>
+                  </div>
+                  <button onClick={onRequestHuman} className="mt-4 w-full rounded-xl border border-[#3CB52A]/30 py-2.5 text-xs font-black text-[#218516] hover:bg-[#f0fdf4] transition-colors">
+                    Connect to a human agent
+                  </button>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -695,6 +760,27 @@ export const SarahChatbot: React.FC = () => {
     );
   }, [location, getPrompt]);
 
+  /* Open the existing live-agent handoff directly from the Messages tab.
+     This stays frontend-first for now; the live-chat endpoint can be enabled
+     later without changing the user-facing route. */
+  const requestHumanAgent = useCallback(() => {
+    setSupportTab('chat');
+    setMessages(prev => {
+      if (prev.length === 0) {
+        return [
+          { role: 'assistant', content: getPrompt(location).greeting },
+          { role: 'assistant', content: 'I can connect you with a human agent. Share your name below to join the support queue.', handoff: true },
+        ];
+      }
+      const last = prev[prev.length - 1];
+      if (last.handoff) return prev;
+      return [
+        ...prev,
+        { role: 'assistant', content: 'I can connect you with a human agent. Share your name below to join the support queue.', handoff: true },
+      ];
+    });
+  }, [getPrompt, location]);
+
   /* ─── Dismiss banner (but keep cycle going) ─── */
   const handleDismiss = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -928,6 +1014,7 @@ export const SarahChatbot: React.FC = () => {
             setTab={setSupportTab}
             onClose={handleClose}
             onOpenChat={openChatView}
+            onRequestHuman={requestHumanAgent}
             onAsk={askFromHelp}
             messageCount={messages.length}
           />
