@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone } from 'lucide-react';
+import {
+  X, Send, MessageCircle, Minimize2, Sparkles, Headset, Mail, Ticket, Phone,
+  Home, MessagesSquare, HelpCircle, Newspaper, Search, BookOpen, ChevronDown,
+  ArrowLeft, ExternalLink, Clock, PhoneCall,
+} from 'lucide-react';
 import { useLocation } from 'wouter';
 import { apiUrl } from '@/lib/apiBase';
 
@@ -145,6 +149,65 @@ const DEFAULT_PROMPT: PagePrompt = {
   greeting: "Hi there! 👋 I'm **Sarah**, your 24/7 AI assistant at **iTech Network Africa**. I'm here to help with any question — services, pricing, projects, support, or anything else. What's on your mind?",
   chips: ['What services do you offer?', 'Get a quote', 'Contact the team'],
 };
+
+type SupportTab = 'home' | 'messages' | 'help' | 'news' | 'chat';
+
+const FAQS = [
+  ['What services does iTech Network Africa offer?', 'We provide web and mobile development, enterprise software, AI and automation, cloud infrastructure, cybersecurity, network solutions, digital marketing, branding, multimedia, printing and IT support.', 'Getting Started'],
+  ['How do I request a project quote?', 'Use the Get a Quote or free consultation links on the website. Share your goals, timeline and requirements and our team will follow up with a tailored scope.', 'Getting Started'],
+  ['What happens during a consultation?', 'We listen to your goals, understand the challenge, review the technical requirements and recommend a practical next step. There is no pressure to proceed.', 'Getting Started'],
+  ['What is your project process?', 'Our usual process is Discovery, Strategy, Build, then Launch & Support, with regular communication and reviews throughout.', 'Getting Started'],
+  ['How long does a website project take?', 'Timing depends on the scope, content and integrations. The team confirms a delivery roadmap after discovery and requirements review.', 'Getting Started'],
+  ['Do you work with clients outside Liberia?', 'Yes. iTech Network Africa serves clients across Africa, Europe and North America through remote and on-site delivery where appropriate.', 'General'],
+  ['Do you offer website design?', 'Yes. We design and build responsive websites, landing pages, CMS-backed sites and digital experiences for organisations and businesses.', 'Web & Mobile'],
+  ['Can you build a mobile application?', 'Yes. Our mobile app service covers the planning, design, engineering and launch of mobile products for your users and teams.', 'Web & Mobile'],
+  ['Can you build custom business software?', 'Yes. We build custom enterprise platforms such as ERP, CRM, portals and workflow systems around your operating model.', 'Software'],
+  ['Can you improve an existing website?', 'Yes. We can audit, redesign, rebuild or extend an existing website while preserving the parts that already work.', 'Web & Mobile'],
+  ['What AI solutions do you build?', 'Our AI work includes support chatbots, business-process automation, analytics, document processing, recommendation systems and custom machine-learning tools.', 'AI & Automation'],
+  ['Can you add an AI chatbot to my website?', 'Yes. We can design a customer-facing assistant, connect it to verified business knowledge and include escalation to a human team.', 'AI & Automation'],
+  ['Can you automate repetitive business tasks?', 'Yes. We map the current workflow, identify safe automation opportunities and connect the tools your team already uses.', 'AI & Automation'],
+  ['Do you provide cloud services?', 'Yes. We design and manage secure, scalable cloud infrastructure across AWS, Azure and Google Cloud.', 'Cloud & Hosting'],
+  ['Do you provide website hosting?', 'Yes. Hosting, domains, SSL, monitoring and managed support are available through our cloud and hosting services.', 'Cloud & Hosting'],
+  ['Can you register a domain name?', 'Yes. Ask our team about domain availability and the best domain setup for your organisation.', 'Cloud & Hosting'],
+  ['Do hosted websites include SSL?', 'Our hosted sites include SSL configuration and support. The team can also help troubleshoot HTTPS and mixed-content issues.', 'Security'],
+  ['Can you move my website to new hosting?', 'Yes. Migration planning, backups, DNS changes and post-migration checks can be included in a hosting engagement.', 'Cloud & Hosting'],
+  ['Do you provide cybersecurity services?', 'Yes. We offer security audits, vulnerability assessments, penetration-testing support, threat protection and security guidance.', 'Security'],
+  ['How do you protect client data?', 'Security is considered throughout delivery, including access controls, secure infrastructure and appropriate protection for data in transit and at rest.', 'Security'],
+  ['Can you set up network infrastructure?', 'Yes. Our IT and network services cover connectivity, monitoring, remote access, hardware setup and managed infrastructure.', 'IT Infrastructure'],
+  ['Do you offer 24/7 support?', 'Managed support and technical assistance are available for supported engagements. Your service scope and response targets are confirmed during onboarding.', 'Support'],
+  ['How do I contact the support team?', 'Use the Contact Support action in this center, open the Support page, email the team or start a live chat when an agent is available.', 'Support'],
+  ['Can I speak with a human agent?', 'Yes. Ask Sarah to connect you with a human, use the headset action, or choose live chat from the support handoff card.', 'Support'],
+  ['How do I open a support ticket?', 'Open the Support page from this website or use the Open a support ticket action when Sarah offers human support.', 'Support'],
+  ['How do I check a project update?', 'Clients can use the Client Portal where access has been configured. You can also contact your account team for a project update.', 'Client Portal'],
+  ['What is the Client Portal?', 'The Client Portal is the secure area for client projects, invoices, support tickets, notifications and service information.', 'Client Portal'],
+  ['How do I sign in to the Client Portal?', 'Use the Client Portal link in the website navigation and sign in with the account details provided to you.', 'Client Portal'],
+  ['What should I do if I cannot access the portal?', 'Check your connection and credentials first. If the issue continues, use Support or contact the team so we can verify your account safely.', 'Client Portal'],
+  ['Where can I find invoices?', 'Signed-in clients can find billing and invoice information in the Client Portal when the account has billing access enabled.', 'Billing'],
+  ['Can you help with payment integrations?', 'Yes. We can scope secure payment and commerce integrations as part of a web, mobile or business-platform project.', 'Software'],
+  ['Do you build e-commerce websites?', 'Yes. We build commerce experiences with catalogues, checkout, payments, order management and business integrations where required.', 'Software'],
+  ['Do you offer digital marketing?', 'Yes. Services include digital strategy, SEO, social campaigns, content and performance-focused marketing support.', 'Marketing'],
+  ['Can you create a brand identity?', 'Yes. Our branding and creative service can cover identity direction, design systems, campaign assets and digital brand applications.', 'Creative'],
+  ['Do you produce video and multimedia?', 'Yes. We support multimedia, video production, graphics and campaign content for digital and business communication.', 'Creative'],
+  ['Do you offer ICT training?', 'Yes. Training and e-learning programmes can be designed for teams, individuals and organisations based on the skills required.', 'Training'],
+  ['What industries do you serve?', 'Our work includes finance and fintech, healthcare, education, government, retail and commerce, NGOs and non-profits, among others.', 'General'],
+  ['Can you work with government or NGOs?', 'Yes. We have experience supporting government, NGO, INGO and enterprise-oriented digital programmes.', 'General'],
+  ['How do partnerships work?', 'Agencies, IT firms, NGOs and institutions can explore referral, reseller and joint-programme opportunities through the Partners page.', 'Partners'],
+  ['What is Gotecx?', 'Gotecx is iTech Network Africa’s flagship brand product and technology engine, helping businesses build their digital presence and growth systems.', 'Products'],
+  ['How can I learn about Gotecx?', 'Visit the Products page or ask the iTech team for a Gotecx walkthrough and the best fit for your business.', 'Products'],
+  ['What is Sarah able to help with?', 'Sarah can explain our services, point you to relevant pages, help with common questions, discuss the next step and connect you with the team.', 'AI Assistant'],
+  ['Can Sarah connect me to a person?', 'Yes. Say “talk to a person” or choose the human-support option. Sarah will collect only the details needed to start the handoff.', 'AI Assistant'],
+  ['Does Sarah know private client information?', 'No. Sarah should not be used to share passwords, private account details or sensitive credentials. Use the secure portal or contact the team.', 'AI Assistant'],
+  ['How do I request a refund?', 'Refund questions should be sent through the Contact or Support channels so the team can review the relevant engagement and policy.', 'Billing'],
+  ['How is my privacy handled?', 'Privacy and terms information are available through the legal links in the website footer. Contact the team if you have a specific privacy request.', 'Privacy'],
+  ['Where can I read iTech news and updates?', 'Visit the News page for company updates, product news, announcements and technology insights.', 'News'],
+] as const;
+
+const SUPPORT_NEWS = [
+  { category: 'Product', title: 'Meet Gotecx — the iTech technology engine', description: 'Discover the flagship product brand helping businesses build a stronger digital presence.', href: '/products' },
+  { category: 'Services', title: 'Build your next digital platform with iTech', description: 'From discovery to launch and support, explore how our team turns ambitious ideas into useful systems.', href: '/services' },
+  { category: 'AI & Automation', title: 'Practical AI for modern organisations', description: 'Explore chatbots, workflow automation, analytics and custom AI tools designed around real business needs.', href: '/ai' },
+  { category: 'Company', title: 'Global expertise, delivered from Africa', description: 'Learn more about iTech Network Africa, our story and the partners and clients we serve.', href: '/about' },
+];
 
 /* Timings */
 const SHOW_AFTER_MS = 15_000;   // appear 15s after last hide / page change
