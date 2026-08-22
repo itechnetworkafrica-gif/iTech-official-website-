@@ -327,8 +327,11 @@ export const navigationData: NavigationItem[] = [
     children: [
       { label: 'Blog', href: '/blog' },
       { label: 'News', href: '/news' },
-      { label: 'Downloads', href: '/resources/downloads' },
+      { label: 'Tutorials', href: '/resources#tutorials' },
+      { label: 'Downloads', href: '/resources' },
       { label: 'FAQs', href: '/support#knowledge-base' },
+      { label: 'Documentation', href: '/resources#docs' },
+      { label: 'White Papers', href: '/resources' },
       { label: 'Success Stories', href: '/portfolio' },
     ],
   },

@@ -3,24 +3,8 @@
   "outputDirectory": "artifacts/itech-network-africa/dist/public",
   "installCommand": "pnpm install",
   "framework": null,
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "itechnetworkafrica.com"
-        }
-      ],
-      "destination": "https://www.itechnetworkafrica.com/$1",
-      "permanent": true
-    }
-  ],
   "rewrites": [
-    {
-      "source": "/((?!assets/|api/|sitemap\\.xml$|robots\\.txt$|site\\.webmanifest$).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

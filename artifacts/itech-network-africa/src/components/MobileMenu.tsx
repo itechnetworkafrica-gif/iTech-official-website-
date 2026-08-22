@@ -3,7 +3,7 @@ import { X, Plus, ExternalLink } from 'lucide-react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { navigationData } from './NavigationData';
-import wordmarkLogo from '@/assets/logo-wordmark.webp';
+import wordmarkLogo from '@/assets/logo-wordmark.png';
 
 interface MobileMenuProps {
   isOpen: boolean;

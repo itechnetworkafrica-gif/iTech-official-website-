@@ -1,7 +1,6 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
 import { LegalTOC } from '@/components/LegalTOC';
-import { useSEO } from '@/hooks/useSEO';
 
 const TOC_ITEMS = [
   { id: 'overview', title: 'Overview' },
@@ -19,11 +18,6 @@ const TOC_ITEMS = [
 ];
 
 export default function RefundPolicyPage() {
-  useSEO({
-    title: 'Refund Policy — Refund & Cancellation Terms',
-    description: 'Read iTech Network Africa refund and cancellation policy for technology services including website design and hosting.',
-    canonical: '/refund-policy',
-  });
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Refund Policy" subtitle="Last Updated: July 2026" />

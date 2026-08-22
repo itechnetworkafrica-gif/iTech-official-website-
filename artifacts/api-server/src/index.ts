@@ -1,6 +1,5 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { ensureLiveChatSchema } from "./lib/ensureSchema";
 
 const rawPort = process.env["PORT"];
 
@@ -16,22 +15,11 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-async function start() {
-  try {
-    await ensureLiveChatSchema();
-  } catch (err) {
-    logger.error({ err }, "Failed to initialise database schema");
+app.listen(port, (err) => {
+  if (err) {
+    logger.error({ err }, "Error listening on port");
     process.exit(1);
   }
 
-  app.listen(port, (err) => {
-    if (err) {
-      logger.error({ err }, "Error listening on port");
-      process.exit(1);
-    }
-
-    logger.info({ port }, "Server listening");
-  });
-}
-
-void start();
+  logger.info({ port }, "Server listening");
+});

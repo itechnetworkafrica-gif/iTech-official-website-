@@ -11,10 +11,13 @@ const port = rawPort ? Number(rawPort) : 5173;
 
 const basePath = process.env.BASE_PATH ?? '/';
 
-// The public website URL is intentionally never inferred from a Replit host.
-// Replit preview/deployment domains are alternate hosts and must not become
-// canonical URLs in search results.
-const siteUrl = 'https://www.itechnetworkafrica.com';
+// Site URL for OG / social meta tags — resolves to the Replit dev domain in dev,
+// or VITE_SITE_URL if set (point this to your production domain in your build env).
+const siteUrl =
+  process.env.VITE_SITE_URL ||
+  (process.env.REPLIT_DEV_DOMAIN
+    ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+    : 'https://itechnetworkafrica.com');
 
 export default defineConfig({
   base: basePath,
@@ -62,7 +65,6 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           motion: ['framer-motion'],
           ui: ['@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-navigation-menu', '@radix-ui/react-tabs'],
-          charts: ['recharts'],
         },
       },
     },

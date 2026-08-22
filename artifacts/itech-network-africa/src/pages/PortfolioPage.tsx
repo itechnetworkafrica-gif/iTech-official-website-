@@ -5,7 +5,6 @@ import {
   ArrowRight, ExternalLink, TrendingUp, Users, Globe, Award,
   Star, Quote, CheckCircle2, Monitor, BarChart3,
 } from 'lucide-react';
-import { useSEO } from '@/hooks/useSEO';
 
 /* ─── Animation helpers ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -207,11 +206,6 @@ function CategoryLabel({ icon, label }: { icon: React.ReactNode; label: string }
 
 /* ══════════════════════════════════════════════════════ */
 export default function PortfolioPage() {
-  useSEO({
-    title: 'Portfolio — Completed Projects & Case Studies',
-    description: 'Browse our portfolio of completed websites, apps and digital solutions delivered to clients across Liberia, West Africa and beyond.',
-    canonical: '/portfolio',
-  });
   return (
     <div className="flex flex-col w-full bg-[#F8F9FA] min-h-screen">
 
