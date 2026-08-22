@@ -887,25 +887,42 @@ function VideoShowcaseSection() {
       />
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
           variants={stagger}
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14"
+          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12"
         >
-          <div>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="text-4xl md:text-5xl font-black text-white leading-tight"
-            >
-              Real Projects.<br />Real Results.
+          <div className="max-w-2xl">
+            <motion.span variants={fadeUp} className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-5">
+              <span className="w-7 h-px bg-[#3CB52A]" /> Selected work
+            </motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white leading-tight">
+              Real Projects.<br /><span className="text-[#3CB52A]">Real Results.</span>
             </motion.h2>
           </div>
+          <motion.div variants={fadeUp} custom={2} className="max-w-sm lg:text-right">
+            <p className="text-white/50 text-base leading-relaxed mb-4">
+              A closer look at the products, platforms, and partnerships we're proud to bring to life.
+            </p>
+            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[#3CB52A] text-sm font-bold hover:gap-3 transition-all">
+              Explore the full portfolio <ArrowRight size={15} />
+            </Link>
+          </motion.div>
         </motion.div>
 
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.12 }}
+          variants={stagger}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
+          {VIDEO_REELS.map((reel, i) => (
+            <VideoCard key={reel.title} reel={reel} index={i} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
@@ -1399,6 +1416,35 @@ export default function HomePage() {
       <HeroSlider />
 
       {/* ══════════════════════════════════════
+          TRUST BAND
+      ══════════════════════════════════════ */}
+      <section className="relative z-10 bg-white border-b border-[#E5E7EB]">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#E5E7EB]">
+            {[
+              { value: '20+', label: 'Projects shipped', detail: 'Across sectors & continents' },
+              { value: '30+', label: 'Enterprise clients', detail: 'Built on long-term trust' },
+              { value: '10+', label: 'Countries reached', detail: 'Africa and beyond' },
+              { value: '24/7', label: 'Support coverage', detail: 'When your business needs us' },
+            ].map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.07 }}
+                className="px-4 sm:px-7 lg:px-10 py-7 lg:py-9 first:pl-0 last:pr-0"
+              >
+                <div className="text-2xl sm:text-3xl font-black text-[#060E18] tracking-tight">{item.value}</div>
+                <div className="text-sm font-bold text-[#060E18] mt-1">{item.label}</div>
+                <div className="text-xs text-[#9CA3AF] mt-1 hidden sm:block">{item.detail}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           SERVICES OVERVIEW
       ══════════════════════════════════════ */}
       <section className="py-24 lg:py-32 bg-white">
@@ -1425,12 +1471,12 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
-          <motion.div
+            <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
             variants={stagger}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
           >
             {SERVICES.map((svc, i) => (
               <motion.div
@@ -1438,19 +1484,17 @@ export default function HomePage() {
                 custom={i}
                 variants={fadeUp}
                 whileHover={{ y: -8, transition: { duration: 0.28, ease: EASE } }}
-                className="group flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-xl hover:border-[#3CB52A]/30 transition-all duration-300"
+                  className="group relative flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-2xl hover:border-[#3CB52A]/40 transition-all duration-300 overflow-hidden"
               >
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#3CB52A] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300" />
                 <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
                   {svc.icon}
                 </div>
                 <h3 className="text-lg font-bold text-[#060E18] mb-2">{svc.title}</h3>
                 <p className="text-[#6B7280] text-sm leading-relaxed mb-6 flex-1">{svc.desc}</p>
-                <Link
-                  href="/services"
-                  className="w-full py-2.5 bg-[#060E18] group-hover:bg-[#3CB52A] text-white text-sm font-bold rounded-xl text-center transition-colors flex items-center justify-center gap-1.5"
-                >
-                  Learn More <ChevronRight size={14} />
-                </Link>
+                  <Link href="/services" className="inline-flex items-center gap-1.5 text-[#060E18] group-hover:text-[#3CB52A] text-sm font-bold transition-colors">
+                    Explore capability <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
               </motion.div>
             ))}
           </motion.div>

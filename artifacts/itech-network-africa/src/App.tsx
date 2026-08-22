@@ -10,7 +10,6 @@ import { Footer } from '@/components/Footer';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { RouteScrollReset } from '@/components/RouteScrollReset';
-import { CookieBanner } from '@/components/CookieBanner';
 
 // Page Imports
 import HomePage from '@/pages/HomePage';
@@ -131,7 +130,6 @@ function Router() {
       <Footer />
       <ScrollToTop />
       <WhatsAppWidget />
-      <CookieBanner />
     </div>
   );
 }
