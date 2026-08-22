@@ -1,58 +1,50 @@
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { WhatsAppWidget } from '@/components/WhatsAppWidget';
 import { RouteScrollReset } from '@/components/RouteScrollReset';
-import { CookieBanner } from '@/components/CookieBanner';
-import { SarahChatbot } from '@/components/SarahChatbot';
 
-// Lazy-loaded page imports — each page becomes its own JS chunk
-const HomePage         = lazy(() => import('@/pages/HomePage'));
-const AboutPage        = lazy(() => import('@/pages/AboutPage'));
-const ServicesPage     = lazy(() => import('@/pages/ServicesPage'));
-const ServiceDetailPage= lazy(() => import('@/pages/ServiceDetailPage'));
-const AIPage           = lazy(() => import('@/pages/AIPage'));
-const SolutionsPage    = lazy(() => import('@/pages/SolutionsPage'));
-const ProductsPage     = lazy(() => import('@/pages/ProductsPage'));
-const PortfolioPage    = lazy(() => import('@/pages/PortfolioPage'));
-const ProjectsPage     = lazy(() => import('@/pages/ProjectsPage'));
-const IndustriesPage   = lazy(() => import('@/pages/IndustriesPage'));
-const PartnersPage     = lazy(() => import('@/pages/PartnersPage'));
-const ResourcesPage    = lazy(() => import('@/pages/ResourcesPage'));
-const BlogPage         = lazy(() => import('@/pages/BlogPage'));
-const NewsPage         = lazy(() => import('@/pages/NewsPage'));
-const CareersPage      = lazy(() => import('@/pages/CareersPage'));
-const SupportPage      = lazy(() => import('@/pages/SupportPage'));
-const ContactPage      = lazy(() => import('@/pages/ContactPage'));
-const PricingPage      = lazy(() => import('@/pages/PricingPage'));
-const PrivacyPage      = lazy(() => import('@/pages/PrivacyPage'));
-const TermsPage        = lazy(() => import('@/pages/TermsPage'));
-const CookiesPage      = lazy(() => import('@/pages/CookiesPage'));
-const ClientPortalPage = lazy(() => import('@/pages/ClientPortalPage'));
-const AdminDashboardPage= lazy(() => import('@/pages/AdminDashboardPage'));
-const TeamMemberPage   = lazy(() => import('@/pages/TeamMemberPage'));
-const FounderCVPage    = lazy(() => import('@/pages/FounderCVPage'));
-const RefundPolicyPage = lazy(() => import('@/pages/RefundPolicyPage'));
-const SitemapPage      = lazy(() => import('@/pages/SitemapPage'));
-const ConsultationPage = lazy(() => import('@/pages/ConsultationPage'));
-const DownloadsPage    = lazy(() => import('@/pages/resources/DownloadsPage'));
-const BillingPage      = lazy(() => import('@/pages/BillingPage'));
-const QuotePage        = lazy(() => import('@/pages/QuotePage'));
-const NotFound         = lazy(() => import('@/pages/not-found'));
-
-// Lightweight fallback shown while a page chunk is loading
-function PageFallback() {
-  return (
-    <div className="flex-grow flex items-center justify-center py-32">
-      <div className="w-8 h-8 rounded-full border-2 border-[#3CB52A] border-t-transparent animate-spin" />
-    </div>
-  );
-}
+// Page Imports
+import HomePage from '@/pages/HomePage';
+import AboutPage from '@/pages/AboutPage';
+import ServicesPage from '@/pages/ServicesPage';
+import ServiceDetailPage from '@/pages/ServiceDetailPage';
+import AIPage from '@/pages/AIPage';
+import SolutionsPage from '@/pages/SolutionsPage';
+import ProductsPage from '@/pages/ProductsPage';
+import PortfolioPage from '@/pages/PortfolioPage';
+import ProjectsPage from '@/pages/ProjectsPage';
+import IndustriesPage from '@/pages/IndustriesPage';
+import PartnersPage from '@/pages/PartnersPage';
+import ResourcesPage from '@/pages/ResourcesPage';
+import BlogPage from '@/pages/BlogPage';
+import NewsPage from '@/pages/NewsPage';
+import CareersPage from '@/pages/CareersPage';
+import SupportPage from '@/pages/SupportPage';
+import ContactPage from '@/pages/ContactPage';
+import PricingPage from '@/pages/PricingPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import TermsPage from '@/pages/TermsPage';
+import CookiesPage from '@/pages/CookiesPage';
+import ClientPortalPage from '@/pages/ClientPortalPage';
+import AdminDashboardPage from '@/pages/AdminDashboardPage';
+import TeamMemberPage from '@/pages/TeamMemberPage';
+import RefundPolicyPage from '@/pages/RefundPolicyPage';
+import SitemapPage from '@/pages/SitemapPage';
+import ConsultationPage from '@/pages/ConsultationPage';
+import DocsPage from '@/pages/resources/DocsPage';
+import ApiReferencePage from '@/pages/resources/ApiReferencePage';
+import TutorialsPage from '@/pages/resources/TutorialsPage';
+import DownloadsPage from '@/pages/resources/DownloadsPage';
+import ChangelogPage from '@/pages/resources/ChangelogPage';
+import DeveloperToolsPage from '@/pages/resources/DeveloperToolsPage';
 
 const queryClient = new QueryClient();
 
@@ -65,7 +57,7 @@ const PAGE_TRANSITION = {
 };
 
 // Routes that manage their own full-screen layout (no shared header/footer)
-const FULLSCREEN_ROUTES = ['/portal', '/admin', '/quote'];
+const FULLSCREEN_ROUTES = ['/portal', '/admin'];
 
 function Router() {
   const [location] = useLocation();
@@ -76,13 +68,10 @@ function Router() {
     return (
       <>
         <RouteScrollReset />
-        <Suspense fallback={<PageFallback />}>
-          <Switch>
-            <Route path="/portal" component={ClientPortalPage} />
-            <Route path="/admin" component={AdminDashboardPage} />
-            <Route path="/quote/:token" component={QuotePage} />
-          </Switch>
-        </Suspense>
+        <Switch>
+          <Route path="/portal" component={ClientPortalPage} />
+          <Route path="/admin" component={AdminDashboardPage} />
+        </Switch>
       </>
     );
   }
@@ -101,46 +90,46 @@ function Router() {
             transition={PAGE_TRANSITION.transition}
             className="flex-grow flex flex-col"
           >
-            <Suspense fallback={<PageFallback />}>
-              <Switch>
-                <Route path="/" component={HomePage} />
-                <Route path="/about" component={AboutPage} />
-                <Route path="/services" component={ServicesPage} />
-                <Route path="/services/:slug" component={ServiceDetailPage} />
-                <Route path="/ai-solutions" component={AIPage} />
-                <Route path="/solutions" component={SolutionsPage} />
-                <Route path="/products" component={ProductsPage} />
-                <Route path="/portfolio" component={PortfolioPage} />
-                <Route path="/projects" component={ProjectsPage} />
-                <Route path="/industries" component={IndustriesPage} />
-                <Route path="/partners" component={PartnersPage} />
-                <Route path="/resources" component={ResourcesPage} />
-                <Route path="/resources/downloads" component={DownloadsPage} />
-                <Route path="/blog" component={BlogPage} />
-                <Route path="/news" component={NewsPage} />
-                <Route path="/careers" component={CareersPage} />
-                <Route path="/support" component={SupportPage} />
-                <Route path="/contact" component={ContactPage} />
-                <Route path="/pricing" component={PricingPage} />
-                <Route path="/privacy-policy" component={PrivacyPage} />
-                <Route path="/terms" component={TermsPage} />
-                <Route path="/cookies" component={CookiesPage} />
-                <Route path="/team/wilmot-kerkulah/cv" component={FounderCVPage} />
-                <Route path="/team/:slug" component={TeamMemberPage} />
-                <Route path="/refund-policy" component={RefundPolicyPage} />
-                <Route path="/sitemap" component={SitemapPage} />
-                <Route path="/consultation" component={ConsultationPage} />
-                <Route path="/billing" component={BillingPage} />
-                <Route component={NotFound} />
-              </Switch>
-            </Suspense>
+            <Switch>
+              <Route path="/" component={HomePage} />
+              <Route path="/about" component={AboutPage} />
+              <Route path="/services" component={ServicesPage} />
+              <Route path="/services/:slug" component={ServiceDetailPage} />
+              <Route path="/ai-solutions" component={AIPage} />
+              <Route path="/solutions" component={SolutionsPage} />
+              <Route path="/products" component={ProductsPage} />
+              <Route path="/portfolio" component={PortfolioPage} />
+              <Route path="/projects" component={ProjectsPage} />
+              <Route path="/industries" component={IndustriesPage} />
+              <Route path="/partners" component={PartnersPage} />
+              <Route path="/resources" component={ResourcesPage} />
+              <Route path="/resources/docs" component={DocsPage} />
+              <Route path="/resources/api" component={ApiReferencePage} />
+              <Route path="/resources/tutorials" component={TutorialsPage} />
+              <Route path="/resources/downloads" component={DownloadsPage} />
+              <Route path="/resources/changelog" component={ChangelogPage} />
+              <Route path="/resources/tools" component={DeveloperToolsPage} />
+              <Route path="/blog" component={BlogPage} />
+              <Route path="/news" component={NewsPage} />
+              <Route path="/careers" component={CareersPage} />
+              <Route path="/support" component={SupportPage} />
+              <Route path="/contact" component={ContactPage} />
+              <Route path="/pricing" component={PricingPage} />
+              <Route path="/privacy-policy" component={PrivacyPage} />
+              <Route path="/terms" component={TermsPage} />
+              <Route path="/cookies" component={CookiesPage} />
+              <Route path="/team/:slug" component={TeamMemberPage} />
+              <Route path="/refund-policy" component={RefundPolicyPage} />
+              <Route path="/sitemap" component={SitemapPage} />
+              <Route path="/consultation" component={ConsultationPage} />
+              <Route component={NotFound} />
+            </Switch>
           </motion.div>
         </AnimatePresence>
       </main>
       <Footer />
       <ScrollToTop />
-      <SarahChatbot />
-      <CookieBanner />
+      <WhatsAppWidget />
     </div>
   );
 }
