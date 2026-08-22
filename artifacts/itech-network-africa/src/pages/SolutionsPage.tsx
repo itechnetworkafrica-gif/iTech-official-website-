@@ -8,6 +8,7 @@ import {
   Factory, Church, Rocket, ChevronDown, ChevronUp,
   Users, TrendingUp, Award, Layers,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── Animation ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -418,6 +419,11 @@ function IndustrySection({ ind, reverse }: { ind: Industry; reverse?: boolean })
 
 /* ══════════════════════════════════════════════════════ */
 export default function SolutionsPage() {
+  useSEO({
+    title: 'Business Solutions — Technology Solutions for African Companies',
+    description: 'Tailored technology solutions for African businesses — digital transformation, enterprise software, cloud migration and cybersecurity.',
+    canonical: '/solutions',
+  });
   return (
     <div className="flex flex-col w-full bg-[#F8F9FA]">
 

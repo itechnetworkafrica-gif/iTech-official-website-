@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageHero } from '@/components/PageHero';
 import { LegalTOC } from '@/components/LegalTOC';
+import { useSEO } from '@/hooks/useSEO';
 
 const TOC_ITEMS = [
   { id: 'introduction', title: 'Introduction' },
@@ -18,6 +19,11 @@ const TOC_ITEMS = [
 ];
 
 export default function PrivacyPage() {
+  useSEO({
+    title: 'Privacy Policy — How We Protect Your Data',
+    description: 'Read how iTech Network Africa collects, uses and protects your personal data in compliance with privacy standards.',
+    canonical: '/privacy-policy',
+  });
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero badge="Legal" title="Privacy Policy" subtitle="Last Updated: July 2026" />

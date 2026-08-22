@@ -27,6 +27,8 @@ args = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
 [services.production.run.env]
 PORT = "8000"
 NODE_ENV = "production"
+COOKIE_CROSS_SITE = "true"
+CORS_ORIGINS = "https://www.itechnetworkafrica.com,https://itechnetworkafrica.com,https://itechnetworkafrica.replit.app"
 
 [services.production.health.startup]
 path = "/api/healthz"

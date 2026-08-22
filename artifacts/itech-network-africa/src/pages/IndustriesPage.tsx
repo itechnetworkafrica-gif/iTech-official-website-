@@ -6,6 +6,7 @@ import {
   Factory, Hotel, HeartHandshake, Wifi, Tractor, Home, Film, ArrowRight
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 const industries = [
   { icon: <Stethoscope size={32} />, name: "Healthcare", desc: "Secure HMS, telemedicine platforms, and patient record systems compliant with medical data standards." },
@@ -23,6 +24,11 @@ const industries = [
 ];
 
 export default function IndustriesPage() {
+  useSEO({
+    title: 'Industries We Serve — Technology Solutions by Sector',
+    description: 'iTech Network Africa serves healthcare, education, retail, government and more with tailored technology solutions in Liberia and Africa.',
+    canonical: '/industries',
+  });
   return (
     <div className="flex flex-col w-full bg-white min-h-screen">
       <PageHero 

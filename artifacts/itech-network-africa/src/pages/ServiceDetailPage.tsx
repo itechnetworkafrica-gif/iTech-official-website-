@@ -11,6 +11,7 @@ import {
   BarChart2, Lock, Cpu, Wifi, FileText, Target,
   MessageSquare, HelpCircle, ArrowLeft,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const fadeUp = {
@@ -936,6 +937,14 @@ export default function ServiceDetailPage() {
   const [, params] = useRoute('/services/:slug');
   const slug = params?.slug ?? '';
   const service = SERVICE_DETAILS.find((s) => s.slug === slug);
+  useSEO({
+    title: service ? `${service.title} Services in Liberia & Africa` : 'Service Not Found',
+    description: service
+      ? service.description.replace(/\s+/g, ' ').slice(0, 155).trimEnd() + (service.description.length > 155 ? '…' : '')
+      : 'Professional technology services for businesses in Liberia and West Africa.',
+    canonical: `/services/${slug}`,
+    noindex: !service,
+  });
 
   if (!service) {
     return (

@@ -33,10 +33,11 @@ const footerSections = [
   {
     title: 'Resources',
     links: [
-      { label: 'Documentation', href: '/resources' },
-      { label: 'Blog & Insights', href: '/blog' },
-      { label: 'Case Studies', href: '/portfolio' },
-      { label: 'Partners', href: '/partners' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'News', href: '/news' },
+      { label: 'Downloads', href: '/resources/downloads' },
+      { label: 'FAQs', href: '/support#knowledge-base' },
+      { label: 'Success Stories', href: '/portfolio' },
       { label: 'Sitemap', href: '/sitemap', isNew: true },
     ],
   },

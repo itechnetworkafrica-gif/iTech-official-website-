@@ -30,8 +30,8 @@ export interface PortalClient {
   id: string;
   name: string;
   email: string;
-  /** btoa(password + ":iTechPortal2025") */
-  passwordHash: string;
+  /** btoa(password + ":iTechPortal2025") — not returned from API, optional */
+  passwordHash?: string;
   organisation: string;
   role: string;
   phone: string;

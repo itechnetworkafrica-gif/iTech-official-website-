@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { PageHero } from '@/components/PageHero';
 import { CheckCircle2, Clock, Calendar, Briefcase } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const projects = [
   {
@@ -70,6 +71,11 @@ const getStatusIcon = (status: string) => {
 };
 
 export default function ProjectsPage() {
+  useSEO({
+    title: 'Projects — Our Technology Work',
+    description: 'Explore technology projects delivered by iTech Network Africa — websites, apps and platforms for clients across Africa.',
+    canonical: '/projects',
+  });
   return (
     <div className="flex flex-col w-full bg-white min-h-screen">
       <PageHero 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Clock, RefreshCw, Globe, Newspaper, Building2, ChevronRight } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -166,6 +167,11 @@ function useIndustryNews() {
 
 /* ─── Page component ─── */
 export default function NewsPage() {
+  useSEO({
+    title: 'News — Latest Technology & Company Updates',
+    description: 'Stay up to date with the latest technology news and company announcements from iTech Network Africa.',
+    canonical: '/news',
+  });
   const [activeTab, setActiveTab] = useState<'company' | 'industry'>('company');
   const { items, loading, error, lastFetched, refetch } = useIndustryNews();
 

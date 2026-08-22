@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, ArrowLeft, MessageSquare, Search, Wifi, WifiOff } from 'lucide-react';
+import { SITE_URL } from '@/hooks/useSEO';
+import iconLogoWhite from '@/assets/logo-icon-white.webp';
 
 /* ─── Animation presets ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -19,7 +21,6 @@ const HELPFUL_LINKS = [
 
 export default function NotFound() {
   const [showLinks, setShowLinks] = useState(false);
-  const [logoError, setLogoError] = useState(false);
 
   /* ── Full SEO meta management ── */
   useEffect(() => {
@@ -50,14 +51,14 @@ export default function NotFound() {
     const ogType  = setMeta('meta[property="og:type"]',        'property', 'og:type',        'website');
     const ogTitle = setMeta('meta[property="og:title"]',       'property', 'og:title',       '404 – Page Not Found | iTech Network Africa');
     const ogDesc  = setMeta('meta[property="og:description"]', 'property', 'og:description', 'Page not found. Visit iTech Network Africa for enterprise software, AI solutions and digital transformation services across Africa.');
-    const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       '/og-image.png');
-    const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         window.location.href);
+     const ogImg   = setMeta('meta[property="og:image"]',       'property', 'og:image',       '/og-image.png');
+    const ogUrl   = setMeta('meta[property="og:url"]',         'property', 'og:url',         `${SITE_URL}/`);
 
     // Twitter Card
     const twCard  = setMeta('meta[name="twitter:card"]',        'name', 'twitter:card',        'summary_large_image');
     const twTitle = setMeta('meta[name="twitter:title"]',       'name', 'twitter:title',       '404 – Page Not Found | iTech Network Africa');
     const twDesc  = setMeta('meta[name="twitter:description"]', 'name', 'twitter:description', 'Page not found. Explore iTech Network Africa\'s enterprise technology solutions for Africa.');
-    const twImg   = setMeta('meta[name="twitter:image"]',       'name', 'twitter:image',       '/og-image.png');
+     const twImg   = setMeta('meta[name="twitter:image"]',       'name', 'twitter:image',       '/og-image.png');
 
     // Canonical link — point to home since this URL doesn't exist
     let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
@@ -67,7 +68,7 @@ export default function NotFound() {
       document.head.appendChild(canon);
     }
     const prevCanon = canon.href;
-    canon.href = window.location.origin + '/';
+    canon.href = `${SITE_URL}/`;
 
     return () => {
       document.title = prevTitle;
@@ -187,24 +188,16 @@ export default function NotFound() {
             style={{ background: 'radial-gradient(circle at 40% 35%, rgba(60,181,42,0.12) 0%, transparent 65%)' }}
           />
 
-          {/* ── The Logo — gently floating ── */}
+          {/* ── White header logo — gently floating inside the "0" ── */}
           <motion.img
-            src="/logo-icon.png"
+            src={iconLogoWhite}
             alt="iTech Network Africa"
-            onError={() => setLogoError(true)}
-            animate={logoError ? {} : { y: [-6, 6, -6] }}
+            animate={{ y: [-6, 6, -6] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
             className="relative z-10 object-contain"
             style={{ width: '52%', height: '52%' }}
             loading="eager"
           />
-
-          {/* Fallback if logo fails */}
-          {logoError && (
-            <div className="relative z-10 text-white font-black" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
-              iT
-            </div>
-          )}
         </motion.div>
 
         {/* Right "4" */}
@@ -243,17 +236,20 @@ export default function NotFound() {
           aria-label="Recovery options"
         >
           {/* Return Home */}
-          <Link href="/">
-            <motion.a
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-7 py-3.5 rounded-xl transition-colors shadow-[0_6px_28px_rgba(60,181,42,0.4)] focus:outline-none focus:ring-2 focus:ring-[#3CB52A] focus:ring-offset-2 focus:ring-offset-[#060E18] cursor-pointer"
+            aria-label="Return to iTech Network Africa home page"
+          >
+            <motion.span
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.18 }}
-              className="inline-flex items-center gap-2.5 bg-[#3CB52A] hover:bg-[#2da822] text-white font-bold px-7 py-3.5 rounded-xl transition-colors shadow-[0_6px_28px_rgba(60,181,42,0.4)] focus:outline-none focus:ring-2 focus:ring-[#3CB52A] focus:ring-offset-2 focus:ring-offset-[#060E18] cursor-pointer"
-              aria-label="Return to iTech Network Africa home page"
+              className="inline-flex items-center gap-2.5"
             >
               <Home size={17} aria-hidden="true" />
               Return Home
-            </motion.a>
+            </motion.span>
           </Link>
 
           {/* Go Back */}
@@ -270,14 +266,13 @@ export default function NotFound() {
           </motion.button>
 
           {/* Contact Support */}
-          <Link href="/support">
-            <a
-              className="inline-flex items-center gap-1.5 text-white/35 hover:text-[#3CB52A] text-sm font-medium transition-colors focus:outline-none focus:underline"
-              aria-label="Contact iTech support"
-            >
-              <MessageSquare size={14} aria-hidden="true" />
-              Contact Support
-            </a>
+          <Link
+            href="/support"
+            className="inline-flex items-center gap-1.5 text-white/35 hover:text-[#3CB52A] text-sm font-medium transition-colors focus:outline-none focus:underline"
+            aria-label="Contact iTech support"
+          >
+            <MessageSquare size={14} aria-hidden="true" />
+            Contact Support
           </Link>
         </div>
       </motion.div>

@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { Link, useParams } from 'wouter';
 import {
   ArrowLeft, Mail, MapPin, Calendar, Briefcase,
-  Quote, CheckCircle2, Users, ExternalLink, ChevronRight,
+  Quote, CheckCircle2, Users, ExternalLink, ChevronRight, FileText,
 } from 'lucide-react';
 import { FaLinkedinIn, FaXTwitter, FaInstagram, FaFacebook } from 'react-icons/fa6';
 import { TEAM, getMemberBySlug } from '@/data/team';
 import NotFound from '@/pages/not-found';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -36,6 +37,14 @@ const DEPT_COLOR: Record<string, { bg: string; text: string; border: string }> =
 export default function TeamMemberPage() {
   const params = useParams<{ slug: string }>();
   const member = getMemberBySlug(params.slug ?? '');
+  useSEO({
+    title: member ? `${member.name} — ${member.role}` : 'Team Member Not Found',
+    description: member
+      ? `Meet ${member.name}, ${member.role} at iTech Network Africa. Expert technology professionals serving Liberia and West Africa.`
+      : 'Meet the team at iTech Network Africa.',
+    canonical: `/team/${params.slug ?? ''}`,
+    noindex: !member,
+  });
 
   if (!member) return <NotFound />;
 
@@ -131,6 +140,15 @@ export default function TeamMemberPage() {
                     <Mail size={15} />
                     Send a Message
                   </a>
+                  {member.slug === 'wilmot-kerkulah' && (
+                    <Link
+                      href="/team/wilmot-kerkulah/cv"
+                      className="inline-flex items-center gap-2 bg-[#3CB52A] hover:bg-[#2da822] text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-[#3CB52A]/25"
+                    >
+                      <FileText size={15} />
+                      View Full CV
+                    </Link>
+                  )}
                 </motion.div>
               )}
             </div>
