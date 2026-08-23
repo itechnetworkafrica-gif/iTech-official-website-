@@ -4,8 +4,10 @@ import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import {
   ArrowRight, Globe, Shield, Zap, Users, Award, TrendingUp,
   Star, Monitor, Cloud, Brain, Code2, Wifi, ChevronRight,
-  Quote, ChevronLeft, FolderOpen, Headphones
+  Quote, ChevronLeft, FolderOpen, Headphones, Handshake,
+  Banknote, HeartPulse, GraduationCap, Landmark, ShoppingBag,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── Animation helpers ─── */
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -271,7 +273,7 @@ const WHY = [
 const TESTIMONIALS = [
   { name: 'Health Tech Liberia', role: 'Digital Health Platform', quote: 'iTech Network Africa built our entire patient-provider platform from the ground up. The digital health records system and telemedicine integration have transformed how we deliver care across Liberia.', rating: 5 },
   { name: 'Galaxy International', role: 'International Business Group', quote: 'Our corporate website and CMS delivered by iTech is exactly what we envisioned — clean, responsive, and easy for our team to manage. Their design sense and attention to brand detail is outstanding.', rating: 5 },
-  { name: 'B4P CODEFOUND', role: 'Women & Youth-Led NGO · Liberia & Diaspora', quote: 'iTech built us a platform that truly represents our mission. The donation integration works flawlessly and the programme pages have helped us reach thousands more young coders across Liberia and the diaspora.', rating: 5 },
+  { name: 'B4P CODEFOUND', role: 'Youth & Women-Focused NGO · Liberia & Diaspora', quote: 'iTech built us a platform that truly represents our mission. The donation integration works flawlessly and the programme pages have helped us reach thousands more young people across Liberia and the diaspora.', rating: 5 },
   { name: 'DKS Incubation Center', role: 'Startup Incubation Institution', quote: 'The online application portal iTech developed has completely streamlined how we receive and review applicants. What used to take weeks now takes days. The team was professional from day one.', rating: 5 },
   { name: 'Lewanah LLC', role: 'E-commerce · US Market', quote: 'Running a digital brand across borders is complex, but iTech made it seamless. Our e-commerce platform handles orders, payments, and product management without a hitch. Highly recommended.', rating: 5 },
   { name: 'Agrolite', role: 'Agricultural Organisation', quote: 'Our website finally reflects the quality of work we do in the field. The blog, gallery, and outreach pages iTech built have helped us connect with farming communities in ways we never could before.', rating: 5 },
@@ -394,7 +396,7 @@ function HeroSlider() {
   const totalNum = String(total).padStart(2, '0');
 
   return (
-    <section className="relative bg-[#060E18]">
+    <section className="relative bg-[#060E18] overflow-hidden">
       {/* ── Background layer (overflow-hidden here only, so content is never clipped) ── */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Full-bleed background photo */}
@@ -872,62 +874,6 @@ function VideoCard({ reel, index }: { reel: (typeof VIDEO_REELS)[number]; index:
   );
 }
 
-/* ─── Video Showcase Section (reel grid) ─── */
-function VideoShowcaseSection() {
-  return (
-    <section className="py-24 lg:py-32 bg-[#060E18] relative overflow-hidden">
-      <FloatingOrbs count={4} dark />
-      <div
-        className="absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#3CB52A 1px,transparent 1px),linear-gradient(90deg,#3CB52A 1px,transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12"
-        >
-          <div className="max-w-2xl">
-            <motion.span variants={fadeUp} className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-5">
-              <span className="w-7 h-px bg-[#3CB52A]" /> Selected work
-            </motion.span>
-            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white leading-tight">
-              Real Projects.<br /><span className="text-[#3CB52A]">Real Results.</span>
-            </motion.h2>
-          </div>
-          <motion.div variants={fadeUp} custom={2} className="max-w-sm lg:text-right">
-            <p className="text-white/50 text-base leading-relaxed mb-4">
-              A closer look at the products, platforms, and partnerships we're proud to bring to life.
-            </p>
-            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[#3CB52A] text-sm font-bold hover:gap-3 transition-all">
-              Explore the full portfolio <ArrowRight size={15} />
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.12 }}
-          variants={stagger}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5"
-        >
-          {VIDEO_REELS.map((reel, i) => (
-            <VideoCard key={reel.title} reel={reel} index={i} />
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
 const FEATURED_SCENES = [
   {
     label: 'Our Mission',
@@ -1255,15 +1201,52 @@ function FeaturedVideoSection() {
 /* ─── Testimonials Slider ─── */
 function TestimonialsSlider() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const total = TESTIMONIALS.length;
 
   const prev = useCallback(() => setActive((a) => (a - 1 + total) % total), [total]);
   const next = useCallback(() => setActive((a) => (a + 1) % total), [total]);
 
   useEffect(() => {
-    const id = setInterval(next, 5000);
+    if (paused) return;
+    const id = setInterval(next, 6000);
     return () => clearInterval(id);
-  }, [next]);
+  }, [next, paused]);
+
+  /* Step = actual rendered card width, so one step always moves exactly one
+     card regardless of breakpoint (88% mobile, 70% sm, 1/2 md, 1/3 lg). */
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const first = trackRef.current?.children[0] as HTMLElement | undefined;
+      if (first) setStep(first.getBoundingClientRect().width);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  /* Touch swipe support (mobile) */
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    setPaused(true);
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    setPaused(false);
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    // Only treat as a swipe when horizontal movement dominates
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) next(); else prev();
+    }
+  };
 
   return (
     <section className="py-24 lg:py-32 bg-[#F8FFFE] relative overflow-hidden">
@@ -1286,95 +1269,76 @@ function TestimonialsSlider() {
         </motion.div>
 
         {/* Slider */}
-        <div className="relative">
-
-          {/* ── Mobile: single card ── */}
-          <div className="md:hidden overflow-hidden rounded-3xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="relative bg-white rounded-3xl p-7 border border-[#3CB52A]/25 shadow-xl"
-              >
-                <div className="absolute top-0 left-7 w-1 h-10 bg-[#3CB52A] rounded-b-full" />
-                <Quote size={26} className="mb-4 text-[#3CB52A]" />
-                <p className="text-[#374151] text-base leading-relaxed mb-6 italic">"{TESTIMONIALS[active].quote}"</p>
-                <div className="flex gap-0.5 mb-4">
-                  {[...Array(TESTIMONIALS[active].rating)].map((_, j) => (
-                    <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />
-                  ))}
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-sm shrink-0">
-                    {TESTIMONIALS[active].name[0]}
-                  </div>
-                  <div>
-                    <div className="text-[#111827] font-bold text-sm">{TESTIMONIALS[active].name}</div>
-                    <div className="text-[#9CA3AF] text-xs mt-0.5">{TESTIMONIALS[active].role}</div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* ── Desktop: 3 cards ── */}
-          <div className="hidden md:block overflow-hidden rounded-3xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.45, ease: EASE }}
-                className="grid md:grid-cols-3 gap-6"
-              >
-                {[0, 1, 2].map((offset) => {
-                  const idx = (active + offset) % total;
-                  const t = TESTIMONIALS[idx];
-                  const isMain = offset === 0;
-                  return (
+        <div
+          className="relative"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* Sliding track — 1 card mobile, 2 tablet, 3 desktop */}
+          <div
+            className="overflow-hidden -mx-3 py-2"
+            style={{ touchAction: 'pan-y' }}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <div
+              ref={trackRef}
+              className="flex transition-transform duration-[650ms]"
+              style={{
+                transform: `translateX(-${active * step}px)`,
+                transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              }}
+            >
+              {[...TESTIMONIALS, ...TESTIMONIALS.slice(0, 2)].map((t, i) => {
+                const isMain = i % total === active;
+                return (
+                  <div key={i} className="w-[88%] sm:w-[70%] md:w-1/2 lg:w-1/3 flex-shrink-0 px-2 sm:px-3">
                     <div
-                      key={idx}
-                      className={`relative rounded-3xl p-8 border transition-all duration-300 ${
+                      className={`relative h-full rounded-3xl p-6 sm:p-8 border flex flex-col transition-all duration-500 ${
                         isMain
-                          ? 'bg-white border-[#3CB52A]/25 shadow-xl shadow-[#3CB52A]/8 scale-[1.02]'
-                          : 'bg-white border-[#E5E7EB] shadow-sm opacity-70 hover:opacity-90'
+                          ? 'bg-gradient-to-b from-white to-[#f6fef4] border-[#3CB52A]/30 shadow-[0_20px_60px_rgba(60,181,42,0.14)] lg:scale-[1.02]'
+                          : 'bg-white border-[#E5E7EB] shadow-sm lg:opacity-75'
                       }`}
                     >
-                      {isMain && (
-                        <div className="absolute top-0 left-8 w-1 h-10 bg-[#3CB52A] rounded-b-full" />
-                      )}
-                      <Quote size={28} className={`mb-4 ${isMain ? 'text-[#3CB52A]' : 'text-[#D1D5DB]'}`} />
-                      <p className="text-[#374151] text-sm leading-relaxed mb-6 italic">"{t.quote}"</p>
-                      <div className="flex gap-0.5 mb-4">
+                      {/* Top accent + quote mark */}
+                      <div className={`absolute top-0 left-8 w-1 h-10 rounded-b-full ${isMain ? 'bg-[#3CB52A]' : 'bg-[#E5E7EB]'}`} />
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 ${isMain ? 'bg-[#3CB52A] shadow-lg shadow-[#3CB52A]/30' : 'bg-[#F3F4F6]'}`}>
+                        <Quote size={20} className={isMain ? 'text-white' : 'text-[#9CA3AF]'} />
+                      </div>
+
+                      <p className="text-[#374151] text-[15px] leading-relaxed mb-6 flex-1">"{t.quote}"</p>
+
+                      <div className="flex gap-1 mb-5">
                         {[...Array(t.rating)].map((_, j) => (
-                          <Star key={j} size={14} className="text-[#3CB52A] fill-[#3CB52A]" />
+                          <Star key={j} size={15} className="text-[#f5a623] fill-[#f5a623]" />
                         ))}
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 flex items-center justify-center text-[#3CB52A] font-black text-sm shrink-0">
+
+                      <div className="flex items-center gap-3 pt-5 border-t border-[#E5E7EB]/80">
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-sm shrink-0 ${
+                          isMain
+                            ? 'bg-gradient-to-br from-[#3CB52A] to-[#2da822] text-white shadow-md shadow-[#3CB52A]/25'
+                            : 'bg-[#f0fdf4] border border-[#3CB52A]/20 text-[#3CB52A]'
+                        }`}>
                           {t.name[0]}
                         </div>
-                        <div>
-                          <div className="text-[#111827] font-bold text-sm">{t.name}</div>
-                          <div className="text-[#9CA3AF] text-xs mt-0.5">{t.role}</div>
+                        <div className="min-w-0">
+                          <div className="text-[#111827] font-bold text-sm truncate">{t.name}</div>
+                          <div className="text-[#9CA3AF] text-xs mt-0.5 truncate">{t.role}</div>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </motion.div>
-            </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Controls */}
           <div className="flex items-center justify-center gap-6 mt-10">
             <button
               onClick={prev}
-              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all"
+              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               aria-label="Previous"
             >
               <ChevronLeft size={20} />
@@ -1387,7 +1351,7 @@ function TestimonialsSlider() {
                   key={i}
                   onClick={() => setActive(i)}
                   className={`rounded-full transition-all duration-300 ${
-                    i === active ? 'w-7 h-2.5 bg-[#3CB52A]' : 'w-2.5 h-2.5 bg-[#D1D5DB] hover:bg-[#3CB52A]/50'
+                    i === active ? 'w-8 h-2.5 bg-gradient-to-r from-[#3CB52A] to-[#2da822]' : 'w-2.5 h-2.5 bg-[#D1D5DB] hover:bg-[#3CB52A]/50'
                   }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
@@ -1396,7 +1360,7 @@ function TestimonialsSlider() {
 
             <button
               onClick={next}
-              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all"
+              className="w-11 h-11 rounded-full border-2 border-[#E5E7EB] hover:border-[#3CB52A] hover:bg-[#f0fdf4] text-[#6B7280] hover:text-[#3CB52A] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               aria-label="Next"
             >
               <ArrowRight size={20} />
@@ -1410,39 +1374,15 @@ function TestimonialsSlider() {
 
 /* ─── Main Component ─── */
 export default function HomePage() {
+  useSEO({
+    title: 'Website Design, Hosting & IT Services in Liberia',
+    description: 'Professional website design, web hosting, digital marketing, IT consultancy and graphic design for businesses in Liberia and West Africa. Get a free quote today.',
+    canonical: '/',
+  });
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
 
       <HeroSlider />
-
-      {/* ══════════════════════════════════════
-          TRUST BAND
-      ══════════════════════════════════════ */}
-      <section className="relative z-10 bg-white border-b border-[#E5E7EB]">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#E5E7EB]">
-            {[
-              { value: '20+', label: 'Projects shipped', detail: 'Across sectors & continents' },
-              { value: '30+', label: 'Enterprise clients', detail: 'Built on long-term trust' },
-              { value: '10+', label: 'Countries reached', detail: 'Africa and beyond' },
-              { value: '24/7', label: 'Support coverage', detail: 'When your business needs us' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.07 }}
-                className="px-4 sm:px-7 lg:px-10 py-7 lg:py-9 first:pl-0 last:pr-0"
-              >
-                <div className="text-2xl sm:text-3xl font-black text-[#060E18] tracking-tight">{item.value}</div>
-                <div className="text-sm font-bold text-[#060E18] mt-1">{item.label}</div>
-                <div className="text-xs text-[#9CA3AF] mt-1 hidden sm:block">{item.detail}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════
           SERVICES OVERVIEW
@@ -1471,12 +1411,12 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
-            <motion.div
+          <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
             variants={stagger}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {SERVICES.map((svc, i) => (
               <motion.div
@@ -1484,17 +1424,19 @@ export default function HomePage() {
                 custom={i}
                 variants={fadeUp}
                 whileHover={{ y: -8, transition: { duration: 0.28, ease: EASE } }}
-                  className="group relative flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-2xl hover:border-[#3CB52A]/40 transition-all duration-300 overflow-hidden"
+                className="group flex flex-col p-7 rounded-2xl border border-[#E5E7EB] bg-white shadow-sm hover:shadow-xl hover:border-[#3CB52A]/30 transition-all duration-300"
               >
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#3CB52A] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300" />
                 <div className="w-14 h-14 rounded-2xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-5 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors duration-300">
                   {svc.icon}
                 </div>
                 <h3 className="text-lg font-bold text-[#060E18] mb-2">{svc.title}</h3>
                 <p className="text-[#6B7280] text-sm leading-relaxed mb-6 flex-1">{svc.desc}</p>
-                  <Link href="/services" className="inline-flex items-center gap-1.5 text-[#060E18] group-hover:text-[#3CB52A] text-sm font-bold transition-colors">
-                    Explore capability <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                <Link
+                  href="/services"
+                  className="w-full py-2.5 bg-[#060E18] group-hover:bg-[#3CB52A] text-white text-sm font-bold rounded-xl text-center transition-colors flex items-center justify-center gap-1.5"
+                >
+                  Learn More <ChevronRight size={14} />
+                </Link>
               </motion.div>
             ))}
           </motion.div>
@@ -1508,14 +1450,150 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
+          GOOD / PRO / GOTECX — Product paths
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-[#F8F9FA] relative overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#3CB52A]/8 blur-[100px] pointer-events-none" />
+        <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+            className="max-w-3xl mb-12"
+          >
+            <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/15 px-4 py-1.5 rounded-full">
+              Choose your next move
+            </motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] leading-tight mb-4">
+              Start good. Scale pro.<br className="hidden sm:block" /> Build with Gotecx.
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg leading-relaxed">
+              Whether you are establishing your digital presence or building the next big platform, iTech has a path designed for where you are going.
+            </motion.p>
+          </motion.div>
+
+           <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Good block */}
+            <motion.article
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease: EASE }}
+              whileHover={{ y: -6 }}
+                className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-white border border-[#DCE5DD] shadow-[0_18px_50px_rgba(10,25,41,0.08)]"
+            >
+              <img
+                src="/home-good-hero.jpg"
+                alt="Happy customer ready to grow with iTech"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/78 to-white/10" />
+              <div className="relative z-10 flex h-full min-h-[430px] max-w-md flex-col justify-between p-8 lg:p-10">
+                <div>
+                  <span className="inline-flex items-center rounded-full bg-[#f0fdf4] border border-[#3CB52A]/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#23851D]">
+                    Good
+                  </span>
+                    <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-[#060E18]">
+                    A good digital start changes everything.
+                  </h3>
+                  <p className="mt-4 text-sm leading-relaxed text-[#6B7280]">
+                    Get the essentials right with a polished website, reliable hosting, digital support and a brand people remember.
+                  </p>
+                </div>
+                <Link href="/contact" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
+                  Start with Good <ArrowRight size={15} />
+                </Link>
+              </div>
+            </motion.article>
+
+            {/* Pro block */}
+            <motion.article
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
+              whileHover={{ y: -6 }}
+                className="group relative min-h-[430px] rounded-3xl overflow-hidden bg-white border border-[#DCE5DD] shadow-[0_18px_50px_rgba(10,25,41,0.08)]"
+            >
+               <img src="/home-pro-platform.jpg" alt="Custom digital platform built by iTech Network Africa" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
+               <div className="absolute inset-0 bg-gradient-to-t from-white/98 via-white/72 to-white/5" />
+              <div className="relative z-10 flex h-full min-h-[430px] flex-col justify-end p-8 lg:p-10">
+                 <span className="inline-flex self-start items-center rounded-full bg-[#3CB52A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                  Pro
+                </span>
+                 <h3 className="mt-5 text-3xl md:text-4xl font-black leading-tight text-[#060E18]">
+                  Pro systems for ambitious growth.
+                </h3>
+                 <p className="mt-4 max-w-lg text-sm leading-relaxed text-[#6B7280]">
+                  Move faster with custom software, automation, commerce and secure infrastructure built around your business.
+                </p>
+                 <Link href="/services" className="mt-7 inline-flex self-start items-center gap-2 rounded-xl bg-[#060E18] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#3CB52A]">
+                  Go Pro <ArrowRight size={15} />
+                </Link>
+              </div>
+            </motion.article>
+          </div>
+
+          {/* Gotecx flagship block */}
+          <motion.article
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: EASE }}
+             className="relative overflow-hidden rounded-3xl bg-white border border-[#DCE5DD] shadow-[0_22px_70px_rgba(10,25,41,0.10)]"
+          >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.11),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(60,181,42,0.06),transparent_32%)]" />
+            <div className="relative grid lg:grid-cols-[1fr_0.95fr]">
+              <div className="flex flex-col justify-center p-8 lg:p-14">
+                <div className="flex items-center gap-3 mb-6">
+                   <span className="h-px w-10 bg-[#3CB52A]" />
+                   <span className="text-[#3CB52A] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-black leading-tight text-[#060E18] mb-5">
+                   Meet <span className="text-[#3CB52A]">Gotecx</span>.
+                </h3>
+                <p className="text-[#6B7280] text-lg leading-relaxed max-w-xl mb-6">
+                  Our brand product and technology engine — powering the digital presence, tools and growth systems that help modern businesses move forward.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-3 mb-8">
+                  {[
+                    ['Digital presence', 'Websites, domains & hosting'],
+                    ['Business growth', 'Commerce & customer tools'],
+                    ['Tech engine', 'Secure platforms that scale'],
+                  ].map(([title, desc]) => (
+                    <div key={title} className="rounded-2xl border border-[#DCE5DD] bg-[#F8F9FA] p-4">
+                      <div className="text-[#060E18] text-sm font-bold mb-1">{title}</div>
+                      <div className="text-[#6B7280] text-xs leading-relaxed">{desc}</div>
+                    </div>
+                  ))}
+                </div>
+                  <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
+                  Explore Gotecx <ArrowRight size={15} />
+                </Link>
+              </div>
+              <div className="relative min-h-[420px] overflow-hidden lg:min-h-[520px]">
+                <img src="/gotecx-promo.jpg" alt="Gotecx technology engine helping businesses build their digital presence" className="absolute inset-0 h-full w-full object-cover object-center" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/10 to-transparent lg:bg-gradient-to-r lg:from-white lg:via-transparent lg:to-transparent" />
+                <div className="absolute bottom-6 right-6 rounded-2xl border border-white/30 bg-white/85 px-4 py-3 backdrop-blur-md">
+                   <div className="text-[10px] uppercase tracking-[0.18em] text-[#3CB52A]">Powered by iTech</div>
+                  <div className="text-[#060E18] font-black text-xl">Gotecx</div>
+                </div>
+              </div>
+            </div>
+          </motion.article>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           WHY CHOOSE US
       ══════════════════════════════════════ */}
-      <section id="why-choose-us" className="py-24 lg:py-32 bg-[#060E18]">
+      <section id="why-choose-us" className="py-24 lg:py-32 bg-[#F8F9FA] border-y border-[#E5E7EB]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={stagger}>
               <motion.span variants={fadeUp} className="inline-block text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4">Why iTech Network Africa</motion.span>
-              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+              <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-black text-[#060E18] mb-6 leading-tight">
                 Your Global<br />
                 <TypewriterText
                   text="Technology Partner"
@@ -1524,7 +1602,7 @@ export default function HomePage() {
                   className="text-[#3CB52A]"
                 />
               </motion.h2>
-              <motion.p variants={fadeUp} custom={2} className="text-white/55 text-lg leading-relaxed mb-10">
+              <motion.p variants={fadeUp} custom={2} className="text-[#6B7280] text-lg leading-relaxed mb-10">
                 A global technology company headquartered in Africa — combining world-class engineering standards with deep local market knowledge to deliver solutions that actually work, everywhere.
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
@@ -1533,7 +1611,7 @@ export default function HomePage() {
                     <div className="text-3xl font-black text-[#3CB52A]">
                       <CountUp target={s.num} suffix={s.suffix} />
                     </div>
-                    <div className="text-white/45 text-xs mt-1 leading-snug">{s.label}</div>
+                    <div className="text-[#6B7280] text-xs mt-1 leading-snug">{s.label}</div>
                   </div>
                 ))}
               </motion.div>
@@ -1546,12 +1624,12 @@ export default function HomePage() {
 
             <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={stagger} className="grid sm:grid-cols-2 gap-4">
               {WHY.map((w, i) => (
-                <motion.div key={w.title} custom={i} variants={fadeUp} whileHover={{ scale: 1.04, transition: { duration: 0.22 } }} className="p-6 rounded-2xl bg-white/4 border border-white/8 hover:border-[#3CB52A]/30 hover:bg-[#3CB52A]/5 transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-[#3CB52A]/15 text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
+                <motion.div key={w.title} custom={i} variants={fadeUp} whileHover={{ y: -4, transition: { duration: 0.22 } }} className="p-6 rounded-2xl bg-white border border-[#E5E7EB] hover:border-[#3CB52A]/40 hover:shadow-lg hover:shadow-[#3CB52A]/10 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-[#f0fdf4] text-[#3CB52A] flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] group-hover:text-white transition-colors">
                     {w.icon}
                   </div>
-                  <h4 className="text-white font-bold text-sm mb-1.5">{w.title}</h4>
-                  <p className="text-white/45 text-xs leading-relaxed">{w.desc}</p>
+                  <h4 className="text-[#060E18] font-bold text-sm mb-1.5">{w.title}</h4>
+                  <p className="text-[#6B7280] text-xs leading-relaxed">{w.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -1582,25 +1660,39 @@ export default function HomePage() {
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
-            className="flex flex-col lg:flex-row rounded-3xl overflow-hidden shadow-2xl border border-[#E5E7EB]"
+            className="flex flex-col lg:flex-row rounded-[2rem] overflow-hidden shadow-[0_28px_80px_rgba(6,14,24,0.16)] border border-[#DCE5DD]"
           >
             {/* Left — photo */}
-            <motion.div variants={fadeUp} className="lg:w-[48%] min-h-[340px] lg:min-h-[520px] shrink-0">
+            <motion.div variants={fadeUp} className="relative lg:w-[48%] min-h-[340px] lg:min-h-[520px] shrink-0 overflow-hidden bg-[#0A1929]">
               <img
                 src="/hero-man-laptop-chair.jpg"
                 alt="iTech Network Africa professional"
                 className="w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060E18]/80 via-transparent to-[#060E18]/10" />
+              <div className="absolute bottom-7 left-7 right-7 flex items-end justify-between gap-4 text-white">
+                <div>
+                  <div className="text-2xl font-black leading-none">Africa-led.</div>
+                  <div className="mt-1 text-sm text-white/70">Built for the world.</div>
+                </div>
+                <div className="rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] backdrop-blur-sm">
+                  Global standard
+                </div>
+              </div>
             </motion.div>
 
             {/* Right — card */}
             <motion.div
               variants={fadeUp}
               custom={1}
-              className="flex-1 bg-[#F8F9FA] p-8 lg:p-12 flex flex-col justify-between gap-8"
+              className="flex-1 bg-[#0A1929] p-8 lg:p-12 flex flex-col justify-between gap-8"
             >
+              <div className="flex items-center gap-3 text-[#3CB52A] text-xs font-bold uppercase tracking-[0.18em]">
+                <span className="h-px w-8 bg-[#3CB52A]" />
+                One partner. Every digital layer.
+              </div>
               {/* Quote */}
-              <blockquote className="text-[#060E18] text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
+              <blockquote className="text-white text-lg lg:text-xl font-semibold leading-relaxed border-l-4 border-[#3CB52A] pl-5">
                 "A global technology company with African roots — we handle the technology so you can focus on what you do best. From AI solutions to cloud infrastructure, iTech Network Africa delivers world-class results on time, on budget, every time."
               </blockquote>
 
@@ -1616,7 +1708,7 @@ export default function HomePage() {
                     { icon: <Shield size={16} />, label: 'Cybersecurity' },
                     { icon: <Headphones size={16} />, label: 'IT Support & Managed Services' },
                   ].map(({ icon, label }) => (
-                    <li key={label} className="flex items-center gap-3 text-[#374151] text-sm font-medium">
+                    <li key={label} className="flex items-center gap-3 text-white/70 text-sm font-medium">
                       <span className="text-[#3CB52A] shrink-0">{icon}</span>
                       {label}
                     </li>
@@ -1624,11 +1716,11 @@ export default function HomePage() {
                 </ul>
 
                 {/* Small preview image */}
-                <div className="sm:w-[180px] shrink-0 rounded-xl overflow-hidden border border-[#E5E7EB] shadow-md">
+                 <div className="sm:w-[180px] shrink-0 rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-md">
                   <img
                     src="/promo-online-training.jpg"
                     alt="iTech platform preview"
-                    className="w-full h-full object-cover"
+                   className="w-full h-full object-cover opacity-90"
                   />
                 </div>
               </div>
@@ -1809,7 +1901,6 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           VIDEO SHOWCASE REEL
       ══════════════════════════════════════ */}
-      <VideoShowcaseSection />
 
       {/* ══════════════════════════════════════
           TESTIMONIALS — Light mode slider
@@ -1945,6 +2036,108 @@ export default function HomePage() {
                 {tag}
               </span>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          INDUSTRIES WE SERVE
+      ══════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14"
+          >
+            <div className="max-w-xl">
+              <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/20 px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3CB52A] animate-pulse" />
+                Industries We Serve
+              </span>
+              <h2 className="text-3xl md:text-5xl font-bold text-[#0A1929] leading-tight">
+                Deep expertise across the sectors that move Africa forward
+              </h2>
+            </div>
+            <Link
+              href="/industries"
+              className="inline-flex items-center gap-2 text-[#0A1929] font-bold border border-[#E5E7EB] hover:border-[#3CB52A] hover:text-[#3CB52A] px-6 py-3 rounded-xl transition-colors self-start lg:self-auto"
+            >
+              All Industries <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { icon: Banknote,      label: 'Finance & Fintech',    desc: 'Payments, banking & mobile money' },
+              { icon: HeartPulse,    label: 'Healthcare',           desc: 'Health records & telemedicine' },
+              { icon: GraduationCap, label: 'Education',            desc: 'E-learning & school systems' },
+              { icon: Landmark,      label: 'Government',           desc: 'E-government & public services' },
+              { icon: ShoppingBag,   label: 'Retail & Commerce',    desc: 'E-commerce & inventory' },
+              { icon: Handshake,     label: 'NGOs & Non-Profits',   desc: 'Donation & impact platforms' },
+            ].map((it, i) => (
+              <motion.div
+                key={it.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+                className="group rounded-2xl border border-[#E5E7EB] bg-white p-5 hover:border-[#3CB52A]/50 hover:shadow-lg transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-[#3CB52A]/10 flex items-center justify-center mb-4 group-hover:bg-[#3CB52A] transition-colors">
+                  <it.icon size={22} className="text-[#3CB52A] group-hover:text-white transition-colors" />
+                </div>
+                <div className="font-bold text-[#0A1929] text-sm mb-1">{it.label}</div>
+                <div className="text-[#6B7280] text-xs leading-relaxed">{it.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          PARTNER WITH US
+      ══════════════════════════════════════ */}
+      <section className="py-20 bg-[#F8F9FA]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="relative overflow-hidden rounded-3xl bg-[#060E18] px-8 py-14 lg:px-16 lg:py-16"
+          >
+            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle, #3CB52A 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
+            <div className="absolute -top-24 -right-24 w-[380px] h-[380px] rounded-full bg-[#3CB52A]/15 blur-[90px] pointer-events-none" />
+
+            <div className="relative z-10 grid lg:grid-cols-[1fr_auto] gap-10 items-center">
+              <div>
+                <span className="inline-flex items-center gap-2 text-[#3CB52A] text-xs font-bold tracking-widest uppercase mb-4 bg-[#3CB52A]/10 border border-[#3CB52A]/25 px-4 py-1.5 rounded-full">
+                  <Handshake size={13} />
+                  Partner Programme
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
+                  Grow with us — refer, resell or build together
+                </h2>
+                <p className="text-white/50 text-lg leading-relaxed max-w-2xl">
+                  Agencies, IT firms, NGOs and institutions across 10+ countries partner with iTech Network Africa
+                  for referral commissions, reseller margins and joint programmes. Applications go straight to our
+                  partnerships team.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-4 shrink-0">
+                <Link
+                  href="/partners#apply"
+                  className="inline-flex items-center justify-center gap-2 bg-[#3CB52A] hover:bg-[#2ea827] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-[0_4px_24px_rgba(60,181,42,0.35)] hover:-translate-y-0.5 active:scale-95"
+                >
+                  Become a Partner <ArrowRight size={16} />
+                </Link>
+                <Link
+                  href="/partners#document"
+                  className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-[#3CB52A]/60 text-white font-bold px-8 py-4 rounded-xl transition-colors"
+                >
+                  Read the Partnership Document
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>

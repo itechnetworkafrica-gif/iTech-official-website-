@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import iconLogo from '@/assets/logo-icon-white.png';
+import iconLogo from '@/assets/logo-icon-white.webp';
 
 const routeNames: Record<string, string> = {
   '/': 'Home',

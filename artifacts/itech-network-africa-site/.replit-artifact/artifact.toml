@@ -1,0 +1,24 @@
+kind = "web"
+previewPath = "/"
+title = "iTech Network Africa"
+description = "Marketing and landing site for iTech Network Africa — a tech company and services platform based in Africa. Built with React 19, Vite, TypeScript, Tailwind CSS, and Framer Motion."
+version = "1.0.0"
+id = "artifacts/itech-network-africa-site"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24065
+
+[services.development]
+run = "pnpm --filter @workspace/itech-network-africa-site run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/itech-network-africa-site", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/itech-network-africa-site/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

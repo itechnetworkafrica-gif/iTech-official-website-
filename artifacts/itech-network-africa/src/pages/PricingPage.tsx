@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { PageHero } from '@/components/PageHero';
 import { pricingCategories, paymentTerms, faqs, type PricingPackage } from '@/lib/pricing-data';
+import { useSEO } from '@/hooks/useSEO';
 
 /* ─── helpers ─────────────────────────────────────────────────────────── */
 
@@ -98,7 +99,7 @@ function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
 
         {/* CTA Button */}
         <Link
-          href="/contact"
+          href={pkg.cta === 'Contact Sales' ? '/contact' : `/billing?plan=${encodeURIComponent(pkg.name)}`}
           className={`
             block text-center w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200
             ${isPopular
@@ -107,7 +108,7 @@ function PricingCard({ pkg, index }: { pkg: PricingPackage; index: number }) {
             }
           `}
         >
-          {pkg.cta}
+          {pkg.cta === 'Contact Sales' ? 'Contact Sales' : 'Pay Now'}
         </Link>
       </div>
     </motion.div>
@@ -177,6 +178,11 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 /* ─── Main Page ────────────────────────────────────────────────────────── */
 
 export default function PricingPage() {
+  useSEO({
+    title: 'Pricing — Affordable Website & IT Service Plans',
+    description: 'Transparent pricing for website design, web hosting, digital marketing and IT consultancy. Plans from $350 for businesses in Liberia and Africa.',
+    canonical: '/pricing',
+  });
   const [activeTab, setActiveTab] = useState(pricingCategories[0].id);
 
   const activeCategory = pricingCategories.find((c) => c.id === activeTab)!;

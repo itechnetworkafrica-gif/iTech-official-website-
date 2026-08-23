@@ -3,8 +3,14 @@ import { motion } from 'framer-motion';
 import { PageHero } from '@/components/PageHero';
 import { Bot, Cpu, LineChart, Brain, Eye, Settings, ArrowRight } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function AIPage() {
+  useSEO({
+    title: 'AI Solutions — Artificial Intelligence for African Businesses',
+    description: 'Harness AI for your business. Intelligent automation, AI-powered tools and machine learning solutions for companies across Liberia and Africa.',
+    canonical: '/ai-solutions',
+  });
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },

@@ -6,6 +6,7 @@ import {
   ShoppingCart, GraduationCap, Package, Users, Layers
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { useSEO } from '@/hooks/useSEO';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -212,6 +213,11 @@ const PRODUCTS = [
 ];
 
 export default function ProductsPage() {
+  useSEO({
+    title: 'Our Products — Software & Digital Tools',
+    description: 'Browse software products and digital tools built by iTech Network Africa for businesses across Liberia and West Africa.',
+    canonical: '/products',
+  });
   return (
     <div className="flex flex-col w-full bg-white">
       <PageHero
