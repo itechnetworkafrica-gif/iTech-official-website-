@@ -1541,43 +1541,54 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.7, ease: EASE }}
-             className="relative overflow-hidden rounded-3xl bg-white border border-[#DCE5DD] shadow-[0_22px_70px_rgba(10,25,41,0.10)]"
+            className="relative overflow-hidden rounded-3xl border border-[#16353B] bg-[#07131F] shadow-[0_22px_70px_rgba(10,25,41,0.20)]"
           >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(60,181,42,0.11),transparent_35%),radial-gradient(circle_at_20%_100%,rgba(60,181,42,0.06),transparent_32%)]" />
-            <div className="relative grid lg:grid-cols-[1fr_0.95fr]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_8%,rgba(60,181,42,0.18),transparent_30%),radial-gradient(circle_at_18%_100%,rgba(0,176,190,0.12),transparent_34%)]" />
+            <div className="relative grid lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.84fr)]">
               <div className="flex flex-col justify-center p-8 lg:p-14">
-                <div className="flex items-center gap-3 mb-6">
-                   <span className="h-px w-10 bg-[#3CB52A]" />
-                   <span className="text-[#3CB52A] text-xs font-bold tracking-[0.2em] uppercase">Flagship brand product</span>
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="h-px w-10 bg-[#3CB52A]" />
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#8EE47B]">Flagship brand product</span>
                 </div>
-                <h3 className="text-4xl md:text-5xl font-black leading-tight text-[#060E18] mb-5">
-                   Meet <span className="text-[#3CB52A]">Gotecx</span>.
+                <h3 className="mb-5 text-4xl font-black leading-tight text-white md:text-5xl">
+                  Meet <span className="text-[#5BDB49]">Gotecx</span>.
                 </h3>
-                <p className="text-[#6B7280] text-lg leading-relaxed max-w-xl mb-6">
+                <p className="mb-8 max-w-xl text-lg leading-relaxed text-white/65">
                   Our brand product and technology engine — powering the digital presence, tools and growth systems that help modern businesses move forward.
                 </p>
-                <div className="grid sm:grid-cols-3 gap-3 mb-8">
+                <div className="mb-8 grid gap-3 sm:grid-cols-3">
                   {[
                     ['Digital presence', 'Websites, domains & hosting'],
                     ['Business growth', 'Commerce & customer tools'],
                     ['Tech engine', 'Secure platforms that scale'],
                   ].map(([title, desc]) => (
-                    <div key={title} className="rounded-2xl border border-[#DCE5DD] bg-[#F8F9FA] p-4">
-                      <div className="text-[#060E18] text-sm font-bold mb-1">{title}</div>
-                      <div className="text-[#6B7280] text-xs leading-relaxed">{desc}</div>
+                    <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
+                      <div className="mb-1 text-sm font-bold text-white">{title}</div>
+                      <div className="text-xs leading-relaxed text-white/55">{desc}</div>
                     </div>
                   ))}
                 </div>
-                  <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
+                <Link href="/products" className="inline-flex self-start items-center gap-2 rounded-xl bg-[#3CB52A] px-6 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#2da822]">
                   Explore Gotecx <ArrowRight size={15} />
                 </Link>
               </div>
-              <div className="relative min-h-[420px] overflow-hidden lg:min-h-[520px]">
-                <img src="/gotecx-promo.jpg" alt="Gotecx technology engine helping businesses build their digital presence" className="absolute inset-0 h-full w-full object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/10 to-transparent lg:bg-gradient-to-r lg:from-white lg:via-transparent lg:to-transparent" />
-                <div className="absolute bottom-6 right-6 rounded-2xl border border-white/30 bg-white/85 px-4 py-3 backdrop-blur-md">
-                   <div className="text-[10px] uppercase tracking-[0.18em] text-[#3CB52A]">Powered by iTech</div>
-                  <div className="text-[#060E18] font-black text-xl">Gotecx</div>
+              <div className="relative flex min-h-[420px] flex-col items-center justify-center overflow-hidden bg-[#0A1B26]/80 p-5 lg:min-h-[560px] lg:p-8">
+                <div className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#3CB52A]/15 blur-[90px]" />
+                <div className="relative z-10 w-full max-w-[560px]">
+                  <img
+                    src="/gotecx-promo.jpg"
+                    alt="Gotecx flyer showing businesses building their digital presence"
+                    className="block aspect-square h-auto w-full rounded-[1.35rem] object-contain shadow-[0_24px_55px_rgba(0,0,0,0.34)] ring-1 ring-white/15"
+                  />
+                  <div className="mt-4 flex items-center justify-between px-1">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[#8EE47B]">Powered by iTech</div>
+                      <div className="mt-1 text-lg font-black text-white">Gotecx</div>
+                    </div>
+                    <span className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/65">
+                      Technology engine
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
